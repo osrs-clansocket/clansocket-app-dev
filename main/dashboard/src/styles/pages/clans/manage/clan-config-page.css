@@ -1,0 +1,180 @@
+.clans-manage__config {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-block-size: 0;
+}
+.clans-manage__config-loading {
+    padding: var(--sp-4);
+    font-size: var(--fs-xs);
+    font-style: italic;
+    color: var(--base-graphite-300);
+}
+.clans-manage__config-section {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: var(--sp-2);
+    min-block-size: 0;
+    padding: var(--sp-2);
+    background: linear-gradient(
+        160deg,
+        rgb(from var(--base-graphite-700) r g b / 0.4) 0%,
+        rgb(from var(--base-graphite-900) r g b / 0.6) 100%
+    );
+}
+.clans-manage__config-section-title {
+    font-size: var(--fs-md);
+    font-weight: var(--fw-semi);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    color: var(--base-gold-200);
+}
+.clans-manage__config-section-meta {
+    font-size: var(--fs-3xs);
+    font-style: italic;
+    color: var(--base-graphite-300);
+}
+.clans-manage__config-scroll {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: var(--sp-2);
+    min-block-size: 0;
+    overflow-block: auto;
+    padding: var(--sp-0);
+}
+.clans-manage__config-field-list {
+    display: grid;
+    align-items: start;
+    gap: var(--sp-1h);
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    grid-auto-rows: min-content;
+}
+.clans-manage__config-roster {
+    display: grid;
+    align-items: start;
+    gap: var(--sp-1);
+    grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+    grid-auto-rows: min-content;
+}
+.clans-manage__config-roster-card {
+    display: grid;
+    align-items: center;
+    column-gap: var(--sp-1);
+    grid-template-columns: 1fr auto;
+    padding: var(--sp-1) var(--sp-1h);
+    border: var(--sp-hairline) solid rgb(from var(--base-gold-500) r g b / 0.15);
+    border-radius: var(--radius-md);
+    background: linear-gradient(
+        160deg,
+        rgb(from var(--base-graphite-700) r g b / 0.3) 0%,
+        rgb(from var(--base-graphite-900) r g b / 0.5) 100%
+    );
+    transition:
+        border-color var(--dur-fast) var(--ease-out),
+        background-color var(--dur-fast) var(--ease-out);
+    cursor: pointer;
+    user-select: none;
+}
+.clans-manage__config-roster-card:hover {
+    border-color: rgb(from var(--base-gold-500) r g b / 0.4);
+}
+.clans-manage__config-roster-card:focus-visible {
+    outline: var(--sp-hairline) solid rgb(from var(--base-gold-500) r g b / 0.4);
+    outline-offset: var(--sp-0h);
+}
+.clans-manage__config-roster-card.is-active {
+    border-color: var(--base-gold-500);
+    background: linear-gradient(
+        160deg,
+        rgb(from var(--base-gold-500) r g b / 0.18) 0%,
+        rgb(from var(--base-graphite-900) r g b / 0.6) 100%
+    );
+}
+.clans-manage__config-roster-card-body {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-1);
+    min-inline-size: 0;
+}
+.clans-manage__config-roster-card-globe {
+    flex-shrink: 0;
+    inline-size: var(--sp-4);
+    block-size: var(--sp-4);
+    object-fit: contain;
+}
+.clans-manage__config-roster-card-body .rsn-tag__name {
+    font-size: var(--fs-2xs);
+    font-weight: var(--fw-semi);
+    color: var(--rank-accent, var(--base-graphite-200));
+}
+.clans-manage__config-roster-card-global-label {
+    overflow: hidden;
+    font-size: var(--fs-2xs);
+    font-weight: var(--fw-semi);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--base-gold-300);
+}
+.clans-manage__config-roster-card-marker {
+    font-size: var(--fs-3xs);
+    font-style: italic;
+    letter-spacing: var(--ls-snug);
+    text-transform: uppercase;
+    color: var(--base-gold-300);
+}
+.clans-manage__config-field-row {
+    display: grid;
+    align-items: center;
+    column-gap: var(--sp-2);
+    grid-template-columns: 1fr auto;
+    padding: var(--sp-1h) var(--sp-2);
+    border: var(--sp-hairline) solid rgb(from var(--base-gold-500) r g b / 0.15);
+    border-radius: var(--radius-md);
+    background: linear-gradient(
+        160deg,
+        rgb(from var(--base-graphite-700) r g b / 0.3) 0%,
+        rgb(from var(--base-graphite-900) r g b / 0.5) 100%
+    );
+    transition: border-color var(--dur-fast) var(--ease-out);
+}
+.clans-manage__config-field-row:hover {
+    border-color: rgb(from var(--base-gold-500) r g b / 0.4);
+}
+.clans-manage__config-field-label {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-0);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semi);
+    color: var(--base-gold-300);
+}
+.clans-manage__config-field-label-text {
+    font-size: var(--fs-xs);
+}
+.clans-manage__config-field-desc {
+    margin: 0;
+    font-size: var(--fs-3xs);
+    font-weight: var(--fw-normal);
+    font-style: italic;
+    color: var(--base-graphite-300);
+}
+.clans-manage__config-field-control {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.clans-manage__config-actions {
+    display: grid;
+    align-items: center;
+    gap: var(--sp-1) var(--sp-2);
+    grid-template-columns: 1fr 1fr;
+}
+.clans-manage__config-status {
+    grid-column: 1 / -1;
+    margin: 0;
+    font-size: var(--fs-2xs);
+    font-style: italic;
+    color: var(--base-graphite-200);
+}

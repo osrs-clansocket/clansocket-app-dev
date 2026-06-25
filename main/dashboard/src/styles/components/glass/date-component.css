@@ -1,0 +1,150 @@
+.glass-date {
+    position: relative;
+    display: inline-block;
+    user-select: none;
+}
+.glass-date__trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-1);
+    padding: var(--sp-0h) var(--sp-1h);
+    border: var(--border-hairline-active);
+    border-radius: var(--radius-md);
+    font-family: var(--font-data);
+    font-size: var(--fs-2xs);
+    font-variant-numeric: tabular-nums;
+    line-height: var(--lh-flat);
+    letter-spacing: var(--ls-normal);
+    color: var(--base-gold-300);
+    background: linear-gradient(
+        160deg,
+        rgb(from var(--base-graphite-700) r g b / 0.5) 0%,
+        rgb(from var(--base-graphite-900) r g b / 0.7) 100%
+    );
+    backdrop-filter: blur(var(--blur-sm)) saturate(1.2);
+    transition:
+        border-color var(--dur-fast) var(--ease-out),
+        box-shadow var(--dur-fast) var(--ease-out);
+    cursor: pointer;
+}
+.glass-date__trigger:hover,
+.glass-date--open .glass-date__trigger {
+    border-color: var(--base-gold-500);
+    box-shadow: var(--shadow-date-hover);
+}
+.glass-date__icon {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    font-size: var(--fs-2xs);
+    line-height: var(--lh-flat);
+    color: var(--base-gold-300);
+}
+.glass-date__label {
+    display: inline-block;
+    min-inline-size: 4rem;
+    line-height: var(--lh-flat);
+    text-align: start;
+}
+.glass-date__popup {
+    position: absolute;
+    inset-block-start: calc(100% + var(--sp-1));
+    inset-inline-start: 0;
+    z-index: var(--z-dropdown);
+    display: none;
+    flex-direction: column;
+    gap: var(--sp-1);
+    min-inline-size: 11rem;
+    padding: var(--sp-1h);
+    border: var(--border-hairline-active);
+    border-radius: var(--radius-md);
+    background: linear-gradient(
+        160deg,
+        rgb(from var(--base-graphite-700) r g b / 0.55) 0%,
+        rgb(from var(--base-graphite-900) r g b / 0.78) 100%
+    );
+    box-shadow: var(--shadow-elev-3);
+    backdrop-filter: blur(var(--blur-md)) saturate(1.3);
+}
+.glass-date--open .glass-date__popup {
+    display: flex;
+}
+.glass-date__nav {
+    display: grid;
+    align-items: center;
+    gap: var(--sp-1);
+    grid-template-columns: auto 1fr auto;
+    padding-block-end: var(--sp-1);
+    border-block-end: var(--border-hairline-active);
+}
+.glass-date__nav-btn {
+    padding: 0 var(--sp-1);
+    border: none;
+    font-family: var(--font-heading);
+    font-size: var(--fs-xs);
+    line-height: var(--lh-flat);
+    color: var(--base-gold-300);
+    background: transparent;
+    cursor: pointer;
+}
+.glass-date__nav-btn:hover {
+    color: var(--base-gold-500);
+}
+.glass-date__title {
+    font-family: var(--font-heading);
+    font-size: var(--fs-2xs);
+    font-weight: var(--fw-semi);
+    letter-spacing: var(--ls-snug);
+    text-align: center;
+    text-transform: lowercase;
+    color: var(--base-gold-300);
+}
+.glass-date__grid {
+    display: grid;
+    gap: var(--sp-0);
+    grid-template-columns: repeat(7, 1fr);
+}
+.glass-date__dow {
+    padding: var(--sp-0) 0;
+    font-family: var(--font-heading);
+    font-size: var(--fs-3xs);
+    line-height: var(--lh-flat);
+    letter-spacing: var(--ls-normal);
+    text-align: center;
+    text-transform: uppercase;
+    color: var(--base-graphite-300);
+}
+.glass-date__day {
+    min-inline-size: 1.125rem;
+    padding: var(--sp-0h) 0;
+    border: var(--sp-hairline) solid transparent;
+    border-radius: var(--radius-md);
+    font-family: var(--font-data);
+    font-size: var(--fs-3xs);
+    font-variant-numeric: tabular-nums;
+    line-height: var(--lh-flat);
+    text-align: center;
+    color: var(--base-cream-100);
+    background: transparent;
+    cursor: pointer;
+}
+.glass-date__day:hover {
+    border-color: var(--base-gold-500);
+    color: var(--base-gold-300);
+}
+.glass-date__day--muted {
+    color: var(--base-graphite-300);
+    opacity: var(--opacity-medium);
+}
+.glass-date__day--today {
+    border-color: rgb(from var(--base-gold-500) r g b / 0.35);
+    color: var(--base-gold-300);
+}
+.glass-date__day--selected {
+    border-color: var(--base-gold-500);
+    color: var(--base-graphite-900);
+    background: var(--base-gold-500);
+}
+.glass-date__day--selected:hover {
+    color: var(--base-graphite-900);
+}

@@ -1,0 +1,29 @@
+{
+    "$schema": "https://unpkg.com/knip@6/schema.json",
+    "workspaces": {
+        "main/discord": {
+            "entry": [
+                "src/plugins/commands/**/*.ts",
+                "src/plugins/messages/**/*.ts",
+                "src/plugins/slash/**/*.ts",
+                "src/plugins/interactions/**/*.ts"
+            ]
+        }
+    },
+    "ignore": [
+        "**/node_modules/**",
+        "**/dist/**",
+        "**/auto-gen/**",
+        "**/.lint-reports/**",
+        "**/.cache/**",
+        "**/varez-clan-vocab/**"
+    ],
+    "ignoreDependencies": [
+        "knip",
+        "@types/better-sqlite3",
+        "@types/express",
+        "@types/multer",
+        "@types/prismjs",
+        "@types/ws"
+    ]
+}

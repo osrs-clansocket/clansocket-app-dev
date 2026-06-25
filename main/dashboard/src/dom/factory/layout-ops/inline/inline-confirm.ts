@@ -1,0 +1,92 @@
+import { type Instance } from "../../core";
+import { button, BTN_VARIANT_OUTLINE } from "../../content-ops/button.js";
+import { icon } from "../../content-ops/graphics/media.js";
+import { div } from "../structural/container.js";
+import { positionOverlay, startOverlay, triggerAnchor } from "./inline-confirm-overlay.js";
+
+const INLINE_CONFIRM_HOST_CLASS = "glass-inline-confirm__host";
+const CLASS_PENDING = "glass-inline-confirm";
+const CLASS_ACTIONS = "glass-inline-confirm__actions";
+const CLASS_BTN_DANGER = "glass-inline-confirm__btn--danger";
+const DEFAULT_CANCEL_LABEL = "Cancel";
+const DEFAULT_CONFIRM_LABEL = "Confirm";
+const DEFAULT_CANCEL_ICON = "x-lg";
+const DEFAULT_CONFIRM_ICON = "check-lg";
+const VISIBILITY_HIDDEN = "hidden";
+
+const pendingHosts = new WeakMap<Instance, () => void>();
+
+interface InlineConfirmOptions {
+    cancelLabel?: string;
+    confirmLabel?: string;
+    cancelIcon?: string;
+    confirmIcon?: string;
+    danger?: boolean;
+    cancelContext: string;
+    confirmContext: string;
+}
+
+function buildCancelBtn(opts: InlineConfirmOptions, settle: (v: boolean) => void): Instance {
+    return button(
+        {
+            variant: BTN_VARIANT_OUTLINE,
+            compact: true,
+            ariaLabel: opts.cancelLabel ?? DEFAULT_CANCEL_LABEL,
+            context: opts.cancelContext,
+            meta: ["action"],
+            onClick: () => settle(false),
+        },
+        [icon({ name: opts.cancelIcon ?? DEFAULT_CANCEL_ICON, context: null, meta: null })],
+    );
+}
+
+function buildConfirmBtn(opts: InlineConfirmOptions, danger: boolean, settle: (v: boolean) => void): Instance {
+    return button(
+        {
+            classes: danger ? [CLASS_BTN_DANGER] : [],
+            variant: BTN_VARIANT_OUTLINE,
+            compact: true,
+            ariaLabel: opts.confirmLabel ?? DEFAULT_CONFIRM_LABEL,
+            context: opts.confirmContext,
+            meta: danger ? ["destructive"] : ["submit"],
+            onClick: () => settle(true),
+        },
+        [icon({ name: opts.confirmIcon ?? DEFAULT_CONFIRM_ICON, context: null, meta: null })],
+    );
+}
+
+function buildActions(
+    opts: InlineConfirmOptions,
+    settle: (v: boolean) => void,
+): { actions: Instance; confirmBtn: Instance } {
+    const danger = Boolean(opts.danger);
+    const cancelBtn = buildCancelBtn(opts, settle);
+    const confirmBtn = buildConfirmBtn(opts, danger, settle);
+    const actions = div({ classes: [CLASS_ACTIONS], context: null, meta: null }, [cancelBtn, confirmBtn]);
+    return { actions, confirmBtn };
+}
+
+function inlineConfirm(host: Instance, opts: InlineConfirmOptions): Promise<boolean> {
+    pendingHosts.get(host)?.();
+    return new Promise<boolean>((resolve) => {
+        const ta = triggerAnchor(host);
+        if (ta === null) {
+            resolve(false);
+            return;
+        }
+        const { trigger, anchor } = ta;
+        const prevVisibility = trigger.style.visibility;
+        trigger.style.visibility = VISIBILITY_HIDDEN;
+        host.el.classList.add(CLASS_PENDING);
+        const { settle, bindActions } = startOverlay({ host, trigger, anchor, prevVisibility, resolve }, pendingHosts);
+        pendingHosts.set(host, () => settle(false));
+        const { actions, confirmBtn } = buildActions(opts, settle);
+        bindActions(actions);
+        anchor.appendChild(actions.el);
+        positionOverlay(actions.el, trigger, anchor);
+        confirmBtn.el.focus();
+    });
+}
+
+export { inlineConfirm, INLINE_CONFIRM_HOST_CLASS };
+export type { InlineConfirmOptions };

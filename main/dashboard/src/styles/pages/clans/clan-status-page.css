@@ -1,0 +1,7 @@
+.clans-clan__status {
+    font-size: var(--fs-3xs);
+    line-height: var(--lh-flat);
+    letter-spacing: var(--ls-normal);
+    text-transform: uppercase;
+    color: var(--base-graphite-300);
+}

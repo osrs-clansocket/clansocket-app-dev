@@ -1,0 +1,5 @@
+.member-crown {
+    flex-shrink: 0;
+    font-size: var(--fs-xs);
+    color: var(--base-gold-400);
+}

@@ -1,0 +1,7 @@
+.voxlab__frame-overlay {
+    position: absolute;
+    z-index: var(--z-raised);
+    box-sizing: border-box;
+    border: var(--bw-hairline) dashed var(--base-gold-500);
+    pointer-events: none;
+}

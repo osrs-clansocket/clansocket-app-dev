@@ -1,0 +1,17 @@
+import "./ai/routes/chat/index.js";
+import "./ai/routes/memory-routes.js";
+import "./ai/routes/persona-routes.js";
+import "./auth/site-routes/index.js";
+import "./auth/passkey/handlers/index.js";
+import "./clans/manage-routes/index.js";
+import "./clans/routes/index.js";
+import "./data-rights/routes/index.js";
+import "./discord/routes/index.js";
+import "./wom/routes/index.js";
+import "./runewatch/routes/index.js";
+import "./notifications/routes.js";
+import "./legacy-rsn/routes.js";
+import "./plugin-api/metrics-route.js";
+import "./map-assets/routes.js";
+import "./site/routes/index.js";
+import "./seo/routes/sitemap.js";

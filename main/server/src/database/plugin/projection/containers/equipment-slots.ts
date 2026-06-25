@@ -1,0 +1,16 @@
+export const EQUIPMENT_SLOTS: Record<number, string> = {
+    0: "HEAD",
+    1: "CAPE",
+    2: "AMULET",
+    3: "WEAPON",
+    4: "BODY",
+    5: "SHIELD",
+    6: "ARMS",
+    7: "LEGS",
+    8: "HAIR",
+    9: "GLOVES",
+    10: "BOOTS",
+    11: "JAW",
+    12: "RING",
+    13: "AMMO",
+};

@@ -1,0 +1,337 @@
+.account__branding {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-1);
+}
+.account__branding-search {
+    display: block;
+    box-sizing: border-box;
+    inline-size: 100%;
+    padding: var(--sp-1);
+    border: 0.0625rem solid var(--base-graphite-500);
+    border-radius: var(--radius-md);
+    font-family: var(--font-body);
+    font-size: var(--fs-3xs);
+    line-height: var(--lh-tight);
+    color: var(--base-cream-100);
+    background: var(--base-graphite-900);
+    box-shadow: none;
+    backdrop-filter: none;
+}
+.account__branding-search:focus {
+    border-color: var(--base-gold-500);
+    outline: none;
+}
+.account__branding-grid {
+    display: grid;
+    gap: var(--sp-0);
+    grid-template-columns: repeat(auto-fill, minmax(var(--sp-6), 1fr));
+    max-block-size: 14rem;
+    overflow-block: auto;
+    padding: var(--sp-0);
+    border: 0.0625rem solid var(--base-graphite-500);
+    border-radius: var(--radius-md);
+    background: var(--base-graphite-900);
+}
+.account__branding-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    inline-size: 100%;
+    block-size: var(--sp-6);
+    padding: 0;
+    border: 0;
+    font-size: var(--icon-lg);
+    line-height: var(--lh-flat);
+    color: var(--base-cream-100);
+    background: transparent;
+    cursor: pointer;
+}
+.account__branding-icon-glyph {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: contain;
+}
+.account__branding-icon[hidden] {
+    display: none;
+}
+.account__branding-icon:hover {
+    color: var(--base-gold-300);
+}
+.account__branding-icon--active {
+    color: var(--base-gold-300);
+}
+.account__branding-icon .account__rank-icon-img {
+    display: block;
+    inline-size: var(--icon-md);
+    block-size: var(--icon-md);
+    font-size: 0;
+    line-height: 0;
+    image-rendering: -webkit-optimize-contrast;
+    object-fit: contain;
+}
+.account__branding-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: var(--sp-2);
+}
+.account__branding-color-block {
+    display: flex;
+    flex: 1 1 14rem;
+    flex-direction: column;
+    gap: var(--sp-1);
+    min-block-size: 0;
+}
+.account__branding-avatar-block {
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sp-1);
+}
+.account__branding-avatar-block[hidden] {
+    display: none;
+}
+.account__branding-avatar {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    inline-size: 3.5rem;
+    block-size: 3.5rem;
+    overflow: hidden;
+    border: 0.125rem solid var(--branding-accent, var(--base-gold-300));
+    border-radius: var(--radius-pill);
+    background: var(--base-graphite-900);
+    transition:
+        transform 0.12s ease,
+        box-shadow 0.12s ease;
+    cursor: pointer;
+}
+.account__branding-avatar:hover {
+    box-shadow: var(--shadow-glow);
+    transform: scale(1.05);
+}
+.account__branding-avatar:focus-visible {
+    outline: none;
+    box-shadow: var(--shadow-glow-accent);
+}
+.account__branding-avatar-glyph {
+    font-size: var(--fs-lg);
+    line-height: var(--lh-flat);
+    color: var(--branding-accent, var(--base-gold-300));
+}
+.account__branding-avatar-glyph[hidden] {
+    display: none;
+}
+.account__branding-avatar-img {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+}
+.account__branding-avatar-img[hidden] {
+    display: none;
+}
+.account__branding-upload {
+    position: absolute;
+    inline-size: var(--sp-hairline);
+    block-size: var(--sp-hairline);
+    overflow: hidden;
+    margin: calc(var(--sp-hairline) * -1);
+    padding: 0;
+    border: 0;
+    white-space: nowrap;
+    clip-path: inset(50%);
+}
+.account__branding-swatches {
+    display: flex;
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    gap: var(--sp-0);
+    min-block-size: 0;
+    overflow: hidden auto;
+    padding: var(--sp-0);
+    border: 0.0625rem solid var(--base-graphite-500);
+    border-radius: var(--radius-md);
+    background: var(--base-graphite-900);
+    cursor: grab;
+    scroll-behavior: smooth;
+    scrollbar-color: var(--base-graphite-500) transparent;
+    scrollbar-width: thin;
+}
+.account__branding-swatches::-webkit-scrollbar {
+    inline-size: 0.25rem;
+}
+.account__branding-swatches::-webkit-scrollbar-thumb {
+    border-radius: var(--radius-md);
+    background: var(--base-graphite-500);
+}
+.account__branding-swatches::-webkit-scrollbar-track {
+    background: transparent;
+}
+.account__branding-swatches--dragging {
+    cursor: grabbing;
+    scroll-behavior: auto;
+}
+.account__branding-swatch {
+    flex: 0 0 auto;
+    inline-size: var(--sp-6);
+    block-size: var(--sp-6);
+    padding: 0;
+    border: 0.0625rem solid var(--base-graphite-500);
+    border-radius: var(--radius-md);
+    transition:
+        transform 0.12s ease,
+        border-color 0.12s ease,
+        box-shadow 0.12s ease;
+    cursor: pointer;
+}
+.account__branding-swatch:hover {
+    border-color: var(--base-gold-300);
+    transform: scale(1.08);
+}
+.account__branding-swatch--active {
+    border-color: var(--base-gold-300);
+    box-shadow: var(--shadow-glow-accent);
+}
+.account__branding-swatch--custom {
+    border-style: dashed;
+}
+.account__branding-swatches--dragging .account__branding-swatch {
+    pointer-events: none;
+}
+.account__branding-hex-row {
+    display: flex;
+    align-items: stretch;
+    gap: var(--sp-1);
+    margin-block-start: auto;
+}
+.account__branding-color-preview {
+    display: block;
+    flex: 0 0 auto;
+    aspect-ratio: 1;
+    border: 0.0625rem solid var(--base-graphite-500);
+    border-radius: var(--radius-md);
+}
+.account__branding-hex {
+    flex: 1;
+    box-sizing: border-box;
+    min-inline-size: 0;
+    padding: var(--sp-1);
+    border: 0.0625rem solid var(--base-graphite-500);
+    border-radius: var(--radius-md);
+    font-family: var(--font-body);
+    font-size: var(--fs-3xs);
+    line-height: var(--lh-tight);
+    letter-spacing: var(--ls-normal);
+    text-transform: uppercase;
+    color: var(--base-cream-100);
+    background: var(--base-graphite-900);
+    box-shadow: none;
+    backdrop-filter: none;
+}
+.account__branding-hex:focus {
+    border-color: var(--base-gold-500);
+    outline: none;
+}
+.account__branding-avatar-upload-caption {
+    font-family: var(--font-heading);
+    font-size: var(--fs-2xs);
+    font-weight: var(--fw-semi);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    color: var(--base-gold-300);
+    cursor: pointer;
+    user-select: none;
+}
+.account__branding-avatar-upload-caption:hover {
+    color: var(--base-gold-500);
+}
+.account__branding-tweaker-block {
+    display: flex;
+    flex: 1 1 18rem;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--sp-1);
+    min-inline-size: 0;
+}
+.account__branding-tweaker-block[hidden] {
+    display: none;
+}
+.account__branding-tweaker-body {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: flex-start;
+    gap: var(--sp-2);
+    min-inline-size: 0;
+}
+.account__branding-tweaker-controls {
+    display: flex;
+    flex: 1 1 9rem;
+    flex-direction: column;
+    gap: var(--sp-1);
+    min-inline-size: 0;
+}
+.account__branding-tweaker-canvas-stack {
+    display: flex;
+    flex: 0 0 8rem;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--sp-1);
+    inline-size: 8rem;
+}
+.account__branding-tweaker-action--upload {
+    flex: 0 0 8rem;
+}
+.account__branding-tweaker-canvas {
+    inline-size: 100%;
+    max-inline-size: 8rem;
+    aspect-ratio: 1 / 1;
+    background: transparent;
+    cursor: grab;
+    touch-action: none;
+}
+.account__branding-tweaker-canvas--dragging {
+    cursor: grabbing;
+}
+.account__branding-tweaker-source {
+    display: none;
+}
+.account__branding-tweaker-row {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-1);
+}
+.account__branding-tweaker-slider-label {
+    flex: 0 0 2.5rem;
+    font-size: var(--fs-2xs);
+    letter-spacing: var(--ls-snug);
+    text-transform: uppercase;
+    color: var(--base-graphite-300);
+}
+.account__branding-tweaker-slider {
+    flex: 1 1 auto;
+}
+.account__branding-tweaker-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-1);
+}
+.account__branding-tweaker-actions-pair {
+    display: flex;
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+    gap: var(--sp-1);
+}
+.account__branding-tweaker-action {
+    flex: 1 1 auto;
+}
+.account__branding-tweaker-status {
+    min-block-size: var(--sp-4);
+    font-size: var(--fs-2xs);
+    color: var(--base-graphite-300);
+}

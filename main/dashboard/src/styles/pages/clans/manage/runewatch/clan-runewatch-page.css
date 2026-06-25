@@ -1,0 +1,231 @@
+.clans-manage__runewatch-head {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+}
+
+.clans-manage__runewatch-brand-icon {
+    inline-size: auto;
+    block-size: var(--sp-12);
+    object-fit: contain;
+}
+
+.clans-manage__runewatch-top,
+.clans-manage__runewatch-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-3);
+    padding: var(--sp-3) var(--sp-4);
+    border: var(--border-dim);
+    border-radius: var(--radius-md);
+    background: var(--gradient-surface);
+    box-shadow: var(--shadow-elev-1);
+    backdrop-filter: blur(var(--blur-sm)) saturate(1.15);
+}
+
+.clans-manage__runewatch-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--sp-3);
+}
+
+.clans-manage__runewatch-header {
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semi);
+    line-height: var(--lh-flat);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    color: var(--base-gold-300);
+}
+
+.clans-manage__runewatch-refresh {
+    padding: var(--sp-1) var(--sp-3);
+    border: var(--border-dim);
+    border-radius: var(--radius-md);
+    font-size: var(--fs-2xs);
+    font-weight: var(--fw-medium);
+    color: var(--base-gold-300);
+    background: var(--gradient-surface);
+    transition:
+        color var(--dur-base) var(--ease-out),
+        border-color var(--dur-base) var(--ease-out),
+        box-shadow var(--dur-base) var(--ease-out);
+    cursor: pointer;
+}
+
+.clans-manage__runewatch-refresh:hover {
+    border-color: rgb(from var(--base-gold-500) r g b / 0.5);
+    color: var(--base-gold-500);
+    box-shadow: var(--shadow-glow);
+}
+
+.clans-manage__runewatch-refresh:disabled {
+    opacity: var(--opacity-medium);
+    cursor: progress;
+}
+
+.clans-manage__runewatch-search-row {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+}
+
+.clans-manage__runewatch-card-list {
+    display: grid;
+    gap: var(--sp-3);
+    grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+}
+
+.clans-manage__runewatch-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+    padding: var(--sp-3);
+    border: var(--border-dim);
+    border-radius: var(--radius-md);
+    background: var(--gradient-surface);
+    box-shadow: var(--shadow-elev-1);
+    transition:
+        transform var(--dur-base) var(--ease-out),
+        box-shadow var(--dur-base) var(--ease-out),
+        border-color var(--dur-base) var(--ease-out);
+    border-inline-start-width: var(--sp-0h);
+    contain: layout paint;
+    contain-intrinsic-size: auto var(--sp-24);
+    content-visibility: auto;
+}
+
+.clans-manage__runewatch-card:hover {
+    transform: translateY(-0.0625rem);
+}
+
+.clans-manage__runewatch-card--hard {
+    background: var(--clr-danger-bg);
+    border-inline-start-color: var(--base-ember-300);
+}
+
+.clans-manage__runewatch-card--hard:hover {
+    border-color: rgb(from var(--base-ember-300) r g b / 0.5);
+    box-shadow: var(--shadow-glow-danger);
+}
+
+.clans-manage__runewatch-card--soft {
+    background: var(--clr-warn-bg);
+    border-inline-start-color: var(--base-gold-500);
+}
+
+.clans-manage__runewatch-card--soft:hover {
+    border-color: rgb(from var(--base-gold-500) r g b / 0.45);
+    box-shadow: var(--shadow-glow-warn);
+}
+
+.clans-manage__runewatch-card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--sp-2);
+    padding-block-end: var(--sp-2);
+    border-block-end: var(--border-dim);
+}
+
+.clans-manage__runewatch-card-head .rsn-tag__icon {
+    inline-size: var(--sp-6);
+    block-size: var(--sp-6);
+}
+
+.clans-manage__runewatch-card-head .rsn-tag__name {
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-medium);
+    color: var(--base-silver-100);
+}
+
+.clans-manage__runewatch-card-badges {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-1);
+}
+
+.clans-manage__runewatch-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--sp-0) var(--sp-1h);
+    border: var(--border-dim);
+    border-radius: var(--radius-md);
+    font-size: var(--fs-3xs);
+    font-weight: var(--fw-semi);
+    line-height: var(--lh-flat);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+}
+
+.clans-manage__runewatch-badge--hard {
+    border-color: rgb(from var(--base-ember-300) r g b / 0.5);
+    color: var(--base-ember-300);
+    background: rgb(from var(--base-ember-300) r g b / 0.12);
+}
+
+.clans-manage__runewatch-badge--soft {
+    border-color: rgb(from var(--base-gold-500) r g b / 0.5);
+    color: var(--base-gold-300);
+    background: rgb(from var(--base-gold-500) r g b / 0.12);
+}
+
+.clans-manage__runewatch-badge--source {
+    border-color: rgb(from var(--base-graphite-500) r g b / 0.5);
+    color: var(--base-silver-200);
+    background: rgb(from var(--base-graphite-700) r g b / 0.5);
+}
+
+.clans-manage__runewatch-card-body {
+    display: grid;
+    align-items: baseline;
+    gap: var(--sp-1) var(--sp-3);
+    grid-template-columns: max-content 1fr;
+}
+
+.clans-manage__runewatch-field-label {
+    font-size: var(--fs-3xs);
+    font-weight: var(--fw-medium);
+    letter-spacing: var(--ls-tight);
+    text-transform: uppercase;
+    color: var(--base-graphite-300);
+}
+
+.clans-manage__runewatch-field-value {
+    font-size: var(--fs-2xs);
+    line-height: var(--lh-snug);
+    overflow-wrap: anywhere;
+    color: var(--base-silver-200);
+}
+
+.clans-manage__runewatch-link {
+    border-block-end: var(--border-dim);
+    text-decoration: none;
+    color: var(--base-gold-300);
+    transition: color var(--dur-base) var(--ease-out);
+}
+
+.clans-manage__runewatch-link:hover {
+    color: var(--base-gold-500);
+}
+
+.clans-manage__runewatch-empty {
+    padding: var(--sp-3);
+    font-size: var(--fs-xs);
+    font-style: italic;
+    text-align: center;
+    color: var(--base-graphite-300);
+}
+
+.clans-manage__runewatch-empty--good {
+    font-weight: var(--fw-medium);
+    font-style: normal;
+    color: var(--base-forest-100);
+}
+
+.clans-manage__runewatch-sentinel {
+    grid-column: 1 / -1;
+    inline-size: 100%;
+    block-size: var(--sp-1);
+}

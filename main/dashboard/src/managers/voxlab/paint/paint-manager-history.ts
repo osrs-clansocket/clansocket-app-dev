@@ -1,0 +1,11 @@
+import type { HistoryState as _HistoryState } from "../history/history-state-types.js";
+export type HistoryState = _HistoryState;
+import { pushDelta as _pushDelta } from "../history/history-push-delta.js";
+export const pushDelta = _pushDelta;
+import { collectAffectedVertices as _collectAffectedVertices } from "../history/history-collect-affected.js";
+export const collectAffectedVertices = _collectAffectedVertices;
+import { redoStroke as _redoStroke, undoStroke as _undoStroke } from "../history/history-undo-redo.js";
+export const redoStroke = _redoStroke;
+export const undoStroke = _undoStroke;
+import { snapshotPaintState as _snapshotPaintState } from "../history/history-snapshot-paint.js";
+export const snapshotPaintState = _snapshotPaintState;

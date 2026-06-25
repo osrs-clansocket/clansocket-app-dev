@@ -1,0 +1,42 @@
+import { DB_NAMES, getClanDb, getDb } from "../../../core/database.js";
+import { exists } from "../../../core/db-ops.js";
+
+const NBSP = "\u00a0";
+const WOM_PLACEHOLDER_HASH_PREFIX = "wom:";
+
+export function normalizeRsn(s: string): string {
+    return s.split(NBSP).join(" ").toLowerCase().trim();
+}
+
+export function verifiedRsnMap(): Record<string, string> {
+    const rows = getDb(DB_NAMES.APP).prepare(`SELECT account_hash, rsn FROM clansocket_account_rsns`).all() as {
+        account_hash: string;
+        rsn: string;
+    }[];
+    const map: Record<string, string> = {};
+    for (const row of rows) {
+        if (row.account_hash.startsWith(WOM_PLACEHOLDER_HASH_PREFIX)) continue;
+        const key = normalizeRsn(row.rsn);
+        if (!(key in map)) map[key] = row.account_hash;
+    }
+    return map;
+}
+
+export function isClanMember(clanId: string, memberName: string): boolean {
+    return exists(
+        getClanDb(clanId),
+        "SELECT 1 FROM clan_members WHERE LOWER(member_name) = LOWER(?) LIMIT 1",
+        memberName,
+    );
+}
+
+export function getRosterRank(clanId: string, memberName: string): string | null {
+    try {
+        const row = getClanDb(clanId)
+            .prepare("SELECT rank FROM clan_members WHERE LOWER(member_name) = LOWER(?) LIMIT 1")
+            .get(memberName) as { rank: string | null } | undefined;
+        return row?.rank ?? null;
+    } catch {
+        return null;
+    }
+}

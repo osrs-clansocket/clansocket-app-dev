@@ -1,0 +1,97 @@
+.form__input {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sp-0);
+    box-sizing: border-box;
+    inline-size: 100%;
+    margin: 0;
+    padding: var(--sp-1) var(--sp-1);
+    border: var(--border-hairline-active);
+    border-radius: var(--radius-md);
+    font-family: var(--font-body);
+    font-size: var(--fs-3xs);
+    line-height: var(--lh-tight);
+    color: var(--base-cream-100);
+    background: var(--base-graphite-900);
+    cursor: text;
+}
+.form__input:focus,
+.form__input:focus-within {
+    border-color: var(--base-gold-500);
+    outline: none;
+}
+.form__input > [type] {
+    flex: 1 1 var(--sp-16);
+    min-inline-size: var(--sp-16);
+    margin: 0;
+    padding: 0;
+    border: none;
+    outline: none;
+    font: inherit;
+    color: inherit;
+    background: transparent;
+    box-shadow: none;
+    appearance: none;
+    -webkit-tap-highlight-color: transparent;
+}
+.form__input > [type]:focus,
+.form__input > [type]:focus-visible {
+    outline: none;
+    box-shadow: none;
+}
+.form__field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-0);
+    margin: 0;
+    padding-block-end: var(--sp-2);
+}
+.form__field[hidden] {
+    display: none;
+}
+.form__field-label {
+    font-size: var(--fs-3xs);
+    line-height: var(--lh-flat);
+    letter-spacing: var(--ls-normal);
+    text-transform: uppercase;
+    color: var(--base-graphite-300);
+}
+.form__row {
+    display: flex;
+    gap: var(--sp-1);
+}
+.form__row > .form__field {
+    flex: 1 1 0;
+    min-inline-size: 0;
+}
+.form__row--fill > .form__field,
+.form__row--fill > .form__input,
+.form__row--fill > .btn {
+    flex: 1 1 0;
+    min-inline-size: 0;
+}
+.form__claim-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+}
+.form__claim-form[hidden] {
+    display: none;
+}
+.form__error {
+    margin: 0;
+    font-size: var(--fs-2xs);
+    white-space: pre-line;
+    color: var(--base-ember-300);
+}
+.form__hint {
+    margin: 0;
+    font-size: var(--fs-2xs);
+    font-style: italic;
+    line-height: var(--lh-snug);
+    color: var(--base-graphite-300);
+}
+.form__hint--right {
+    text-align: end;
+}

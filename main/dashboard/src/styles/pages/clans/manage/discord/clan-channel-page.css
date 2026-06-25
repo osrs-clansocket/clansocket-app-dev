@@ -1,0 +1,25 @@
+.clans-manage__channel-pins-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-1);
+}
+.clans-manage__channel-pin-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-hairline);
+    padding: var(--sp-1);
+    border: var(--bw-hairline) solid var(--base-graphite-500);
+    border-radius: var(--radius-md);
+    background: rgb(from var(--base-graphite-800) r g b / 0.3);
+}
+.clans-manage__channel-pin-meta {
+    font-size: var(--fs-3xs);
+    font-style: italic;
+    color: var(--base-graphite-300);
+}
+.clans-manage__channel-pin-content {
+    font-size: var(--fs-2xs);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    color: var(--base-graphite-200);
+}

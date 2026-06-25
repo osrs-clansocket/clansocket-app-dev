@@ -1,0 +1,6 @@
+.tt-charts {
+    display: grid;
+    gap: var(--sp-2);
+    grid-template-columns: 1fr;
+    padding: var(--sp-1);
+}

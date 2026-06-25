@@ -1,0 +1,26 @@
+import { button, div, span, type Instance } from "../../../../factory/index.js";
+import { DATA_KEY_NAV_DIR, GD_NAV, GD_NAV_BTN, GD_TITLE } from "./classes.js";
+import { monthTitle } from "./date-month-utils.js";
+
+export function buildNavRow(viewDate: Date): Instance {
+    const prev = button({
+        classes: [GD_NAV_BTN],
+        ariaLabel: "Previous month",
+        type: "button",
+        data: { [DATA_KEY_NAV_DIR]: "-1" },
+        text: "‹",
+        context: "show the previous month",
+        meta: ["action"],
+    });
+    const next = button({
+        classes: [GD_NAV_BTN],
+        ariaLabel: "Next month",
+        type: "button",
+        data: { [DATA_KEY_NAV_DIR]: "1" },
+        text: "›",
+        context: "show the next month",
+        meta: ["action"],
+    });
+    const title = span({ classes: [GD_TITLE], text: monthTitle(viewDate), context: null, meta: null });
+    return div({ classes: [GD_NAV], context: null, meta: null }, [prev, title, next]);
+}

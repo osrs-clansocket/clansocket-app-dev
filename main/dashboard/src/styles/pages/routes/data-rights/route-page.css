@@ -1,0 +1,30 @@
+.route-data-rights {
+    position: fixed;
+    inset: var(--data-rights-top, var(--nav-height)) 0 var(--data-rights-bottom, 0) 0;
+    z-index: var(--z-base);
+    display: grid;
+    grid-template-columns: 14rem minmax(0, 1fr) minmax(0, 1.5fr);
+    grid-template-rows: minmax(0, 1fr);
+    box-sizing: border-box;
+    overflow: hidden;
+    user-select: none;
+}
+.route-data-rights--embedded {
+    position: relative;
+    inset: auto;
+    z-index: auto;
+    flex: 1 1 auto;
+    min-block-size: 0;
+}
+
+.route-data-rights .btn {
+    box-sizing: border-box;
+    min-block-size: 1.05rem;
+    padding: var(--sp-0) var(--sp-1h);
+    border-radius: var(--radius-md);
+    font-size: var(--fs-3xs);
+    font-weight: var(--fw-medium);
+    line-height: var(--lh-flat);
+    letter-spacing: 0;
+    text-transform: none;
+}

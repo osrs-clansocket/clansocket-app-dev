@@ -1,0 +1,10 @@
+.dashboard__subtitle {
+    min-inline-size: 0;
+    overflow: hidden;
+    font-size: clamp(0.55rem, 1.6vi, var(--fs-xs));
+    letter-spacing: var(--ls-wider);
+    text-transform: uppercase;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--base-graphite-300);
+}

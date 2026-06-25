@@ -1,0 +1,112 @@
+.route-data-rights__row-scroll-wrap {
+    position: relative;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-block-size: 0;
+}
+.route-data-rights__row-scroll {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: var(--sp-hairline);
+    min-block-size: 0;
+    overflow-block: auto;
+    padding: var(--sp-1);
+    overflow-anchor: auto;
+}
+.route-data-rights__row-item {
+    display: flex;
+    flex-direction: row;
+    flex-shrink: 0;
+    align-items: stretch;
+    border: var(--bw-hairline) solid transparent;
+    border-inline-start: var(--sp-0) solid transparent;
+    border-radius: var(--radius-md);
+    background: transparent;
+    contain: layout style paint;
+}
+.route-data-rights__row-item:hover {
+    background: var(--base-graphite-800);
+}
+.route-data-rights__row-item.is-selected {
+    background: rgb(from var(--base-gold-500) r g b / 0.18);
+    border-inline-start-color: var(--base-gold-500);
+}
+.route-data-rights__row-button {
+    display: grid;
+    flex: 1 1 auto;
+    align-items: center;
+    gap: var(--sp-hairline) var(--sp-1);
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+        "asset primary"
+        "asset secondary"
+        "asset meta";
+    box-sizing: border-box;
+    min-inline-size: 0;
+    padding: var(--sp-1);
+    border: none;
+    font: inherit;
+    text-align: start;
+    color: var(--base-cream-100);
+    background: transparent;
+    cursor: pointer;
+}
+.route-data-rights__row-asset {
+    align-self: center;
+    grid-area: asset;
+    inline-size: 2rem;
+    block-size: 2rem;
+    object-fit: contain;
+}
+.route-data-rights__row-asset--empty {
+    display: none;
+}
+.route-data-rights__row-delete {
+    align-self: center;
+    margin-inline-end: var(--sp-1);
+    color: var(--base-graphite-300);
+    background: transparent;
+    isolation: isolate;
+    visibility: hidden;
+}
+.route-data-rights__row-delete:focus-visible {
+    visibility: visible;
+}
+.route-data-rights__row-delete:hover {
+    color: var(--base-amber-300);
+    background: rgb(from var(--base-amber-300) r g b / 0.12);
+}
+.route-data-rights__row-item:hover .route-data-rights__row-delete {
+    visibility: visible;
+}
+.route-data-rights__row-primary {
+    grid-area: primary;
+    overflow: hidden;
+    font-family: var(--font-body);
+    font-size: var(--fs-2xs);
+    line-height: var(--lh-tight);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--base-gold-300);
+}
+.route-data-rights__row-secondary {
+    grid-area: secondary;
+    overflow: hidden;
+    font-family: var(--font-body);
+    font-size: var(--fs-3xs);
+    line-height: var(--lh-flat);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--base-graphite-300);
+}
+.route-data-rights__row-meta {
+    grid-area: meta;
+    font-family: var(--font-data);
+    font-size: var(--fs-3xs);
+    font-variant-numeric: tabular-nums;
+    line-height: var(--lh-flat);
+    letter-spacing: var(--ls-snug);
+    color: var(--base-graphite-300);
+}

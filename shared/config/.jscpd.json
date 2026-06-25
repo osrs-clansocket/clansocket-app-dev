@@ -1,0 +1,23 @@
+{
+    "threshold": 0,
+    "reporters": ["json", "console"],
+    "ignore": [
+        "**/node_modules/**",
+        "**/dist/**",
+        "**/auto-gen/**",
+        "**/.lint-reports/**",
+        "**/.cache/**",
+        "**/varez-clan-vocab/**",
+        "**/*.ts",
+        "**/*.tsx",
+        "**/*.js",
+        "**/*.mjs",
+        "**/*.cjs"
+    ],
+    "format": ["css", "sql", "json", "markdown"],
+    "output": ".lint-reports/jscpd-report",
+    "absolute": false,
+    "gitignore": true,
+    "minTokens": 50,
+    "minLines": 5
+}

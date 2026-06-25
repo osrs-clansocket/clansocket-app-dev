@@ -1,0 +1,35 @@
+.tt-team-member {
+    display: grid;
+    align-items: center;
+    gap: var(--sp-2);
+    grid-template-columns: 8rem 1fr auto 2.5rem;
+    font-size: var(--fs-xs);
+}
+.tt-team-member__name {
+    overflow: hidden;
+    font-family: var(--font-heading);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.tt-team-member__bar {
+    display: block;
+    block-size: 0.375rem;
+    overflow: hidden;
+    border: var(--border-dim);
+    border-radius: var(--radius-md);
+    background: rgb(0 0 0/0.4);
+}
+.tt-team-member__bar-fill {
+    display: block;
+    block-size: 100%;
+    background: var(--gradient-accent-divider);
+}
+.tt-team-member__value {
+    font-family: var(--font-heading);
+    color: var(--base-cream-100);
+}
+.tt-team-member__share {
+    font-family: var(--font-heading);
+    text-align: end;
+    color: var(--base-gold-400);
+}

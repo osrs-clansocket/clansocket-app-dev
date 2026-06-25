@@ -1,0 +1,5 @@
+.clans-clan__missing {
+    margin: 0;
+    font-size: var(--fs-2xs);
+    color: var(--base-graphite-300);
+}

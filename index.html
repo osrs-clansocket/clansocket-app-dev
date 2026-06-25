@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Google tag (gtag.js) — production hosts only; localhost/127.0.0.1/0.0.0.0 dev skips both the script load and the config. -->
+    <script type="text/javascript">
+      (function () {
+        var host = window.location.hostname;
+        if (host === "localhost" || host === "127.0.0.1" || host === "0.0.0.0") return;
+        var s = document.createElement("script");
+        s.async = true;
+        s.src = "https://www.googletagmanager.com/gtag/js?id=G-ZJZT7C3B9M";
+        document.head.appendChild(s);
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { window.dataLayer.push(arguments); }
+        window.gtag = gtag;
+        gtag("js", new Date());
+        gtag("config", "G-ZJZT7C3B9M");
+      })();
+    </script>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="ClanSocket - Live, Open-Source platform for Old School RuneScape clans. Verified clan identity, live RuneLite telemetry, discord-server management, Wise Old Man backfill, and an AI operator for clan leaders." />
+    <meta name="robots" content="index, follow" />
+    <title>ClanSocket - Live, Open-Source platform for Old School RuneScape clans</title>
+
+    <link rel="canonical" href="https://clansocket.com/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="ClanSocket" />
+    <meta property="og:url" content="https://clansocket.com/" />
+    <meta property="og:title" content="ClanSocket - Live, Open-Source platform for Old School RuneScape clans" />
+    <meta property="og:description" content="Verified clan identity, live RuneLite telemetry, discord-server management, Wise Old Man backfill, and an AI operator for clan leaders." />
+    <meta property="og:image" content="https://clansocket.com/resources/clan/clansocket_banner.webp" />
+    <meta property="og:image:secure_url" content="https://clansocket.com/resources/clan/clansocket_banner.webp" />
+    <meta property="og:image:type" content="image/webp" />
+    <meta property="og:image:width" content="2048" />
+    <meta property="og:image:height" content="952" />
+    <meta property="og:image:alt" content="ClanSocket - Live, Open-Source platform for Old School RuneScape clans" />
+    <meta property="og:locale" content="en_US" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="ClanSocket - Live, Open-Source platform for Old School RuneScape clans" />
+    <meta name="twitter:description" content="Verified clan identity, live RuneLite telemetry, discord-server management, Wise Old Man backfill, and an AI operator for clan leaders." />
+    <meta name="twitter:image" content="https://clansocket.com/resources/clan/clansocket_banner.webp" />
+    <meta name="twitter:image:alt" content="ClanSocket - Live, Open-Source platform for Old School RuneScape clans" />
+
+    <!-- Font preloads — only runescape_bold (4.8 KB) is critical for first paint chrome.
+         cascadia_code (214 KB) is monospace used only in code blocks — most pages don't need it; font-display: swap handles graceful late-load.
+         bootstrap_icons (131 KB) is used by chrome icons but font-display: swap shows fallback briefly then swaps — saves blocking 131 KB on first paint. -->
+    <link rel="preload" as="font" href="/fonts/runescape_bold.woff2" type="font/woff2" crossorigin />
+
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/main/dashboard/src/main.ts"></script>
+  </body>
+</html>

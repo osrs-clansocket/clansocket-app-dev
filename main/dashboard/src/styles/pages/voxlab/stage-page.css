@@ -1,0 +1,11 @@
+.voxlab__stage {
+    position: relative;
+    flex: 1;
+    min-inline-size: 0;
+    overflow: hidden;
+}
+.voxlab__stage-canvas {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+}

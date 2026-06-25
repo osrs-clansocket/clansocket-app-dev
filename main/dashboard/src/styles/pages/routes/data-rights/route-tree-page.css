@@ -1,0 +1,78 @@
+.route-data-rights__tree {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: var(--sp-hairline);
+    min-block-size: 0;
+    overflow-block: auto;
+    padding: var(--sp-1);
+}
+.route-data-rights__tree-node {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-hairline);
+}
+.route-data-rights__tree-folder,
+.route-data-rights__tree-leaf {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-1);
+    box-sizing: border-box;
+    inline-size: 100%;
+    padding: var(--sp-0) var(--sp-1);
+    border: var(--bw-hairline) solid transparent;
+    border-radius: var(--radius-md);
+    font-family: var(--font-body);
+    font-size: var(--fs-2xs);
+    line-height: var(--lh-flat);
+    text-align: start;
+    color: var(--base-cream-100);
+    background: transparent;
+    cursor: pointer;
+}
+.route-data-rights__tree-folder {
+    font-family: var(--font-heading);
+    letter-spacing: var(--ls-snug);
+    text-transform: lowercase;
+    color: var(--base-gold-300);
+}
+.route-data-rights__tree-folder:hover,
+.route-data-rights__tree-leaf:hover {
+    color: var(--base-gold-300);
+    background: var(--base-graphite-800);
+}
+.route-data-rights__tree-leaf.is-active {
+    border-color: var(--base-gold-500);
+    color: var(--base-gold-300);
+    background: rgb(from var(--base-gold-500) r g b / 0.18);
+}
+.route-data-rights__tree-leaf.is-empty {
+    color: var(--base-graphite-300);
+    opacity: var(--opacity-low);
+    cursor: not-allowed;
+}
+.route-data-rights__tree-leaf.is-empty:hover {
+    color: var(--base-graphite-300);
+    background: transparent;
+}
+.route-data-rights__tree-icon {
+    flex: 0 0 auto;
+    font-size: var(--fs-2xs);
+}
+.route-data-rights__tree-icon[src] {
+    inline-size: 1.5em;
+    block-size: 1.5em;
+    object-fit: contain;
+}
+.route-data-rights__tree-chevron {
+    flex: 0 0 auto;
+    font-size: var(--fs-3xs);
+    color: var(--base-graphite-300);
+}
+.route-data-rights__tree-label {
+    flex: 1;
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

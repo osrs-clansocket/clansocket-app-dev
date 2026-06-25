@@ -1,0 +1,48 @@
+import { listGuildRows } from "../list-guild-rows.js";
+import type { WebhookRow } from "../types.js";
+
+const LIST_SQL = `
+SELECT webhook_id, guild_id, channel_id, channel_name, name, avatar_url, application_id, user_id, webhook_type,
+       source_guild_id, source_guild_name, source_channel_id, source_channel_name
+FROM discord_webhooks
+WHERE guild_id = ?
+ORDER BY channel_id, LOWER(COALESCE(name, '')) ASC
+`;
+
+interface WebhookSqlRow {
+    webhook_id: string;
+    guild_id: string;
+    channel_id: string;
+    channel_name: string | null;
+    name: string | null;
+    avatar_url: string | null;
+    application_id: string | null;
+    user_id: string | null;
+    webhook_type: number;
+    source_guild_id: string | null;
+    source_guild_name: string | null;
+    source_channel_id: string | null;
+    source_channel_name: string | null;
+}
+
+function toWebhookRow(r: WebhookSqlRow): WebhookRow {
+    return {
+        webhook_id: r.webhook_id,
+        guild_id: r.guild_id,
+        channel_id: r.channel_id,
+        channel_name: r.channel_name,
+        name: r.name,
+        avatar_url: r.avatar_url,
+        application_id: r.application_id,
+        user_id: r.user_id,
+        webhook_type: r.webhook_type,
+        source_guild_id: r.source_guild_id,
+        source_guild_name: r.source_guild_name,
+        source_channel_id: r.source_channel_id,
+        source_channel_name: r.source_channel_name,
+    };
+}
+
+export function listWebhooksGuild(clanId: string, guildId: string): WebhookRow[] {
+    return listGuildRows<WebhookSqlRow, WebhookRow>(clanId, guildId, LIST_SQL, toWebhookRow);
+}

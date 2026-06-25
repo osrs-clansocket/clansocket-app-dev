@@ -1,0 +1,7 @@
+.tt-chart-label {
+    flex: 0 0 auto;
+    font-size: var(--fs-3xs);
+    letter-spacing: var(--ls-normal);
+    text-transform: uppercase;
+    color: var(--base-gold-500);
+}

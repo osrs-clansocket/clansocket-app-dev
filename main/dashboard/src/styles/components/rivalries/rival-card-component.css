@@ -1,0 +1,91 @@
+.rival-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-1);
+    padding: var(--sp-2);
+    border: var(--sp-hairline) solid rgb(from var(--base-graphite-500) r g b / 0.2);
+    border-radius: var(--radius-md);
+    background: var(--gradient-surface);
+    cursor: pointer;
+}
+.rival-card__pair {
+    display: grid;
+    align-items: center;
+    gap: var(--sp-1);
+    grid-template-columns: 1fr auto 1fr;
+    font-size: var(--fs-xs);
+}
+.rival-card__pair > :nth-child(1) {
+    justify-self: start;
+}
+.rival-card__pair > :nth-child(3) {
+    justify-self: end;
+}
+.rival-card__name {
+    font-weight: var(--fw-semi);
+    color: var(--base-gold-300);
+}
+.rival-card__vs {
+    font-size: var(--fs-2xs);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    color: var(--base-ember-300);
+}
+.rival-card__meta {
+    display: grid;
+    align-items: center;
+    gap: var(--sp-1);
+    grid-template-columns: 1fr auto 1fr;
+    font-size: var(--fs-2xs);
+    color: var(--base-graphite-300);
+}
+.rival-card__meta > :nth-child(1) {
+    justify-self: start;
+}
+.rival-card__meta > :nth-child(2) {
+    justify-self: center;
+}
+.rival-card__meta > :nth-child(3) {
+    justify-self: end;
+}
+.rival-card__metric {
+    letter-spacing: var(--ls-normal);
+    text-transform: uppercase;
+    color: var(--base-gold-500);
+}
+.rival-card__gap {
+    font-variant-numeric: tabular-nums;
+    color: var(--base-cream-100);
+}
+.rival-card__swaps {
+    display: none;
+    max-block-size: 10rem;
+    overflow-block: auto;
+    margin-block-start: var(--sp-1);
+    padding-block-start: var(--sp-1);
+    border-block-start: var(--sp-hairline) dashed rgb(from var(--base-graphite-500) r g b / 0.3);
+    font-size: var(--fs-2xs);
+    color: var(--base-graphite-300);
+}
+.rival-card--open .rival-card__swaps {
+    display: block;
+}
+.rival-card__swap-row {
+    display: grid;
+    gap: var(--sp-1);
+    grid-template-columns: auto 1fr auto;
+    padding: var(--sp-0) 0;
+    color: var(--base-cream-100);
+}
+.rival-card__swap-leader {
+    color: var(--base-gold-300);
+}
+.rival-card__swap-time {
+    font-variant-numeric: tabular-nums;
+    color: var(--base-graphite-300);
+}
+.rival-card__swaps-empty {
+    padding: var(--sp-1) 0;
+    font-style: italic;
+    color: var(--base-graphite-300);
+}

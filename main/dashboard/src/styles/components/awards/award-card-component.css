@@ -1,0 +1,43 @@
+.award-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-1);
+    padding: var(--sp-2);
+    border: var(--sp-hairline) solid rgb(from var(--base-graphite-500) r g b / 0.2);
+    border-radius: var(--radius-md);
+    background: var(--gradient-surface);
+}
+.award-card__kind {
+    font-size: var(--fs-3xs);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    color: var(--base-gold-500);
+}
+.award-card__main {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--sp-1);
+}
+.award-card__player {
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semi);
+    color: var(--base-gold-300);
+}
+.award-card__rank {
+    font-size: var(--fs-2xs);
+    color: var(--clr-rank-bronze);
+}
+.award-card__detail {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--fs-2xs);
+    color: var(--base-graphite-300);
+}
+.award-card__metric {
+    color: var(--base-cream-100);
+}
+.award-card__value {
+    font-variant-numeric: tabular-nums;
+    color: var(--base-gold-300);
+}

@@ -1,0 +1,274 @@
+.clans-manage__permission-pane {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-block-size: 0;
+}
+.clans-manage__permission-accordion {
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    inline-size: 100%;
+    min-block-size: 0;
+    overflow: hidden;
+    border: var(--bw-hairline) solid var(--base-graphite-500);
+    background: rgb(from var(--base-graphite-800) r g b / 0.3);
+}
+.clans-manage__permission-accordion.is-open {
+    flex: 1 1 0;
+    min-block-size: 0;
+}
+.clans-manage__permission-accordion-header {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-1);
+    inline-size: 100%;
+    padding: var(--sp-1) var(--sp-2);
+    border: none;
+    border-radius: 0;
+    font-family: var(--font-heading);
+    font-size: var(--fs-3xs);
+    letter-spacing: var(--ls-snug);
+    text-align: start;
+    text-transform: uppercase;
+    color: var(--base-gold-300);
+    background: rgb(from var(--base-graphite-700) r g b / 0.4);
+    cursor: pointer;
+}
+.clans-manage__permission-accordion-chevron {
+    flex-shrink: 0;
+    transition: transform var(--dur-fast) var(--ease-out);
+}
+.clans-manage__permission-accordion.is-open .clans-manage__permission-accordion-chevron {
+    transform: rotate(90deg);
+}
+.clans-manage__permission-accordion-body {
+    display: none;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    align-content: flex-start;
+    gap: var(--sp-hairline);
+    min-block-size: 0;
+    overflow-block: auto;
+    padding: var(--sp-1);
+}
+.clans-manage__permission-accordion.is-open .clans-manage__permission-accordion-body {
+    display: flex;
+    flex: 1 1 0;
+}
+.clans-manage__permission-swatch {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    inline-size: max-content;
+    max-inline-size: 8rem;
+    overflow: hidden;
+    padding: var(--sp-hairline) var(--sp-1);
+    border: var(--bw-hairline) dotted var(--base-graphite-500);
+    border-radius: var(--radius-md);
+    font-size: var(--fs-3xs);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--base-graphite-200);
+    background: rgb(from var(--base-graphite-700) r g b / 0.4);
+    transition:
+        background var(--dur-fast) var(--ease-out),
+        border-color var(--dur-fast) var(--ease-out),
+        color var(--dur-fast) var(--ease-out);
+    cursor: grab;
+    user-select: none;
+}
+.clans-manage__permission-swatch:hover {
+    border-color: var(--base-gold-500);
+    color: var(--base-gold-300);
+    background: rgb(from var(--base-gold-500) r g b / 0.15);
+}
+.clans-manage__permission-swatch:active {
+    cursor: grabbing;
+}
+.clans-manage__permission-row-slot.is-drop-target {
+    border-radius: var(--radius-md);
+    outline: var(--bw-hairline) dashed var(--base-gold-300);
+    outline-offset: var(--sp-0);
+    background: rgb(from var(--base-gold-500) r g b / 0.08);
+}
+.clans-manage__permission-rows {
+    position: relative;
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-block-size: 0;
+    overflow-block: auto;
+}
+.clans-manage__permission-rows-list {
+    display: flex;
+    flex-direction: column;
+}
+.clans-manage__permission-wires {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    z-index: var(--z-raised);
+    overflow: visible;
+    pointer-events: none;
+}
+.clans-manage__permission-wire {
+    stroke: var(--base-gold-300);
+    stroke-linecap: round;
+    stroke-opacity: 0.7;
+    stroke-width: 1;
+}
+.clans-manage__permission-row {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    padding: var(--sp-hairline) var(--sp-2);
+}
+.clans-manage__permission-row:hover {
+    background: rgb(from var(--base-graphite-800) r g b / 0.3);
+}
+.clans-manage__permission-row-name {
+    flex: 0 0 9rem;
+    font-family: var(--font-heading);
+    font-size: var(--fs-2xs);
+    line-height: var(--lh-snug);
+    letter-spacing: var(--ls-snug);
+    text-transform: lowercase;
+    color: var(--base-gold-300);
+}
+.clans-manage__permission-row-arrow {
+    flex-shrink: 0;
+    color: var(--base-graphite-400);
+}
+.clans-manage__permission-row-slot {
+    display: flex;
+    flex: 1;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sp-1);
+    min-inline-size: 0;
+}
+.clans-manage__permission-row-add {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+    padding: 0;
+    border: var(--bw-hairline) dotted var(--base-graphite-500);
+    border-radius: var(--radius-md);
+    font-size: var(--fs-3xs);
+    color: var(--base-graphite-300);
+    background: transparent;
+    transition:
+        color var(--dur-fast) var(--ease-out),
+        background var(--dur-fast) var(--ease-out),
+        border-color var(--dur-fast) var(--ease-out);
+    cursor: pointer;
+}
+.clans-manage__permission-row-add:hover {
+    border-color: var(--base-gold-500);
+    color: var(--base-gold-300);
+    background: rgb(from var(--base-graphite-700) r g b / 0.5);
+}
+.clans-manage__permission-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-hairline);
+    padding: 0 var(--sp-1);
+    border: var(--bw-hairline) solid var(--base-graphite-500);
+    border-radius: var(--radius-md);
+    font-size: var(--fs-3xs);
+    color: var(--base-graphite-200);
+    background: rgb(from var(--base-graphite-800) r g b / 0.4);
+    cursor: pointer;
+}
+.clans-manage__permission-chip.is-locked {
+    border-style: dashed;
+    border-color: var(--base-graphite-300);
+    color: var(--base-graphite-200);
+    background: rgb(from var(--base-graphite-700) r g b / 0.3);
+    cursor: default;
+}
+.clans-manage__permission-chip--allow {
+    border-color: var(--base-forest-300);
+    color: var(--base-forest-300);
+    background: rgb(from var(--base-forest-300) r g b / 0.12);
+}
+.clans-manage__permission-chip--deny {
+    border-color: var(--base-ember-300);
+    color: var(--base-ember-300);
+    background: rgb(from var(--base-ember-300) r g b / 0.12);
+}
+.clans-manage__permission-chip--mixed {
+    border-color: var(--base-cream-100);
+    color: var(--base-cream-100);
+    background: rgb(from var(--base-cream-100) r g b / 0.08);
+}
+.clans-manage__permission-chip-label {
+    line-height: var(--lh-snug);
+}
+.clans-manage__permission-chip-remove {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    inline-size: 1rem;
+    block-size: 1rem;
+    padding: 0;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: var(--fs-3xs);
+    color: inherit;
+    background: transparent;
+    opacity: var(--opacity-medium);
+    transition:
+        opacity var(--dur-fast) var(--ease-out),
+        background var(--dur-fast) var(--ease-out);
+    cursor: pointer;
+}
+.clans-manage__permission-chip-remove:hover {
+    background: rgb(from var(--base-graphite-700) r g b / 0.5);
+    opacity: 1;
+}
+.clans-manage__permission-na-text {
+    font-size: var(--fs-3xs);
+    font-style: italic;
+    color: var(--base-graphite-300);
+}
+.clans-manage__permission-rows.permissions-hovered .clans-manage__permission-chip {
+    opacity: var(--opacity-faint);
+    transition:
+        opacity var(--dur-fast) var(--ease-out),
+        box-shadow var(--dur-fast) var(--ease-out);
+}
+.clans-manage__permission-rows--hovered .clans-manage__permission-chip.is-related,
+.clans-manage__permission-rows--hovered .clans-manage__permission-chip:hover {
+    box-shadow: 0 0 0 var(--bw-hairline) var(--base-gold-300);
+    opacity: 1;
+}
+.clans-manage__permission-swatch-label {
+    font-size: var(--fs-3xs);
+}
+.clans-manage__permission-accordion-label {
+    font-size: var(--fs-3xs);
+}
+.clans-manage__permission-row-block {
+    display: flex;
+    flex-direction: column;
+    border-block-end: var(--bw-hairline) solid var(--base-graphite-700);
+}
+.clans-manage__permission-row-block .slide-panel__panel {
+    border: none;
+    background: transparent;
+}
+.clans-manage__permission-add-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-1);
+    padding-block: var(--sp-1);
+}
+.clans-manage__permission-add-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--sp-1);
+}

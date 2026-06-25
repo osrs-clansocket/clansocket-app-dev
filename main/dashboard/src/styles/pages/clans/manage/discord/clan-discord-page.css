@@ -1,0 +1,484 @@
+.clans-manage__discord {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-block-size: 0;
+}
+
+.clans-manage__discord-loading {
+    padding: var(--sp-4);
+    font-size: var(--fs-sm);
+    font-style: italic;
+    text-align: center;
+    color: var(--base-graphite-200);
+}
+
+.clans-manage__discord-empty {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sp-4);
+    min-block-size: 0;
+    overflow-block: auto;
+    padding: var(--sp-4) var(--sp-3);
+}
+
+.clans-manage__discord-empty-hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sp-2);
+    text-align: center;
+}
+
+.clans-manage__discord-empty-badges {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+    padding-block-end: var(--sp-1);
+}
+
+.clans-manage__discord-empty-logo {
+    inline-size: clamp(2rem, 5vi, 2.75rem);
+    block-size: clamp(2rem, 5vi, 2.75rem);
+    border-radius: var(--radius-md);
+}
+
+.clans-manage__discord-empty-badge-plus {
+    font-family: var(--font-heading);
+    font-size: var(--fs-lg);
+    line-height: var(--lh-flat);
+    color: var(--base-gold-300);
+}
+
+.clans-manage__discord-empty-discord-icon {
+    font-size: var(--fs-xl);
+    line-height: var(--lh-flat);
+    color: var(--base-gold-300);
+}
+
+.clans-manage__discord-empty-headline {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: var(--fs-lg);
+    letter-spacing: var(--ls-tight);
+    color: var(--base-gold-300);
+}
+
+.clans-manage__discord-empty-lede {
+    max-inline-size: var(--tt-width-wide);
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: var(--fs-xs);
+    line-height: var(--lh-snug);
+    color: var(--base-cream-100);
+}
+
+.clans-manage__discord-empty-info-grid {
+    display: grid;
+    gap: var(--sp-2);
+    grid-template-columns: repeat(auto-fit, minmax(var(--grid-min), 1fr));
+    inline-size: 100%;
+    max-inline-size: var(--max-width);
+}
+
+.clans-manage__discord-empty-info-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-1);
+    padding: var(--sp-2);
+    border: var(--sp-hairline) solid var(--base-graphite-500);
+    border-inline-start: var(--sp-0h) solid var(--base-gold-300);
+    border-radius: var(--radius-md);
+    background: var(--base-graphite-900);
+}
+
+.clans-manage__discord-empty-info-title {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: var(--fs-3xs);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    color: var(--base-gold-300);
+}
+
+.clans-manage__discord-empty-info-body {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: var(--fs-2xs);
+    line-height: var(--lh-snug);
+    color: var(--base-cream-100);
+}
+
+.clans-manage__discord-empty-cta-wrap {
+    display: flex;
+    justify-content: center;
+    inline-size: 100%;
+    max-inline-size: var(--max-width);
+}
+
+.clans-manage__discord-empty-cta-wrap > .btn {
+    inline-size: 100%;
+}
+
+.clans-manage__discord-empty-steps {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--sp-2);
+    inline-size: 100%;
+    max-inline-size: var(--max-width);
+}
+
+.clans-manage__discord-empty-steps-title {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: var(--fs-3xs);
+    letter-spacing: var(--ls-wide);
+    text-align: center;
+    text-transform: uppercase;
+    color: var(--base-gold-300);
+}
+
+.clans-manage__discord-empty-step-list {
+    display: grid;
+    gap: var(--sp-2);
+    grid-template-columns: repeat(auto-fit, minmax(var(--grid-min), 1fr));
+    inline-size: 100%;
+}
+
+.clans-manage__discord-empty-step {
+    display: flex;
+    align-items: baseline;
+    gap: var(--sp-2);
+    padding: var(--sp-2);
+    border: var(--sp-hairline) solid var(--base-graphite-500);
+    border-inline-start: var(--sp-0h) solid var(--base-gold-300);
+    border-radius: var(--radius-md);
+    background: var(--base-graphite-900);
+}
+
+.clans-manage__discord-empty-step-num {
+    flex-shrink: 0;
+    font-family: var(--font-data);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-semi);
+    font-variant-numeric: tabular-nums;
+    color: var(--base-gold-300);
+}
+
+.clans-manage__discord-empty-step-text {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: var(--fs-2xs);
+    line-height: var(--lh-snug);
+    color: var(--base-cream-100);
+}
+
+.clans-manage__discord-frame {
+    display: grid;
+    flex: 1 1 auto;
+    grid-template:
+        "header header header" auto
+        "rail-left pane-center rail-right" 1fr
+        "footer footer footer" auto
+        / 14rem 1fr 16rem;
+    min-block-size: 0;
+}
+.clans-manage__discord-frame:has(.clans-manage__auto-hooks) {
+    grid-template:
+        "header header header" auto
+        "rail-left pane-center rail-right" 1fr
+        "footer footer footer" auto
+        / 14rem 1fr 1fr;
+}
+.clans-manage__discord-toolbar-btn {
+    display: flex;
+    justify-content: center;
+    inline-size: 100%;
+    padding: var(--sp-1);
+    border: var(--bw-hairline) dotted var(--base-graphite-500);
+    font-family: var(--font-heading);
+    font-size: var(--fs-3xs);
+    letter-spacing: var(--ls-normal);
+    text-transform: uppercase;
+    color: var(--base-graphite-300);
+    background: rgb(from var(--base-graphite-800) r g b / 0.3);
+    transition:
+        color var(--dur-fast) var(--ease-out),
+        background var(--dur-fast) var(--ease-out),
+        border-color var(--dur-fast) var(--ease-out);
+    cursor: pointer;
+}
+.clans-manage__discord-toolbar-btn:hover {
+    border-color: rgb(from var(--base-gold-500) r g b / 0.5);
+    color: var(--base-gold-300);
+    background: rgb(from var(--base-graphite-700) r g b / 0.4);
+}
+.clans-manage__discord-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--sp-3);
+    grid-area: header;
+    padding-block: var(--sp-2);
+    padding-inline: var(--sp-3);
+    border-block-end: var(--border-dim);
+    background: var(--base-graphite-900);
+}
+
+.clans-manage__discord-rail-left {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-0);
+    grid-area: rail-left;
+    min-block-size: 0;
+    overflow-block: auto;
+    padding: var(--sp-2);
+    border-inline-end: var(--border-dim);
+}
+
+.clans-manage__discord-rail-item--placeholder {
+    font-style: italic;
+    opacity: var(--opacity-medium);
+}
+
+.clans-manage__discord-pane-center {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+    grid-area: pane-center;
+    min-block-size: 0;
+    overflow-block: auto;
+}
+
+.clans-manage__discord-pane-placeholder {
+    margin: 0;
+    font-size: var(--fs-xs);
+    font-style: italic;
+    color: var(--base-graphite-200);
+}
+
+.clans-manage__discord-placeholder-hint {
+    margin: 0;
+    font-size: var(--fs-xs);
+    font-style: italic;
+    color: var(--base-graphite-200);
+}
+
+.clans-manage__discord-rail-right {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+    grid-area: rail-right;
+    min-block-size: 0;
+    overflow-block: auto;
+    border-inline-start: var(--border-dim);
+}
+.clans-manage__discord-rail-right:has(.clans-manage__permission-accordion) {
+    gap: 0;
+    padding: 0;
+}
+
+.clans-manage__discord-rail-right-host {
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    inline-size: 100%;
+    block-size: 100%;
+    min-block-size: 0;
+}
+
+.clans-manage__discord-inspector-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-0);
+    padding: var(--sp-0);
+    border-block-end: var(--border-dim);
+}
+.clans-manage__discord-inspector-label-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--sp-1);
+}
+.clans-manage__discord-inspector-copy-btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    border: none;
+    color: var(--base-graphite-300);
+    background: transparent;
+    transition: color var(--dur-fast) var(--ease-out);
+    cursor: pointer;
+}
+.clans-manage__discord-inspector-copy-btn:hover {
+    color: var(--base-gold-300);
+}
+
+.clans-manage__discord-inspector-section:last-child {
+    padding-block-end: 0;
+    border-block-end: none;
+}
+
+.clans-manage__discord-inspector-value {
+    min-inline-size: 0;
+    font-family: var(--font-data);
+    font-size: var(--fs-xs);
+    overflow-wrap: anywhere;
+    color: var(--base-graphite-100);
+}
+
+.clans-manage__discord-footer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--sp-3);
+    grid-area: footer;
+    padding-block: var(--sp-2);
+    padding-inline: var(--sp-3);
+    border-block-start: var(--border-dim);
+}
+
+.clans-manage__discord-footer-status {
+    font-size: var(--fs-2xs);
+    font-style: italic;
+    color: var(--base-graphite-200);
+}
+
+.clans-manage__discord-emoji-pane {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-block-size: 0;
+    padding: var(--sp-1);
+}
+.clans-manage__discord-emoji-grid {
+    display: grid;
+    flex: 1 1 auto;
+    align-content: start;
+    gap: var(--sp-1);
+    grid-template-columns: repeat(auto-fill, minmax(3rem, 1fr));
+    min-block-size: 0;
+    overflow-block: auto;
+}
+
+.clans-manage__discord-emoji-tile {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-inline-size: 3rem;
+    max-block-size: 3rem;
+    aspect-ratio: 1 / 1;
+    padding: var(--sp-1);
+    border: var(--border-dim);
+    border-radius: var(--radius-md);
+    background: transparent;
+    transition:
+        border-color var(--dur-fast) var(--ease-out),
+        background var(--dur-fast) var(--ease-out);
+    cursor: pointer;
+}
+.clans-manage__discord-emoji-tile:hover {
+    border-color: rgb(from var(--base-gold-500) r g b / 0.4);
+}
+.clans-manage__discord-emoji-tile--active {
+    border-color: var(--base-gold-500);
+    background: rgb(from var(--base-gold-500) r g b / 0.1);
+}
+
+.clans-manage__discord-mode {
+    display: contents;
+}
+
+.clans-manage__discord-channels-empty {
+    font-size: var(--fs-xs);
+    font-style: italic;
+    color: var(--base-graphite-200);
+}
+
+.clans-manage__discord-channels-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    padding-block-end: var(--sp-2);
+}
+
+.clans-manage__discord-roles-empty {
+    font-size: var(--fs-xs);
+    font-style: italic;
+    color: var(--base-graphite-200);
+}
+
+.clans-manage__discord-byo-bot {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-1);
+}
+
+.clans-manage__discord-byo-bot--owner-override {
+    padding-inline-start: var(--sp-2);
+    border-inline-start: var(--sp-0h) solid var(--base-gold-500);
+}
+
+.clans-manage__discord-byo-bot-readonly {
+    margin: 0;
+    font-size: var(--fs-xs);
+    font-style: italic;
+    color: var(--base-graphite-200);
+}
+
+.clans-manage__discord-permission-grid {
+    display: grid;
+    gap: var(--sp-1);
+    grid-template-columns: repeat(auto-fill, minmax(7rem, 1fr));
+}
+
+.clans-manage__discord-permission-card {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-1);
+    inline-size: 100%;
+    min-inline-size: 0;
+    padding: var(--sp-1) var(--sp-2);
+    border: var(--bw-hairline) solid var(--base-graphite-500);
+    border-radius: var(--radius-md);
+    font-size: var(--fs-3xs);
+    text-align: start;
+    color: var(--base-graphite-200);
+    background: rgb(from var(--base-graphite-800) r g b / 0.3);
+    transition:
+        background var(--dur-fast) var(--ease-out),
+        border-color var(--dur-fast) var(--ease-out),
+        color var(--dur-fast) var(--ease-out);
+    cursor: pointer;
+}
+
+.clans-manage__discord-permission-card:hover {
+    background: rgb(from var(--base-graphite-700) r g b / 0.5);
+}
+
+.clans-manage__discord-permission-card--allow {
+    border-color: var(--base-gold-500);
+    color: var(--base-gold-300);
+    background: rgb(from var(--base-gold-500) r g b / 0.12);
+}
+
+.clans-manage__discord-permission-card--deny {
+    border-color: var(--base-ember-300);
+    color: var(--base-ember-300);
+    background: rgb(from var(--base-ember-300) r g b / 0.12);
+}
+
+.clans-manage__discord-permission-card-label {
+    flex: 1;
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.clans-manage__discord-permission-card-icon {
+    flex-shrink: 0;
+}

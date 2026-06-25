@@ -1,0 +1,5 @@
+.clans-manage__back {
+    margin-inline-start: auto;
+    padding: var(--sp-0) var(--sp-2);
+    font-size: var(--fs-3xs);
+}

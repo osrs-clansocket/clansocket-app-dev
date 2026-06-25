@@ -1,0 +1,23 @@
+.account__section-title {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: var(--fs-xs);
+    line-height: var(--lh-tight);
+    color: var(--base-gold-300);
+}
+.account__section-hint {
+    margin: 0;
+    font-size: var(--fs-2xs);
+    line-height: var(--lh-snug);
+    color: var(--base-graphite-300);
+}
+.account__section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--sp-2);
+    margin-block: var(--sp-2) var(--sp-1);
+}
+.account__section-header > .form__field-label {
+    margin: 0;
+}

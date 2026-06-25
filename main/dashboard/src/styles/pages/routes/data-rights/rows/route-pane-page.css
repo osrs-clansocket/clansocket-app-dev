@@ -1,0 +1,24 @@
+.route-data-rights__pane-header {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: var(--sp-1);
+    box-sizing: border-box;
+    min-block-size: 1.8rem;
+    padding: var(--sp-1) var(--sp-2);
+    border-block-end: var(--bw-hairline) solid transparent;
+    background: rgb(from var(--base-graphite-800) r g b / 0.65);
+    border-image: linear-gradient(90deg, transparent, rgb(from var(--base-gold-500) r g b / 0.4) 50%, transparent) 1;
+}
+.route-data-rights__pane-title {
+    flex: 1;
+    min-inline-size: 0;
+    overflow: hidden;
+    font-family: var(--font-heading);
+    font-size: var(--fs-2xs);
+    letter-spacing: var(--ls-snug);
+    text-transform: lowercase;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--base-gold-300);
+}

@@ -1,0 +1,190 @@
+.voxlab__control-file-input {
+    display: block;
+    inline-size: calc(100% + var(--sp-2h) * 2);
+    margin: 0 calc(var(--sp-2h) * -1);
+    padding: var(--sp-1h) var(--sp-2h);
+    border: 0;
+    border-block-start: var(--bw-hairline) solid transparent;
+    border-radius: 0;
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semi);
+    letter-spacing: var(--ls-normal);
+    text-align: center;
+    text-transform: uppercase;
+    color: var(--base-gold-200);
+    background: rgb(from var(--base-gold-500) r g b / 0.08);
+    transition: background var(--dur-base) var(--ease-out);
+    cursor: pointer;
+    border-image: linear-gradient(90deg, transparent, rgb(from var(--base-gold-500) r g b / 0.4) 50%, transparent) 1;
+}
+.voxlab__control-file-input:hover {
+    background: rgb(from var(--base-gold-500) r g b / 0.14);
+}
+.voxlab__control-file-input [type="file"] {
+    display: none;
+}
+.voxlab__control-stat-row {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--sp-0) 0;
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    color: var(--base-graphite-300);
+}
+.voxlab__control {
+    display: grid;
+    align-items: center;
+    column-gap: var(--sp-2);
+    grid-template-columns: minmax(var(--sp-16), 0.9fr) minmax(0, 1.3fr) auto;
+    min-block-size: var(--sp-6);
+    margin-block-end: var(--sp-0h);
+    font-size: var(--fs-xs);
+}
+.voxlab__control--color {
+    grid-template-columns: 1fr auto;
+}
+.voxlab__control--number {
+    grid-template-columns: minmax(var(--sp-16), 0.9fr) 1fr;
+}
+.voxlab__control--dropdown {
+    grid-template-columns: minmax(var(--sp-16), 0.9fr) 1fr;
+}
+.voxlab__control--toggle {
+    display: flex;
+    gap: var(--sp-2);
+}
+.voxlab__control:last-child {
+    margin-block-end: 0;
+}
+.voxlab__control-label {
+    overflow: hidden;
+    font-size: var(--fs-2xs);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--base-graphite-300);
+}
+.voxlab__control [type="number"] {
+    inline-size: 100%;
+    min-inline-size: 0;
+    padding: var(--sp-0h) var(--sp-1h);
+    border: 0.0625rem solid rgb(from var(--base-gold-500) r g b / 0.35);
+    border-radius: var(--radius-md);
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semi);
+    color: var(--base-gold-200);
+    background-color: rgb(from var(--base-gold-500) r g b / 0.08);
+    transition:
+        background-color var(--dur-base) var(--ease-out),
+        border-color var(--dur-base) var(--ease-out);
+    appearance: textfield;
+}
+.voxlab__control [type="number"]:hover,
+.voxlab__control [type="number"]:focus-visible {
+    border-color: rgb(from var(--base-gold-500) r g b / 0.55);
+    outline: none;
+    background-color: rgb(from var(--base-gold-500) r g b / 0.14);
+}
+.voxlab__control [type="number"]::-webkit-inner-spin-button,
+.voxlab__control [type="number"]::-webkit-outer-spin-button {
+    inline-size: var(--sp-4);
+    block-size: 100%;
+    margin: 0 calc(var(--sp-1h) * -1) 0 var(--sp-1h);
+    border-inline-start: 0.0625rem solid rgb(from var(--base-gold-500) r g b / 0.35);
+    background-color: rgb(from var(--base-gold-500) r g b / 0.14);
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 12'%3E%3Cpath d='M4 1 L7 4 L1 4 Z' fill='%23ebd88a'/%3E%3Cpath d='M4 11 L1 8 L7 8 Z' fill='%23ebd88a'/%3E%3C/svg%3E");
+    background-position: center;
+    background-size: var(--sp-1h);
+    background-repeat: no-repeat;
+    opacity: 1;
+    transition: background-color var(--dur-fast) var(--ease-out);
+    cursor: pointer;
+    appearance: none;
+}
+.voxlab__control-toggle {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    gap: var(--sp-1h);
+    font-size: var(--fs-xs);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    color: var(--base-graphite-300);
+    cursor: pointer;
+    user-select: none;
+}
+.voxlab__control-toggle-input {
+    position: relative;
+    flex-shrink: 0;
+    inline-size: var(--sp-3);
+    block-size: var(--sp-3);
+    margin: 0;
+    border: 0.0625rem solid rgb(from var(--base-gold-500) r g b / 0.35);
+    border-radius: var(--radius-md);
+    background-color: var(--base-graphite-900);
+    transition:
+        background-color var(--dur-fast) var(--ease-out),
+        border-color var(--dur-fast) var(--ease-out);
+    cursor: pointer;
+    appearance: none;
+}
+.voxlab__control-toggle-input:hover {
+    border-color: rgb(from var(--base-gold-500) r g b / 0.65);
+}
+.voxlab__control-toggle-input:checked {
+    border-color: var(--base-gold-200);
+    background-color: var(--base-gold-200);
+}
+.voxlab__control-toggle-input:checked::after {
+    content: "";
+    position: absolute;
+    inset-block-start: 45%;
+    inset-inline-start: 50%;
+    inline-size: var(--sp-0h);
+    block-size: var(--sp-1h);
+    border: solid var(--base-graphite-900);
+    border-width: 0 var(--sp-0) var(--sp-0) 0;
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+.voxlab__control-toggle-input:focus-visible {
+    border-color: var(--base-gold-200);
+    outline: 0.125rem solid rgb(from var(--base-gold-500) r g b / 0.35);
+    outline-offset: 0.0625rem;
+}
+.voxlab__control-header {
+    display: contents;
+}
+.voxlab__control-value {
+    min-inline-size: var(--sp-8);
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semi);
+    text-align: end;
+    color: var(--base-gold-200);
+}
+.voxlab__control-slider {
+    inline-size: 100%;
+    min-inline-size: 0;
+    block-size: var(--sp-3);
+    background: transparent;
+    cursor: pointer;
+    accent-color: var(--base-gold-200);
+}
+.voxlab__control-color {
+    inline-size: var(--sp-8);
+    block-size: var(--sp-4);
+    padding: 0;
+    border: 0.0625rem solid rgb(from var(--base-gold-500) r g b / 0.35);
+    border-radius: var(--radius-md);
+    background: transparent;
+    cursor: pointer;
+}
+.voxlab__control-color::-webkit-color-swatch-wrapper {
+    padding: var(--sp-hairline);
+}
+.voxlab__control-color::-webkit-color-swatch {
+    border: none;
+    border-radius: var(--radius-md);
+}

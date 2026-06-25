@@ -1,0 +1,147 @@
+export interface ChannelRow {
+    channel_id: string;
+    guild_id: string;
+    name: string | null;
+    type: number;
+    parent_id: string | null;
+    parent_name: string | null;
+    position: number | null;
+    topic: string | null;
+    nsfw: boolean;
+    rate_limit_per_user: number | null;
+    bitrate: number | null;
+    user_limit: number | null;
+    thread_archived: boolean | null;
+    thread_locked: boolean | null;
+    thread_auto_archive_duration: number | null;
+    thread_archive_timestamp: number | null;
+    thread_message_count: number | null;
+}
+
+export interface RoleRow {
+    role_id: string;
+    guild_id: string;
+    name: string;
+    color: number;
+    hoist: boolean;
+    mentionable: boolean;
+    position: number;
+    permissions: string;
+    managed: boolean;
+    icon_url: string | null;
+    unicode_emoji: string | null;
+}
+
+export interface MemberRow {
+    user_id: string;
+    guild_id: string;
+    name: string;
+    display_name: string | null;
+    nickname: string | null;
+    joined_at: number | null;
+    premium_since: number | null;
+    communication_disabled_until: number | null;
+    is_boosting: boolean;
+    is_bot: boolean;
+    role_ids: string[];
+    avatar_url: string | null;
+    pending: boolean;
+    flags: string;
+}
+
+export interface WebhookRow {
+    webhook_id: string;
+    guild_id: string;
+    channel_id: string;
+    channel_name: string | null;
+    name: string | null;
+    avatar_url: string | null;
+    application_id: string | null;
+    user_id: string | null;
+    webhook_type: number;
+    source_guild_id: string | null;
+    source_guild_name: string | null;
+    source_channel_id: string | null;
+    source_channel_name: string | null;
+}
+
+export interface ServerEmojiRow {
+    emoji_id: string;
+    guild_id: string;
+    name: string;
+    role_ids: string[];
+    animated: boolean;
+    available: boolean;
+    managed: boolean;
+    image_url: string | null;
+    user_id: string | null;
+}
+
+export interface ServerStickerRow {
+    sticker_id: string;
+    guild_id: string;
+    name: string;
+    description: string | null;
+    tags: string | null;
+    format_type: number;
+    available: boolean;
+    image_url: string | null;
+    user_id: string | null;
+}
+
+export interface ChannelPinRow {
+    message_id: string;
+    channel_id: string;
+    channel_name: string | null;
+    guild_id: string;
+    author_user_id: string | null;
+    author_user_name: string | null;
+    content: string | null;
+    timestamp: number;
+    attachments: string[];
+}
+
+export interface WelcomeScreenChannel {
+    channel_id: string;
+    description: string;
+    emoji_id: string | null;
+    emoji_name: string | null;
+}
+
+export interface GuildSettingsRow {
+    guild_id: string;
+    name: string;
+    icon_url: string | null;
+    banner_url: string | null;
+    description: string | null;
+    system_channel_id: string | null;
+    system_channel_name: string | null;
+    afk_channel_id: string | null;
+    afk_channel_name: string | null;
+    afk_timeout: number | null;
+    verification_level: number;
+    welcome_screen_enabled: boolean;
+    welcome_screen_description: string | null;
+    welcome_screen_channels: WelcomeScreenChannel[];
+}
+
+interface RoleOverwriteRow {
+    channel_id: string;
+    channel_name: string | null;
+    role_id: string;
+    role_name: string | null;
+    guild_id: string;
+    allow: string;
+    deny: string;
+}
+
+interface MemberOverwriteRow {
+    channel_id: string;
+    channel_name: string | null;
+    user_id: string;
+    guild_id: string;
+    allow: string;
+    deny: string;
+}
+
+export type ChannelOverwriteRow = ({ kind: "role" } & RoleOverwriteRow) | ({ kind: "member" } & MemberOverwriteRow);

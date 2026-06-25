@@ -1,0 +1,13 @@
+.iconbtn {
+    padding: var(--sp-0) var(--sp-1h);
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: var(--fs-md);
+    line-height: var(--lh-flat);
+    color: var(--base-graphite-300);
+    background: none;
+    transition:
+        color 0.15s,
+        background 0.15s;
+    cursor: pointer;
+}

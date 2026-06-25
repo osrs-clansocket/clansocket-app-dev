@@ -1,0 +1,8 @@
+.route-data-rights__label {
+    font-family: var(--font-heading);
+    font-size: var(--fs-3xs);
+    line-height: var(--lh-flat);
+    letter-spacing: var(--ls-normal);
+    text-transform: uppercase;
+    color: var(--base-graphite-300);
+}

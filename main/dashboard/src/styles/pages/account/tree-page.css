@@ -1,0 +1,54 @@
+.account__tree {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-0);
+}
+.account__tree-row {
+    display: grid;
+    align-items: start;
+    gap: var(--sp-1);
+    grid-template-columns: auto auto minmax(0, 1fr) auto;
+    min-inline-size: 0;
+    padding: var(--sp-1) var(--sp-1);
+    border: 0.0625rem solid var(--base-graphite-500);
+    border-radius: var(--radius-md);
+    font-family: var(--font-mono, monospace);
+    font-size: var(--fs-2xs);
+    line-height: var(--lh-snug);
+    background: var(--base-graphite-800);
+}
+.account__tree-row--branch {
+    border-color: transparent;
+    color: var(--base-graphite-300);
+    background: transparent;
+}
+.account__tree-link {
+    font-family: var(--font-mono, monospace);
+    white-space: pre;
+    color: var(--base-graphite-300);
+    user-select: none;
+}
+.account__tree-segment {
+    font-weight: var(--fw-semi);
+    white-space: nowrap;
+    color: var(--base-gold-300);
+}
+.account__tree-value {
+    min-inline-size: 0;
+    overflow-wrap: anywhere;
+    color: var(--base-cream-100);
+}
+.account__tree-row > .account__row-actions {
+    grid-column-start: 4;
+}
+.account__tree-row--editing {
+    border-color: var(--base-gold-500);
+    background: var(--base-graphite-900);
+}
+.account__tree-row--editing .account__row-actions {
+    opacity: 1;
+}
+.account__tree-row:hover .account__row-actions,
+.account__tree-row:focus-within .account__row-actions {
+    opacity: 1;
+}

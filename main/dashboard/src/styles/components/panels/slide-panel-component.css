@@ -1,0 +1,74 @@
+.slide-panel {
+    position: relative;
+    z-index: var(--z-dropdown);
+    display: flex;
+    flex-direction: column;
+    inline-size: 100%;
+}
+.slide-panel--banner {
+    inline-size: auto;
+}
+.slide-panel__panel {
+    z-index: var(--z-dropdown);
+    display: grid;
+    grid-template-rows: minmax(0, 0fr);
+    overflow: hidden;
+    transition: grid-template-rows var(--dur-base) var(--ease-out);
+}
+.slide-panel__panel[data-slide-panel-align] {
+    flex-basis: calc(100% + var(--sp-3) * 2);
+    inline-size: calc(100% + var(--sp-3) * 2);
+    margin-inline: calc(0 - var(--sp-3));
+}
+.slide-panel__panel:not(:empty) {
+    border-inline: var(--bw-hairline) dotted var(--base-graphite-500);
+    background: rgb(from var(--base-graphite-800) r g b / 0.6);
+}
+.slide-panel__panel--open {
+    grid-template-rows: minmax(0, 1fr);
+    overflow: visible;
+}
+.slide-panel__panel[data-slide-panel-align].slide-panel__panel--open {
+    border-block: var(--bw-hairline) solid transparent;
+    border-inline: none;
+    border-image: var(--gradient-accent-divider) 1;
+}
+.slide-panel__inner {
+    min-block-size: 0;
+    overflow: hidden;
+    padding-block: 0;
+    padding-inline: var(--sp-2);
+    transition: padding-block var(--dur-base) var(--ease-out);
+}
+.slide-panel__panel--open .slide-panel__inner {
+    overflow: visible;
+    padding-block: var(--sp-2);
+}
+.slide-panel__panel[data-slide-panel-align="start"] .slide-panel__inner {
+    text-align: start;
+    justify-self: start;
+}
+.slide-panel__panel[data-slide-panel-align="center"] .slide-panel__inner {
+    text-align: center;
+    justify-self: center;
+}
+.slide-panel__panel[data-slide-panel-align="end"] .slide-panel__inner {
+    text-align: end;
+    justify-self: end;
+}
+
+.slide-panel__panel .btn {
+    display: flex;
+    inline-size: 100%;
+    border-radius: 0;
+}
+.slide-panel__panel[data-slide-panel-align] .btn {
+    inline-size: auto;
+    border-radius: var(--radius-md);
+}
+
+.slide-panel__panel .clans-manage__discord-create-actions {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: var(--sp-1);
+}

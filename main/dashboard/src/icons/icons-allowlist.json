@@ -1,0 +1,12 @@
+{
+    "_comment": "Glyph names that the static scanner can NOT detect — dynamic class-string assembly, data-driven icons, etc. Listed here, they're force-included in the subset CSS + woff2.",
+    "_format": "{ \"<family-prefix>\": [\"<glyph-name>\", ...] | \"*\" }",
+    "_special": "Use \"*\" to force-include the FULL family (e.g. bi picker UI loads all glyphs).",
+    "bi": [],
+    "mdi": [],
+    "ti": [],
+    "gi": [],
+    "lu": [],
+    "ph": [],
+    "ra": []
+}

@@ -1,0 +1,15 @@
+import { extname as _extname, basename as _basename, dirname as _dirname } from "./empty-name-fns.js";
+export const extname = _extname;
+export const basename = _basename;
+export const dirname = _dirname;
+import { normalize as _normalize } from "./path-normalize.js";
+export const normalize = _normalize;
+import { relative as _relative } from "./path-relative.js";
+export const relative = _relative;
+import { join as _join, resolve as _resolve } from "./path-join-resolve.js";
+export const join = _join;
+export const resolve = _resolve;
+import { isAbsolute as _isAbsolute } from "./path-is-absolute.js";
+export const isAbsolute = _isAbsolute;
+import { parse as _parse } from "./path-parse.js";
+export const parse = _parse;

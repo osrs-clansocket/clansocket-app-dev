@@ -1,0 +1,49 @@
+.account__list {
+    display: grid;
+    align-items: stretch;
+    gap: var(--sp-0);
+    grid-template-columns: auto minmax(0, 1fr) auto minmax(0, 1fr) auto;
+}
+.account__list > .account__vault-row {
+    grid-column: 1 / -1;
+}
+.account__list > .account__list-row {
+    display: grid;
+    align-items: center;
+    column-gap: var(--sp-2);
+    grid-template-columns: subgrid;
+    grid-column: 1 / -1;
+}
+.account__list > .account__empty,
+.account__list > .form__hint {
+    grid-column: 1 / -1;
+}
+.account__list-row > .bi {
+    grid-column: 1;
+    justify-self: start;
+}
+.account__list-row > .account__row-primary {
+    grid-column: 2;
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    justify-self: start;
+}
+.account__list-row > .account__row-meta {
+    grid-column: 4;
+    text-align: end;
+    white-space: nowrap;
+    justify-self: end;
+}
+.account__list-row > .btn,
+.account__list-row > .account__session-ping {
+    grid-column: 5;
+    justify-self: end;
+}
+.account__list-row > .account__empty,
+.account__list-row > .form__hint {
+    grid-column: 1 / -1;
+    text-align: start;
+    justify-self: start;
+}

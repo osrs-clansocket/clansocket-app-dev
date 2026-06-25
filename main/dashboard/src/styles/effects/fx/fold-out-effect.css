@@ -1,0 +1,46 @@
+@keyframes fx-fold-out-anim {
+    0% {
+        opacity: 1;
+        clip-path: none;
+    }
+    7% {
+        opacity: var(--opacity-strong);
+        clip-path: polygon(0 12%, 100% 12%, 100% 22%, 0 22%);
+    }
+    14% {
+        opacity: var(--opacity-high);
+        clip-path: polygon(0 34%, 100% 34%, 100% 44%, 0 44%);
+    }
+    22% {
+        opacity: var(--opacity-high);
+        clip-path: polygon(0 60%, 100% 60%, 100% 68%, 0 68%);
+    }
+    30% {
+        opacity: var(--opacity-medium);
+        clip-path: polygon(0 2%, 100% 2%, 100% 10%, 0 10%);
+    }
+    38% {
+        opacity: var(--opacity-medium);
+        clip-path: polygon(0 76%, 100% 76%, 100% 90%, 0 90%);
+    }
+    46% {
+        opacity: var(--opacity-low);
+        clip-path: none;
+    }
+    58% {
+        opacity: var(--opacity-faint);
+        clip-path: polygon(0 44%, 100% 44%, 100% 58%, 0 58%);
+    }
+    70% {
+        opacity: var(--opacity-faint);
+        clip-path: none;
+    }
+    100% {
+        opacity: 0;
+        clip-path: none;
+    }
+}
+
+.fx-fold-out {
+    animation: fx-fold-out-anim 900ms steps(1, end) forwards;
+}

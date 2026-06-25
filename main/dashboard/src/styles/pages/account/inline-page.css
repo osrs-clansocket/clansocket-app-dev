@@ -1,0 +1,30 @@
+.account__inline-input {
+    box-sizing: border-box;
+    inline-size: 100%;
+    min-inline-size: 0;
+    margin: 0;
+    padding: var(--sp-0) var(--sp-1h);
+    border: 0.0625rem solid var(--base-graphite-500);
+    border-radius: var(--radius-md);
+    font-family: var(--font-body);
+    font-size: var(--fs-2xs);
+    line-height: var(--lh-snug);
+    color: var(--base-cream-100);
+    background: var(--base-graphite-800);
+    resize: block;
+}
+.account__inline-input:focus {
+    border-color: var(--base-gold-500);
+    outline: none;
+}
+.account__inline-input--invalid {
+    border-color: var(--base-amber-100, var(--base-gold-500));
+}
+.account__inline-input.account__tree-segment {
+    font-family: var(--font-mono, monospace);
+    font-weight: var(--fw-semi);
+    color: var(--base-gold-300);
+}
+.account__inline-input.account__tree-value {
+    color: var(--base-cream-100);
+}

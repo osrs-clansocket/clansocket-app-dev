@@ -1,0 +1,12 @@
+@media (width<=40rem) {
+    .teams__mode--overview {
+        row-gap: var(--sp-3);
+        grid-template: "list" auto "head" auto "chart" auto/1fr;
+    }
+    .teams__mode--overview .teams__list {
+        padding-block-end: var(--sp-3);
+        padding-inline-end: 0;
+        border-block-end: var(--border-dim);
+        border-inline-end: none;
+    }
+}

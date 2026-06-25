@@ -1,0 +1,12 @@
+export const CHARCODE_SPACE = 32;
+export const ASCII_CASE_OFFSET = 32;
+export const CHARCODE_HASH = 35;
+export const CHARCODE_DASH = 45;
+export const CHARCODE_DIGIT_0 = 48;
+export const CHARCODE_DIGIT_9 = 57;
+export const CHARCODE_UPPER_A = 65;
+export const CHARCODE_UPPER_F = 70;
+export const CHARCODE_UPPER_Z = 90;
+export const CHARCODE_LOWER_A = 97;
+export const CHARCODE_LOWER_F = 102;
+export const CHARCODE_LOWER_Z = 122;

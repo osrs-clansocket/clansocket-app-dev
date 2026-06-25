@@ -1,0 +1,17 @@
+/* B1: aggregator for voxlab page CSS. Imported lazily by voxlab-renderer.ts on
+   first mount so that routes which never reach the WebGL avatar path (or
+   non-voxlab clan-model-icon callers) don't pay for these styles. */
+@import "./voxlab-page.css";
+@import "./stage-page.css";
+@import "./picker-page.css";
+@import "./control-page.css";
+@import "./dropdown-page.css";
+@import "./footer-page.css";
+@import "./shell-page.css";
+@import "./modal-page.css";
+@import "./overlay-page.css";
+@import "./sidebar-page.css";
+@import "./tabs-page.css";
+@import "./presets-page.css";
+@import "./actions-page.css";
+@import "./timeline-page.css";

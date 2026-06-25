@@ -1,0 +1,11 @@
+.list-card {
+    inline-size: 100%;
+    min-inline-size: 0;
+}
+.list-card > .panel {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-block-size: 0;
+    overflow: hidden;
+}

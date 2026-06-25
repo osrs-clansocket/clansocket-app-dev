@@ -1,0 +1,36 @@
+.account__device-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sp-1) var(--sp-2);
+    grid-column: 1 / -1;
+    padding: var(--sp-1) var(--sp-1);
+    border: 0.0625rem solid var(--base-graphite-500);
+    border-radius: var(--radius-md);
+    font-size: var(--fs-2xs);
+    background: var(--base-graphite-800);
+    container-type: inline-size;
+}
+.account__device-row > .account__row-primary {
+    display: flex;
+    flex: 1 1 max-content;
+    align-items: center;
+    min-inline-size: 0;
+    overflow: hidden;
+}
+.account__device-row > .account__row-meta {
+    display: block;
+    flex: 0 1 auto;
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+@container (max-width: 22rem) {
+    .account__device-row .account__row-meta-prefix {
+        display: none;
+    }
+    .account__device-row .account__row-meta-date {
+        font-size: var(--fs-2xs);
+    }
+}

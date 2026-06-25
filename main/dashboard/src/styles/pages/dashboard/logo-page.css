@@ -1,0 +1,13 @@
+.dashboard__logo-link {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    block-size: 100%;
+    text-decoration: none;
+}
+.dashboard__logo {
+    inline-size: auto;
+    block-size: 100%;
+    max-block-size: var(--sp-6);
+    object-fit: contain;
+}

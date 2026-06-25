@@ -1,0 +1,236 @@
+.clans-manage__auto-hooks {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+    padding: var(--sp-2);
+}
+.clans-manage__auto-hooks-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+}
+.clans-manage__auto-hooks-empty {
+    padding: var(--sp-3);
+    font-size: var(--fs-2xs);
+    text-align: center;
+    color: var(--base-graphite-300);
+}
+.clans-manage__auto-hooks-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-1);
+    padding: var(--sp-2);
+    border: var(--sp-hairline) solid rgb(from var(--base-gold-500) r g b / 0.25);
+    border-radius: var(--radius-md);
+    background: linear-gradient(
+        160deg,
+        rgb(from var(--base-graphite-700) r g b / 0.5) 0%,
+        rgb(from var(--base-graphite-900) r g b / 0.7) 100%
+    );
+}
+.clans-manage__auto-hooks-card-header {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-1h);
+}
+.clans-manage__auto-hooks-card-header > .account__greeting-name-row {
+    flex: 1;
+    min-inline-size: 0;
+}
+.clans-manage__auto-hooks-card-delete {
+    padding: var(--sp-1);
+    border: none;
+    color: var(--base-ember-300);
+    background: transparent;
+    cursor: pointer;
+}
+.clans-manage__auto-hooks-card-delete:hover {
+    color: var(--base-ember-500);
+}
+.clans-manage__auto-hooks-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-1);
+}
+.clans-manage__auto-hooks-card-body-stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-1h);
+}
+.clans-manage__auto-hooks-card-row {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sp-1h);
+}
+.clans-manage__auto-hooks-card-value {
+    flex: 1 1 0;
+    min-inline-size: 0;
+}
+.clans-manage__auto-hooks-card-label {
+    flex-shrink: 0;
+    inline-size: 5rem;
+    font-size: var(--fs-3xs);
+    letter-spacing: var(--ls-snug);
+    text-transform: uppercase;
+    color: var(--base-graphite-300);
+}
+.clans-manage__auto-hooks-token-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-0);
+}
+.clans-manage__auto-hooks-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: var(--sp-1);
+}
+.clans-manage__auto-hooks-embed-toggle {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-1);
+}
+.clans-manage__auto-hooks-card-header .clans-manage__auto-hooks-card-label {
+    inline-size: auto;
+}
+.clans-manage__auto-hooks-card-header > .clans-manage__auto-hooks-embed-toggle {
+    gap: var(--sp-0h);
+}
+.clans-manage__auto-hooks-actions > .clans-manage__auto-hooks-embed-toggle {
+    margin-inline-end: auto;
+}
+.clans-manage__auto-hooks-embed-editor,
+.clans-manage__auto-hooks-overrides {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-1);
+    padding: var(--sp-1h);
+    border-radius: var(--radius-md);
+    background: rgb(from var(--base-graphite-900) r g b / 0.3);
+}
+.clans-manage__auto-hooks-embed-editor .voxlab__picker {
+    flex: 1 1 0;
+    justify-content: flex-start;
+}
+.clans-manage__auto-hooks-embed-editor .voxlab__picker-swatch {
+    inline-size: 100%;
+    block-size: var(--sp-8);
+}
+.clans-manage__auto-hooks-emoji-picker {
+    padding-block: var(--sp-1);
+}
+.clans-manage__auto-hooks-emoji-grid {
+    display: grid;
+    gap: var(--sp-0);
+    grid-template-columns: repeat(auto-fill, minmax(2rem, 1fr));
+    max-block-size: 8rem;
+    overflow-block: auto;
+    padding: var(--sp-0);
+    border-radius: var(--radius-md);
+    background: rgb(from var(--base-graphite-900) r g b / 0.3);
+}
+.clans-manage__auto-hooks-emoji-cell {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    aspect-ratio: 1;
+    padding: var(--sp-0);
+    border: var(--sp-hairline) solid transparent;
+    border-radius: var(--radius-md);
+    font-size: var(--fs-base);
+    background: transparent;
+    cursor: pointer;
+}
+.clans-manage__auto-hooks-emoji-cell:hover {
+    border-color: rgb(from var(--base-gold-500) r g b / 0.35);
+    background: rgb(from var(--base-gold-500) r g b / 0.15);
+}
+.clans-manage__auto-hooks-emoji-cell-img {
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+}
+.clans-manage__auto-hooks-preview {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-1);
+    padding: var(--sp-2);
+    border-radius: var(--radius-md);
+    background: rgb(from var(--base-graphite-800) r g b / 0.5);
+}
+.clans-manage__auto-hooks-preview-username {
+    display: block;
+    padding-block-end: var(--sp-0);
+    font-size: var(--fs-2xs);
+    font-weight: var(--fw-semi);
+    color: var(--base-cream-100);
+}
+.clans-manage__auto-hooks-preview-content {
+    margin: 0;
+    font-size: var(--fs-2xs);
+    line-height: var(--lh-normal);
+    white-space: pre-wrap;
+    color: var(--base-cream-100);
+}
+.clans-manage__auto-hooks-preview-embed {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-0);
+    padding: var(--sp-1h);
+    padding-inline-start: calc(var(--sp-1h) + 0.25rem);
+    border-radius: var(--radius-md);
+    background: rgb(from var(--base-graphite-700) r g b / 0.6);
+}
+.clans-manage__auto-hooks-preview-embed-bar {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    inline-size: 0.25rem;
+    border-end-start-radius: var(--radius-md);
+    border-start-start-radius: var(--radius-md);
+}
+.clans-manage__auto-hooks-preview-embed-title {
+    margin: 0;
+    font-size: var(--fs-2xs);
+    font-weight: var(--fw-semi);
+    color: var(--base-gold-300);
+}
+.clans-manage__auto-hooks-preview-embed-desc {
+    margin: 0;
+    font-size: var(--fs-3xs);
+    line-height: var(--lh-normal);
+    white-space: pre-wrap;
+    color: var(--base-cream-100);
+}
+.clans-manage__auto-hooks-preview-md-text {
+    font-size: var(--fs-3xs);
+}
+.clans-manage__auto-hooks-preview-md-bold {
+    font-size: var(--fs-3xs);
+    font-weight: 700;
+}
+.clans-manage__auto-hooks-preview-md-italic {
+    font-size: var(--fs-3xs);
+    font-style: italic;
+}
+.clans-manage__auto-hooks-preview-md-code {
+    padding: 0 var(--sp-1);
+    border-radius: var(--radius-md);
+    font-family: var(--font-mono);
+    font-size: var(--fs-3xs);
+    background: rgb(from var(--base-graphite-900) r g b / 0.6);
+}
+.clans-manage__auto-hooks-preview-md-link {
+    font-size: var(--fs-3xs);
+    text-decoration: underline;
+    color: var(--base-gold-300);
+}
+.clans-manage__auto-hooks-preview-md-br {
+    font-size: var(--fs-3xs);
+}
+.clans-manage__auto-hooks-preview-pane-label {
+    font-size: var(--fs-3xs);
+}
+.clans-manage__auto-hooks-emoji-picker-variables-label {
+    font-size: var(--fs-3xs);
+}

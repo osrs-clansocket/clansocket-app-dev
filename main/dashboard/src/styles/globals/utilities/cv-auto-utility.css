@@ -1,0 +1,42 @@
+/* B2: content-visibility: auto — browser skips layout + paint for offscreen
+ * subtrees. Combine with contain-intrinsic-size so layout doesn't shift when
+ * the element scrolls into view.
+ *
+ * Apply to:
+ *   - long lists of items (clan list, member list, history rows)
+ *   - stacked sections in long pages (dashboard panels)
+ *   - tab panels (multiple mounted but one visible)
+ *
+ * DO NOT apply to:
+ *   - elements with effects that need to fire on mount (animations, intersection-triggered fx)
+ *   - elements whose intrinsic size changes dramatically with content
+ *   - elements that need to be measured by JS while offscreen
+ */
+
+/* Universal — browser chooses size hint based on content. Best for variable-
+ * sized lists where rows differ in height. */
+.cv-auto {
+    content-visibility: auto;
+}
+
+/* Row-height hint — for lists of relatively uniform-height rows. The
+ * 4rem ≈ 64px placeholder matches a typical dense list row.
+ */
+.cv-auto--row {
+    contain-intrinsic-size: auto 4rem;
+    content-visibility: auto;
+}
+
+/* Panel-height hint — for stacked page panels with ~400px typical height.
+ * Browser shows a placeholder this tall until the panel scrolls into view.
+ */
+.cv-auto--panel {
+    contain-intrinsic-size: auto 25rem;
+    content-visibility: auto;
+}
+
+/* Card-height hint — for card grids with ~12rem typical card height. */
+.cv-auto--card {
+    contain-intrinsic-size: auto 12rem;
+    content-visibility: auto;
+}

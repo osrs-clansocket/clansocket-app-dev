@@ -1,0 +1,218 @@
+.tree {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-hairline);
+    min-block-size: 0;
+    overflow-block: auto;
+    padding: var(--sp-1);
+}
+
+.tree__node {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-hairline);
+}
+
+.tree__folder,
+.tree__leaf-body {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-1);
+    box-sizing: border-box;
+    inline-size: 100%;
+    padding: var(--sp-0) var(--sp-1);
+    border: var(--bw-hairline) solid transparent;
+    border-radius: var(--radius-md);
+    font-family: var(--font-body);
+    font-size: var(--fs-2xs);
+    line-height: var(--lh-flat);
+    text-align: start;
+    color: var(--base-cream-50);
+    background: transparent;
+    cursor: pointer;
+}
+
+.tree__folder {
+    font-family: var(--font-heading);
+    letter-spacing: var(--ls-snug);
+    text-transform: lowercase;
+    color: var(--base-gold-300);
+}
+
+.tree__folder:hover,
+.tree__leaf-body:hover {
+    color: var(--base-gold-300);
+    background: var(--base-graphite-800);
+}
+
+.tree__leaf-row,
+.tree__folder-row {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-1);
+    inline-size: 100%;
+}
+
+.tree__leaf-row > .tree__leaf-body,
+.tree__folder-row > .tree__folder {
+    flex: 1;
+    min-inline-size: 0;
+}
+
+.tree__leaf-actions,
+.tree__folder-actions {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: var(--sp-1);
+    opacity: 0;
+    transition: opacity var(--dur-fast) var(--ease-out);
+}
+
+.tree__leaf-row:hover .tree__leaf-actions,
+.tree__leaf-row:focus-within .tree__leaf-actions,
+.tree__folder-row:hover .tree__folder-actions,
+.tree__folder-row:focus-within .tree__folder-actions {
+    opacity: 1;
+}
+
+.tree__leaf-action {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: var(--sp-0) var(--sp-1);
+    border: var(--bw-hairline) solid transparent;
+    border-radius: var(--radius-md);
+    font-size: var(--fs-2xs);
+    color: var(--base-graphite-200);
+    background: transparent;
+    cursor: pointer;
+}
+
+.tree__leaf-action:hover {
+    color: var(--base-gold-300);
+    background: var(--base-graphite-800);
+}
+
+.tree__leaf-action.is-danger:hover {
+    color: var(--base-ember-200);
+}
+
+.tree__children {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-hairline);
+    margin-inline-start: var(--sp-2);
+    padding-inline-start: var(--sp-3);
+    border-inline-start: var(--bw-hairline) solid rgb(from var(--base-gold-500) r g b / 0.35);
+}
+
+.tree__leaf-body.is-active {
+    border-color: var(--base-gold-500);
+    color: var(--base-gold-300);
+    background: rgb(from var(--base-gold-500) r g b / 0.18);
+}
+
+.tree__leaf-body.is-empty {
+    color: var(--base-graphite-300);
+    opacity: var(--opacity-low);
+    cursor: not-allowed;
+}
+
+.tree__leaf-body.is-empty:hover {
+    color: var(--base-graphite-300);
+    background: transparent;
+}
+
+.tree--comfortable {
+    gap: var(--sp-1);
+    padding: var(--sp-2);
+}
+
+.tree__icon {
+    flex: 0 0 auto;
+    font-size: var(--fs-2xs);
+}
+
+.tree--comfortable .tree__folder,
+.tree--comfortable .tree__leaf-body {
+    gap: var(--sp-2);
+    padding: var(--sp-1) var(--sp-2);
+    font-size: var(--fs-xs);
+}
+
+.tree--comfortable .tree__icon {
+    font-size: var(--fs-xs);
+}
+
+.tree--comfortable .tree__leaf-action {
+    padding: var(--sp-0) var(--sp-1);
+    font-size: var(--fs-xs);
+}
+
+.tree__icon[src] {
+    inline-size: 1.5em;
+    block-size: 1.5em;
+    object-fit: contain;
+}
+
+.tree__chevron {
+    flex: 0 0 auto;
+    font-size: var(--fs-3xs);
+    color: var(--base-graphite-300);
+}
+
+.tree__label {
+    flex: 1;
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.tree__label-input {
+    flex: 1;
+    min-inline-size: 0;
+    padding: 0 var(--sp-1);
+    border: var(--bw-hairline) solid var(--base-gold-500);
+    border-radius: var(--radius-md);
+    outline: none;
+    font: inherit;
+    color: var(--base-cream-50);
+    background: transparent;
+}
+
+.tree__label-input:focus {
+    border-color: var(--base-gold-300);
+}
+
+.tree .is-dragging {
+    opacity: var(--opacity-faint);
+}
+
+.tree .is-drop-into {
+    border-radius: var(--radius-md);
+    background: rgb(from var(--base-gold-500) r g b / var(--opacity-faint));
+}
+
+.tree .is-drop-before,
+.tree .is-drop-after {
+    position: relative;
+}
+
+.tree .is-drop-before::before,
+.tree .is-drop-after::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    block-size: var(--sp-hairline);
+    background: var(--base-gold-300);
+}
+
+.tree .is-drop-before::before {
+    inset-block-start: 0;
+}
+
+.tree .is-drop-after::after {
+    inset-block-end: 0;
+}

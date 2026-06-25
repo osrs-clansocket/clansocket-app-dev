@@ -1,0 +1,19 @@
+.scroll-thin {
+    scrollbar-color: var(--base-graphite-600) transparent;
+    scrollbar-width: thin;
+}
+.scroll-thin::-webkit-scrollbar {
+    display: block;
+    inline-size: 0.25rem;
+    block-size: 0.25rem;
+}
+.scroll-thin::-webkit-scrollbar-track {
+    background: transparent;
+}
+.scroll-thin::-webkit-scrollbar-thumb {
+    border-radius: var(--radius-md);
+    background: var(--base-graphite-600);
+}
+.scroll-thin::-webkit-scrollbar-thumb:hover {
+    background: var(--base-graphite-500);
+}

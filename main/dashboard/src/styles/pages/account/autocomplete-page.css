@@ -1,0 +1,69 @@
+.account__autocomplete {
+    display: flex;
+    flex-direction: column;
+    max-block-size: calc(var(--sp-16) * 2);
+    overflow-block: auto;
+    margin-block-start: var(--sp-0);
+    border: var(--border-hairline-active);
+    border-radius: var(--radius-md);
+    background: var(--base-graphite-900);
+}
+.account__autocomplete-row {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-1);
+    inline-size: 100%;
+    padding: var(--sp-1) var(--sp-1);
+    border: none;
+    text-align: start;
+    color: var(--base-cream-100);
+    background: transparent;
+    cursor: pointer;
+}
+.account__autocomplete-row:hover {
+    background: var(--base-graphite-500);
+}
+.account__autocomplete-check {
+    flex: 0 0 auto;
+    inline-size: var(--icon-md);
+    block-size: var(--icon-md);
+    pointer-events: none;
+}
+.account__autocomplete-check:checked {
+    background-size: var(--icon-sm), cover;
+}
+.account__autocomplete-avatar {
+    display: inline-flex;
+    flex: 0 0 auto;
+    justify-content: center;
+    align-items: center;
+    inline-size: var(--icon-md);
+    block-size: var(--icon-md);
+    color: var(--base-cream-100);
+}
+.account__autocomplete-avatar-img {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+}
+.account__autocomplete-avatar-glyph {
+    font-size: var(--icon-md);
+    line-height: var(--lh-tight);
+}
+.account__autocomplete-name {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.account__autocomplete-dot {
+    display: inline-block;
+    flex: 0 0 auto;
+    inline-size: var(--sp-2);
+    block-size: var(--sp-2);
+    border: var(--border-hairline-active);
+    border-radius: var(--radius-pill);
+    background: var(--clan-accent, transparent);
+}

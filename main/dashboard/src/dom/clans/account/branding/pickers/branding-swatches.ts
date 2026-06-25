@@ -1,0 +1,18 @@
+export const BRANDING_SWATCHES: readonly string[] = [
+    "#e0c96e",
+    "#c9a84c",
+    "#f5e6c3",
+    "#8b1a1a",
+    "#c92626",
+    "#ff4d4d",
+    "#3a1a14",
+    "#5a3a36",
+    "#2e7d32",
+    "#4caf50",
+    "#1976d2",
+    "#00bcd4",
+    "#7c4dff",
+    "#ff7a00",
+    "#e91e63",
+    "#ffd700",
+];

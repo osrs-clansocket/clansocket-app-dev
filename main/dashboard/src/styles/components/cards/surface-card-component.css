@@ -1,0 +1,14 @@
+.surface-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-1);
+    min-inline-size: 0;
+    min-block-size: 11rem;
+    padding: var(--sp-1);
+    border: 0.0625rem solid var(--base-graphite-500);
+    border-radius: var(--radius-md);
+    background: var(--base-graphite-800);
+}
+.surface-card--auto {
+    min-block-size: 0;
+}

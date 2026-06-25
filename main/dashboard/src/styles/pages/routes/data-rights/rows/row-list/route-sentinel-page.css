@@ -1,0 +1,4 @@
+.route-data-rights__sentinel {
+    flex-shrink: 0;
+    block-size: var(--sp-hairline);
+}

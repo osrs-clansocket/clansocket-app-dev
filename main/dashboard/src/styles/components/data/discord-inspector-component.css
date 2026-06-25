@@ -1,0 +1,41 @@
+.discord-inspector__image-preview {
+    display: block;
+    inline-size: auto;
+    max-inline-size: 8rem;
+    block-size: auto;
+    max-block-size: 8rem;
+    border: var(--bw-hairline) solid var(--base-graphite-500);
+    border-radius: var(--radius-md);
+    background: rgb(from var(--base-graphite-800) r g b / 0.3);
+    object-fit: contain;
+}
+.discord-inspector__perms-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-hairline);
+    max-block-size: 20rem;
+    overflow-block: auto;
+    padding: var(--sp-1);
+    border: var(--bw-hairline) solid var(--base-graphite-500);
+    border-radius: var(--radius-md);
+    background: rgb(from var(--base-graphite-800) r g b / 0.3);
+}
+.discord-inspector__perms-row {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-1);
+    padding: var(--sp-hairline) var(--sp-1);
+    font-size: var(--fs-3xs);
+    color: var(--base-graphite-200);
+}
+.discord-inspector__perms-row-label {
+    flex: 1;
+    min-inline-size: 0;
+}
+.discord-inspector__perms-row-state {
+    flex-shrink: 0;
+    inline-size: 1.5rem;
+    font-family: var(--font-data);
+    text-align: center;
+    color: var(--base-gold-300);
+}

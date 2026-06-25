@@ -1,0 +1,296 @@
+.clans-manage__wise-old-man {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-3);
+    block-size: 100%;
+    min-block-size: 0;
+    padding: var(--sp-2);
+}
+.clans-manage__wise-old-man-head {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-1h);
+}
+.clans-manage__wise-old-man-brand-icon {
+    inline-size: var(--icon-lg);
+    block-size: var(--icon-lg);
+}
+.clans-manage__wise-old-man-title {
+    margin: 0;
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-semi);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    color: var(--base-gold-200);
+}
+.clans-manage__wise-old-man-loading {
+    margin: 0;
+    font-size: var(--fs-xs);
+    font-style: italic;
+    color: var(--base-graphite-300);
+}
+.clans-manage__wise-old-man-hint {
+    margin: 0;
+    font-size: var(--fs-xs);
+    color: var(--base-graphite-300);
+}
+.clans-manage__wise-old-man-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-1h);
+}
+.clans-manage__wise-old-man-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-0h);
+}
+.clans-manage__wise-old-man-label {
+    font-size: var(--fs-2xs);
+    letter-spacing: var(--ls-snug);
+    text-transform: uppercase;
+    color: var(--base-graphite-300);
+}
+.clans-manage__wise-old-man-submit {
+    inline-size: 100%;
+    margin-block-start: var(--sp-1);
+}
+.clans-manage__wise-old-man-status-line {
+    margin: 0;
+    font-size: var(--fs-2xs);
+    font-style: italic;
+    color: var(--base-graphite-300);
+}
+.clans-manage__wise-old-man-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-1);
+    padding: var(--sp-2);
+    border: var(--border-dim);
+    border-radius: var(--radius-md);
+    background: linear-gradient(
+        160deg,
+        rgb(from var(--base-graphite-700) r g b / 0.35) 0%,
+        rgb(from var(--base-graphite-900) r g b / 0.55) 100%
+    );
+}
+.clans-manage__wise-old-man-section-title {
+    margin: 0;
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semi);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    color: var(--base-gold-200);
+}
+.clans-manage__wise-old-man-identity-name {
+    margin: 0;
+    font-size: var(--fs-md);
+    font-weight: var(--fw-semi);
+    color: var(--base-gold-300);
+}
+.clans-manage__wise-old-man-identity-desc {
+    margin: 0;
+    font-size: var(--fs-xs);
+    color: var(--base-graphite-200);
+}
+.clans-manage__wise-old-man-meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--sp-1) var(--sp-3);
+    inline-size: 100%;
+}
+.clans-manage__wise-old-man-meta-chip {
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--sp-1);
+}
+.clans-manage__wise-old-man-meta-label {
+    font-size: var(--fs-2xs);
+    letter-spacing: var(--ls-snug);
+    text-transform: uppercase;
+    color: var(--base-graphite-300);
+}
+.clans-manage__wise-old-man-meta-value {
+    font-family: var(--font-data);
+    font-size: var(--fs-xs);
+    font-variant-numeric: tabular-nums;
+    color: var(--base-gold-300);
+}
+.clans-manage__wise-old-man-verified {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--sp-0h) var(--sp-1);
+    border: var(--sp-hairline) solid rgb(from var(--base-forest-300) r g b / 0.4);
+    border-radius: var(--radius-md);
+    font-size: var(--fs-2xs);
+    letter-spacing: var(--ls-snug);
+    text-transform: uppercase;
+    color: var(--base-forest-100);
+    background-color: rgb(from var(--base-forest-300) r g b / 0.18);
+}
+.clans-manage__wise-old-man-external-link {
+    align-self: flex-start;
+    padding-block-end: var(--sp-0);
+    border-block-end: var(--sp-hairline) solid rgb(from var(--base-gold-300) r g b / 0.4);
+    font-size: var(--fs-xs);
+    text-decoration: none;
+    color: var(--base-gold-200);
+}
+.clans-manage__wise-old-man-external-link:hover {
+    color: var(--base-gold-100);
+    border-block-end-color: var(--base-gold-200);
+}
+.clans-manage__wise-old-man-members {
+    display: grid;
+    gap: var(--sp-1);
+    grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+    max-block-size: 16rem;
+    overflow-block: auto;
+    background: transparent;
+}
+.clans-manage__wise-old-man-member-row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-0h);
+    min-inline-size: 0;
+    padding: var(--sp-1);
+    border: var(--sp-hairline) solid rgb(from var(--base-gold-500) r g b / 0.1);
+    border-radius: var(--radius-md);
+    background: rgb(from var(--base-graphite-900) r g b / 0.3);
+}
+.clans-manage__wise-old-man-member-role {
+    font-size: var(--fs-2xs);
+    letter-spacing: var(--ls-snug);
+    text-transform: uppercase;
+    color: var(--base-graphite-300);
+}
+.clans-manage__wise-old-man-member-name {
+    overflow: hidden;
+    font-family: var(--font-body);
+    font-size: var(--fs-xs);
+    text-overflow: ellipsis;
+    color: var(--base-cream-50);
+}
+.clans-manage__wise-old-man-member-meta {
+    font-family: var(--font-data);
+    font-size: var(--fs-2xs);
+    font-variant-numeric: tabular-nums;
+    color: var(--base-graphite-300);
+}
+.clans-manage__wise-old-man-internal {
+    display: grid;
+    gap: var(--sp-1);
+    grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+    background: transparent;
+}
+.clans-manage__wise-old-man-internal-row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-0h);
+    min-inline-size: 0;
+    padding: var(--sp-1);
+    border: var(--sp-hairline) solid rgb(from var(--base-gold-500) r g b / 0.1);
+    border-radius: var(--radius-md);
+    background: rgb(from var(--base-graphite-900) r g b / 0.3);
+}
+.clans-manage__wise-old-man-internal-label {
+    font-size: var(--fs-2xs);
+    letter-spacing: var(--ls-snug);
+    text-transform: uppercase;
+    color: var(--base-graphite-300);
+}
+.clans-manage__wise-old-man-internal-value {
+    font-family: var(--font-data);
+    font-size: var(--fs-xs);
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+    color: var(--base-graphite-200);
+}
+.clans-manage__wise-old-man-internal-row .rsn-tag__name,
+.clans-manage__wise-old-man-member-row .rsn-tag__name {
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semi);
+    color: var(--rank-accent, var(--base-graphite-200));
+}
+.clans-manage__wise-old-man-actions {
+    display: flex;
+    gap: var(--sp-1);
+    margin-block-start: var(--sp-1);
+}
+.clans-manage__wise-old-man-action-host {
+    display: flex;
+}
+.clans-manage__wise-old-man-action-host > .btn {
+    flex: 1 1 0;
+    inline-size: 100%;
+}
+.clans-manage__wise-old-man-actions > .btn,
+.clans-manage__wise-old-man-actions > .clans-manage__wise-old-man-action-host {
+    flex: 1 1 0;
+    min-inline-size: 0;
+}
+.clans-manage__wise-old-man-feedback {
+    margin: 0;
+    font-size: var(--fs-xs);
+    font-style: italic;
+    color: var(--base-gold-200);
+}
+.clans-manage__wise-old-man-fused {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: 0;
+    min-block-size: 0;
+    overflow: hidden;
+    border: var(--border-dim);
+    border-radius: var(--radius-md);
+    background: linear-gradient(
+        160deg,
+        rgb(from var(--base-graphite-700) r g b / 0.35) 0%,
+        rgb(from var(--base-graphite-900) r g b / 0.55) 100%
+    );
+}
+.clans-manage__wise-old-man-fused > .clans-manage__wise-old-man-section {
+    border: none;
+    border-radius: 0;
+    background: transparent;
+}
+.clans-manage__wise-old-man-fused > .clans-manage__wise-old-man-actions {
+    gap: 0;
+    margin-block-start: 0;
+    padding: 0;
+    border-block: var(--sp-hairline) solid rgb(from var(--base-gold-500) r g b / 0.15);
+    background: rgb(from var(--base-graphite-900) r g b / 0.25);
+}
+.clans-manage__wise-old-man-fused .btn {
+    border: none;
+    border-radius: 0;
+}
+.clans-manage__wise-old-man-fused .clans-manage__wise-old-man-action-host {
+    border: none;
+    border-radius: 0;
+}
+.clans-manage__wise-old-man-fused .btn:not(:first-child),
+.clans-manage__wise-old-man-fused .clans-manage__wise-old-man-action-host:not(:first-child) {
+    border-inline-start: var(--sp-hairline) solid rgb(from var(--base-gold-500) r g b / 0.12);
+}
+.clans-manage__wise-old-man-fused > .clans-manage__wise-old-man-feedback {
+    padding: var(--sp-0h) var(--sp-2) var(--sp-1);
+    border-block-end: var(--sp-hairline) solid rgb(from var(--base-gold-500) r g b / 0.15);
+    background: rgb(from var(--base-graphite-900) r g b / 0.25);
+}
+.clans-manage__wise-old-man-fused > .clans-manage__wise-old-man-section:last-child {
+    flex: 1 1 auto;
+    min-block-size: 0;
+    overflow: hidden;
+}
+.clans-manage__wise-old-man-fused .clans-manage__wise-old-man-members {
+    flex: 1 1 auto;
+    min-block-size: 0;
+    max-block-size: none;
+}
+
+.clans-manage__wise-old-man-linker-value {
+    font-size: var(--fs-sm);
+}

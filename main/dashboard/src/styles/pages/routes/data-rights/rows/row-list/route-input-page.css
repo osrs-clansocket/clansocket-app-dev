@@ -1,0 +1,17 @@
+.route-data-rights__input {
+    box-sizing: border-box;
+    inline-size: auto;
+    block-size: 0.9375rem;
+    min-block-size: 0;
+    padding: 0 var(--sp-1);
+    border: var(--border-hairline-active);
+    border-radius: var(--radius-md);
+    font-family: var(--font-data);
+    font-size: var(--fs-3xs);
+    line-height: var(--lh-flat);
+    color: var(--base-cream-100);
+    background: var(--base-graphite-900);
+    box-shadow: none;
+    backdrop-filter: none;
+    appearance: none;
+}

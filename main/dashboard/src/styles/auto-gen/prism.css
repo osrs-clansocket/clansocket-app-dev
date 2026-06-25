@@ -1,0 +1,105 @@
+[class*="language-"] {
+    font-family: var(--font-mono);
+    font-size: var(--fs-sm);
+    line-height: var(--lh-snug);
+    word-spacing: normal;
+    text-align: left;
+    text-shadow: none;
+    white-space: pre;
+    word-break: normal;
+    overflow-wrap: normal;
+    color: var(--base-cream-100);
+    direction: ltr;
+    hyphens: none;
+    tab-size: 4;
+}
+.prism-block {
+    overflow: auto;
+    margin: var(--sp-2) 0;
+    padding: var(--sp-3) var(--sp-4);
+    border: var(--sp-hairline) solid rgb(from var(--base-gold-500) r g b / 0.15);
+    border-left: var(--sp-0h) solid var(--base-gold-500);
+    border-radius: var(--radius-md);
+    background: var(--base-graphite-900);
+    box-shadow: var(--shadow-sm);
+}
+.prism-inline {
+    padding: var(--sp-hairline) var(--sp-1h);
+    border-radius: var(--radius-md);
+    font-size: var(--fs-2xs);
+    white-space: normal;
+    color: var(--base-gold-200);
+    background: var(--base-graphite-800);
+}
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+    font-style: italic;
+    color: var(--base-graphite-300);
+}
+.token.punctuation {
+    color: var(--base-silver-200);
+}
+.token.punctuation.brace {
+    font-weight: var(--fw-semi);
+    color: var(--base-silver-200);
+}
+.token.namespace {
+    opacity: var(--opacity-high);
+}
+.token.keyword,
+.token.important,
+.token.rule,
+.token.atrule {
+    font-weight: var(--fw-semi);
+    color: var(--base-gold-300);
+}
+.token.builtin,
+.token.class-name,
+.token.constant,
+.token.symbol {
+    color: var(--base-gold-200);
+}
+.token.function,
+.token.function-variable {
+    color: var(--base-gold-400);
+}
+.token.string,
+.token.char,
+.token.attr-value,
+.token.url,
+.token.entity {
+    color: var(--base-cream-100);
+}
+.token.number,
+.token.boolean,
+.token.hexcode {
+    color: var(--base-gold-500);
+}
+.token.operator,
+.token.tag,
+.token.selector {
+    color: var(--base-silver-200);
+}
+.token.property,
+.token.attr-name,
+.token.variable,
+.token.parameter {
+    color: var(--base-gold-200);
+}
+.token.regex {
+    color: var(--base-silver-200);
+}
+.token.inserted {
+    color: var(--base-forest-100);
+}
+.token.deleted {
+    color: var(--base-ember-100);
+}
+.token.bold {
+    font-weight: var(--fw-bold);
+}
+.token.italic {
+    font-style: italic;
+}

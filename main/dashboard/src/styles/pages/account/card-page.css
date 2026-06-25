@@ -1,0 +1,16 @@
+.account__card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-1);
+    padding: var(--sp-2);
+    border: 0.0625rem solid var(--base-graphite-500);
+    border-radius: var(--radius-md);
+    background: var(--base-graphite-900);
+}
+.account__card--memory {
+    gap: var(--sp-1);
+    min-inline-size: 0;
+}
+.account__card[hidden] {
+    display: none;
+}

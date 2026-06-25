@@ -1,0 +1,23 @@
+.teams-scoreboard {
+    display: block;
+}
+.teams-scoreboard__panel {
+    padding: var(--sp-3);
+}
+.teams-scoreboard__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--sp-2);
+    margin-block-end: var(--sp-3);
+}
+.teams-scoreboard__caption {
+    flex: 1 1 auto;
+    font-size: var(--fs-2xs);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    color: var(--base-graphite-300);
+}
+.teams-scoreboard__chart-wrap {
+    inline-size: 100%;
+}

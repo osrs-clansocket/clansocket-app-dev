@@ -1,0 +1,12 @@
+.clans-manage__plugin-data {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-block-size: 0;
+}
+.clans-manage__plugin-data-loading {
+    padding: var(--sp-4);
+    font-size: var(--fs-xs);
+    font-style: italic;
+    color: var(--base-graphite-300);
+}

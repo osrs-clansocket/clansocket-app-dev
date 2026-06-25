@@ -1,0 +1,6 @@
+.account__empty {
+    margin: 0;
+    font-size: var(--fs-2xs);
+    white-space: pre-line;
+    color: var(--base-graphite-300);
+}

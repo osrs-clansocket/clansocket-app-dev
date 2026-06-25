@@ -1,0 +1,11 @@
+.clans-manage-shell {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: var(--sp-4);
+    min-block-size: 0;
+    overflow-block: auto;
+    padding: var(--sp-4) var(--sp-3);
+    background: var(--gradient-surface);
+    backdrop-filter: blur(var(--blur-md)) saturate(1.3);
+}

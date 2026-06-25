@@ -1,0 +1,201 @@
+.voxlab__timeline-center-column {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-inline-size: 0;
+    overflow: hidden;
+}
+.voxlab__timeline-center-column .voxlab__stage {
+    position: relative;
+    flex: 1;
+    min-block-size: 0;
+}
+.voxlab__timeline-resizer {
+    display: none;
+    flex: 0 0 var(--sp-1);
+    background: var(--clr-border-medium);
+    transition: background var(--dur-fast) var(--ease-out);
+    cursor: ns-resize;
+    touch-action: none;
+}
+.voxlab__timeline-resizer:hover {
+    background: var(--base-gold-500);
+}
+.voxlab__timeline-panel {
+    display: none;
+    flex-direction: column;
+    flex-grow: 0;
+    flex-shrink: 0;
+    gap: var(--sp-2);
+    box-sizing: border-box;
+    inline-size: 100%;
+    min-inline-size: 0;
+    overflow-block: auto;
+    overflow-inline: hidden;
+    padding: var(--sp-3) var(--sp-6) var(--sp-4);
+    border-block-start: var(--bw-hairline) solid transparent;
+    background: var(--base-graphite-800);
+    border-image: linear-gradient(90deg, transparent, rgb(from var(--base-gold-500) r g b / 0.4) 50%, transparent) 1;
+    scrollbar-color: rgb(from var(--base-gold-500) r g b / 0.35) transparent;
+    scrollbar-width: thin;
+}
+.voxlab__timeline-center-column[data-timeline-active="true"] .voxlab__timeline-resizer {
+    display: block;
+}
+.voxlab__timeline-center-column[data-timeline-active="true"] .voxlab__timeline-panel {
+    display: flex;
+}
+.voxlab__timeline-panel-transport {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: var(--sp-2);
+    box-sizing: border-box;
+    inline-size: 100%;
+    min-inline-size: 0;
+}
+.voxlab__timeline-panel-buttons {
+    display: flex;
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: var(--sp-1h);
+    min-inline-size: 0;
+}
+.voxlab__timeline-panel-btn {
+    display: inline-flex;
+    flex: 0 0 auto;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    min-inline-size: var(--sp-8);
+    block-size: var(--sp-8);
+    padding: 0 var(--sp-2);
+    border: 0.0625rem solid rgb(from var(--base-gold-500) r g b / 0.55);
+    border-radius: var(--radius-md);
+    font-family: var(--font-body);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semi);
+    line-height: var(--lh-flat);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    color: var(--base-gold-200);
+    background: rgb(from var(--base-gold-500) r g b / 0.14);
+    transition:
+        background-color var(--dur-base) var(--ease-out),
+        border-color var(--dur-base) var(--ease-out);
+    cursor: pointer;
+}
+.voxlab__timeline-panel-btn:hover,
+.voxlab__timeline-panel-btn:focus-visible {
+    border-color: rgb(from var(--base-gold-500) r g b / 0.75);
+    outline: none;
+    background: rgb(from var(--base-gold-500) r g b / 0.22);
+}
+.voxlab__timeline-panel-btn .factory-svg {
+    display: block;
+    inline-size: var(--icon-md);
+    block-size: var(--icon-md);
+}
+.voxlab__timeline-panel-btn--loop[data-active="true"] {
+    border-color: var(--base-gold-200);
+    background: rgb(from var(--base-gold-500) r g b / 0.35);
+}
+.voxlab__timeline-panel-readout {
+    flex: 1 1 auto;
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    text-align: end;
+    color: var(--base-graphite-300);
+}
+.voxlab__timeline-panel-scrubber {
+    display: block;
+    flex: 0 0 auto;
+    box-sizing: border-box;
+    inline-size: 100%;
+    min-inline-size: 0;
+    max-inline-size: 100%;
+    margin: 0;
+}
+.voxlab__timeline-panel-markers {
+    position: relative;
+    flex: 0 0 auto;
+    box-sizing: border-box;
+    inline-size: 100%;
+    block-size: var(--sp-3);
+    margin: 0;
+}
+.voxlab__timeline-panel-marker {
+    position: absolute;
+    inset-block-start: 0.0625rem;
+    inset-inline-start: 0;
+    z-index: var(--z-raised);
+    inline-size: var(--sp-2h);
+    block-size: var(--sp-2h);
+    margin: 0;
+    padding: 0;
+    border: 0.0625rem solid rgb(from var(--base-gold-500) r g b / 0.8);
+    border-radius: var(--radius-pill);
+    background: var(--base-gold-200);
+    box-shadow: var(--shadow-elev-1);
+    transform: translateX(-50%);
+    transition:
+        transform var(--dur-fast) var(--ease-out),
+        background var(--dur-fast) var(--ease-out);
+    cursor: grab;
+    touch-action: none;
+}
+.voxlab__timeline-panel-marker:hover,
+.voxlab__timeline-panel-marker:focus-visible {
+    outline: none;
+    background: var(--base-cream-100);
+    transform: translateX(-50%) scale(1.4);
+}
+.voxlab__timeline-panel-keyframe-actions {
+    display: flex;
+    gap: 0;
+    margin-block-start: var(--sp-1);
+}
+.voxlab__timeline-panel-keyframe-btn {
+    flex: 1;
+    padding: var(--sp-1) var(--sp-1h);
+    border: 0.0625rem solid var(--clr-border-medium);
+    font-family: var(--font-body);
+    font-size: var(--fs-2xs);
+    font-weight: var(--fw-semi);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    color: var(--base-graphite-300);
+    background: transparent;
+    transition:
+        background var(--dur-fast) var(--ease-out),
+        color var(--dur-fast) var(--ease-out),
+        border-color var(--dur-fast) var(--ease-out);
+    cursor: pointer;
+    border-inline-end-width: 0;
+}
+.voxlab__timeline-panel-keyframe-btn:last-child {
+    border-inline-end-width: 0.0625rem;
+}
+.voxlab__timeline-panel-keyframe-btn:hover,
+.voxlab__timeline-panel-keyframe-btn:focus-visible {
+    border-color: rgb(from var(--base-gold-500) r g b / 0.55);
+    outline: none;
+    color: var(--base-gold-200);
+    background: rgb(from var(--base-gold-500) r g b / 0.1);
+}
+.voxlab__timeline-panel-keyframe-btn--danger {
+    color: rgb(from var(--base-ember-300) r g b / 0.8);
+}
+.voxlab__timeline-panel-keyframe-btn--danger:hover,
+.voxlab__timeline-panel-keyframe-btn--danger:focus-visible {
+    border-color: rgb(from var(--base-ember-300) r g b / 0.6);
+    color: var(--base-ember-300);
+    background: rgb(from var(--base-ember-300) r g b / 0.12);
+}
+.voxlab__timeline-panel-marker[data-dragging="true"] {
+    background: var(--base-cream-100);
+    transform: translateX(-50%) scale(1.4);
+    transition: none;
+    cursor: grabbing;
+}

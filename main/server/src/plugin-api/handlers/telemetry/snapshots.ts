@@ -1,0 +1,25 @@
+import { upsertCatalog } from "../../../database/index.js";
+import { EVENT_COMBAT_ACHIEVEMENTS_SNAPSHOT } from "../../event-types.js";
+import { logPluginEvent } from "../../logger/index.js";
+import { checkTelemetryGate, handleTelemetryReject } from "../../session/telemetry-gate.js";
+import type { PluginClientMessage } from "../../types/index.js";
+import type { DispatchContext } from "../dispatch.js";
+
+const latestCatalogHashes = new Map<string, string>();
+
+type CombatAchievementsCatalog = Extract<PluginClientMessage, { type: "combat_achievements_catalog" }>;
+
+export function handleCatalog(ctx: DispatchContext, msg: CombatAchievementsCatalog): void {
+    const { ws, state, sessionId } = ctx;
+    const gate = checkTelemetryGate(state, Date.now());
+    if (!gate.ok) {
+        handleTelemetryReject(ws, state, gate.reason);
+        return;
+    }
+    const catalogKey = `${state.sockClanId!}:${state.sockMode!}`;
+    if (latestCatalogHashes.get(catalogKey) === msg.hash) return;
+    const count = upsertCatalog(state.sockClanId!, state.sockMode!, msg.tasks);
+    state.snapshotHashes.delete(`${EVENT_COMBAT_ACHIEVEMENTS_SNAPSHOT}:`);
+    latestCatalogHashes.set(catalogKey, msg.hash);
+    logPluginEvent(sessionId, msg.type, { tasks: count, hash: msg.hash });
+}
