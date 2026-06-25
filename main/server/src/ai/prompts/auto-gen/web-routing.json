@@ -1,16 +1,16 @@
 {
     "routes": [
         {
-            "pattern": "/clans/varietyz/manage/audit",
-            "description": "Clan management (manager-only; non-managers are redirected to the clan dashboard)."
+            "pattern": "/login-device",
+            "description": "Device login — sign in by linking this device."
         },
         {
-            "pattern": "/clans/varietyz/live",
-            "description": "Live clan-positions map. Shows current location of every clan member running the plugin."
+            "pattern": "/recover",
+            "description": "Account recovery — regain access to an account."
         },
         {
-            "pattern": "/clans/varietyz/voxlab",
-            "description": "Voxlab — clan logo editor (manager-only; mounts the VoxlabEditor over the clan's current logo)."
+            "pattern": "/account",
+            "description": "Your account — clans, RSNs, linked accounts, sign-in devices, vault."
         },
         {
             "pattern": "/clans/varietyz",
@@ -21,16 +21,16 @@
             "description": "Home — the landing page and clan directory."
         },
         {
-            "pattern": "/account",
-            "description": "Your account — clans, RSNs, linked accounts, sign-in devices, vault."
+            "pattern": "/clans/varietyz/live",
+            "description": "Live clan-positions map. Shows current location of every clan member running the plugin."
         },
         {
-            "pattern": "/login-device",
-            "description": "Device login — sign in by linking this device."
+            "pattern": "/clans/varietyz/manage/audit",
+            "description": "Clan management (manager-only; non-managers are redirected to the clan dashboard)."
         },
         {
-            "pattern": "/recover",
-            "description": "Account recovery — regain access to an account."
+            "pattern": "/clans/varietyz/voxlab",
+            "description": "Voxlab — clan logo editor (manager-only; mounts the VoxlabEditor over the clan's current logo)."
         },
         {
             "pattern": "/data-rights",
