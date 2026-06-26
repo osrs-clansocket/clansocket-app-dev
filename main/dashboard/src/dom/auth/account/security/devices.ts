@@ -62,7 +62,7 @@ function buildDevicesFooter(refresh: () => void, status: Instance): Instance {
     const deviceInput = buildNameInput();
     const addBtn: Instance<HTMLButtonElement> = button({
         variant: BTN_VARIANT_OUTLINE,
-        
+
         text: "Add",
         context: "register a passkey on this device",
         meta: ["action", "device"],
@@ -70,7 +70,7 @@ function buildDevicesFooter(refresh: () => void, status: Instance): Instance {
     });
     const linkBtn: Instance<HTMLButtonElement> = button({
         variant: BTN_VARIANT_OUTLINE,
-        
+
         text: "Link",
         context: "generate a device-link code to add another device",
         meta: ["action", "device"],

@@ -12,7 +12,7 @@ export function modeButton(mode$: Signal<ViewMode>): Instance<HTMLButtonElement>
         {
             ariaLabel: "Toggle follow mode",
             variant: "chip",
-            
+
             classes: [MAP_MODE_BTN_CLASS],
             onClick: () => mode$.set(mode$() === "auto" ? "manual" : "auto"),
             context: "toggle follow blips",

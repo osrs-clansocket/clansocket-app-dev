@@ -74,7 +74,7 @@ export function buildSetupChrome(): { helpEl: Instance; errorEl: Instance; showE
 export function buildCreateBtn(): Instance<HTMLButtonElement> {
     return button({
         variant: BTN_VARIANT_OUTLINE,
-        
+
         type: "submit",
         text: "Create vault",
         context: "create the encrypted key vault",

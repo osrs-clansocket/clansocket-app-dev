@@ -2,12 +2,12 @@ import { div, icon, span, type Instance, baseProps, textProps } from "../../dom/
 import { TOOLTIPS, type SlotMeta } from "../../ai/persona-store/index.js";
 import type { Tooltip } from "../../shared/types/tooltip-types.js";
 
-const TIP_CLASS = "account-ai-settings__tip";
-const TIP_TRIGGER_CLASS = "account-ai-settings__tip-trigger";
-const TIP_POP_CLASS = "account-ai-settings__tip-pop";
-const TIP_ROW_CLASS = "account-ai-settings__tip-row";
-const TIP_KEY_CLASS = "account-ai-settings__tip-key";
-const TIP_VAL_CLASS = "account-ai-settings__tip-val";
+const TIP_CLASS = "ai-settings__tip";
+const TIP_TRIGGER_CLASS = "ai-settings__tip-trigger";
+const TIP_POP_CLASS = "ai-settings__tip-pop";
+const TIP_ROW_CLASS = "ai-settings__tip-row";
+const TIP_KEY_CLASS = "ai-settings__tip-key";
+const TIP_VAL_CLASS = "ai-settings__tip-val";
 
 function buildTipRow(keyText: string, valText: string): Instance {
     return div(baseProps([TIP_ROW_CLASS]), [

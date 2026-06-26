@@ -53,7 +53,7 @@ export function buildCloseBtn(panelRef: { inst: SlidePanelInstance | null }): In
             {
                 classes: [],
                 variant: BTN_VARIANT_BARE,
-                
+
                 ariaLabel: "Close",
                 context: "close the integrity status panel",
                 meta: ["action"],
@@ -72,7 +72,7 @@ export function buildShowBtn(breakAt: number, showRow: (n: number) => void): Ins
             {
                 classes: [],
                 variant: BTN_VARIANT_OUTLINE,
-                
+
                 ariaLabel: "Show broken audit row",
                 context: "scroll to and highlight the broken audit entry",
                 meta: ["action"],

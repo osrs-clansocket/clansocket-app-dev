@@ -11,7 +11,7 @@ export function layersButton(mergedLayersVisible$: Signal<boolean>): Instance<HT
         {
             ariaLabel: "Toggle layered planes",
             variant: "chip",
-            
+
             classes: [MAP_LAYERS_BTN_CLASS],
             onClick: () => mergedLayersVisible$.set(!mergedLayersVisible$()),
             context: "toggle layered planes (ghost-floor underlay)",

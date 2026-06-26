@@ -1,0 +1,97 @@
+.ai-settings__diag {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+    overflow-block: auto;
+    padding: var(--sp-2);
+    border: var(--border-hairline-active);
+    border-radius: var(--radius-md);
+    background: var(--gradient-surface);
+    backdrop-filter: blur(var(--blur-sm));
+}
+
+.ai-settings__diag-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-1);
+}
+
+.ai-settings__diag-heading {
+    font-family: var(--font-heading);
+    font-size: var(--fs-3xs);
+    font-weight: var(--fw-semi);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    color: var(--base-gold-300);
+}
+
+.ai-settings__diag-empty {
+    margin: 0;
+    font-size: var(--fs-2xs);
+    font-style: italic;
+    color: var(--base-graphite-300);
+}
+
+.ai-settings__diag-entry {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-0);
+    padding: var(--sp-1) var(--sp-1h);
+    border-inline-start: var(--sp-0h) solid var(--base-gold-500);
+    border-radius: var(--radius-md);
+    background: var(--base-graphite-900);
+}
+
+.ai-settings__diag-entry-key {
+    font-family: var(--font-mono);
+    font-size: var(--fs-3xs);
+    color: var(--base-cream-100);
+    overflow-wrap: anywhere;
+}
+
+.ai-settings__diag-entry-diff {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-0h);
+    font-size: var(--fs-3xs);
+}
+
+.ai-settings__diag-entry-from {
+    color: var(--base-graphite-300);
+    text-decoration: line-through;
+    overflow-wrap: anywhere;
+}
+
+.ai-settings__diag-entry-to {
+    color: var(--base-gold-300);
+    overflow-wrap: anywhere;
+}
+
+.ai-settings__diag-entry-time {
+    font-family: var(--font-mono);
+    font-size: var(--fs-3xs);
+    color: var(--base-graphite-300);
+}
+
+.ai-settings__diag-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-1);
+    margin-block-start: auto;
+    padding-block-start: var(--sp-2);
+    border-block-start: var(--sp-hairline) solid rgb(from var(--base-graphite-500) r g b / 0.3);
+}
+
+.ai-settings__diag-actions > .btn {
+    justify-content: center;
+}
+
+.ai-settings__diag-action--destructive {
+    border-color: var(--base-ember-300);
+    color: var(--base-ember-300);
+}
+
+.ai-settings__diag-action--destructive:hover {
+    color: var(--base-graphite-900);
+    background: var(--base-ember-300);
+}

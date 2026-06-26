@@ -13,6 +13,10 @@
             "description": "Your account — clans, RSNs, linked accounts, sign-in devices, vault."
         },
         {
+            "pattern": "/ai-settings/persona",
+            "description": "Your AI settings — memory, modes, persona, operation, preferences."
+        },
+        {
             "pattern": "/clans/varietyz",
             "description": "A clan's dashboard. :slug is the clan's lowercase slug."
         },

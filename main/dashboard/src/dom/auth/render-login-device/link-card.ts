@@ -88,7 +88,7 @@ function buildLinkBtn(args: {
     const { codeInput, deviceInput, status } = args;
     const submit: Instance<HTMLButtonElement> = button({
         variant: BTN_VARIANT_OUTLINE,
-        
+
         text: "Link this device",
         context: "link this device to your existing account",
         meta: ["action", "device"],

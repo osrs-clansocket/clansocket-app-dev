@@ -33,7 +33,7 @@ function buildButtonRow(opts: VaultSetupOpts, submitBtn: Instance<HTMLButtonElem
         submitBtn,
         button({
             variant: BTN_VARIANT_OUTLINE,
-            
+
             type: "button",
             text: "Cancel",
             context: "cancel vault setup",

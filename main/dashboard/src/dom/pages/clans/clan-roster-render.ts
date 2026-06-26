@@ -4,7 +4,7 @@ import type { ClanRankLadder } from "../../../state/icons/rank-sort.js";
 import { persistSort, persistView, type RosterSort, type RosterView } from "../../../state/clans/roster/prefs.js";
 import { buildRosterGrid, buildRosterList } from "./roster-items.js";
 import { applySort, buildSortToggle, buildViewToggle } from "./toggles.js";
-import { buildManageBtn, buildMapBtn } from "./clan-page-buttons.js";
+import { buildClanTabs } from "./clan-page-buttons.js";
 import {
     CLAN_HEADING_CLASS,
     CLAN_NAME_CLASS,
@@ -39,13 +39,11 @@ function makeRenderRoster(s: LoadedState): () => void {
 }
 
 function buildRosterControls(args: {
-    clan: ManagedClan;
-    isManager: boolean;
     viewRef: { v: RosterView };
     sortRef: { v: RosterSort };
     render: () => void;
 }): Instance {
-    const { clan, isManager, viewRef, sortRef, render } = args;
+    const { viewRef, sortRef, render } = args;
     const onViewChange = (v: RosterView): void => {
         viewRef.v = v;
         persistView(v);
@@ -56,11 +54,10 @@ function buildRosterControls(args: {
         persistSort(v);
         render();
     };
-    const children: Instance[] = [buildMapBtn(clan.slug)];
-    if (isManager) children.push(buildManageBtn(clan.slug));
-    children.push(buildSortToggle(sortRef.v, onSortChange));
-    children.push(buildViewToggle(viewRef.v, onViewChange));
-    return div(baseProps([CLAN_ROSTER_CONTROLS_CLASS]), children);
+    return div(baseProps([CLAN_ROSTER_CONTROLS_CLASS]), [
+        buildSortToggle(sortRef.v, onSortChange),
+        buildViewToggle(viewRef.v, onViewChange),
+    ]);
 }
 
 function buildClanToolbar(args: { memberCount: number; controls: Instance }): Instance {
@@ -103,7 +100,6 @@ function initLoadedState(
 
 function setupLoadedState(
     clan: ManagedClan,
-    isManager: boolean,
     ladder: ClanRankLadder,
     prefs: { view: RosterView; sort: RosterSort },
 ): { state: LoadedState; controls: Instance } {
@@ -111,8 +107,6 @@ function setupLoadedState(
     const renderRoster = makeRenderRoster(state);
     renderRoster();
     const controls = buildRosterControls({
-        clan,
-        isManager,
         viewRef: state.viewRef,
         sortRef: state.sortRef,
         render: renderRoster,
@@ -122,18 +116,28 @@ function setupLoadedState(
 
 export function buildLoaded(
     clan: ManagedClan,
+    isMember: boolean,
     isManager: boolean,
     ladder: ClanRankLadder,
     prefs: { view: RosterView; sort: RosterSort },
 ): Instance {
-    const { state, controls } = setupLoadedState(clan, isManager, ladder, prefs);
+    const { state, controls } = setupLoadedState(clan, ladder, prefs);
+    const inner = div(baseProps([ROUTE_ROOT_CLASS]), [
+        ...buildClanHeader(clan),
+        buildClanToolbar({ memberCount: state.members.length, controls }),
+        state.host,
+    ]);
+    const children: Instance[] = [
+        buildClanTabs(clan.slug, isMember, isManager, "roster"),
+        inner,
+    ];
     return div(
         {
-            classes: [ROUTE_ROOT_CLASS, ROUTE_CLAN_CLASS],
+            classes: [ROUTE_CLAN_CLASS],
             effects: onceEffect("route-enter-right"),
             context: null,
             meta: null,
         },
-        [...buildClanHeader(clan), buildClanToolbar({ memberCount: state.members.length, controls }), state.host],
+        children,
     );
 }

@@ -28,14 +28,13 @@ function buildKeyButtons(opts: AddKeyOpts): { submitBtn: Instance; cancelBtn: In
     return {
         submitBtn: button({
             variant: BTN_VARIANT_PRIMARY,
-            
+
             type: "submit",
             text: "Save key",
             context: "save the API key to your vault",
             meta: ["submit"],
         }),
         cancelBtn: button({
-            
             type: "button",
             text: "Cancel",
             context: "cancel adding a key",

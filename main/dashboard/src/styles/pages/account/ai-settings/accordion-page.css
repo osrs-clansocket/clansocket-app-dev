@@ -1,5 +1,0 @@
-.account-ai-settings__accordion {
-    display: flex;
-    flex-direction: column;
-    border-block-start: 0.0625rem solid var(--base-graphite-500);
-}

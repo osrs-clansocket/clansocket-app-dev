@@ -56,7 +56,7 @@ function buildDeleteSection(emoji: DiscordServerEmoji): Instance {
     const deleteBtn = button({
         classes: [],
         variant: BTN_VARIANT_OUTLINE,
-        
+
         text: "Delete emoji",
         ariaLabel: `Delete server emoji ${emoji.name}`,
         context: `delete the ${emoji.name} server emoji`,

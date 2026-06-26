@@ -3,6 +3,7 @@ import { STATE_KINDS } from "../core/constants.js";
 import type { Client, Guild } from "discord.js";
 import { loadBotServers } from "../loaders/bot-servers-loader.js";
 import type { BotIdentity } from "../shared/types/bot-types.js";
+import { autoBindServer } from "./auto-bind.js";
 import { extractChannelRow } from "./channels/extract.js";
 import { postServerFeatures } from "./features/post-features.js";
 import { extractSettingsRow } from "./guild-settings/extract.js";
@@ -102,4 +103,23 @@ export async function syncChannelsRoles(identity: BotIdentity, client: Client): 
         await syncOneGuild(server.guild_id, guild, identity.bot_id, identity.bot_name);
     }
     logger.info(`State synced for ${servers.length} guild(s) (bot=${identity.bot_id})`);
+}
+
+export async function backfillUnboundGuilds(identity: BotIdentity, client: Client): Promise<void> {
+    const servers = await loadBotServers(identity.bot_id);
+    const boundIds = new Set(servers.map((s) => s.guild_id));
+    const cached = [...client.guilds.cache.values()];
+    let bound = 0;
+    for (const guild of cached) {
+        if (boundIds.has(guild.id)) continue;
+        try {
+            await autoBindServer(identity.bot_id, guild.id, guild.name);
+            bound += 1;
+        } catch (err) {
+            logger.warn(`backfill auto-bind failed bot=${identity.bot_id} guild=${guild.id}: ${(err as Error).message}`);
+        }
+    }
+    if (bound > 0) {
+        logger.info(`Backfilled ${bound} pre-existing guild binding(s) for bot=${identity.bot_id}`);
+    }
 }

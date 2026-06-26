@@ -17,7 +17,7 @@ import { startSubscription } from "../publish-queue/subscriber.js";
 import { publishSlashCommands } from "../publishers/slash-publisher.js";
 import { noServers } from "../shared/no-servers.js";
 import type { BotIdentity, BotState } from "../shared/types/bot-types.js";
-import { syncChannelsRoles } from "../state-sync/ready-sync.js";
+import { backfillUnboundGuilds, syncChannelsRoles } from "../state-sync/ready-sync.js";
 import { startBotsWatcher } from "../watchers/bots-watcher.js";
 
 async function withInstalledGuilds(
@@ -57,6 +57,7 @@ async function startBot(identity: BotIdentity): Promise<BotState> {
             await applyPresence(client, identity);
             startOutboundSubscription(identity.bot_id, client);
             await drainPending(identity.bot_id, client);
+            await backfillUnboundGuilds(identity, client);
             await subscribeAll(identity, client);
             await syncChannelsRoles(identity, client);
             await syncEmojis(identity);

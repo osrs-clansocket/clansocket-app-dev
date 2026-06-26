@@ -16,7 +16,7 @@ function describeError(err: Error & { code?: string }): string {
     return err.message || err.code || err.name || FALLBACK_UNKNOWN;
 }
 
-async function postAuditLog(guildId: string, userId: string, action: string, data: object = {}): Promise<void> {
+async function postAuditLog(guildId: string, userId: string | null, action: string, data: object = {}): Promise<void> {
     try {
         await apiRequest<unknown>(HTTP_METHOD_POST, "/api/discord/audit", { guildId, userId, action, data });
     } catch (err: any) {

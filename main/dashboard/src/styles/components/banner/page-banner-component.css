@@ -1,0 +1,43 @@
+.page-banner__row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-1);
+    padding: var(--sp-1) var(--sp-3);
+    border-block-end: 0.0625rem solid var(--base-graphite-500);
+    background: var(--gradient-surface-opaque);
+    backdrop-filter: blur(var(--blur-sm)) saturate(1.2);
+}
+
+.page-banner__tab {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: var(--sp-1) var(--sp-3);
+    border: 0.0625rem solid rgb(from var(--base-graphite-200) r g b / 0.3);
+    border-radius: var(--radius-md);
+    font-family: var(--font-heading);
+    font-size: var(--fs-3xs);
+    letter-spacing: var(--ls-normal);
+    text-transform: uppercase;
+    background: var(--gradient-surface-opaque);
+    opacity: var(--opacity-medium);
+    transition:
+        opacity var(--dur-fast) var(--ease-out),
+        border-color var(--dur-fast) var(--ease-out),
+        color var(--dur-fast) var(--ease-out),
+        box-shadow var(--dur-fast) var(--ease-out);
+    cursor: pointer;
+}
+
+.page-banner__tab:hover {
+    border-color: rgb(from var(--base-gold-500) r g b / 0.4);
+    color: var(--base-gold-300);
+    opacity: 1;
+}
+
+.page-banner__tab--active {
+    border-color: var(--base-gold-500);
+    color: var(--base-gold-300);
+    box-shadow: var(--shadow-glow);
+    opacity: 1;
+}

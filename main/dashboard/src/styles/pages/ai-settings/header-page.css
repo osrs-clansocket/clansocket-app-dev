@@ -1,0 +1,27 @@
+.ai-settings__header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sp-3);
+    padding: var(--sp-2) var(--sp-3);
+    border: var(--border-hairline-active);
+    border-radius: var(--radius-md);
+    background: var(--gradient-surface);
+    backdrop-filter: blur(var(--blur-sm));
+}
+
+.ai-settings__header-brand {
+    font-family: var(--font-heading);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-semi);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    color: var(--base-gold-300);
+}
+
+.ai-settings__tablist {
+    display: flex;
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+    gap: var(--sp-1);
+}

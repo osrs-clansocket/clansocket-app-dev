@@ -22,7 +22,7 @@ function metaText(state: BackupMetaState): string {
 function generateBtn(codesHost: Instance): Instance {
     const btn = button({
         variant: BTN_VARIANT_OUTLINE,
-        
+
         text: "Generate",
         context: "generate a fresh set of backup codes",
         meta: ["action", "account"],

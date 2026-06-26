@@ -30,7 +30,6 @@ function refresh(host: Instance): void {
 
 function buildRow(match: LegacyRsnMatch, host: Instance): Instance {
     const claimBtn = button({
-        
         text: "Claim",
         context: "claim this unresolved clan RSN as yours",
         meta: ["action", "rsn"],

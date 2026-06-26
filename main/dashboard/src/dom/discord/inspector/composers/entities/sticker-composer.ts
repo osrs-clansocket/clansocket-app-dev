@@ -63,7 +63,7 @@ function buildDeleteSection(sticker: DiscordServerSticker): Instance {
     const deleteBtn = button({
         classes: [],
         variant: BTN_VARIANT_OUTLINE,
-        
+
         text: "Delete sticker",
         ariaLabel: `Delete server sticker ${sticker.name}`,
         context: `delete the ${sticker.name} server sticker`,

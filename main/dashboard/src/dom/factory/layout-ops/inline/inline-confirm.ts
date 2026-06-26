@@ -24,13 +24,14 @@ interface InlineConfirmOptions {
     danger?: boolean;
     cancelContext: string;
     confirmContext: string;
+    triggerEl?: HTMLElement;
 }
 
 function buildCancelBtn(opts: InlineConfirmOptions, settle: (v: boolean) => void): Instance {
     return button(
         {
             variant: BTN_VARIANT_OUTLINE,
-            
+
             ariaLabel: opts.cancelLabel ?? DEFAULT_CANCEL_LABEL,
             context: opts.cancelContext,
             meta: ["action"],
@@ -45,7 +46,7 @@ function buildConfirmBtn(opts: InlineConfirmOptions, danger: boolean, settle: (v
         {
             classes: danger ? [CLASS_BTN_DANGER] : [],
             variant: BTN_VARIANT_OUTLINE,
-            
+
             ariaLabel: opts.confirmLabel ?? DEFAULT_CONFIRM_LABEL,
             context: opts.confirmContext,
             meta: danger ? ["destructive"] : ["submit"],
@@ -69,7 +70,7 @@ function buildActions(
 function inlineConfirm(host: Instance, opts: InlineConfirmOptions): Promise<boolean> {
     pendingHosts.get(host)?.();
     return new Promise<boolean>((resolve) => {
-        const ta = triggerAnchor(host);
+        const ta = triggerAnchor(host, opts.triggerEl);
         if (ta === null) {
             resolve(false);
             return;

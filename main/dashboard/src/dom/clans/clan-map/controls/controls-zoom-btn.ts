@@ -9,7 +9,7 @@ export function zoomButton(label: string, onClick: () => void, context: string):
             context,
             ariaLabel: label,
             variant: "chip",
-            
+
             classes: [MAP_ZOOM_BTN_CLASS],
             meta: ["action"],
         },

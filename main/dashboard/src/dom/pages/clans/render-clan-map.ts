@@ -4,6 +4,9 @@ import { div, paragraph, type Instance, type ReadSignal, baseProps, textProps } 
 import { clanMap } from "../../clans/clan-map/index.js";
 import { liveSlug } from "../../../managers/router/slug-paths.js";
 import { events } from "../../../managers/events";
+import { clansClient } from "../../../state/clans/clans-client/index.js";
+import { clansStore } from "../../../state/clans/stores/clans-store.js";
+import { memberClansStore } from "../../../state/clans/stores/member-clans-store.js";
 import {
     createPositionsStore,
     type PositionsState,
@@ -14,32 +17,46 @@ import {
     CLAN_MAP_HOST_CLASS,
     CLAN_MAP_ROUTE_CLASS,
 } from "../../../shared/constants/clan/clan-map-constants.js";
-import { ROUTE_ROOT_CLASS } from "../../../shared/constants/route/route-constants.js";
+import { ROUTE_CLAN_CLASS, ROUTE_ROOT_CLASS } from "../../../shared/constants/route/route-constants.js";
 import { buildSidePanel } from "./clan-map-side.js";
+import { buildClanTabs } from "./clan-page-buttons.js";
 
-function renderEmpty(slug: string): Instance {
+function renderMissingSlug(): Instance {
     return div(baseProps([ROUTE_ROOT_CLASS, CLAN_MAP_ROUTE_CLASS]), [
-        paragraph(
-            textProps(
-                [CLAN_MAP_EMPTY_CLASS],
-                `No live positions yet for ${slug}. Have a clan member open the plugin in-game.`,
-            ),
-        ),
+        paragraph(textProps([CLAN_MAP_EMPTY_CLASS], "No live positions yet. Have a clan member open the plugin in-game.")),
     ]);
 }
 
-function buildPage(store: PositionsStore): Instance {
+function buildMapContent(store: PositionsStore): Instance {
     const map = clanMap({ positions$: store.positions$ as ReadSignal<PositionsState> });
     const mapHost = div(baseProps([CLAN_MAP_HOST_CLASS]), [map.host]);
     const side = buildSidePanel(store.liveStore, map);
-    return div(baseProps([ROUTE_ROOT_CLASS, CLAN_MAP_ROUTE_CLASS]), [mapHost, side]);
+    return div(baseProps([CLAN_MAP_ROUTE_CLASS]), [mapHost, side]);
 }
 
-export function renderClanMap(path: string): Instance {
+export async function renderClanMap(path: string): Promise<Instance> {
     const slug = liveSlug(path);
-    if (slug.length === 0) return renderEmpty("");
+    if (slug.length === 0) return renderMissingSlug();
+
+    await Promise.all([clansStore.ready(), memberClansStore.ready()]);
+    const isMember =
+        clansStore.managed$().some((c) => c.slug === slug) ||
+        memberClansStore.member$().some((c) => c.slug === slug);
+    const isManager = await clansClient
+        .checkManagerStatus(slug)
+        .then((s) => s.isManager)
+        .catch(() => false);
+
     const store = createPositionsStore(slug);
-    const root = buildPage(store);
+    const mapContent = buildMapContent(store);
+
+    const children: Instance[] = [buildClanTabs(slug, isMember, isManager, "map"), mapContent];
+
+    const root = div(
+        { classes: [ROUTE_CLAN_CLASS], context: null, meta: null },
+        children,
+    );
+
     const offRoute = events.on("route:change", () => {
         store.dispose();
         offRoute();

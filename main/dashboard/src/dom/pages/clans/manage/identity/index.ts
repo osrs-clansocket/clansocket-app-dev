@@ -2,7 +2,7 @@ import "../../../../../styles/pages/account/index.css";
 import "../../../../../styles/pages/clans/manage/identity/clan-identity-page.css";
 import { div, heading, baseProps } from "../../../../factory";
 import { clansStore } from "../../../../../state/clans/stores/clans-store.js";
-import { buildBrandingControls } from "../../../../clans/account/branding/branding-controls.js";
+import { buildBrandingControls } from "../../../account/branding/branding-controls.js";
 import { buildSeoPanel } from "./seo-panel.js";
 import {
     ACCOUNT_CLAN_BRANDING_SECTION_CLASS,

@@ -51,7 +51,7 @@ function buildInputRow(args: { passInput: Instance; submitBtn: Instance; opts: V
     if (!opts.onCancel) return div(baseProps([FORM_ROW_CLASS]), [passInput, submitBtn]);
     const cancelBtn = button({
         variant: BTN_VARIANT_OUTLINE,
-        
+
         type: "button",
         text: "Cancel",
         context: "cancel unlocking the vault",

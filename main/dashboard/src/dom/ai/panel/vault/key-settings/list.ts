@@ -32,7 +32,7 @@ export async function renderListView(
     (await buildListBody(providers, setSub, rerender)).mount(bodyHost);
     const addBtn = button({
         variant: BTN_VARIANT_OUTLINE,
-        
+
         text: "Add key",
         context: "add a new provider API key",
         meta: ["action"],

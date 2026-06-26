@@ -13,5 +13,5 @@ defineRoute({
     nav: { key: "account", title: "Account", icon: "person-circle", order: 20, requiresAuth: true },
     guard: () => authState.isAuthed(),
     onReject: AppRoutes.HOME,
-    render: async () => (await import("../account/index.js")).renderAccount(),
+    render: async () => (await import("../../pages/account/index.js")).renderAccount(),
 });

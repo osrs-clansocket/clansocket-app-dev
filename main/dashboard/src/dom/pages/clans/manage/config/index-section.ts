@@ -71,7 +71,7 @@ function buildPublishBtn(args: BuildSectionArgs): Instance {
     const { slug, store, state, scope, values, status } = args;
     return button({
         variant: BTN_VARIANT_PRIMARY,
-        
+
         text: derived(() => publishLabel(scope())),
         context: "publish the plugin config to the active scope",
         meta: ["action", "plugin-config"],
@@ -92,7 +92,7 @@ function buildClearBtn(args: BuildSectionArgs): Instance {
     const { slug, store, state, scope, values, status } = args;
     return button({
         variant: BTN_VARIANT_OUTLINE,
-        
+
         text: derived(() => clearLabel(scope())),
         context: "clear the plugin config for the active scope",
         meta: ["action", "plugin-config"],

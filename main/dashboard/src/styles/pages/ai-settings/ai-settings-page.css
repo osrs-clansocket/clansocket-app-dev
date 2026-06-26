@@ -1,0 +1,25 @@
+.ai-settings {
+    display: grid;
+    flex: 1;
+    gap: var(--sp-3);
+    grid-template: "header  header" auto "content diag" 1fr / 1fr 18rem;
+    box-sizing: border-box;
+    inline-size: 100%;
+    min-block-size: 100%;
+    padding: var(--sp-3);
+}
+
+.ai-settings__header {
+    grid-area: header;
+}
+
+.ai-settings__content {
+    grid-area: content;
+    min-block-size: 0;
+    overflow: hidden;
+}
+
+.ai-settings__diag {
+    grid-area: diag;
+    min-block-size: 0;
+}

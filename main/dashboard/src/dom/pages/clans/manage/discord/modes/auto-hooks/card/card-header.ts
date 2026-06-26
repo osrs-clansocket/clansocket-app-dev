@@ -9,7 +9,7 @@ import {
     textProps,
 } from "../../../../../../../factory";
 import { buildGlassCheck } from "../../../../../../../forms/glass/inputs/glass-check.js";
-import { editName } from "../../../../../../../clans/account/workflows/display-name-edit.js";
+import { editName } from "../../../../../../account/workflows/display-name-edit.js";
 import {
     ACCOUNT_GREETING_EDIT_CLASS,
     ACCOUNT_GREETING_NAME_CLASS,
@@ -35,7 +35,6 @@ export interface CardCallbacks {
 function buildEditIcon(nameEl: Instance, onSaveName: (n: string) => void): Instance<HTMLButtonElement> {
     const editIcon: Instance<HTMLButtonElement> = button(
         {
-            
             classes: [ACCOUNT_GREETING_EDIT_CLASS],
             ariaLabel: `Edit ${NAME_LABEL}`,
             title: `Edit ${NAME_LABEL}`,

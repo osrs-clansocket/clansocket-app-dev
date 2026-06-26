@@ -1,0 +1,8 @@
+.ai-settings__content {
+    display: flex;
+    flex-direction: column;
+    min-block-size: 0;
+    overflow-block: auto;
+    padding-inline-end: var(--sp-1);
+    scroll-behavior: smooth;
+}

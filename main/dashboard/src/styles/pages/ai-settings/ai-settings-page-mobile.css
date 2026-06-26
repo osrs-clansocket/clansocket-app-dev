@@ -1,0 +1,15 @@
+@media (width <= 48rem) {
+    .ai-settings {
+        grid-template: "header" auto "content" 1fr "diag" auto / 1fr;
+        gap: var(--sp-2);
+        padding: var(--sp-2);
+    }
+
+    .ai-settings__diag {
+        max-block-size: 16rem;
+    }
+
+    .ai-settings__header {
+        flex-wrap: wrap;
+    }
+}

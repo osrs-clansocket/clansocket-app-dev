@@ -85,7 +85,7 @@ function buildSubmitBtn(args: {
     const { nameInput, deviceInput, status } = args;
     const submit: Instance<HTMLButtonElement> = button({
         variant: BTN_VARIANT_OUTLINE,
-        
+
         text: "Create account + add this device",
         context: "create your account and register a passkey for this device",
         meta: ["action", "account"],

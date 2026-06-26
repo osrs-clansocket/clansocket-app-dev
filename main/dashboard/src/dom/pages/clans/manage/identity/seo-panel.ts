@@ -65,7 +65,7 @@ async function saveChanges(slug: string, state: PanelState): Promise<void> {
 function buildSaveButton(slug: string, state: PanelState): Instance {
     const btn = button({
         variant: BTN_VARIANT_PRIMARY,
-        
+
         text: "Save",
         context: "save clan discoverability changes",
         meta: ["submit"],

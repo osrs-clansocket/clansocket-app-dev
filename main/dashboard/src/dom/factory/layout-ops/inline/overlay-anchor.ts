@@ -15,8 +15,11 @@ export function findAnchor(trigger: HTMLElement): HTMLElement | null {
     return document.body;
 }
 
-export function triggerAnchor(host: Instance): { trigger: HTMLElement; anchor: HTMLElement } | null {
-    const trigger = host.el.firstElementChild;
+export function triggerAnchor(
+    host: Instance,
+    explicitTrigger?: HTMLElement,
+): { trigger: HTMLElement; anchor: HTMLElement } | null {
+    const trigger = explicitTrigger ?? host.el.firstElementChild;
     if (!(trigger instanceof HTMLElement)) return null;
     const anchor = findAnchor(trigger);
     if (anchor === null) return null;

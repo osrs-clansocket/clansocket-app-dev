@@ -24,7 +24,7 @@ function buildSavePayload(state: CardState, row: AutoHookRow): AutoHookRow {
 export function buildSaveBtn(state: CardState, row: AutoHookRow, cb: CardCallbacks): Instance {
     const saveBtn = button({
         variant: BTN_VARIANT_PRIMARY,
-        
+
         text: SAVE_BTN_LABEL,
         context: "save the auto-hook edits",
         meta: ["action", "submit"],

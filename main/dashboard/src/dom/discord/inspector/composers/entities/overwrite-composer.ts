@@ -99,7 +99,7 @@ function buildDeleteSection(o: DiscordChannelOverwrite, tid: string): Instance {
     const deleteBtn = button({
         classes: [],
         variant: BTN_VARIANT_OUTLINE,
-        
+
         text: "Delete overwrite",
         ariaLabel: `Delete ${o.kind} permission overwrite for ${tid}`,
         context: `delete the ${o.kind} permission overwrite for ${tid}`,

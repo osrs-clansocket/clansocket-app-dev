@@ -6,11 +6,11 @@ import { ATTR_HIDDEN, HIDDEN_FALSE, HIDDEN_TRUE } from "../../shared/constants/h
 import { buildControl, buildResetButton } from "../builders/control-builder.js";
 import { buildTipIcon } from "./tip-composer.js";
 
-const ROW_CLASS = "account-ai-settings__row";
-const FIELD_CLASS = "account-ai-settings__field";
-const FIELD_HEAD_CLASS = "account-ai-settings__field-head";
-const FIELD_LABEL_CLASS = "account-ai-settings__field-label";
-const FIELD_DESC_CLASS = "account-ai-settings__field-desc";
+const ROW_CLASS = "ai-settings__row";
+const FIELD_CLASS = "ai-settings__field";
+const FIELD_HEAD_CLASS = "ai-settings__field-head";
+const FIELD_LABEL_CLASS = "ai-settings__field-label";
+const FIELD_DESC_CLASS = "ai-settings__field-desc";
 
 function buildField(meta: SlotMeta): Instance {
     const labelEl = label({

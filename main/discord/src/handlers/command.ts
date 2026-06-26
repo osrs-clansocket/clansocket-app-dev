@@ -1,10 +1,9 @@
 import logger from "@clansocket/logger";
-import { HTTP_METHOD_POST } from "../core/constants.js";
 import { dispatchEvent, eventErrCtx } from "../dispatchers/event-dispatcher.js";
-import { apiRequest } from "../fetchers/api-fetcher.js";
 import { trackInteractionPending, triggerInteractionCleanup } from "../interactions/ttl-tracker.js";
 import { serverRegistry } from "../registries/server-registry.js";
 import type { BotIdentity } from "../shared/types/bot-types.js";
+import { autoBindServer } from "../state-sync/auto-bind.js";
 import { syncOneGuild } from "../state-sync/ready-sync.js";
 import { logAuditServerAdd, logAuditServerRemove, logAuditUserJoin, logAuditUserLeave } from "./audit.js";
 import { processInteraction } from "./interaction/index.js";
@@ -37,19 +36,21 @@ const handleGuildChange = (logFn: any, infoFn: any) =>
         infoFn(guild);
     }, "Guild event");
 
-async function autoBindServer(botId: string, guildId: string, guildName: string): Promise<void> {
-    await apiRequest(HTTP_METHOD_POST, "/api/discord/state/servers/auto-bind", {
-        bot_id: botId,
-        guild_id: guildId,
-        guild_name: guildName,
-    });
+async function resolveMemberCount(guild: any): Promise<number> {
+    try {
+        const fresh = await guild.client.guilds.fetch({ guild: guild.id, withCounts: true });
+        return fresh.approximateMemberCount ?? guild.memberCount ?? 0;
+    } catch {
+        return guild.memberCount ?? 0;
+    }
 }
 
 function guildCreateHandler(identity: BotIdentity) {
     return safeHandler(async (guild: any) => {
-        await logAuditServerAdd(guild.id, "");
+        await logAuditServerAdd(guild.id);
         serverRegistry.invalidate(guild.id);
-        logger.info(`Joined server: ${guild.name} (${guild.memberCount} members)`);
+        const memberCount = await resolveMemberCount(guild);
+        logger.info(`Joined server: ${guild.name} (${memberCount} members)`);
         try {
             await syncOneGuild(guild.id, guild, identity.bot_id, identity.bot_name);
         } catch (err) {

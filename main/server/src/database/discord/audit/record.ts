@@ -4,7 +4,7 @@ import { resolveClanId } from "./resolve-clan.js";
 
 export interface DiscordAuditEntry {
     guildId: string;
-    discordUserId: string;
+    discordUserId: string | null;
     action: string;
     data: Record<string, unknown>;
 }
@@ -12,7 +12,7 @@ export interface DiscordAuditEntry {
 export function recordFromDiscord(entry: DiscordAuditEntry): boolean {
     const clanId = resolveClanId(entry.guildId);
     if (!clanId) return false;
-    const payload = { ...entry.data, discord_user_id: entry.discordUserId };
+    const payload = entry.discordUserId ? { ...entry.data, discord_user_id: entry.discordUserId } : { ...entry.data };
     recordClanAudit(clanId, {
         actor: null,
         action: entry.action as AnyAuditAction,

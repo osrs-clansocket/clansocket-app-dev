@@ -1,4 +1,4 @@
-import { button, div, form, type Child, type Instance, baseProps } from "../../../factory";
+import { button, div, form, onceEffect, type Child, type Instance, baseProps } from "../../../factory";
 import type { MemoryFile } from "../../../../ai/memory-client";
 import { buildGlassCheck } from "../../../forms/glass/inputs/glass-check.js";
 import { buildGlassSelect } from "../../../forms/glass/inputs/select/index.js";
@@ -59,6 +59,7 @@ export function buildEditorForm(file: MemoryFile, mode: Mode): Instance<HTMLForm
     return form(
         {
             classes: [AI_MEMORY_EDITOR_CLASS],
+            effects: [onceEffect("pop")],
             context: "memory editor form — submit to save the memory",
             meta: ["submit"],
         },

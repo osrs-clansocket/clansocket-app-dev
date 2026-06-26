@@ -1,3 +1,4 @@
+@import "../../../components/features-bucket-component.css";
 @import "./audit/index.css";
 @import "./discord/index.css";
 @import "./identity/index.css";
@@ -5,6 +6,4 @@
 @import "./clan-back-page.css";
 @import "./clan-body-page.css";
 @import "./clan-missing-page.css";
-@import "./clan-tab-page.css";
-@import "./clan-tabs-page.css";
 @import "./clan-title-page.css";

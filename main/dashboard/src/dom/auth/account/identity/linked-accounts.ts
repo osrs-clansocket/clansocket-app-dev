@@ -48,7 +48,7 @@ function linkAction(name: ProviderName): () => void {
 function buildLinkButton(name: ProviderName): Instance {
     return button({
         variant: BTN_VARIANT_OUTLINE,
-        
+
         text: "Link",
         context: `link your ${PROVIDER_LABEL[name]} account as a sign-in method`,
         meta: ["action", "account"],

@@ -1,8 +1,9 @@
 .clans-clan__map-route {
     display: grid;
+    flex: 1 1 0;
     gap: var(--sp-2);
     grid-template-columns: minmax(0, 1fr) minmax(0, 18rem);
-    block-size: calc(100dvb - 6rem);
+    min-block-size: 0;
     padding: var(--sp-2);
     user-select: none;
 }

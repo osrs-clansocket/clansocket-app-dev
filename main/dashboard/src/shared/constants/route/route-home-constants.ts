@@ -12,6 +12,7 @@ export const ROUTE_HOME_COMMUNITY_CLASS = "route-home__community";
 export const ROUTE_HOME_COMMUNITY_CTA_CLASS = "route-home__community-cta";
 export const ROUTE_HOME_COMMUNITY_CTA_ICON_CLASS = "route-home__community-cta-icon";
 export const ROUTE_HOME_COMMUNITY_CTA_LABEL_CLASS = "route-home__community-cta-label";
+export const ROUTE_HOME_COMMUNITY_DISCLAIMER_CLASS = "route-home__community-disclaimer";
 export const ROUTE_HOME_RESOURCES_CLASS = "route-home__resources";
 export const ROUTE_HOME_RESOURCE_CLASS = "route-home__resource";
 export const ROUTE_HOME_RESOURCE_ICON_CLASS = "route-home__resource-icon";

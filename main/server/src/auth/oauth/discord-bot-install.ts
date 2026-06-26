@@ -4,8 +4,13 @@ import { buildOauthUrl } from "./oauth-client.js";
 const DISCORD_AUTHORIZE_URL = "https://discord.com/api/oauth2/authorize";
 const DISCORD_TOKEN_URL = "https://discord.com/api/oauth2/token";
 const BOT_SCOPES = "bot applications.commands";
-const PERMISSION_ADMINISTRATOR = "8";
 const RADIX_DECIMAL = 10;
+
+function resolvePermissionsBitfield(): string {
+    const fromEnv = process.env.DISCORD_INSTALL_PERMISSIONS_BITFIELD?.trim();
+    if (!fromEnv) throw new Error("DISCORD_INSTALL_PERMISSIONS_BITFIELD env var is required");
+    return fromEnv;
+}
 
 export interface BotInstallResult {
     accessToken: string;
@@ -29,7 +34,7 @@ export function botInstallUrl(clientId: string, state: string, redirectUri: stri
         redirect_uri: redirectUri,
         response_type: "code",
         scope: BOT_SCOPES,
-        permissions: PERMISSION_ADMINISTRATOR,
+        permissions: resolvePermissionsBitfield(),
         state,
     });
 }

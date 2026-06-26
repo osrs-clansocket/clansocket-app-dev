@@ -43,7 +43,7 @@ function buildEditorForm(args: { model: EditorModel; onSave: () => Promise<void>
 function buildEditorFooter(args: { setSub: (next: UnlockedSub) => void; rerender: () => Promise<void> }): Instance {
     const saveBtn = button({
         variant: BTN_VARIANT_OUTLINE,
-        
+
         text: "Save key",
         type: "submit",
         form: EDITOR_FORM_ID,
@@ -52,7 +52,7 @@ function buildEditorFooter(args: { setSub: (next: UnlockedSub) => void; rerender
     });
     const cancelBtn = button({
         variant: BTN_VARIANT_OUTLINE,
-        
+
         text: "Cancel",
         type: "button",
         context: "cancel editing the key",

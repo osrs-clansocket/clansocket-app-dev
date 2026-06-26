@@ -25,7 +25,7 @@ defineAccountPanel({ key: "data-rights", order: 70, build: () => dataRightsPanel
 function buildExportBtn(status: Instance): Instance<HTMLButtonElement> {
     const exportBtn: Instance<HTMLButtonElement> = button({
         variant: BTN_VARIANT_OUTLINE,
-        
+
         text: "Export zip",
         context: "export all your data as a downloadable zip",
         meta: ["action", "data"],
@@ -45,7 +45,7 @@ function buildLeaveBtn(args: { status: Instance; leaveHost: Instance }): Instanc
     const { status, leaveHost } = args;
     const leaveBtn: Instance<HTMLButtonElement> = button({
         variant: BTN_VARIANT_OUTLINE,
-        
+
         classes: [ACCOUNT_REMOVE_BTN_CLASS],
         text: "Remove all data",
         context: "permanently delete all your data and leave the site",
@@ -58,7 +58,7 @@ function buildLeaveBtn(args: { status: Instance; leaveHost: Instance }): Instanc
 function buildBrowseBtn(): Instance {
     return button({
         variant: BTN_VARIANT_OUTLINE,
-        
+
         text: "Browse my data",
         context: "browse your stored data table by table",
         meta: ["nav", "data"],

@@ -6,6 +6,7 @@ export const AppRoutes = {
     CLAN_MANAGE: CLANS_PATH,
     CLAN_LIVE: CLANS_PATH,
     ACCOUNT: "/account",
+    AI_SETTINGS: "/ai-settings",
     DATA_RIGHTS: "/data-rights",
     LOGIN_DEVICE: "/login-device",
     RECOVER: "/recover",

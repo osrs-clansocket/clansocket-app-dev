@@ -39,7 +39,7 @@ export function buildClaimForm(refresh: () => void, status: Instance): Instance 
         rsnInput,
         button({
             variant: BTN_VARIANT_OUTLINE,
-            
+
             text: "Verify",
             context: "verify and claim this RSN",
             meta: ["action", "rsn"],

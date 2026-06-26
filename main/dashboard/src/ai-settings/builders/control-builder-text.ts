@@ -5,9 +5,9 @@ import { defaultValueOf } from "../../ai/persona-store/defaults-client.js";
 import { placeholderForBlock, placeholderForEntry } from "../../ai/persona-store/format/placeholder-formatter.js";
 
 const INPUT_BASE_CLASS = "form__input";
-const INPUT_ENTRY_CLASS = "account-ai-settings__input--entry";
-const INPUT_BLOCK_CLASS = "account-ai-settings__input--block";
-const INPUT_NUMBER_CLASS = "account-ai-settings__input--number";
+const INPUT_ENTRY_CLASS = "ai-settings__input--entry";
+const INPUT_BLOCK_CLASS = "ai-settings__input--block";
+const INPUT_NUMBER_CLASS = "ai-settings__input--number";
 const BLOCK_ROWS = "5";
 
 export function buildEntryControl(meta: SlotMeta): Instance {

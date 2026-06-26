@@ -35,7 +35,7 @@ export function buildRecoverLink(): Instance {
 function buildSigninButton(status: ReturnType<typeof statusLine>, fallbackHost: Instance): Instance {
     const btn = button({
         variant: BTN_VARIANT_PRIMARY,
-        
+
         text: "Sign in with this device",
         context: "sign in with a passkey on this device",
         meta: ["action", "account"],

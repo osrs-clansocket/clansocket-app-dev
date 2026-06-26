@@ -1,8 +1,8 @@
 .loader {
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: center;
+    align-items: center;
     gap: var(--sp-2);
     padding: var(--sp-4);
     color: var(--base-graphite-300);
@@ -11,9 +11,9 @@
     inline-size: var(--sp-6);
     block-size: var(--sp-6);
     border: var(--sp-hairline) solid rgb(from var(--base-gold-500) r g b / 0.22);
-    border-block-start-color: var(--base-gold-500);
     border-radius: var(--radius-pill);
     animation: loader-spin var(--dur-reveal) linear infinite;
+    border-block-start-color: var(--base-gold-500);
 }
 .loader__label {
     margin: 0;

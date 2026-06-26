@@ -26,7 +26,7 @@ export function buildAddBtn(a: AddBtnArgs): Instance {
     const { triggerType, fields, state, cb, rerender } = a;
     return button({
         variant: BTN_VARIANT_OUTLINE,
-        
+
         text: "+ Add condition",
         context: "add a new condition row",
         meta: ["action"],

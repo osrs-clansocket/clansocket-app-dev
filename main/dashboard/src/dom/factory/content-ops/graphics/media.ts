@@ -39,6 +39,7 @@ interface IconProps extends ContextProps {
     alt?: string;
     title?: string;
     ariaHidden?: boolean;
+    fullSprite?: boolean;
 }
 
 interface ImageProps extends ContextProps {
@@ -77,10 +78,9 @@ function rasterIcon(provider: string, props: IconProps, ariaHiddenAttr: string |
 }
 
 function svgIcon(provider: string, props: IconProps, ariaHiddenAttr: string | undefined): Instance<HTMLElement> {
-    const href = `/svg-sprite/${provider}.svg#${props.name}`;
-    const inner = svg({ attrs: { width: "1em", height: "1em", fill: "currentColor" } }, [
-        use({ attrs: { href } }),
-    ]);
+    const spriteBase = props.fullSprite === true ? "/svg-sprite-full/" : "/svg-sprite/";
+    const href = `${spriteBase}${provider}.svg#${props.name}`;
+    const inner = svg({ attrs: { width: "1em", height: "1em", fill: "currentColor" } }, [use({ attrs: { href } })]);
     const host = build({
         tag: TAG_SPAN,
         classes: props.classes && props.classes.length > 0 ? props.classes : undefined,

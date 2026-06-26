@@ -7,7 +7,7 @@ export function resetButton(onClick: () => void): Instance<HTMLButtonElement> {
         {
             onClick,
             variant: "chip",
-            
+
             classes: [MAP_RESET_BTN_CLASS],
             context: "reset viewport",
             meta: ["action"],

@@ -78,7 +78,7 @@ function buildRecoverForm(): Instance {
     const deviceInput = buildDeviceInput();
     const submit: Instance<HTMLButtonElement> = button({
         variant: BTN_VARIANT_PRIMARY,
-        
+
         text: "Recover account",
         context: "recover your account using the backup code",
         meta: ["action", "account"],

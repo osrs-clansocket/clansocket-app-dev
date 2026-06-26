@@ -123,3 +123,20 @@ export function manageSubTab(path: string): string | null {
 export function normalizeClanPath(path: string): string {
     return path.startsWith(SINGULAR_CLAN_PREFIX) ? CLAN_PREFIX + path.slice(SINGULAR_CLAN_PREFIX.length) : path;
 }
+
+const AI_SETTINGS_PREFIX = "/ai-settings";
+
+export function matchAiSettings(path: string): boolean {
+    const stripped = stripQuery(path);
+    return stripped === AI_SETTINGS_PREFIX || stripped.startsWith(`${AI_SETTINGS_PREFIX}/`);
+}
+
+export function aiSettingsTab(path: string): string | null {
+    const stripped = stripQuery(path);
+    if (!stripped.startsWith(AI_SETTINGS_PREFIX)) return null;
+    const tail = trimSlugSlash(stripped.slice(AI_SETTINGS_PREFIX.length));
+    if (tail.length === 0 || !tail.startsWith("/")) return null;
+    const seg = tail.slice(1).split("/")[0]!;
+    if (seg.length === 0 || !allSlugChars(seg)) return null;
+    return seg;
+}

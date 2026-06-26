@@ -9,7 +9,7 @@ const CLOSE_CLASS = "ai-bar__ctx-close";
 function buildCtxTag(id: string): Instance {
     const closeBtn = button({
         classes: [CLOSE_CLASS],
-        
+
         text: "×",
         data: { unpin: id },
         context: "unpin this ai context tag",

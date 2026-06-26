@@ -15,6 +15,7 @@ export const PERSONA_TAB: TabConcerns = {
             id: "voice",
             title: "Voice",
             icon: "megaphone",
+            defaultOpen: DEFAULT_OPEN,
             rows: ["ai_voice_directive", "ai_voice_dna", "ai_anti_voice"],
         },
         {

@@ -15,15 +15,15 @@ import { ATTR_HIDDEN, HIDDEN_FALSE, HIDDEN_TRUE } from "../../shared/constants/h
 import { buildBlockControl, buildEntryControl, buildNumberControl } from "./control-builder-text.js";
 import { buildSelectControl } from "./control-builder-select.js";
 
-const FIELD_RESET_CLASS = "account-ai-settings__field-reset";
+const FIELD_RESET_CLASS = "ai-settings__field-reset";
 
-const TOGGLE_CLASS = "account-ai-settings__toggle";
-const TOGGLE_OPT_CLASS = "account-ai-settings__toggle-opt";
-const TOGGLE_OPT_ACTIVE_CLASS = "account-ai-settings__toggle-opt--active";
+const TOGGLE_CLASS = "ai-settings__toggle";
+const TOGGLE_OPT_CLASS = "ai-settings__toggle-opt";
+const TOGGLE_OPT_ACTIVE_CLASS = "ai-settings__toggle-opt--active";
 
-const RANGE_CLASS = "account-ai-settings__range";
-const RANGE_SLIDER_CLASS = "account-ai-settings__range-slider";
-const RANGE_VALUE_CLASS = "account-ai-settings__range-value";
+const RANGE_CLASS = "ai-settings__range";
+const RANGE_SLIDER_CLASS = "ai-settings__range-slider";
+const RANGE_VALUE_CLASS = "ai-settings__range-value";
 
 const DEFAULT_RANGE_MAX = 100;
 

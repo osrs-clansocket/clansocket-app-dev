@@ -120,7 +120,7 @@ function buildLinkForm(slug: string, onLinked: () => void): Instance {
         button({
             classes: [SUBMIT_BTN_CLASS],
             variant: BTN_VARIANT_PRIMARY,
-            
+
             text: SUBMIT_LINK_BTN,
             context: "submit the WoM credentials to link the clan's WoM group",
             meta: ["submit"],

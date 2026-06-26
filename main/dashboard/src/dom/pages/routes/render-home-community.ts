@@ -4,12 +4,13 @@ import {
     ROUTE_HOME_COMMUNITY_CTA_CLASS,
     ROUTE_HOME_COMMUNITY_CTA_ICON_CLASS,
     ROUTE_HOME_COMMUNITY_CTA_LABEL_CLASS,
+    ROUTE_HOME_COMMUNITY_DISCLAIMER_CLASS,
     ROUTE_HOME_COMMUNITY_TILE_CLASS,
     ROUTE_HOME_SECTION_BODY_CLASS,
     ROUTE_HOME_SECTION_CLASS,
     ROUTE_HOME_SECTION_TITLE_CLASS,
 } from "../../../shared/constants/route/route-home-constants.js";
-import { COMMUNITY_BODY, URL_DISCORD_INVITE } from "../../../shared/constants/home/render-home-data.js";
+import { COMMUNITY_BODY, COMMUNITY_DISCLAIMER, URL_DISCORD_INVITE } from "../../../shared/constants/home/render-home-data.js";
 import { externalAnchor } from "./home-external-anchor.js";
 
 function buildCommunityCta(): Instance {
@@ -47,6 +48,7 @@ export function buildCommunity(): Instance {
             }),
             paragraph(textProps([ROUTE_HOME_SECTION_BODY_CLASS], COMMUNITY_BODY)),
             buildCommunityCta(),
+            paragraph(textProps([ROUTE_HOME_COMMUNITY_DISCLAIMER_CLASS], COMMUNITY_DISCLAIMER)),
         ],
     );
 }

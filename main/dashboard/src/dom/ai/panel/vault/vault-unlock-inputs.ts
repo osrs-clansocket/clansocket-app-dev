@@ -34,7 +34,7 @@ function buildPassInput(): Instance<HTMLInputElement> {
 function buildUnlockBtn(): Instance<HTMLButtonElement> {
     return button({
         variant: BTN_VARIANT_OUTLINE,
-        
+
         type: "submit",
         text: "Unlock",
         context: "unlock the encrypted key vault",

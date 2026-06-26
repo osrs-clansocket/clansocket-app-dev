@@ -49,7 +49,7 @@ function planeButton(plane: number, activePlane$: Signal<number>): Instance<HTML
         {
             ariaLabel: `Plane ${plane}`,
             variant: "chip",
-            
+
             classes: [MAP_PLANE_BTN_CLASS],
             onClick: () => activePlane$.set(plane),
             context: `select plane ${plane}`,

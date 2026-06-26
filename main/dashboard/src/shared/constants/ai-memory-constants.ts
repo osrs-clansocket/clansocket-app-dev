@@ -1,13 +1,14 @@
 export const AI_MEMORY_INLINE_CLASS = "ai-memory__inline";
 export const AI_MEMORY_INLINE_BODY_CLASS = "ai-memory__inline-body";
-export const AI_MEMORY_SIDEBAR_CLASS = "ai-memory__sidebar";
+export const AI_MEMORY_GALLERY_CLASS = "ai-memory__gallery";
 export const AI_MEMORY_CONTENT_CLASS = "ai-memory__content";
 export const AI_MEMORY_STATUS_CLASS = "ai-memory__status";
 export const AI_MEMORY_STATUS_ERROR_CLASS = "ai-memory__status--error";
 export const AI_MEMORY_LIST_CLASS = "ai-memory__list";
 export const AI_MEMORY_LIST_ITEM_CLASS = "ai-memory__list-item";
 export const AI_MEMORY_NEW_CLASS = "ai-memory__new";
-export const AI_MEMORY_PLACEHOLDER_CLASS = "ai-memory__placeholder";
+export const AI_MEMORY_NEW_GLYPH_CLASS = "ai-memory__new-glyph";
+export const AI_MEMORY_NEW_LABEL_CLASS = "ai-memory__new-label";
 export const AI_MEMORY_LIST_ID_CLASS = "ai-memory__list-id";
 export const AI_MEMORY_LIST_TYPE_CLASS = "ai-memory__list-type";
 export const AI_MEMORY_LOADER_CLASS = "ai-memory__loader";

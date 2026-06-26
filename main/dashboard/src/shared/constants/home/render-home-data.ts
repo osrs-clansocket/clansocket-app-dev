@@ -61,7 +61,9 @@ export const BTN_OUTLINE_CLASS = "btn--outline";
 export const BTN_COMPACT_CLASS = "btn--compact";
 
 export const COMMUNITY_BODY =
-    "Looking to connect with other OSRS clan owners and staff? Head over to Clan Central for peer support, inter-clan events, and bad-actor reports.";
+    "Discord for OSRS clan owners and staff. Peer support, idea exchange, clan-vs-clan events, and bad-actor reports across the community.";
+export const COMMUNITY_DISCLAIMER =
+    "Clan members should join their own clan's discord if one exists — Clan Central doesn't tailor to regular members.";
 export const DOWNLOADS_BODY = "Don't like web browsers? Grab the latest desktop build for your platform below.";
 
 export interface ResourceLink {

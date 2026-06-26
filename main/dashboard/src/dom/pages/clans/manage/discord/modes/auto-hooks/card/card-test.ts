@@ -76,7 +76,7 @@ export function buildTestBtn(state: TestStateView, row: AutoHookRow): Instance {
     const labelSig = signal(TEST_BTN_LABEL);
     const testBtn: Instance<HTMLButtonElement> = button({
         variant: BTN_VARIANT_OUTLINE,
-        
+
         text: labelSig,
         context: "send a sample message to the configured webhook for preview testing",
         meta: ["action"],

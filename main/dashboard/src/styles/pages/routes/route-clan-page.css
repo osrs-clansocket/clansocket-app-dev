@@ -1,0 +1,8 @@
+.route-clan {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    inline-size: 100%;
+    block-size: 100%;
+    overflow: hidden;
+}

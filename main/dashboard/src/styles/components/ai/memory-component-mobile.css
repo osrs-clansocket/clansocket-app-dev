@@ -1,29 +1,19 @@
 @media (width<=40rem) {
-    .ai-memory__body {
-        gap: var(--sp-2);
-        grid-template-columns: 1fr;
-        grid-template-rows: auto 1fr;
-        padding: var(--sp-2);
+    .ai-memory__gallery {
+        gap: var(--sp-1h);
+        grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
     }
-    .ai-memory__sidebar {
-        max-block-size: 12rem;
+
+    .ai-memory__list-item,
+    .ai-memory__new {
+        padding: var(--sp-1h);
     }
-}
-@media (width<=40rem) {
+
     .ai-memory__textarea {
         min-block-size: 8rem;
     }
+
     .ai-memory__editor {
-        gap: var(--sp-2);
-    }
-}
-@media (width<=40rem) {
-    .ai-memory__inline-body {
-        grid-template-columns: minmax(0, 1fr);
-        grid-template-rows: auto 1fr;
-        max-block-size: none;
-    }
-    .ai-memory__inline-body .ai-memory__sidebar {
-        max-block-size: 10rem;
+        gap: var(--sp-1h);
     }
 }

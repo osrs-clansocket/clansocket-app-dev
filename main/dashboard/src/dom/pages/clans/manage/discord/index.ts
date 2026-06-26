@@ -21,6 +21,16 @@ import { modeContent } from "./mode-registry.js";
 const LOADING_TEXT = "Loading discord…";
 const DEFAULT_MODE_KEY = "channels";
 
+const selectedGuildByClan = new Map<string, ReturnType<typeof signal<string>>>();
+
+function getSelectedGuild(slug: string, defaultGuildId: string): ReturnType<typeof signal<string>> {
+    let s = selectedGuildByClan.get(slug);
+    if (s) return s;
+    s = signal<string>(defaultGuildId);
+    selectedGuildByClan.set(slug, s);
+    return s;
+}
+
 function buildLoading(): Instance {
     return paragraph(textProps([DISCORD_LOADING_CLASS], LOADING_TEXT));
 }
@@ -42,8 +52,12 @@ function makeSelectHandler(
 }
 
 function buildFrame(slug: string, servers: readonly DiscordServer[], subTab: string): Instance {
-    const initialServer = servers[0]!;
-    const selectedGuildId = signal<string>(initialServer.guild_id);
+    const fallbackGuildId = servers[0]!.guild_id;
+    const selectedGuildId = getSelectedGuild(slug, fallbackGuildId);
+    if (!servers.some((s) => s.guild_id === selectedGuildId())) {
+        selectedGuildId.set(fallbackGuildId);
+    }
+    const activeServer = resolveServer(servers, selectedGuildId());
     const paneCenter = buildPaneCenter();
     const renderModeFor = (guildId: string): void => {
         paneCenter.setMode(modeContent({ slug, servers, server: resolveServer(servers, guildId) }, subTab));
@@ -54,7 +68,7 @@ function buildFrame(slug: string, servers: readonly DiscordServer[], subTab: str
         activeGuildId: () => selectedGuildId(),
         onSelect: makeSelectHandler(selectedGuildId, renderModeFor),
     });
-    paneCenter.setMode(modeContent({ slug, servers, server: initialServer }, subTab));
+    paneCenter.setMode(modeContent({ slug, servers, server: activeServer }, subTab));
     return div(baseProps([DISCORD_FRAME_CLASS]), [
         header,
         buildRailLeft({ slug, activeKey: subTab }),

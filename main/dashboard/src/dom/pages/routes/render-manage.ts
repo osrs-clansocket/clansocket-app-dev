@@ -10,10 +10,12 @@ import {
     CLAN_MANAGE_BACK_CLASS,
     CLAN_MANAGE_BODY_CLASS,
     CLAN_MANAGE_MISSING_CLASS,
-    CLAN_MANAGE_TAB_ACTIVE_CLASS,
-    CLAN_MANAGE_TAB_CLASS,
-    CLAN_MANAGE_TABS_CLASS,
 } from "../../../shared/constants/clan/manage-constants.js";
+import {
+    PAGE_BANNER_ROW_CLASS,
+    PAGE_BANNER_TAB_ACTIVE_CLASS,
+    PAGE_BANNER_TAB_CLASS,
+} from "../../../shared/constants/banner/banner-constants.js";
 import { ROUTE_CLAN_MANAGE_CLASS } from "../../../shared/constants/route/route-constants.js";
 
 function buildMissing(): Instance {
@@ -25,7 +27,7 @@ function buildMissing(): Instance {
 function buildTabButton(slug: string, key: string, isActive: boolean): Instance {
     const label = key.split("-").join(" ");
     return button({
-        classes: [CLAN_MANAGE_TAB_CLASS, ...(isActive ? [CLAN_MANAGE_TAB_ACTIVE_CLASS] : [])],
+        classes: [PAGE_BANNER_TAB_CLASS, ...(isActive ? [PAGE_BANNER_TAB_ACTIVE_CLASS] : [])],
         role: "tab",
         ariaSelected: isActive ? "true" : "false",
         data: { "tab-key": key },
@@ -53,7 +55,7 @@ function buildBackButton(slug: string): Instance {
 }
 
 function buildTabNav(slug: string, active: string): Instance {
-    return div({ classes: [CLAN_MANAGE_TABS_CLASS], role: "tablist", context: null, meta: null }, [
+    return div({ classes: [PAGE_BANNER_ROW_CLASS], role: "tablist", context: null, meta: null }, [
         ...TAB_KEYS.map((key) => buildTabButton(slug, key, key === active)),
         buildBackButton(slug),
     ]);

@@ -15,6 +15,7 @@ export const PREFERENCES_TAB: TabConcerns = {
             id: "display-format",
             title: "Display format",
             icon: "calendar3",
+            defaultOpen: DEFAULT_OPEN,
             rows: [["ai_time_format", "ai_date_format"]],
         },
         {

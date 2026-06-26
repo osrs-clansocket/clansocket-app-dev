@@ -9,12 +9,12 @@
     border-radius: var(--radius-md);
     background: var(--base-graphite-800);
 }
-.account__clan-row-head {
+.account__clan-row-banner {
     display: flex;
     align-items: center;
     gap: var(--sp-1);
     inline-size: 100%;
-    padding: var(--sp-1) var(--sp-1);
+    padding: var(--sp-1);
     border: none;
     font: inherit;
     font-size: var(--fs-xs);
@@ -23,6 +23,9 @@
     color: inherit;
     background: transparent;
     cursor: pointer;
+}
+.account__clan-row-banner:hover {
+    background: var(--base-graphite-700);
 }
 .account__clan-avatar {
     display: inline-flex;
@@ -61,20 +64,6 @@
     block-size: 0.875rem;
     margin-inline-start: var(--sp-1);
     background: var(--base-graphite-500);
-}
-.account__clan-row-head:hover {
-    background: var(--base-graphite-700);
-}
-.account__clan-row-head--static {
-    cursor: default;
-}
-.account__clan-row-head--static:hover {
-    background: transparent;
-}
-.account__clan-row-banner {
-    display: flex;
-    align-items: center;
-    gap: var(--sp-1);
 }
 .account__clan-row-info {
     display: flex;
@@ -116,10 +105,26 @@
     white-space: nowrap;
 }
 .account__clan-row-view {
+    display: inline-flex;
     flex-shrink: 0;
-    margin-inline-end: var(--sp-1);
+    align-items: center;
+    gap: var(--sp-0);
+    min-block-size: var(--icon-md);
+    padding: var(--sp-0) var(--sp-1);
+    border: 0.0625rem solid var(--base-graphite-500);
+    border-radius: var(--radius-md);
+    font-size: var(--fs-2xs);
+    line-height: var(--lh-flat);
+    color: var(--base-gold-300);
+    background: var(--base-graphite-800);
+}
+.account__clan-row-view:hover {
+    color: var(--base-gold-200);
+    border-color: var(--base-gold-500);
 }
 .account__clan-chevron {
+    flex-shrink: 0;
+    padding: var(--sp-0) var(--sp-1);
     font-size: var(--fs-2xs);
     color: var(--base-graphite-300);
     transition: transform 0.18s ease;

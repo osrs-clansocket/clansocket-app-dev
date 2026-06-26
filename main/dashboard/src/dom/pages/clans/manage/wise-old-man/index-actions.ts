@@ -79,7 +79,7 @@ async function runUnlinkAction(args: { cfg: ActionsConfig; unlinkHost: Instance 
 }
 
 function actionBtn(text: string, context: string, meta: ("action" | "destructive")[], onClick: () => void): Instance {
-    return button({ classes: [], variant: BTN_VARIANT_OUTLINE,  text, context, meta, onClick });
+    return button({ classes: [], variant: BTN_VARIANT_OUTLINE, text, context, meta, onClick });
 }
 
 function buildRefreshButtons(cfg: ActionsConfig): { updateBtn: Instance; syncBtn: Instance } {

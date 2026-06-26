@@ -204,6 +204,13 @@
 .route-home__community-cta-icon {
     font-size: var(--icon-lg);
 }
+.route-home__community-disclaimer {
+    margin-block-start: var(--sp-1);
+    font-size: var(--fs-3xs);
+    line-height: var(--lh-tight);
+    text-align: center;
+    color: var(--base-graphite-300);
+}
 
 .route-home__download-grid {
     display: flex;

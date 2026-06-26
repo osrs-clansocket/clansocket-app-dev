@@ -1,6 +1,0 @@
-.account-ai-settings__row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    gap: var(--sp-3);
-}

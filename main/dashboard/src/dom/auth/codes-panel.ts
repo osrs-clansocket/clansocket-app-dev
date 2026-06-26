@@ -34,7 +34,7 @@ export function renderCodesPanel(codes: string[], fileContent: string, intro: st
         scroll,
         button({
             variant: BTN_VARIANT_PRIMARY,
-            
+
             text: "Download as .txt",
             context: "download the backup codes as a .txt file",
             meta: ["action", "account"],

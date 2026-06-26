@@ -7,16 +7,29 @@ import { HTTP_BAD_REQUEST, HTTP_INTERNAL_ERROR, HTTP_NOT_FOUND } from "../../../
 import { mountedRouter } from "../_mount-registry.js";
 const router = mountedRouter("/audit");
 
+interface ParsedAuditBody {
+    guildId: string | null;
+    userId: string | null;
+    action: string | null;
+    data: Record<string, unknown>;
+}
+
+function parseAuditBody(body: any): ParsedAuditBody {
+    const guildId = typeof body?.guildId === "string" ? body.guildId : null;
+    const rawUserId = typeof body?.userId === "string" ? body.userId : null;
+    const userId = rawUserId && rawUserId.length > 0 ? rawUserId : null;
+    const action = typeof body?.action === "string" ? body.action : null;
+    const data = body?.data && typeof body.data === "object" ? body.data : {};
+    return { guildId, userId, action, data };
+}
+
 router.post(
     "/",
     authenticate,
     handleAsync(async (req: Request, res: Response) => {
-        const guildId = typeof req.body?.guildId === "string" ? req.body.guildId : null;
-        const userId = typeof req.body?.userId === "string" ? req.body.userId : null;
-        const action = typeof req.body?.action === "string" ? req.body.action : null;
-        const data = req.body?.data && typeof req.body.data === "object" ? req.body.data : {};
-        if (!guildId || !userId || !action) {
-            res.status(HTTP_BAD_REQUEST).json({ error: "guildId_userId_action_required" });
+        const { guildId, userId, action, data } = parseAuditBody(req.body);
+        if (!guildId || !action) {
+            res.status(HTTP_BAD_REQUEST).json({ error: "guildId_action_required" });
             return;
         }
         try {

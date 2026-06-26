@@ -1,0 +1,8 @@
+{
+    "_doc": "Per-family allowlist for icons that can't be statically scanned (dynamic refs, user-picked values). Each key is a family prefix; value is either '*' to include the entire family in the subset sprite, or an array of icon names to force-include.",
+    "bi": ["github", "discord"],
+    "ti": [],
+    "mdi": [],
+    "gi": [],
+    "ph": []
+}
