@@ -1,7 +1,7 @@
 import type { Response } from "express";
 import { writeSseFrame } from "../../shared/http/sse-stream.js";
 import { registerIdentityListener } from "../streams/identity-stream.js";
-import { subscribeProjection } from "../streams/projection.js";
+import { subscribeProjection } from "../streams/subscriber-projection.js";
 import { resolveTopic } from "../streams/projection-registry.js";
 import { attachWritesStream } from "./streams-writes-handler.js";
 import type { ParsedSub } from "./streams-sub-parser.js";

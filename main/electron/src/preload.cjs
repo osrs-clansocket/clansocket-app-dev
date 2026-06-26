@@ -116,7 +116,12 @@ function injectHeaderCSS() {
     document.head.appendChild(style);
 }
 
-function buildIconBtn(id, ariaLabel, biIconClass, modifierClass) {
+const SVG_MASK_STYLE_BASE =
+    "display:inline-block;inline-size:1em;block-size:1em;background-color:currentColor;" +
+    "mask-repeat:no-repeat;mask-position:center;mask-size:contain;" +
+    "-webkit-mask-repeat:no-repeat;-webkit-mask-position:center;-webkit-mask-size:contain;";
+
+function buildIconBtn(id, ariaLabel, biIconName, modifierClass) {
     const btn = document.createElement("button");
     btn.id = id;
     btn.type = "button";
@@ -124,16 +129,18 @@ function buildIconBtn(id, ariaLabel, biIconClass, modifierClass) {
     btn.setAttribute("aria-label", ariaLabel);
     btn.setAttribute("title", ariaLabel);
     const icon = document.createElement("span");
-    icon.className = "bi " + biIconClass;
+    icon.className = "bi";
     icon.setAttribute("aria-hidden", "true");
+    const url = "/svg/bi/" + biIconName + ".svg";
+    icon.style.cssText = SVG_MASK_STYLE_BASE + "mask-image:url(" + url + ");-webkit-mask-image:url(" + url + ");";
     btn.appendChild(icon);
     return btn;
 }
 
 function buildWindowControls() {
-    const min = buildIconBtn("electron-btn-min", "Minimize", "bi-dash-lg", "electron-window-control--min");
-    const max = buildIconBtn("electron-btn-max", "Maximize", "bi-square", "electron-window-control--max");
-    const close = buildIconBtn("electron-btn-close", "Close", "bi-x-lg", "electron-window-control--close");
+    const min = buildIconBtn("electron-btn-min", "Minimize", "dash-lg", "electron-window-control--min");
+    const max = buildIconBtn("electron-btn-max", "Maximize", "square", "electron-window-control--max");
+    const close = buildIconBtn("electron-btn-close", "Close", "x-lg", "electron-window-control--close");
     min.addEventListener("click", () => ipcRenderer.send("window-minimize"));
     max.addEventListener("click", () => ipcRenderer.send("window-maximize-toggle"));
     close.addEventListener("click", () => ipcRenderer.send("window-close"));

@@ -1,4 +1,13 @@
-import { BTN_VARIANT_BARE, button, div, icon, span, wireClick, type Instance } from "../../../../../../factory";
+import {
+    BTN_VARIANT_BARE,
+    button,
+    div,
+    icon,
+    span,
+    wireClick,
+    type Instance,
+    textProps,
+} from "../../../../../../factory";
 import {
     clearChannel,
     clearTarget,
@@ -63,10 +72,7 @@ export function targetChipEl(ctx: PermissionsCtx, t: TargetChip, bit: number, fl
             context: null,
             meta: null,
         },
-        [
-            span({ classes: [CHIP_LABEL_CLASS], text: `${t.kind}: ${t.targetName}`, context: null, meta: null }),
-            targetRemoveBtn(ctx, t, bit, permLabel),
-        ],
+        [span(textProps([CHIP_LABEL_CLASS], `${t.kind}: ${t.targetName}`)), targetRemoveBtn(ctx, t, bit, permLabel)],
     );
     chip.setAttr(DATA_PERM_BIT, String(bit));
     chip.setAttr(DATA_CHIP_TARGET, `${t.kind}:${t.targetId}`);
@@ -98,10 +104,7 @@ export function channelChipEl(ctx: PermissionsCtx, c: ChannelChip, bit: number, 
             context: null,
             meta: null,
         },
-        [
-            span({ classes: [CHIP_LABEL_CLASS], text: `#${c.channelName}`, context: null, meta: null }),
-            channelRemoveBtn(ctx, c, bit, permLabel),
-        ],
+        [span(textProps([CHIP_LABEL_CLASS], `#${c.channelName}`)), channelRemoveBtn(ctx, c, bit, permLabel)],
     );
     chip.setAttr(DATA_PERM_BIT, String(bit));
     chip.setAttr(DATA_CHIP_CHANNEL, c.channelId);
@@ -137,7 +140,7 @@ export function lockedChipEl(c: RoleLevelChip, flagName: string): Instance {
         },
         [
             icon({ name: LOCK_ICON_NAME, classes: [], context: null, meta: null }),
-            span({ classes: [CHIP_LABEL_CLASS], text: `role: ${c.roleName}`, context: null, meta: null }),
+            span(textProps([CHIP_LABEL_CLASS], `role: ${c.roleName}`)),
         ],
     );
 }

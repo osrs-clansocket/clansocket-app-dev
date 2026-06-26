@@ -1,4 +1,4 @@
-import { div, paragraph, span, type Instance } from "../../../../../../../factory";
+import { div, paragraph, span, type Instance, baseProps, textProps } from "../../../../../../../factory";
 import { sampleTokens } from "../../../../../../../../shared/constants/clan-manage-discord/token-list.js";
 import {
     AUTO_HOOKS_PREVIEW_CONTENT_CLASS,
@@ -21,13 +21,8 @@ export function renderContentPreview(state: PreviewState): Instance {
     const tokenMap = sampleTokens(state.triggerType);
     const substituted = substituteTokens(state.content, tokenMap);
     const contentNodes = renderMarkdownNodes(substituted);
-    return div({ classes: [], context: null, meta: null }, [
-        span({
-            classes: [AUTO_HOOKS_PREVIEW_USERNAME_CLASS],
-            text: state.name.length > 0 ? state.name : DEFAULT_USERNAME,
-            context: null,
-            meta: null,
-        }),
+    return div(baseProps([]), [
+        span(textProps([AUTO_HOOKS_PREVIEW_USERNAME_CLASS], state.name.length > 0 ? state.name : DEFAULT_USERNAME)),
         paragraph(
             {
                 classes: [AUTO_HOOKS_PREVIEW_CONTENT_CLASS],

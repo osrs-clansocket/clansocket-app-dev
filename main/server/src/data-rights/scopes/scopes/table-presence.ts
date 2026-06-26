@@ -1,3 +1,4 @@
+import { sqlPlaceholders } from "../../../database/core/operations/index.js";
 import { quoteIdent } from "../../access/db-introspect.js";
 import { APP_TABLES_BY_ACCOUNT_HASH, APP_TABLES_BY_SITE_ACCOUNT } from "../manifest/index.js";
 import { openScopeDb, planForTable, type Scope } from "../user-scope/index.js";
@@ -16,9 +17,10 @@ export function hasUserRows(siteAccountId: string, scope: Scope, table: string):
             return Boolean(row);
         }
         if (plan.identifierValues.length === 0) return false;
-        const ph = plan.identifierValues.map(() => "?").join(",");
         const row = db
-            .prepare(`SELECT 1 FROM ${quoteIdent(table)} WHERE ${quoteIdent(plan.ownershipColumn)} IN (${ph}) LIMIT 1`)
+            .prepare(
+                `SELECT 1 FROM ${quoteIdent(table)} WHERE ${quoteIdent(plan.ownershipColumn)} IN (${sqlPlaceholders(plan.identifierValues.length)}) LIMIT 1`,
+            )
             .get(...plan.identifierValues);
         return Boolean(row);
     } catch {

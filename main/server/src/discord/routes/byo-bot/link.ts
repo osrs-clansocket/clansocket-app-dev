@@ -21,12 +21,6 @@ function guildIdOf(body: unknown): string | null {
     return typeof value === "string" && value.length > 0 ? value : null;
 }
 
-function authorizeExistingLinker(clanId: string, sid: string): boolean {
-    const existing = byoForClan(clanId);
-    if (!existing) return true;
-    return isLinker(sid, clanId, existing.owner_site_account_id ?? "");
-}
-
 function maybeBindGuild(clanId: string, body: unknown, botId: string, botName: string): string | null {
     const requestedGuildId = guildIdOf(body);
     if (requestedGuildId === null) return null;
@@ -53,7 +47,8 @@ async function gatePreVerify(a: VerifyGate): Promise<PreVerifyGate | null> {
         a.res.status(HTTP_BAD_REQUEST).json({ ok: false, reason: "invalid_payload" });
         return null;
     }
-    if (!authorizeExistingLinker(a.clanId, a.sid)) {
+    const existing = byoForClan(a.clanId);
+    if (existing && !isLinker(a.sid, a.clanId, existing.owner_site_account_id ?? "")) {
         a.res.status(HTTP_FORBIDDEN).json({ error: "not_linker_or_clan_owner" });
         return null;
     }

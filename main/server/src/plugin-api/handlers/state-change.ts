@@ -1,4 +1,5 @@
 import { recordClanRoster, recordPluginLogin } from "../../database/index.js";
+import { sessionReady } from "../session/socket-state.js";
 import { EVENT_CLAN_ROSTER, EVENT_LOGIN_STATE } from "../event-types.js";
 import {
     LOGIN_STATE_CONNECTION_LOST,
@@ -17,7 +18,7 @@ import { send } from "../transport/send.js";
 import type { RosterSnapshotEntry } from "../session/socket-state.js";
 import { isTelemetryAllowed, rejectUnauthed } from "../session/telemetry-gate.js";
 import type { PluginClientMessage, PluginLoginState } from "../types/index.js";
-import type { DispatchContext } from "./dispatch.js";
+import type { DispatchContext } from "./dispatch-types.js";
 
 const VALID_LOGIN_STATES: ReadonlySet<PluginLoginState> = new Set([
     LOGIN_STATE_LOGGED_IN,
@@ -95,7 +96,7 @@ function persistRoster(ctx: DispatchContext, msg: ClanRosterMsg): void {
 
 export function handleClanRoster(ctx: DispatchContext, msg: ClanRosterMsg): void {
     const { ws, state } = ctx;
-    if (!state.authed || !state.sockClanId || !state.sessionAccount) {
+    if (!sessionReady(state)) {
         rejectUnauthed(ws, state);
         return;
     }

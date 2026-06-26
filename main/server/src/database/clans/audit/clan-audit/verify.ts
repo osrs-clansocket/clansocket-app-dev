@@ -45,17 +45,27 @@ function recomputeRowHash(r: AuditChainRow): string {
     });
 }
 
+const verifyBreak = (rowsChecked: number, breakAtId: number, breakReason: string): VerifyResult => ({
+    ok: false,
+    rowsChecked,
+    breakAtId,
+    breakReason,
+});
+
+const verifyOk = (rowsChecked: number): VerifyResult => ({
+    rowsChecked,
+    ok: true,
+    breakAtId: null,
+    breakReason: null,
+});
+
 export function verifyAuditChain(clanId: string): VerifyResult {
     const rows = loadChainRows(clanId);
     let expectedPrev: string | null = null;
     for (const r of rows) {
-        if ((r.prev_hash ?? null) !== expectedPrev) {
-            return { ok: false, rowsChecked: rows.length, breakAtId: r.id, breakReason: "prev_hash_mismatch" };
-        }
-        if (recomputeRowHash(r) !== r.row_hash) {
-            return { ok: false, rowsChecked: rows.length, breakAtId: r.id, breakReason: "row_hash_mismatch" };
-        }
+        if ((r.prev_hash ?? null) !== expectedPrev) return verifyBreak(rows.length, r.id, "prev_hash_mismatch");
+        if (recomputeRowHash(r) !== r.row_hash) return verifyBreak(rows.length, r.id, "row_hash_mismatch");
         expectedPrev = r.row_hash;
     }
-    return { ok: true, rowsChecked: rows.length, breakAtId: null, breakReason: null };
+    return verifyOk(rows.length);
 }

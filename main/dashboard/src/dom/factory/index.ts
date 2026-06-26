@@ -1,8 +1,16 @@
 export type { Instance, Child, BuildSpec } from "./core";
-export { build, createInstance, joinClasses } from "./core";
+export { build, createInstance, joinClasses, baseProps, textProps } from "./core";
 export { wireClick } from "./events/click-wirer.js";
 export { wireSubmit } from "./events/submit-wirer.js";
 export { wireDblClick, wireInput, wireChange, wireKey, wireFocus } from "./events/simple-wirer.js";
+export {
+    wirePointerDown,
+    wirePointerUp,
+    wirePointerMove,
+    wirePointerCancel,
+    wirePointerDrag,
+    type PointerDragBindings,
+} from "./events/pointer-wirer.js";
 export type {
     HandlerDescriptor,
     ClickProp,
@@ -11,12 +19,14 @@ export type {
     ChangeProp,
     KeyProp,
     FocusProp,
+    PointerProp,
     ClickHandler,
     SubmitHandler,
     InputHandler,
     ChangeHandler,
     KeyHandler,
     FocusHandler,
+    PointerHandler,
 } from "./events/handler-types.js";
 export { applyEffects } from "./effects/effect-applier.js";
 export { addEffectClass, removeEffectClass } from "./effects/class-applier.js";

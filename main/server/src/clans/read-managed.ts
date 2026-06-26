@@ -1,4 +1,5 @@
 import { DB_NAMES, getDb } from "../database/index.js";
+import { sqlPlaceholders } from "../database/core/operations/index.js";
 import { listAccountManagers } from "../database/clans/access/clan-manager-store.js";
 import { buildClanView, type ClanRow, type ManagedClanView } from "./clan-view-builder.js";
 
@@ -8,12 +9,11 @@ const GRANTED_VIA_FALLBACK = "unknown";
 export type { ManagedClanView, ManagedRoster, ManagedRosterMember } from "./clan-view-builder.js";
 
 function loadManagedClans(managerIds: string[]): ClanRow[] {
-    const placeholders = managerIds.map(() => "?").join(", ");
     return getDb(DB_NAMES.APP)
         .prepare(
             `SELECT id, slug, display_name, status, icon_kind, icon_value, color, created_at
              FROM clansocket_clans
-             WHERE id IN (${placeholders}) AND archived_at IS NULL`,
+             WHERE id IN (${sqlPlaceholders(managerIds.length)}) AND archived_at IS NULL`,
         )
         .all(...managerIds) as ClanRow[];
 }

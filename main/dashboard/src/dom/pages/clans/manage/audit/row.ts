@@ -1,8 +1,8 @@
-import { div, expandWithFade, snapshot, span, type Instance } from "../../../../factory";
+import { div, expandWithFade, snapshot, span, type Instance, textProps } from "../../../../factory";
 import type { ClanAuditEntry } from "../../../../../state/clans/clans-client/index.js";
 import { present } from "../../../../../state/clans/audit-presenters/index.js";
 import type { ClusterRow } from "../../../../../state/clans/audit/cluster-defs.js";
-import { fmtRelative } from "../../../../../state/clans/audit/format.js";
+import { fmtRelative } from "../../../../../state/clans/audit/formatter-audit.js";
 import { canRevertEntry, loadRevertExpansion } from "./expansion.js";
 import { auditRowClasses, buildAuditCells, makeAuditAria, titleText } from "./row-cells.js";
 import {
@@ -25,13 +25,11 @@ const rowRefs = new WeakMap<HTMLElement, RowRefs>();
 
 function revertClusterRow(expansion: Instance, row: Instance): void {
     row.toggleClass(AUDIT_ROW_REVERTED_CLASS, true);
-    expansion.setChildren(
-        span({ classes: [AUDIT_REVERT_CONFIRMED_CLASS], text: "Reverted.", context: null, meta: null }),
-    );
+    expansion.setChildren(span(textProps([AUDIT_REVERT_CONFIRMED_CLASS], "Reverted.")));
 }
 
 function attachClusterExpansion(row: Instance, entry: ClanAuditEntry, slug: string): (e: MouseEvent) => void {
-    const chevron = span({ classes: [AUDIT_CHEVRON_CLASS], text: "▸", context: null, meta: null });
+    const chevron = span(textProps([AUDIT_CHEVRON_CLASS], "▸"));
     const expansion = div({ classes: [AUDIT_EXPANSION_CLASS], hidden: "", context: null, meta: null });
     row.addChild(chevron);
     row.addChild(expansion);

@@ -12,29 +12,33 @@ import {
 import { auditScopeKey, scopeKeyClan, scopeKeyPlugin, registerWriteListener } from "../streams/writes-stream.js";
 import type { ParsedSub } from "./streams-sub-parser.js";
 
-const SIMPLE_SCOPE_KINDS = new Set<string>([SCOPE_APP, SCOPE_VAREZ]);
+type UserScopeRow = ReturnType<typeof listUserScopes>[number];
 
-function indexUserScope(out: Map<string, Scope>, s: ReturnType<typeof listUserScopes>[number]): void {
-    if (SIMPLE_SCOPE_KINDS.has(s.kind)) {
-        out.set(s.kind, { kind: s.kind } as Scope);
-        return;
-    }
-    if (s.kind === SCOPE_CLAN && s.clanId) {
-        out.set(scopeKeyClan(s.clanId), { kind: SCOPE_CLAN, clanId: s.clanId });
-        return;
-    }
-    if (s.kind === SCOPE_CLAN_AUDIT && s.clanId) {
-        out.set(auditScopeKey(s.clanId), { kind: SCOPE_CLAN_AUDIT, clanId: s.clanId });
-        return;
-    }
-    if (s.kind === SCOPE_PLUGIN && s.clanId && s.mode) {
-        out.set(scopeKeyPlugin(s.clanId, s.mode), { kind: SCOPE_PLUGIN, clanId: s.clanId, mode: s.mode });
-    }
-}
+const simpleIndexer = (out: Map<string, Scope>, s: UserScopeRow): void => {
+    out.set(s.kind, { kind: s.kind } as Scope);
+};
+
+const clanIndexer =
+    (kind: typeof SCOPE_CLAN | typeof SCOPE_CLAN_AUDIT, keyer: (id: string) => string) =>
+    (out: Map<string, Scope>, s: UserScopeRow): void => {
+        if (s.clanId) out.set(keyer(s.clanId), { kind, clanId: s.clanId } as Scope);
+    };
+
+const SCOPE_INDEXERS: Record<string, (out: Map<string, Scope>, s: UserScopeRow) => void> = {
+    [SCOPE_APP]: simpleIndexer,
+    [SCOPE_VAREZ]: simpleIndexer,
+    [SCOPE_CLAN]: clanIndexer(SCOPE_CLAN, scopeKeyClan),
+    [SCOPE_CLAN_AUDIT]: clanIndexer(SCOPE_CLAN_AUDIT, auditScopeKey),
+    [SCOPE_PLUGIN]: (out, s) => {
+        if (s.clanId && s.mode) {
+            out.set(scopeKeyPlugin(s.clanId, s.mode), { kind: SCOPE_PLUGIN, clanId: s.clanId, mode: s.mode });
+        }
+    },
+};
 
 function writesScopeMap(siteAccountId: string): Map<string, Scope> {
     const out = new Map<string, Scope>();
-    for (const s of listUserScopes(siteAccountId)) indexUserScope(out, s);
+    for (const s of listUserScopes(siteAccountId)) SCOPE_INDEXERS[s.kind]?.(out, s);
     return out;
 }
 

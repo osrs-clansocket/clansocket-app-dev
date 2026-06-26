@@ -4,7 +4,7 @@ import { WOMClient } from "@wise-old-man/utils";
 import type { PendingWomRow } from "../../database/wom/outbound/list-pending.js";
 import { recordOutbound } from "../../database/wom/outbound/record-failure.js";
 import { markWomApplied, markDeadLetter, markWomFailed } from "../../database/wom/outbound/transition.js";
-import { recordWom429, recordSent, recordWomSuccess } from "../../database/wom/rate-window/update.js";
+import { recordWom429, recordSent, recordWomSuccess } from "../../database/wom/rate-window/updater-rate.js";
 import {
     HTTP_BAD_REQUEST,
     HTTP_FORBIDDEN,
@@ -16,11 +16,18 @@ import type { WomPayload } from "../types/payload-type.js";
 import { dispatchWithTimeout } from "./sdk-handlers.js";
 import { safeRouteResponse } from "./runewatch-block-check.js";
 import { scheduleWake } from "./wake-scheduler.js";
+import { breakerNoteFail, breakerNoteOk } from "./breaker.js";
 
 const BACKOFF_429_MIN_MS = 30000;
 const BACKOFF_429_MAX_MS = 90001;
 const NETWORK_ERROR_BACKOFF_MS = 60000;
 const FAILED_REQUEST_ERROR_CODE = 0;
+const HTTP_SERVER_ERROR_MIN = 500;
+const HTTP_SERVER_ERROR_MAX = 600;
+
+function isServerError(statusCode: number): boolean {
+    return statusCode >= HTTP_SERVER_ERROR_MIN && statusCode < HTTP_SERVER_ERROR_MAX;
+}
 
 const CALLER_ERROR_STATUSES = new Set<number>([HTTP_BAD_REQUEST, HTTP_UNAUTHORIZED, HTTP_FORBIDDEN, HTTP_NOT_FOUND]);
 
@@ -69,6 +76,7 @@ function handleFireFailure(ctx: FailureCtx, err: unknown): void {
         scheduleWake(ctx.clanId, now + backoff429Ms());
         return;
     }
+    if (isServerError(statusCode)) breakerNoteFail(ctx.clanId);
     markWomFailed(ctx.clanId, ctx.head.queue_id, statusCode, ctx.attemptNo);
     const nextWake = statusCode === FAILED_REQUEST_ERROR_CODE ? now + NETWORK_ERROR_BACKOFF_MS : now;
     scheduleWake(ctx.clanId, nextWake);
@@ -89,6 +97,7 @@ export async function fireRequest(args: FireRequestArgs): Promise<void> {
         const bodyHash = createHash("sha256").update(JSON.stringify(result)).digest("hex");
         markWomApplied(clanId, head.queue_id, bodyHash);
         recordWomSuccess(clanId);
+        breakerNoteOk(clanId);
         safeRouteResponse(clanId, head, result);
         scheduleWake(clanId, Date.now());
     } catch (err) {

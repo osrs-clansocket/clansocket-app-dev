@@ -5,6 +5,7 @@ import {
     INLINE_CONFIRM_HOST_CLASS,
     inlineConfirm,
     type Instance,
+    baseProps,
 } from "../../../../factory";
 import { identityStore } from "../../../../../state/identity/stores/identity-store.js";
 import {
@@ -58,11 +59,11 @@ const STICKER_FORMAT_LABELS: Record<number, string> = {
 const STICKER_FORMAT_UNKNOWN = "?";
 
 function buildDeleteSection(sticker: DiscordServerSticker): Instance {
-    const deleteHost = div({ classes: [INLINE_CONFIRM_HOST_CLASS], context: null, meta: null });
+    const deleteHost = div(baseProps([INLINE_CONFIRM_HOST_CLASS]));
     const deleteBtn = button({
         classes: [],
         variant: BTN_VARIANT_OUTLINE,
-        compact: true,
+        
         text: "Delete sticker",
         ariaLabel: `Delete server sticker ${sticker.name}`,
         context: `delete the ${sticker.name} server sticker`,
@@ -70,7 +71,7 @@ function buildDeleteSection(sticker: DiscordServerSticker): Instance {
         onClick: () => void confirmStickerDelete(deleteHost, sticker),
     });
     deleteHost.addChild(deleteBtn);
-    return div({ classes: [DISCORD_INSPECTOR_SECTION_CLASS], context: null, meta: null }, [deleteHost]);
+    return div(baseProps([DISCORD_INSPECTOR_SECTION_CLASS]), [deleteHost]);
 }
 
 interface PatchArgs {

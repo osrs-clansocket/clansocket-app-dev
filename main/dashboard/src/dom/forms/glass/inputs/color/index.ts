@@ -1,11 +1,11 @@
-import "../../../../../styles/pages/voxlab/picker-page.css";
-import { div, effect, label, type Instance } from "../../../../factory/index.js";
+import "../../../../../styles/components/forms/picker-component.css";
+import { div, effect, label, type Instance, baseProps } from "../../../../factory/index.js";
 import { buildColorSwatch } from "./swatch.js";
 import { buildPickerPopup } from "./popup.js";
 
-const CTRL_WRAPPER = "voxlab__control";
-const CTRL_COLOR = "voxlab__control--color";
-const PICKER_LABEL = "voxlab__picker-label";
+const CTRL_WRAPPER = "picker__control";
+const CTRL_COLOR = "picker__control--color";
+const PICKER_LABEL = "picker__label";
 
 export interface ColorPickerHandle {
     wrapper: HTMLElement;
@@ -21,8 +21,8 @@ export interface GlassColorOptions {
 
 export function createColorPicker(labelText: string, initial: string): ColorPickerHandle {
     const swatch = buildColorSwatch({ ariaLabel: `${labelText}: open color picker`, initial }, buildPickerPopup);
-    const wrapper = div({ classes: [CTRL_WRAPPER, CTRL_COLOR], context: null, meta: null }, [
-        label({ classes: [PICKER_LABEL], context: null, meta: null }, [labelText]),
+    const wrapper = div(baseProps([CTRL_WRAPPER, CTRL_COLOR]), [
+        label(baseProps([PICKER_LABEL]), [labelText]),
         swatch.host,
     ]);
     return { wrapper: wrapper.el, input: swatch.carrier };

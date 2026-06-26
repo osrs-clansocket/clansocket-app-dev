@@ -1,4 +1,4 @@
-import { createInstance, div, onceEffect, pre, span, type Instance } from "../../factory";
+import { createInstance, div, onceEffect, pre, span, type Instance, baseProps, textProps } from "../../factory";
 import { labelFor, TYPE_CHAIN, summaryLine, hasDetail, detailContent } from "./summaries";
 import type { Payload } from "./summaries";
 import { renderMarkdown } from "../../../ai/markdown";
@@ -42,10 +42,7 @@ function insertAboveThinking(containerEl: HTMLElement, el: HTMLElement): void {
 }
 
 function createDetails(getContent: () => string): Instance {
-    return eventDetails(
-        () => pre({ classes: [AI_BAR_EVENT_CODE_CLASS], text: getContent(), context: null, meta: null }),
-        "expand the raw event payload",
-    );
+    return eventDetails(() => pre(textProps([AI_BAR_EVENT_CODE_CLASS], getContent())), "expand the raw event payload");
 }
 
 function renderChainMessage(container: HTMLElement, payload: Payload): void {
@@ -57,13 +54,8 @@ function renderChainMessage(container: HTMLElement, payload: Payload): void {
             meta: null,
         },
         [
-            span({
-                classes: [AI_BAR_CHAIN_LABEL_CLASS],
-                text: `Chain (depth ${payload.depth ?? "?"}) — Prediction`,
-                context: null,
-                meta: null,
-            }),
-            div({ classes: [AI_BAR_CHAIN_BODY_CLASS], context: null, meta: null }).setHTML(
+            span(textProps([AI_BAR_CHAIN_LABEL_CLASS], `Chain (depth ${payload.depth ?? "?"}) — Prediction`)),
+            div(baseProps([AI_BAR_CHAIN_BODY_CLASS])).setHTML(
                 renderMarkdown(String(payload.message ?? ""), window.location.pathname),
             ),
         ],
@@ -73,9 +65,9 @@ function renderChainMessage(container: HTMLElement, payload: Payload): void {
 }
 
 function buildEventHeader(type: string, payload: Payload): Instance {
-    return div({ classes: [AI_BAR_EVENT_HEADER_CLASS], context: null, meta: null }, [
-        span({ classes: [AI_BAR_EVENT_LABEL_CLASS], text: labelFor(type), context: null, meta: null }),
-        span({ classes: [AI_BAR_EVENT_BODY_CLASS], text: summaryLine(type, payload), context: null, meta: null }),
+    return div(baseProps([AI_BAR_EVENT_HEADER_CLASS]), [
+        span(textProps([AI_BAR_EVENT_LABEL_CLASS], labelFor(type))),
+        span(textProps([AI_BAR_EVENT_BODY_CLASS], summaryLine(type, payload))),
     ]);
 }
 

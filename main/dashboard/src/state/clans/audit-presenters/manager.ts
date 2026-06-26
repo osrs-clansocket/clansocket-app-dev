@@ -10,7 +10,7 @@ export const MANAGER_PRESENTERS: Record<string, Presenter> = {
         return {
             detail,
             title: "Manager granted",
-            icon: "bi-person-plus-fill",
+            icon: { provider: "bi", name: "person-plus-fill" },
             semantic: "write",
             hasExpansion: priorRole !== null,
         };
@@ -18,7 +18,7 @@ export const MANAGER_PRESENTERS: Record<string, Presenter> = {
     "server:manager.revoked": (entry) => ({
         title: "Manager revoked",
         detail: shortId(entry.targetId),
-        icon: "bi-person-dash-fill",
+        icon: { provider: "bi", name: "person-dash-fill" },
         semantic: "destructive",
         hasExpansion: false,
     }),
@@ -28,7 +28,7 @@ export const MANAGER_PRESENTERS: Record<string, Presenter> = {
         return {
             title: "Manager request",
             detail: source ? `RSN: ${rsn ?? "?"} · via ${source}` : `RSN: ${rsn ?? "?"}`,
-            icon: "bi-envelope-plus",
+            icon: { provider: "bi", name: "envelope-plus" },
             semantic: "write",
             hasExpansion: false,
         };
@@ -38,7 +38,7 @@ export const MANAGER_PRESENTERS: Record<string, Presenter> = {
         return {
             title: "Manager request approved",
             detail: rsn ? `RSN: ${rsn}` : "",
-            icon: "bi-envelope-check",
+            icon: { provider: "bi", name: "envelope-check" },
             semantic: "write",
             hasExpansion: false,
         };
@@ -48,7 +48,7 @@ export const MANAGER_PRESENTERS: Record<string, Presenter> = {
         return {
             title: "Manager request denied",
             detail: rsn ? `RSN: ${rsn}` : "",
-            icon: "bi-envelope-x",
+            icon: { provider: "bi", name: "envelope-x" },
             semantic: "destructive",
             hasExpansion: false,
         };

@@ -1,7 +1,7 @@
 import { type Request, type RequestHandler, type Response } from "express";
 import { requireSiteAccount } from "../../auth/site-middleware.js";
 import { pluginModes } from "../../database/index.js";
-import { subscribeProjection } from "../../data-rights/streams/projection.js";
+import { subscribeProjection } from "../../data-rights/streams/subscriber-projection.js";
 import { positionsTopic } from "../../data-rights/streams/topics/positions-topic.js";
 import { getMapMeta, listMapPlanes } from "../../map-assets/world-map-db.js";
 import { HTTP_NOT_FOUND } from "../../shared/http/http-status.js";

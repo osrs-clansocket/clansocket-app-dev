@@ -1,7 +1,7 @@
 import { clanAuditDb } from "../../../core/database.js";
 import { CLAN_INACTIVITY_THRESHOLD_MS } from "../../../../shared/clan/clan-retention.js";
 import { parseDecimal } from "../../../../shared/parsers/decimal-parser.js";
-import { MS_PER_DAY } from "../../../../shared/time.js";
+import { MS_PER_DAY } from "../../../../shared/time/index.js";
 
 const SETTING_KEY_LAST_PRUNE = "clan_audit_log.last_prune_at";
 const PRUNE_GATE_MS = MS_PER_DAY;

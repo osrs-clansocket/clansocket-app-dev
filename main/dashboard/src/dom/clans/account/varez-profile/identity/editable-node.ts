@@ -1,6 +1,6 @@
 import { setEditing } from "../state.js";
 import { buildTreeLink } from "./tree.js";
-import type { NodeRenderArgs } from "./tree-node.js";
+import type { NodeRenderArgs } from "./render-args.js";
 import { buildEditableInputs } from "./editable-inputs.js";
 import { commitEdit } from "./editable-commit.js";
 import { buildEditableRow } from "./editable-row.js";

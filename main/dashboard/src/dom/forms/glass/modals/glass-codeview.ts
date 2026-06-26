@@ -1,4 +1,4 @@
-import { code, createInstance, modal, pre, scrollContainer } from "../../../factory/index.js";
+import { code, createInstance, modal, pre, scrollContainer, baseProps } from "../../../factory/index.js";
 import {
     GLASS_CODEVIEW_CLASS,
     GLASS_CODEVIEW_PRE_CLASS,
@@ -13,10 +13,10 @@ import type { CodeViewOptions } from "./glass-codeview-types.js";
 export type { CodeViewOptions } from "./glass-codeview-types.js";
 
 export function glassCodeView(opts: CodeViewOptions): void {
-    const preEl = pre({ classes: [GLASS_CODEVIEW_PRE_CLASS], context: null, meta: null }, [
+    const preEl = pre(baseProps([GLASS_CODEVIEW_PRE_CLASS]), [
         code({ text: buildPrettyCode(opts.content), context: null, meta: null }),
     ]);
-    const scrollWrap = scrollContainer({ classes: [GLASS_CODEVIEW_SCROLL_CLASS], context: null, meta: null }, [preEl]);
+    const scrollWrap = scrollContainer(baseProps([GLASS_CODEVIEW_SCROLL_CLASS]), [preEl]);
     const closeBtn = buildCloseBtn(() => m.dismiss());
     const headerEl = buildHeader(opts, preEl, closeBtn);
     const m = modal(

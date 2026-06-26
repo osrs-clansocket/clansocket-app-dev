@@ -1,4 +1,14 @@
-import { anchor, BTN_VARIANT_PRIMARY, button, div, heading, paragraph, type Instance } from "../../factory";
+import {
+    anchor,
+    BTN_VARIANT_PRIMARY,
+    button,
+    div,
+    heading,
+    paragraph,
+    type Instance,
+    baseProps,
+    textProps,
+} from "../../factory";
 import { isPasskeyError, passkeyClient } from "../../../state/passkey/client";
 import { setStatus, statusLine } from "../status-line.js";
 import { buildLinkCard } from "./link-card.js";
@@ -11,7 +21,7 @@ import {
 } from "../../../shared/constants/account-constants.js";
 
 export function buildRecoverLink(): Instance {
-    return paragraph({ classes: [FORM_HINT], text: "Lost access to all your devices? ", context: null, meta: null }, [
+    return paragraph(textProps([FORM_HINT], "Lost access to all your devices? "), [
         anchor({
             href: "/recover",
             data: { route: "" },
@@ -25,7 +35,7 @@ export function buildRecoverLink(): Instance {
 function buildSigninButton(status: ReturnType<typeof statusLine>, fallbackHost: Instance): Instance {
     const btn = button({
         variant: BTN_VARIANT_PRIMARY,
-        compact: true,
+        
         text: "Sign in with this device",
         context: "sign in with a passkey on this device",
         meta: ["action", "account"],
@@ -50,14 +60,14 @@ function buildSigninButton(status: ReturnType<typeof statusLine>, fallbackHost: 
 export function buildSigninCard(fallbackHost: Instance): Instance {
     const status = statusLine();
     const btn = buildSigninButton(status, fallbackHost);
-    return div({ classes: [ACCOUNT_CARD_CLASS], context: null, meta: null }, [
+    return div(baseProps([ACCOUNT_CARD_CLASS]), [
         heading("h3", { classes: [ACCOUNT_SECTION_TITLE_CLASS], text: "Sign in", context: null, meta: null }),
-        paragraph({
-            classes: [ACCOUNT_SECTION_HINT_CLASS],
-            text: "The browser will show passkeys saved on this device. Pick one to sign in.",
-            context: null,
-            meta: null,
-        }),
+        paragraph(
+            textProps(
+                [ACCOUNT_SECTION_HINT_CLASS],
+                "The browser will show passkeys saved on this device. Pick one to sign in.",
+            ),
+        ),
         btn,
         status,
     ]);

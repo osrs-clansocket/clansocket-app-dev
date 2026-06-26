@@ -1,4 +1,4 @@
-import { div, type Instance } from "../../../../../../../factory";
+import { div, type Instance, baseProps } from "../../../../../../../factory";
 import { sampleTokens } from "../../../../../../../../shared/constants/clan-manage-discord/token-list.js";
 import {
     AUTO_HOOKS_PREVIEW_EMBED_BAR_CLASS,
@@ -13,7 +13,7 @@ const DEFAULT_COLOR = "#5865F2";
 
 export function renderEmbedPreview(state: PreviewState): Instance {
     const tokens = sampleTokens(state.triggerType);
-    const bar = div({ classes: [AUTO_HOOKS_PREVIEW_EMBED_BAR_CLASS], context: null, meta: null });
+    const bar = div(baseProps([AUTO_HOOKS_PREVIEW_EMBED_BAR_CLASS]));
     bar.el.style.backgroundColor = state.embedColor.length > 0 ? state.embedColor : DEFAULT_COLOR;
     const children: Instance[] = [bar];
     const author = buildEmbedAuthor(substitute(state.embedAuthorName, tokens), state.embedAuthorIconUrl);
@@ -22,5 +22,5 @@ export function renderEmbedPreview(state: PreviewState): Instance {
     pushImages(children, state);
     const footer = buildFooter(substitute(state.embedFooterText, tokens), state.embedFooterIconUrl);
     if (footer !== null) children.push(footer);
-    return div({ classes: [AUTO_HOOKS_PREVIEW_EMBED_CLASS], context: null, meta: null }, children);
+    return div(baseProps([AUTO_HOOKS_PREVIEW_EMBED_CLASS]), children);
 }

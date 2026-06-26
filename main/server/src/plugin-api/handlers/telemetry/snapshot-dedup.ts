@@ -14,7 +14,7 @@ import {
 } from "../../event-types.js";
 import { isNonBlank } from "../../../shared/validators/type-guards.js";
 import type { PluginClientMessage } from "../../types/index.js";
-import type { DispatchContext } from "../dispatch.js";
+import type { DispatchContext } from "../dispatch-types.js";
 
 const HASHED_SNAPSHOT_TYPES: ReadonlySet<string> = new Set([
     EVENT_BANK_CLOSE,

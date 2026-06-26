@@ -1,37 +1,34 @@
+import type { IconEntry } from "../../../icons/providers.js";
+
 export interface CapabilityCard {
-    iconClasses: readonly string[];
+    icon: IconEntry;
     title: string;
     desc: string;
 }
 
 export const CAPABILITIES: readonly CapabilityCard[] = [
     {
-        iconClasses: ["ti", "ti-broadcast"],
+        icon: { provider: "ti", name: "broadcast" },
         title: "Live telemetry",
         desc: "RuneLite plugin streams positions, chat, drops, and progression in realtime.",
     },
     {
-        iconClasses: ["ti", "ti-shield-check"],
+        icon: { provider: "ti", name: "shield-check" },
         title: "Verified identity",
         desc: "Members prove RSN ownership and clan membership through the plugin, not a form.",
     },
     {
-        iconClasses: ["ti", "ti-brand-discord"],
+        icon: { provider: "ti", name: "brand-discord" },
         title: "Discord management",
         desc: "Stage server edits as drafts, publish via queue, automate via event-triggered webhooks.",
     },
     {
-        iconClasses: ["ti", "ti-chart-arrows"],
+        icon: { provider: "ti", name: "chart-arrows" },
         title: "Wise Old Man backfill",
         desc: "Hiscore data fills in for members the plugin cant see, mobile-only included.",
     },
     {
-        iconClasses: ["ti", "ti-cube-3d-sphere"],
-        title: "Voxlab clan visuals",
-        desc: "Browser-based 3D editor for clan badges, banners, and animated identity.",
-    },
-    {
-        iconClasses: ["ti", "ti-message-circle-2"],
+        icon: { provider: "ti", name: "message-circle-2" },
         title: "AI clan operator",
         desc: "Varez queries live telemetry, generates reports, and operates the dashboard for you.",
     },
@@ -44,7 +41,6 @@ export const URL_CLAIM_WIKI = "https://github.com/osrs-clansocket/clansocket-plu
 export const URL_DISCORD_INVITE = "https://discord.gg/qjpQDNe6xE";
 export const URL_PRIVACY = "/privacy";
 export const URL_TERMS = "/terms";
-export const URL_VOXLAB = "/voxlab";
 export const URL_DOWNLOAD_WIN = "/provide/clansocket_latest.exe";
 export const URL_DOWNLOAD_LINUX = "/provide/clansocket_latest_linux_tar.gz";
 export const URL_BMAC = "https://buymeacoffee.com/clansocket";
@@ -52,12 +48,13 @@ export const URL_GITHUB_DEV = "https://github.com/Varietyz";
 export const URL_DISCORD_CONTACT = "https://discordapp.com/users/406828985696387081";
 export const URL_LINKEDIN = "https://www.linkedin.com/in/jay-baleine/";
 
-export const SITE_LOGO_RECORD_URL = "/api/site/logo-record";
-export const SITE_LOGO_THUMBNAIL_URL = "/api/site/logo";
+export const SITE_LOGO_THUMBNAIL_URL = "/resources/clan/static_logo_400.webp";
+export const SITE_LOGO_THUMBNAIL_SRCSET =
+    "/resources/clan/static_logo_200.webp 200w, /resources/clan/static_logo_400.webp 400w, /resources/clan/static_logo_600.webp 600w";
+export const SITE_LOGO_THUMBNAIL_SIZES = "(min-width: 1280px) 200px, (min-width: 768px) 180px, 166px";
 export const SITE_LOGO_SLUG = "__site__";
 
-export const UPLOAD_ACCEPT = "image/svg+xml,image/png,image/webp,application/json,.svg,.png,.webp,.json";
-export const MOBILE_LOGO_PAN_X = -0.3;
+export const UPLOAD_ACCEPT = "image/svg+xml,image/png,image/webp,.svg,.png,.webp";
 
 export const BTN_CLASS = "btn";
 export const BTN_OUTLINE_CLASS = "btn--outline";
@@ -71,7 +68,7 @@ export interface ResourceLink {
     href: string;
     title: string;
     desc: string;
-    iconClasses: readonly string[];
+    icon: IconEntry;
 }
 
 export const RESOURCES: readonly ResourceLink[] = [
@@ -79,19 +76,24 @@ export const RESOURCES: readonly ResourceLink[] = [
         href: URL_PLUGIN_REPO,
         title: "Plugin Source Code",
         desc: "Java · v1.0.0",
-        iconClasses: ["mdi", "mdi-language-java"],
+        icon: { provider: "mdi", name: "language-java" },
     },
     {
         href: URL_PLUGIN_HUB,
         title: "RuneLite Plugin-hub",
         desc: "official plugin-hub listing",
-        iconClasses: ["ti", "ti-plug-connected"],
+        icon: { provider: "ti", name: "plug-connected" },
     },
-    { href: URL_CLAIM_WIKI, title: "Wiki", desc: "wiki guide for clan owners", iconClasses: ["ti", "ti-brand-github"] },
+    {
+        href: URL_CLAIM_WIKI,
+        title: "Wiki",
+        desc: "wiki guide for clan owners",
+        icon: { provider: "ti", name: "brand-github" },
+    },
     {
         href: URL_MAIN_REPO,
         title: "Platform Source Code",
         desc: "TypeScript · v1.0.0",
-        iconClasses: ["ti", "ti-brand-typescript"],
+        icon: { provider: "ti", name: "brand-typescript" },
     },
 ];

@@ -8,7 +8,9 @@ import type { AtlasBox } from "../../../../shared/types/view-types.js";
 import { MAP_NAMES_CLASS, MAP_NAME_CARD_HOVERED_CLASS } from "../../../../shared/constants/clan/clan-map-constants.js";
 import { IS_HIDDEN_CLASS } from "../../../../shared/constants/state-modifier-constants.js";
 import { buildCard, type CardRefs } from "./names-card.js";
-import { purgeStaleCards, upsertCardIn, type NamesRow } from "./names-patch.js";
+import { type NamesRow } from "./names-patch.js";
+import { purgeStaleCards, upsertCardIn } from "./names-patch-pool.js";
+import { baseProps } from "../../../factory/index.js";
 
 export interface MapNamesProps {
     positions$: ReadSignal<PositionsState>;
@@ -72,7 +74,7 @@ function makeUpdateEffect(props: MapNamesProps, root: Instance, pool: Map<string
 }
 
 export function clanMapNames(props: MapNamesProps): Instance {
-    const root = div({ classes: [MAP_NAMES_CLASS], context: null, meta: null });
+    const root = div(baseProps([MAP_NAMES_CLASS]));
     const pool = new Map<string, CardRefs>();
     root.trackDispose(effect(makeUpdateEffect(props, root, pool)));
     root.trackDispose(

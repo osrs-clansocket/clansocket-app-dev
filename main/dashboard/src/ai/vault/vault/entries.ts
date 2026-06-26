@@ -34,7 +34,7 @@ async function requireRecord() {
     return record;
 }
 
-export async function setEntry(derived: DerivedKey, provider: string, config: ProviderConfig | string): Promise<void> {
+export async function putEntry(derived: DerivedKey, provider: string, config: ProviderConfig | string): Promise<void> {
     const record = await requireRecord();
     const isNew = !(provider in record.entries);
     const normalized: ProviderConfig = typeof config === "string" ? { apiKey: config } : config;
@@ -103,5 +103,3 @@ export async function setPriority(provider: string, newIndex: number): Promise<v
     record.updatedAt = Date.now();
     await writeRecord(record);
 }
-
-export { setEntry as putEntry };

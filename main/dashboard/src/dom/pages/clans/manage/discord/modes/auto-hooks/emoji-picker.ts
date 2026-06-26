@@ -1,4 +1,4 @@
-import { div, span, wireInput, type Instance } from "../../../../../../factory";
+import { div, span, wireInput, type Instance, baseProps, textProps } from "../../../../../../factory";
 import { glassInput } from "../../../../../../forms/glass/inputs/glass-input.js";
 import { emojisFeed } from "../../../../../../../state/discord/server-emojis/server-emojis-feed.js";
 import type { DiscordServerEmoji } from "../../../../../../../state/discord/client.js";
@@ -75,12 +75,9 @@ function subscribeServerEmojis(args: {
 }
 
 function buildVariablesLabel(): Instance {
-    const variablesLabel = span({
-        classes: [CLAN_MANAGE_AUTO_HOOKS_EMOJI_PICKER_VARIABLES_LABEL_CLASS],
-        text: "Variable emojis (resolve per-event)",
-        context: null,
-        meta: null,
-    });
+    const variablesLabel = span(
+        textProps([CLAN_MANAGE_AUTO_HOOKS_EMOJI_PICKER_VARIABLES_LABEL_CLASS], "Variable emojis (resolve per-event)"),
+    );
     variablesLabel.el.style.fontSize = "var(--fs-3xs)";
     variablesLabel.el.style.color = "var(--base-graphite-300)";
     variablesLabel.el.style.textTransform = "uppercase";
@@ -91,8 +88,8 @@ function buildVariablesLabel(): Instance {
 
 function freshPickerState(opts: EmojiPickerOptions): EmojiPickerState {
     return {
-        variablesRow: div({ classes: [AUTO_HOOKS_TOKEN_CHIPS_CLASS], context: null, meta: null }),
-        grid: div({ classes: [AUTO_HOOKS_EMOJI_GRID_CLASS], context: null, meta: null }),
+        variablesRow: div(baseProps([AUTO_HOOKS_TOKEN_CHIPS_CLASS])),
+        grid: div(baseProps([AUTO_HOOKS_EMOJI_GRID_CLASS])),
         serverRef: { v: [] },
         appRef: { v: [] },
         queryRef: { v: "" },
@@ -124,7 +121,7 @@ export function buildEmojiPicker(opts: EmojiPickerOptions): Instance {
     });
     const unsubscribe = subscribeServerEmojis({ guildId: opts.guildId, serverRef: state.serverRef, rerender });
     const searchInp = buildSearchInput(state, rerender);
-    const root = div({ classes: [AUTO_HOOKS_EMOJI_PICKER_CLASS], context: null, meta: null }, [
+    const root = div(baseProps([AUTO_HOOKS_EMOJI_PICKER_CLASS]), [
         buildVariablesLabel(),
         state.variablesRow,
         searchInp,

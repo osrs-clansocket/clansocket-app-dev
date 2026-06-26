@@ -50,7 +50,14 @@ function pushSkillRow(
 ): boolean {
     if (typeof data.level !== "number" || typeof data.experience !== "number") return false;
     args.statRows.push(
-        womStatRow(push.accountHash, push.rsn, args.metric, data.level, data.experience, push.changedAtMs),
+        womStatRow({
+            accountHash: push.accountHash,
+            rsn: push.rsn,
+            skill: args.metric,
+            level: data.level,
+            experience: data.experience,
+            lastChangedAtMs: push.changedAtMs,
+        }),
     );
     return true;
 }
@@ -100,7 +107,7 @@ function collectHiscoreRows(
     return { statRows, clueRows };
 }
 
-export function saturateMetricHiscores(clanId: string, womGroupId: number, metric: string, response: unknown): number {
+export function saturateHiscoreMetric(clanId: string, womGroupId: number, metric: string, response: unknown): number {
     if (!Array.isArray(response)) return 0;
     const modes = pluginModes(clanId);
     if (modes.length === 0) return 0;

@@ -4,16 +4,9 @@ import type { Database } from "better-sqlite3";
 import { DB_NAMES, getDb, getClanDb, clanPluginDb, pluginModes } from "../../../database/index.js";
 import { clanAuditDb, clanDirPath } from "../../../database/core/database.js";
 import { CLAN_AUDIT_DB_FILE, CLAN_DB_FILE } from "../../../database/core/db-constants.js";
-import { OAUTH_PROVIDER_DISCORD } from "../../../auth/oauth-providers.js";
 import { SCOPE_APP, SCOPE_CLAN, SCOPE_CLAN_AUDIT, SCOPE_VAREZ, type Scope } from "./scope.js";
 
-export function userIdFor(siteAccountId: string): string | null {
-    const row = getDb(DB_NAMES.APP)
-        .prepare(`SELECT provider, provider_user_id FROM clansocket_accounts WHERE id = ?`)
-        .get(siteAccountId) as { provider: string; provider_user_id: string } | undefined;
-    if (!row || row.provider !== OAUTH_PROVIDER_DISCORD) return null;
-    return row.provider_user_id;
-}
+export { userIdFor } from "../../collect/collect-user-stats/utils.js";
 
 function clanDbExists(clanId: string, leaf: string): boolean {
     return existsSync(resolve(clanDirPath(clanId), leaf));

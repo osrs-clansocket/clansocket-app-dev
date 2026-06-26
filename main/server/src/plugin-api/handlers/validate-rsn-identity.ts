@@ -6,7 +6,7 @@ import { checkRunewatchBlock } from "../../runewatch/gates/check-block-gate.js";
 import { logPluginError } from "../logger/index.js";
 import { send } from "../transport/send.js";
 import { registerIdentityFailure } from "../session/attack-monitor.js";
-import type { DispatchContext } from "./dispatch.js";
+import type { DispatchContext } from "./dispatch-types.js";
 import type { IdentityMsg } from "./identity-phases.js";
 
 export function validateRsnIdentity(ctx: DispatchContext, msg: IdentityMsg): boolean {

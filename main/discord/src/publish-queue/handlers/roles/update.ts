@@ -1,5 +1,7 @@
 import { PermissionsBitField, type Guild } from "discord.js";
+import { orThrow } from "../../../shared/nullable.js";
 import { registerPublisher } from "../../publisher-registry.js";
+import { OP_KINDS, ENTITY_TYPES } from "../../publish-vocab.js";
 import { runPublishOp } from "../../runners/op-runner.js";
 import { dispatcherBySubject } from "../../../shared/subject-dispatcher.js";
 
@@ -35,9 +37,7 @@ interface RolePermissionsState {
 }
 
 async function fetchRole(guild: Guild, roleId: string) {
-    const role = await guild.roles.fetch(roleId);
-    if (!role) throw new Error(`role ${roleId} not found`);
-    return role;
+    return orThrow(await guild.roles.fetch(roleId), `role ${roleId} not found`);
 }
 
 const SUBJECT_APPLIERS: Record<string, (guild: Guild, roleId: string, data: any) => Promise<unknown>> = {
@@ -53,8 +53,10 @@ async function applyRoleEdit(guild: Guild, roleId: string, data: RoleEditState):
 
 export const applyRoleUpdate = dispatcherBySubject<RoleEditState>(SUBJECT_APPLIERS, applyRoleEdit);
 
-registerPublisher("update", "discord_role", {
+registerPublisher(OP_KINDS.UPDATE, ENTITY_TYPES.ROLE, {
     handler: (c, r) =>
-        runPublishOp(c, r, "update", (g, d) => applyRoleUpdate(g, r.target_id_or_temp, d as Record<string, unknown>)),
+        runPublishOp(c, r, OP_KINDS.UPDATE, (g, d) =>
+            applyRoleUpdate(g, r.target_id_or_temp, d as Record<string, unknown>),
+        ),
     requiredBotPermission: PermissionsBitField.Flags.ManageRoles,
 });

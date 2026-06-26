@@ -3,7 +3,8 @@ import logger from "@clansocket/logger";
 import { discordGuildDb } from "../../../database/index.js";
 import { guildIdsOf } from "../../discord-guild-iterator.js";
 import { DISCORD_GUILD_DB_SITE_ACCOUNT_TABLES } from "../../scopes/manifest/index.js";
-import { prepareTableDelete, runDeleteStmt } from "./purge-stmt-builder.js";
+import { prepareTableDelete } from "./builder-purge-stmt.js";
+import { runDeleteStmt } from "./runner-purge-stmt.js";
 import type { PurgeUserResult } from "./types.js";
 
 function prepareChildOp(
@@ -26,19 +27,20 @@ function purgeOneGuild(args: PurgeGuildArgs): boolean {
     const { clanId, guildId, siteAccountId, result, childOps } = args;
     let touched = false;
     const db = discordGuildDb(clanId, guildId);
-    const childStmts = childOps.map((spec) => prepareChildOp(db, spec));
-    const tableStmts = DISCORD_GUILD_DB_SITE_ACCOUNT_TABLES.map((spec) => prepareTableDelete(db, spec));
+    const allStmts: Array<{ name: string; stmt: Database.Statement }> = [
+        ...childOps.map((spec) => {
+            const child = prepareChildOp(db, spec);
+            return { name: child.childTable, stmt: child.stmt };
+        }),
+        ...DISCORD_GUILD_DB_SITE_ACCOUNT_TABLES.map((spec) => {
+            const t = prepareTableDelete(db, spec);
+            return { name: t.table, stmt: t.stmt };
+        }),
+    ];
     db.transaction(() => {
-        logger.debug(
-            `[purge-guild] clanId=${clanId} guildId=${guildId} childStmts=${childStmts.length} tableStmts=${tableStmts.length}`,
-        );
-        for (const { childTable, stmt } of childStmts) {
-            if (runDeleteStmt(stmt, `${childTable}@${guildId}`, siteAccountId, result.discordTableDeletes)) {
-                touched = true;
-            }
-        }
-        for (const { table, stmt } of tableStmts) {
-            if (runDeleteStmt(stmt, `${table}@${guildId}`, siteAccountId, result.discordTableDeletes)) {
+        logger.debug(`[purge-guild] clanId=${clanId} guildId=${guildId} stmts=${allStmts.length}`);
+        for (const { name, stmt } of allStmts) {
+            if (runDeleteStmt(stmt, `${name}@${guildId}`, siteAccountId, result.discordTableDeletes)) {
                 touched = true;
             }
         }

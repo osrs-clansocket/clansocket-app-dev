@@ -1,20 +1,17 @@
 import { getDb } from "../../../../core/database.js";
+import { sqlPlaceholders } from "../../../../core/operations/index.js";
 
 export interface AccountBindings {
     hashesByAccount: Record<string, string[]>;
     allHashes: Set<string>;
 }
 
-export function loadAccountBindings(
-    appDb: ReturnType<typeof getDb>,
-    placeholders: string,
-    ids: readonly string[],
-): AccountBindings {
+export function loadAccountBindings(appDb: ReturnType<typeof getDb>, ids: readonly string[]): AccountBindings {
     const bindingRows = appDb
         .prepare(
             `SELECT site_account_id, account_hash
              FROM clansocket_account_bindings
-             WHERE site_account_id IN (${placeholders}) AND revoked_at IS NULL`,
+             WHERE site_account_id IN (${sqlPlaceholders(ids.length)}) AND revoked_at IS NULL`,
         )
         .all(...ids) as Array<{ site_account_id: string; account_hash: string }>;
     const hashesByAccount: Record<string, string[]> = {};

@@ -1,9 +1,10 @@
 import { HTTP_NOT_FOUND } from "../../../shared/http/http-status.js";
 import { HEADER_CONTENT_TYPE } from "../../../shared/http/http-mime.js";
-import { applyVersionedCache, setRevalidateCache } from "../../../shared/http/cache-headers.js";
+import { setRevalidateCache } from "../../../shared/http/cache-headers.js";
+import { applyVersionedCache } from "../../../shared/http/cache-versioning.js";
 import { type Request, type Response } from "express";
 import { clanBySlug } from "../../../database/index.js";
-import { findIconPath, pristineIconPath, ICON_MIME_BY_EXT } from "../../icon/filesystem.js";
+import { findIconPath, pristineIconPath, ICON_MIME_BY_EXT } from "../../icon/index.js";
 import { iconVersionFor } from "../../clan-view-builder.js";
 import { mountedRouter } from "../_mount-registry.js";
 
@@ -23,7 +24,7 @@ function resolveServableIcon(req: Request, res: Response): ServableIcon | null {
         res.status(HTTP_NOT_FOUND).end();
         return null;
     }
-    if (clan.icon_kind !== "image" && clan.icon_kind !== "voxlab") {
+    if (clan.icon_kind !== "image") {
         res.status(HTTP_NOT_FOUND).end();
         return null;
     }

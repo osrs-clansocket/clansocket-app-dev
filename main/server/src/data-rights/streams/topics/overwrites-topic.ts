@@ -1,6 +1,6 @@
 import { SQL_TABLES } from "../../../database/core/sql-columns.js";
 import { overwritesByGuild } from "../../../database/discord/state/channel-overwrites/list-overwrites.js";
-import type { ProjectionTopic } from "../projection.js";
+import type { ProjectionTopic } from "../projection-types.js";
 import { guildTopic } from "./guild-topic-builder.js";
 
 const TABLES = [SQL_TABLES.DISCORD_CHANNEL_ROLE_OVERWRITES, SQL_TABLES.DISCORD_CHANNEL_MEMBER_OVERWRITES] as const;

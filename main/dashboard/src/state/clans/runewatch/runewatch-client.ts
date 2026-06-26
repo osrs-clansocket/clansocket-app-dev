@@ -72,5 +72,9 @@ export async function getCooldown(slug: string): Promise<RunewatchCooldownState 
 
 export async function postRefresh(slug: string): Promise<RunewatchRefreshResult> {
     const res = await identityClient.authedFetch(url(slug, "refresh"), { method: "POST" });
-    return jsonOrFallback<RunewatchRefreshResult>(res, { ok: false });
+    try {
+        return (await res.json()) as RunewatchRefreshResult;
+    } catch {
+        return { ok: false };
+    }
 }

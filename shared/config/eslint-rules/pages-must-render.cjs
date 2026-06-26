@@ -35,6 +35,10 @@ function isPagesFile(absPath) {
     return absPath.includes(PAGES_MARKER);
 }
 
+function isPageMetaFile(absPath) {
+    return absPath.endsWith("/meta.ts");
+}
+
 function importIsFactory(specifier) {
     return typeof specifier === "string" && specifier.includes(FACTORY_SUBSTRING);
 }
@@ -64,6 +68,7 @@ module.exports = {
     create(context) {
         const rawPath = normalizePath(context.filename || context.getFilename());
         if (!isPagesFile(rawPath)) return {};
+        if (isPageMetaFile(rawPath)) return {};
 
         let importsFactory = false;
         let firstRuntimeNode = null;

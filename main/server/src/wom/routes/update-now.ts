@@ -2,7 +2,7 @@ import { type Request, type Response } from "express";
 import { handleAsync } from "../../api/middleware.js";
 import { readVaultEntry } from "../../clan-vault/index.js";
 import { clanWomIdentity } from "../../database/wom/identity/get-clan-identity.js";
-import { enqueueWomRequest } from "../../database/wom/outbound/enqueue.js";
+import { ensureWomEnqueued } from "../../database/wom/outbound/enqueue.js";
 import { HTTP_ACCEPTED, HTTP_NOT_FOUND } from "../../shared/http/http-status.js";
 import { withClanTry } from "../../clans/preflights/with-clan-try.js";
 import { scheduleWake } from "../dispatcher/wake-scheduler.js";
@@ -38,7 +38,7 @@ router.post(
         withClanTry(req, res, { label: "wom", errorCode: "update_now_failed" }, async (ctx) => {
             const loaded = await loadWomCreds(ctx.clan.id, ctx.sid, res);
             if (!loaded) return;
-            const queueId = enqueueWomRequest({
+            const result = ensureWomEnqueued({
                 clanId: ctx.clan.id,
                 requestKind: REQUEST_KIND_VERIFY,
                 requestPath: `/groups/${loaded.identity.wom_group_id}/update-all`,
@@ -47,7 +47,11 @@ router.post(
                 scheduledAtMs: Date.now(),
             });
             scheduleWake(ctx.clan.id, Date.now());
-            res.status(HTTP_ACCEPTED).json({ ok: true, queue_id: queueId });
+            res.status(HTTP_ACCEPTED).json({
+                ok: true,
+                queue_id: result.queueId,
+                already_queued: result.alreadyQueued,
+            });
         }),
     ),
 );

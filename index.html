@@ -45,6 +45,12 @@
     <meta name="twitter:image" content="https://clansocket.com/resources/clan/clansocket_banner.webp" />
     <meta name="twitter:image:alt" content="ClanSocket - Live, Open-Source platform for Old School RuneScape clans" />
 
+    <!-- Preconnect to GA4 origins so the DNS+TCP+TLS handshake is warm before gtag.js fires the first beacon.
+         Without this, the dataLayer.push runs the full handshake on a cold connection on first visit, adding ~150-400ms before
+         analytics records the navigation. crossorigin attribute is required for connections that will load scripts. -->
+    <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin />
+    <link rel="preconnect" href="https://www.google-analytics.com" crossorigin />
+
     <!-- Font preloads — only runescape_bold (4.8 KB) is critical for first paint chrome.
          cascadia_code (214 KB) is monospace used only in code blocks — most pages don't need it; font-display: swap handles graceful late-load.
          bootstrap_icons (131 KB) is used by chrome icons but font-display: swap shows fallback briefly then swaps — saves blocking 131 KB on first paint. -->

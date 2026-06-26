@@ -1,4 +1,4 @@
-const HTTP_OK_MIN = 200;
+import { HTTP_STATUS_OK } from "../core/constants.js";
 const HTTP_OK_MAX = 300;
 const HTTP_NOT_FOUND = 404;
 
@@ -21,7 +21,7 @@ export function parseResponse<T>(
             resolve(null);
             return;
         }
-        if (status < HTTP_OK_MIN || status >= HTTP_OK_MAX) {
+        if (status < HTTP_STATUS_OK || status >= HTTP_OK_MAX) {
             reject(new Error(`apiGet ${path}: HTTP ${status}`));
             return;
         }

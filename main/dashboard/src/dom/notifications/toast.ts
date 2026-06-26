@@ -1,4 +1,4 @@
-import { button, div, effect, heading, onceEffect, paragraph, type Instance } from "../factory";
+import { button, div, effect, heading, onceEffect, paragraph, type Instance, baseProps, textProps } from "../factory";
 import { notificationsClient, type AppNotification } from "../../state/notifications/notifications-client.js";
 import { notificationsStore } from "../../state/notifications/stores/notifications-store.js";
 import {
@@ -17,7 +17,7 @@ const toastPool = new Map<number, Instance>();
 
 function buildToastBody(n: AppNotification, title: Instance, body: Instance): Instance {
     if (!n.href) {
-        return div({ classes: [TOAST_BODY_CLASS], context: null, meta: null }, [title, body]);
+        return div(baseProps([TOAST_BODY_CLASS]), [title, body]);
     }
     return button(
         {
@@ -37,7 +37,7 @@ function buildToastBody(n: AppNotification, title: Instance, body: Instance): In
 
 function buildToast(n: AppNotification): Instance {
     const title = heading("h4", { classes: [TOAST_TITLE_CLASS], text: n.title, context: null, meta: null });
-    const body = paragraph({ classes: [TOAST_TEXT_CLASS], text: n.body, context: null, meta: null });
+    const body = paragraph(textProps([TOAST_TEXT_CLASS], n.body));
     const node = div({
         classes: [TOAST_CLASS, `${TOAST_CLASS}--${n.kind}`],
         effects: onceEffect("pop"),
@@ -85,7 +85,7 @@ function reconcileToasts(stackInst: Instance): void {
 
 export function mountNotificationsToast(parent: HTMLElement): void {
     if (stack) return;
-    const stackInst = div({ classes: [TOAST_STACK_CLASS], context: null, meta: null }).mount(parent);
+    const stackInst = div(baseProps([TOAST_STACK_CLASS])).mount(parent);
     stack = stackInst;
     stackEffect = effect(() => reconcileToasts(stackInst));
 }

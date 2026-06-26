@@ -1,5 +1,5 @@
 import type { AuditTargetType } from "../clan-audit-actions.js";
-import type { AuditSource } from "./payload-types.js";
+import type { AuditSource } from "./audit-common-types.js";
 
 export type { AnyAuditAction, PayloadFor } from "./payloads/payload-map.js";
 

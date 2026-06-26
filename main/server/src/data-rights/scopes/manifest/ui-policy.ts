@@ -1,4 +1,4 @@
-import { SQL_COLUMNS } from "../../../database/core/sql-columns.js";
+import { SQL_COLUMNS, SQL_TABLES } from "../../../database/core/sql-columns.js";
 
 export const GLOBAL_SECRET_COLUMNS: readonly string[] = [
     SQL_COLUMNS.ACCOUNT_HASH,
@@ -24,26 +24,26 @@ export const GLOBAL_SECRET_COLUMNS: readonly string[] = [
 ];
 
 export const READ_ONLY_BROWSE_TABLES: ReadonlySet<string> = new Set([
-    "clansocket_data_action_log",
+    SQL_TABLES.CLANSOCKET_DATA_ACTION_LOG,
     "clan_audit_log",
-    "discord_servers",
-    "discord_bot_identities",
+    SQL_TABLES.DISCORD_SERVERS,
+    SQL_TABLES.DISCORD_BOT_IDENTITIES,
     "discord_webhook_tokens",
-    "clansocket_oauth_sessions",
-    "clansocket_webauthn_challenges",
-    "clansocket_passkeys",
-    "clansocket_backup_codes",
-    "clansocket_device_link_codes",
-    "clansocket_accounts",
-    "clansocket_account_bindings",
-    "clansocket_account_rsns",
-    "clansocket_account_providers",
-    "clansocket_clans",
-    "clansocket_clan_managers",
-    "clansocket_clan_manager_requests",
-    "clansocket_clan_whitelists",
-    "clansocket_consent_requests",
+    SQL_TABLES.CLANSOCKET_OAUTH_SESSIONS,
+    SQL_TABLES.CLANSOCKET_WEBAUTHN_CHALLENGES,
+    SQL_TABLES.CLANSOCKET_PASSKEYS,
+    SQL_TABLES.CLANSOCKET_BACKUP_CODES,
+    SQL_TABLES.CLANSOCKET_DEVICE_LINK_CODES,
+    SQL_TABLES.CLANSOCKET_ACCOUNTS,
+    SQL_TABLES.CLANSOCKET_ACCOUNT_BINDINGS,
+    SQL_TABLES.CLANSOCKET_ACCOUNT_RSNS,
+    SQL_TABLES.CLANSOCKET_ACCOUNT_PROVIDERS,
+    SQL_TABLES.CLANSOCKET_CLANS,
+    SQL_TABLES.CLANSOCKET_CLAN_MANAGERS,
+    SQL_TABLES.CLANSOCKET_CLAN_MANAGER_REQUESTS,
+    SQL_TABLES.CLANSOCKET_CLAN_WHITELISTS,
+    SQL_TABLES.CLANSOCKET_CONSENT_REQUESTS,
     "clan_settings",
     "clan_eligibility_rules",
-    "clan_rosters",
+    SQL_TABLES.CLAN_ROSTERS,
 ]);

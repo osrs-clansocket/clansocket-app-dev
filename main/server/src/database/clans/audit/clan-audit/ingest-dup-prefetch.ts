@@ -1,5 +1,5 @@
 import type Database from "better-sqlite3";
-import type { ClientAuditEntry } from "./ingest.js";
+import type { ClientAuditEntry } from "./ingest-types.js";
 
 export function prefetchDups(db: Database.Database, entries: readonly ClientAuditEntry[]): Set<string> {
     if (entries.length === 0) return new Set();

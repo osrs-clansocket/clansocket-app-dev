@@ -1,4 +1,4 @@
-import { div, effect, paragraph, signal, span, type Instance } from "../../../../factory";
+import { div, effect, paragraph, signal, span, type Instance, baseProps, textProps } from "../../../../factory";
 import { reconcile } from "../../../../factory/live-ops/reconcile.js";
 import { buildGlassCheck } from "../../../../forms/glass/inputs/glass-check.js";
 import { type PluginConfigField } from "../../../../../shared/constants/plugin-config/plugin-config-fields.js";
@@ -14,10 +14,10 @@ const FIELD_CONTROL_CLASS = "clans-manage__config-field-control";
 const ROSTER_GRID_CLASS = "clans-manage__config-roster";
 
 export function buildFieldRow(field: PluginConfigField, values: ReturnType<typeof signal<Values>>): Instance {
-    return div({ classes: [FIELD_ROW_CLASS], context: null, meta: null }, [
-        div({ classes: [FIELD_LABEL_CLASS], context: null, meta: null }, [
-            span({ classes: [FIELD_LABEL_TEXT_CLASS], text: field.label, context: null, meta: null }),
-            paragraph({ classes: [FIELD_DESC_CLASS], text: field.description, context: null, meta: null }),
+    return div(baseProps([FIELD_ROW_CLASS]), [
+        div(baseProps([FIELD_LABEL_CLASS]), [
+            span(textProps([FIELD_LABEL_TEXT_CLASS], field.label)),
+            paragraph(textProps([FIELD_DESC_CLASS], field.description)),
         ]),
         div(
             { classes: [FIELD_CONTROL_CLASS], context: null, meta: null },
@@ -51,7 +51,7 @@ export function buildRosterGrid(
     scope: ReturnType<typeof signal<Scope>>,
     state: ReturnType<typeof signal<PluginConfigState | null>>,
 ): Instance {
-    const host = div({ classes: [ROSTER_GRID_CLASS], context: null, meta: null });
+    const host = div(baseProps([ROSTER_GRID_CLASS]));
     const cardState = new Map<string, Instance>();
     host.trackDispose(
         effect(() => {

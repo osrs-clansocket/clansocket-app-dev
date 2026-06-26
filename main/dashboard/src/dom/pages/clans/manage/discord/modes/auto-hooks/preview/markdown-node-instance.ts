@@ -1,4 +1,4 @@
-import { image, span, type Instance } from "../../../../../../../factory";
+import { image, span, type Instance, textProps } from "../../../../../../../factory";
 import {
     MD_BOLD_CLASS,
     MD_BR_CLASS,
@@ -22,15 +22,15 @@ function buildEmojiNode(n: Extract<Node, { kind: "emoji" }>): Instance {
 }
 
 export function nodeToInstance(n: Node): Instance {
-    if (n.kind === "text") return span({ classes: [MD_TEXT_CLASS], text: n.text, context: null, meta: null });
-    if (n.kind === "bold") return span({ classes: [MD_BOLD_CLASS], text: n.text, context: null, meta: null });
-    if (n.kind === "italic") return span({ classes: [MD_ITALIC_CLASS], text: n.text, context: null, meta: null });
-    if (n.kind === "code") return span({ classes: [MD_CODE_CLASS], text: n.text, context: null, meta: null });
+    if (n.kind === "text") return span(textProps([MD_TEXT_CLASS], n.text));
+    if (n.kind === "bold") return span(textProps([MD_BOLD_CLASS], n.text));
+    if (n.kind === "italic") return span(textProps([MD_ITALIC_CLASS], n.text));
+    if (n.kind === "code") return span(textProps([MD_CODE_CLASS], n.text));
     if (n.kind === "link") {
-        const s = span({ classes: [MD_LINK_CLASS], text: n.text, context: null, meta: null });
+        const s = span(textProps([MD_LINK_CLASS], n.text));
         s.setAttr("title", n.url);
         return s;
     }
     if (n.kind === "emoji") return buildEmojiNode(n);
-    return span({ classes: [MD_BR_CLASS], text: "\n", context: null, meta: null });
+    return span(textProps([MD_BR_CLASS], "\n"));
 }

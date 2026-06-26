@@ -30,7 +30,7 @@ function buildCancelBtn(opts: InlineConfirmOptions, settle: (v: boolean) => void
     return button(
         {
             variant: BTN_VARIANT_OUTLINE,
-            compact: true,
+            
             ariaLabel: opts.cancelLabel ?? DEFAULT_CANCEL_LABEL,
             context: opts.cancelContext,
             meta: ["action"],
@@ -45,7 +45,7 @@ function buildConfirmBtn(opts: InlineConfirmOptions, danger: boolean, settle: (v
         {
             classes: danger ? [CLASS_BTN_DANGER] : [],
             variant: BTN_VARIANT_OUTLINE,
-            compact: true,
+            
             ariaLabel: opts.confirmLabel ?? DEFAULT_CONFIRM_LABEL,
             context: opts.confirmContext,
             meta: danger ? ["destructive"] : ["submit"],

@@ -9,9 +9,11 @@ import {
     unlinkProvider,
     updateDisplayName,
 } from "../../database/site/site-accounts/index.js";
-import { revokeSiteSession } from "../site-session.js";
+import { revokeSiteSession, verifySiteSession } from "../site-session.js";
 import { OAUTH_PROVIDER_DISCORD, OAUTH_PROVIDER_GITHUB } from "../oauth-providers.js";
-import { SESSION_COOKIE, readCookie, requireAccount } from "./oauth-session.js";
+import { SESSION_COOKIE } from "./oauth-session-constants.js";
+import { readCookie } from "./reader-oauth-cookie.js";
+import { requireAccount } from "./requirer-oauth-account.js";
 import { mountedRouter } from "./_mount-registry.js";
 
 const DISPLAY_NAME_MAX_LEN = 64;
@@ -20,9 +22,13 @@ const router = mountedRouter();
 
 (() => {
     router.get("/me", (req: Request, res: Response) => {
-        const siteAccountId = requireAccount(req, res);
-        if (!siteAccountId) return;
-        const account = accountById(siteAccountId);
+        const sessionId = readCookie(req, SESSION_COOKIE);
+        const session = verifySiteSession(sessionId);
+        if (!session) {
+            res.json(null);
+            return;
+        }
+        const account = accountById(session.siteAccountId);
         if (!account) {
             res.status(HTTP_UNAUTHORIZED).json({ error: ERROR_ACCOUNT_NOT_FOUND });
             return;

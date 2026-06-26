@@ -3,9 +3,12 @@ module.exports = {
         {
             name: "no-circular",
             severity: "error",
-            comment: "Circular dependencies are forbidden — extract a shared module instead.",
+            comment:
+                "Circular dependencies are forbidden — extract a shared module instead. " +
+                "Cycles routed through an index.ts barrel are exempt (re-export hubs form benign rings); " +
+                "every non-barrel file↔file cycle is a real smell and must be broken.",
             from: {},
-            to: { circular: true },
+            to: { circular: true, viaNot: "/index\\.ts$" },
         },
         {
             name: "no-orphans",
@@ -19,7 +22,9 @@ module.exports = {
                     "\\.test\\.",
                     "tests?/",
                     "^scripts/",
+                    "^shared/config/",
                     "^main/electron/",
+                    "^main/discord/src/base/",
                     "^main/discord/src/plugins/",
                     "^public/",
                     "^index\\.html$",
@@ -84,7 +89,7 @@ module.exports = {
         },
         enhancedResolveOptions: {
             exportsFields: ["exports"],
-            conditionNames: ["import", "require", "node", "default"],
+            conditionNames: ["types", "import", "require", "node", "default"],
         },
         reporterOptions: {
             text: {

@@ -7,9 +7,7 @@ defineIconFamily({
         label: "Material Design Icons",
         license: "Apache 2.0",
         attribution: null,
-        kind: "font",
+        kind: "svg",
     },
-    pathsLoader: async () => (await import("../../mdi-paths.json")).default,
-    cssLoader: () => import("../../../styles/auto-gen/icons/mdi.css"),
-    glyphLoader: async () => (await import("../../mdi.json")).default as Record<string, number>,
+    glyphLoader: async () => (await import("../../mdi.json")).default as readonly string[],
 });

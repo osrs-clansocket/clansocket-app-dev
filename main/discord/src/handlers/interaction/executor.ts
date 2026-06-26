@@ -1,4 +1,5 @@
 import { postAuditLog as insertAuditLog } from "../../core/api-client.js";
+import { FALLBACK_UNKNOWN } from "../../core/constants.js";
 import { AUDIT_ACTIONS, HANDLER_MESSAGES } from "../../core/constants.js";
 import { ephemeralReply, replyOrEdit } from "../interaction-reply.js";
 import { enforceTarget } from "../rate-limit.js";
@@ -20,7 +21,7 @@ const TYPE_CHECKS: any = Object.freeze([
 
 function getInteractionType(interaction: any) {
     const match = TYPE_CHECKS.find((entry: any) => interaction[entry[0]]());
-    return match ? match[1] : "unknown";
+    return match ? match[1] : FALLBACK_UNKNOWN;
 }
 
 async function replyWithError(interaction: any) {

@@ -1,12 +1,11 @@
 import "../../../../../styles/pages/clans/manage/clan-wise-old-man-page.css";
 import { effect } from "../../../../factory/reactive/index.js";
 import { identityStore } from "../../../../../state/identity/stores/identity-store.js";
-import { defineManageTab } from "../registry";
 import { freshWomTab } from "./index-state.js";
 import { makeRefreshShut } from "../../../../../state/wom/page/index-tear-down.js";
 import { mountLinked, mountNotLinked } from "../../../../../state/wom/page/index-mount.js";
 
-export function buildWomTab(slug: string): HTMLElement {
+export function build(slug: string): HTMLElement {
     const s = freshWomTab(slug);
     const refreshShut = makeRefreshShut(s);
     void s.store.ensure().then(() => void s.detailsStore.refresh());
@@ -23,5 +22,3 @@ export function buildWomTab(slug: string): HTMLElement {
     );
     return s.host.el;
 }
-
-defineManageTab({ key: "wise-old-man", build: (slug) => buildWomTab(slug), order: 40 });

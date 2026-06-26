@@ -10,9 +10,9 @@ const NAV_GLYPH_SELECTOR = "[data-nav-icon-glyph]";
 const NAV_AVATAR_IMG_SELECTOR = ".dashboard__nav-icon-img";
 const NAV_AVATAR_IMG_CLASS = "dashboard__nav-icon-img";
 const NAV_AVATAR_GLYPH_CLASS = "dashboard__nav-icon-glyph";
-const FALLBACK_ICON = "bi-shield";
+const FALLBACK_ICON = "shield";
 
-export type NavIconKind = "builtin" | "image" | "voxlab";
+export type NavIconKind = "builtin" | "image";
 
 export interface NavPage {
     key: string;
@@ -32,15 +32,13 @@ export interface IconEntry {
     destroy(): void;
 }
 
-function navIconKind(iconKind: string | null): "image" | "voxlab" | "builtin" {
-    if (iconKind === "image") return "image";
-    if (iconKind === "voxlab") return "voxlab";
-    return "builtin";
+function navIconKind(iconKind: string | null): NavIconKind {
+    return iconKind === "image" ? "image" : "builtin";
 }
 
 export function toNavPage(c: ManagedClan): NavPage {
     const builtin = c.iconKind === "builtin" && c.iconValue ? c.iconValue : FALLBACK_ICON;
-    const kind: "image" | "voxlab" | "builtin" = navIconKind(c.iconKind);
+    const kind = navIconKind(c.iconKind);
     return {
         key: `clan:${c.slug}`,
         title: c.displayName,
@@ -77,6 +75,8 @@ function createAvatar(page: NavPage): ReturnType<typeof clanAvatarInner> {
         imageVersion: page.imageVersion,
         imgClass: NAV_AVATAR_IMG_CLASS,
         glyphClass: NAV_AVATAR_GLYPH_CLASS,
+        width: 20,
+        height: 20,
         context: null,
         meta: null,
     });

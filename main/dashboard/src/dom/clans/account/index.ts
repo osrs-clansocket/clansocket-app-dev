@@ -1,7 +1,21 @@
 import "../../../styles/pages/account/index.css";
 import "../../../styles/pages/clans/manage/clan-tabs-page.css";
 import "../../../styles/pages/clans/manage/clan-tab-page.css";
-import { button, derived, div, effect, header, heading, onceEffect, section, span, type Instance } from "../../factory";
+import {
+    button,
+    derived,
+    div,
+    effect,
+    header,
+    heading,
+    icon,
+    onceEffect,
+    section,
+    span,
+    type Instance,
+    baseProps,
+    textProps,
+} from "../../factory";
 import { DISPLAY_NAME_MAX_LEN, identityClient } from "../../../state/identity/identity-client/index.js";
 import { identityStore } from "../../../state/identity/stores/identity-store.js";
 import { profileStore } from "../../../state/identity/stores/profile-store.js";
@@ -12,7 +26,6 @@ import { aiCard } from "../../pages/account/ai-settings/index.js";
 import { buildClanList } from "./clan/clan-row";
 import { buildAddClan } from "./workflows/add-clan";
 import { buildRequestManagement } from "./workflows/request-management";
-import { editName } from "./workflows/display-name-edit";
 import { buildSessionsCard, makeRenderSessions } from "./account-sessions.js";
 import {
     ACCOUNT_CARD_CLASS,
@@ -24,7 +37,6 @@ import {
     ACCOUNT_IDENTITY_BAR_CLASS,
     ACCOUNT_SECTION_TITLE_CLASS,
 } from "../../../shared/constants/account-constants.js";
-import { BS_ICON_CLASS, BS_ICON_PENCIL_CLASS } from "../../../shared/constants/bootstrap-icon-constants.js";
 import { ROUTE_ACCOUNT_CLASS, ROUTE_ROOT_CLASS } from "../../../shared/constants/route/route-constants.js";
 
 const POLL_MS = 10_000;
@@ -37,43 +49,45 @@ async function saveDisplayName(next: string): Promise<void> {
 function buildEditIcon(accountName: Instance): Instance<HTMLButtonElement> {
     const editIcon: Instance<HTMLButtonElement> = button(
         {
-            compact: true,
+            
             classes: [ACCOUNT_GREETING_EDIT_CLASS],
             ariaLabel: "Edit display name",
             title: "Edit display name",
             context: "edit your display name",
             meta: ["action", "account"],
-            onClick: () =>
+            onClick: async () => {
+                const { editName } = await import("./workflows/display-name-edit");
                 editName({
                     nameEl: accountName.el,
                     iconEl: editIcon.el,
                     maxLength: DISPLAY_NAME_MAX_LEN,
                     onSave: saveDisplayName,
-                }),
+                });
+            },
         },
-        [span({ classes: [BS_ICON_CLASS, BS_ICON_PENCIL_CLASS], context: null, meta: null })],
+        [icon({ provider: "bi", name: "pencil", ariaHidden: true, context: null, meta: null })],
     );
     return editIcon;
 }
 
 function buildAccountBar(session$: typeof identityStore.session$): Instance {
-    const accountName = span({
-        classes: [ACCOUNT_GREETING_NAME_CLASS],
-        context: null,
-        meta: null,
-        text: derived(() => session$()?.displayName ?? "you"),
-    });
+    const accountName = span(
+        textProps(
+            [ACCOUNT_GREETING_NAME_CLASS],
+            derived(() => session$()?.displayName ?? "you"),
+        ),
+    );
     const editIcon = buildEditIcon(accountName);
-    const greeting = div({ classes: [ACCOUNT_GREETING_CLASS], context: null, meta: null }, [
-        span({ classes: [ACCOUNT_GREETING_PREFIX_CLASS], text: "Signed in as", context: null, meta: null }),
-        div({ classes: [ACCOUNT_GREETING_NAME_ROW_CLASS], context: null, meta: null }, [accountName, editIcon]),
+    const greeting = div(baseProps([ACCOUNT_GREETING_CLASS]), [
+        span(textProps([ACCOUNT_GREETING_PREFIX_CLASS], "Signed in as")),
+        div(baseProps([ACCOUNT_GREETING_NAME_ROW_CLASS]), [accountName, editIcon]),
     ]);
-    return header({ classes: [ACCOUNT_IDENTITY_BAR_CLASS], context: null, meta: null }, [greeting]);
+    return header(baseProps([ACCOUNT_IDENTITY_BAR_CLASS]), [greeting]);
 }
 
 function buildClansCard(refresh: () => void): { clansCard: Instance; clansContainer: Instance } {
     const clansContainer = div({ context: null, meta: null });
-    const clansCard = section({ classes: [ACCOUNT_CARD_CLASS], context: null, meta: null }, [
+    const clansCard = section(baseProps([ACCOUNT_CARD_CLASS]), [
         heading("h2", { classes: [ACCOUNT_SECTION_TITLE_CLASS], text: "Your clans", context: null, meta: null }),
         clansContainer,
         buildAddClan(refresh),

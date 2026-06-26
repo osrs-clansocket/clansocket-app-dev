@@ -1,4 +1,4 @@
-import { div, heading, paragraph, span, type Instance } from "../../../../../factory";
+import { div, heading, paragraph, span, type Instance, baseProps, textProps } from "../../../../../factory";
 import {
     DISCORD_EMPTY_STEP_CLASS,
     DISCORD_EMPTY_STEP_LIST_CLASS,
@@ -22,20 +22,20 @@ const STEPS: ReadonlyArray<StepDef> = [
 ];
 
 function buildStep(def: StepDef): Instance {
-    return div({ classes: [DISCORD_EMPTY_STEP_CLASS], context: null, meta: null }, [
-        span({ classes: [DISCORD_EMPTY_STEP_NUM_CLASS], text: def.num, context: null, meta: null }),
-        paragraph({ classes: [DISCORD_EMPTY_STEP_TEXT_CLASS], text: def.text, context: null, meta: null }),
+    return div(baseProps([DISCORD_EMPTY_STEP_CLASS]), [
+        span(textProps([DISCORD_EMPTY_STEP_NUM_CLASS], def.num)),
+        paragraph(textProps([DISCORD_EMPTY_STEP_TEXT_CLASS], def.text)),
     ]);
 }
 
 export function buildStepGroup(): Instance {
-    return div({ classes: [DISCORD_EMPTY_STEPS_CLASS], context: null, meta: null }, [
+    return div(baseProps([DISCORD_EMPTY_STEPS_CLASS]), [
         heading("h3", {
             classes: [DISCORD_EMPTY_STEPS_TITLE_CLASS],
             text: STEPS_TITLE,
             context: null,
             meta: null,
         }),
-        div({ classes: [DISCORD_EMPTY_STEP_LIST_CLASS], context: null, meta: null }, STEPS.map(buildStep)),
+        div(baseProps([DISCORD_EMPTY_STEP_LIST_CLASS]), STEPS.map(buildStep)),
     ]);
 }

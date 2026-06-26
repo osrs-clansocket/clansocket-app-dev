@@ -1,20 +1,20 @@
-import { div, input, type Instance } from "../../../../factory/index.js";
+import { div, input, type Instance, baseProps } from "../../../../factory/index.js";
 import { sliderRow } from "./sliders.js";
 import type { PickerSliders } from "./color-picker-types.js";
 
-const PICKER_COLUMN = "voxlab__picker-popup-column";
-const PICKER_COLUMN_TITLE = "voxlab__picker-popup-column-title";
-const PICKER_HEX_INPUT = "voxlab__picker-popup-hex-input";
+const PICKER_COLUMN = "picker__popup-column";
+const PICKER_COLUMN_TITLE = "picker__popup-column-title";
+const PICKER_HEX_INPUT = "picker__popup-hex-input";
 
 export function buildPickerColumns(sliders: PickerSliders): { hslCol: Instance; rgbCol: Instance } {
-    const hslCol = div({ classes: [PICKER_COLUMN], context: null, meta: null }, [
-        div({ classes: [PICKER_COLUMN_TITLE], context: null, meta: null }, ["HSL"]),
+    const hslCol = div(baseProps([PICKER_COLUMN]), [
+        div(baseProps([PICKER_COLUMN_TITLE]), ["HSL"]),
         sliderRow("H", sliders.hue),
         sliderRow("S", sliders.sat),
         sliderRow("L", sliders.lit),
     ]);
-    const rgbCol = div({ classes: [PICKER_COLUMN], context: null, meta: null }, [
-        div({ classes: [PICKER_COLUMN_TITLE], context: null, meta: null }, ["RGB"]),
+    const rgbCol = div(baseProps([PICKER_COLUMN]), [
+        div(baseProps([PICKER_COLUMN_TITLE]), ["RGB"]),
         sliderRow("R", sliders.red),
         sliderRow("G", sliders.grn),
         sliderRow("B", sliders.blu),

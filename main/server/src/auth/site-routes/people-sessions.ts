@@ -2,7 +2,7 @@ import { type Request, type Response } from "express";
 import { clanById } from "../../database/clans/clan-store.js";
 import { hashesForAccount } from "../../database/site/site-accounts/index.js";
 import { sessionsByHash, type PluginLiveSession } from "../../plugin-api/session/session-registry/index.js";
-import { requireAccount } from "./oauth-session.js";
+import { requireAccount } from "./requirer-oauth-account.js";
 import { mountedRouter } from "./_mount-registry.js";
 
 const router = mountedRouter();

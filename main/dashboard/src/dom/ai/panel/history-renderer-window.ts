@@ -1,4 +1,4 @@
-import { div, type Instance } from "../../factory";
+import { div, type Instance, baseProps } from "../../factory";
 import { getMessagesHost } from "./messaging/messages-host";
 import { setDynProp } from "../../../state/dynamic-styles.js";
 import type { DisplayItem } from "./history-renderer-types.js";
@@ -22,7 +22,7 @@ export interface WindowState {
 }
 
 export function buildWindowRange(): Instance {
-    return div({ classes: [SPACER_CLASS], context: null, meta: null });
+    return div(baseProps([SPACER_CLASS]));
 }
 
 export function sumWindowRange(state: WindowState, from: number, to: number): number {

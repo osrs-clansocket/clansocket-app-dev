@@ -1,4 +1,4 @@
-export type ClanIconKind = "builtin" | "image" | "voxlab";
+export type ClanIconKind = "builtin" | "image";
 
 export interface IconTransform {
     scale: number;

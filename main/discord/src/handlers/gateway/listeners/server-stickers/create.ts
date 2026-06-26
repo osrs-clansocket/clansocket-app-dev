@@ -1,4 +1,5 @@
 import { Events } from "discord.js";
+import { STATE_KINDS } from "../../../../core/constants.js";
 import { extractStickerRow } from "../../../../state-sync/server-stickers/extract.js";
 import { registerListener } from "../../listener-registry.js";
 import { pSticker } from "../../specs/payloads.js";
@@ -10,5 +11,5 @@ registerListener({
     triggerId: "discord:server-stickers.created",
     selectEntity: stickerGuard,
     buildPayload: pSticker,
-    persist: upsertOf("server-stickers", extractStickerRow),
+    persist: upsertOf(STATE_KINDS.SERVER_STICKERS, extractStickerRow),
 });

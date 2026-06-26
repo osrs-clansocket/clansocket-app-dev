@@ -1,4 +1,4 @@
-import { BTN_VARIANT_BARE, button, div, effect, icon, span, type Instance } from "../../factory";
+import { BTN_VARIANT_BARE, button, div, effect, icon, span, type Instance, baseProps } from "../../factory";
 import type { PositionRow } from "../../../state/clans/stores/positions-store.js";
 import {
     CLAN_MAP_ROW_ACTION_CLASS,
@@ -7,7 +7,7 @@ import {
     CLAN_MAP_ROW_ALERT_CLASS,
     CLAN_MAP_ROW_FOLLOW_CLASS,
 } from "../../../shared/constants/clan/clan-map-constants.js";
-import type { RowHandlers } from "./render-map-row.js";
+import type { RowHandlers } from "./row-handlers-types.js";
 
 interface RowActionOpts {
     classes: string[];
@@ -31,10 +31,7 @@ function bindRowActions(btn: Instance, inactiveIcon: Instance, activeIcon: Insta
 function buildRowAction({ classes, iconName, activeIconName, isActive$, label, onToggle }: RowActionOpts): Instance {
     const inactiveIcon = icon({ name: iconName, ariaHidden: true, context: null, meta: null });
     const activeIcon = icon({ name: activeIconName, ariaHidden: true, context: null, meta: null });
-    const iconHost = span({ classes: [CLAN_MAP_ROW_ACTION_ICON_CLASS], context: null, meta: null }, [
-        inactiveIcon,
-        activeIcon,
-    ]);
+    const iconHost = span(baseProps([CLAN_MAP_ROW_ACTION_ICON_CLASS]), [inactiveIcon, activeIcon]);
     const btn = button(
         {
             classes,
@@ -70,5 +67,5 @@ export function buildActionRow(row: PositionRow, h: RowHandlers): Instance {
         label: `alert on ${row.latest_rsn}`,
         onToggle: () => h.onToggleAlert(row.account_hash),
     });
-    return div({ classes: [CLAN_MAP_ROW_ACTIONS_CLASS], context: null, meta: null }, [alertBtn, followBtn]);
+    return div(baseProps([CLAN_MAP_ROW_ACTIONS_CLASS]), [alertBtn, followBtn]);
 }

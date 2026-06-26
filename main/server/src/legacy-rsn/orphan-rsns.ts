@@ -1,7 +1,7 @@
 import { getClanDb } from "../database/index.js";
 import { NAME_CHANGED_SUFFIX } from "../database/plugin/saturated-tables.js";
 import { stripSuffix } from "./strip-suffix.js";
-import type { LegacyRsnMatch, MemberClan } from "./legacy-rsn-store.js";
+import type { LegacyRsnMatch, MemberClan } from "./legacy-rsn-types.js";
 
 interface OrphanRsnRow {
     sender_rsn: string;

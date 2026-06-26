@@ -1,4 +1,4 @@
-import { createInstance, div, effect, paragraph, type Instance } from "../../../factory";
+import { createInstance, div, effect, paragraph, type Instance, baseProps, textProps } from "../../../factory";
 import { consentsStore } from "../../../../state/identity/stores/consents-store.js";
 import type { ConsentRecord } from "../../../../state/identity/consent/consent-client.js";
 import { buildPendingRow, buildResolvedRow } from "./rows.js";
@@ -64,12 +64,7 @@ function makeRenderEmpty(
         for (const inst of rowPool.values()) inst.destroy();
         rowPool.clear();
         if (emptyRef.inst === null)
-            emptyRef.inst = paragraph({
-                classes: [ACCOUNT_EMPTY_CLASS],
-                text: "No consent records yet.",
-                context: null,
-                meta: null,
-            });
+            emptyRef.inst = paragraph(textProps([ACCOUNT_EMPTY_CLASS], "No consent records yet."));
         placeConsentChildren(host, [emptyRef.inst]);
     };
 }
@@ -99,13 +94,13 @@ import { defineAccountPanel } from "../registry.js";
 defineAccountPanel({ key: "consent", order: 80, build: () => buildConsentPanel() });
 
 export function buildConsentPanel(): Instance {
-    const status = paragraph({ classes: [FORM_HINT], text: "", context: null, meta: null });
+    const status = paragraph(textProps([FORM_HINT], ""));
     status.el.hidden = true;
-    const host = div({ classes: [ACCOUNT_LIST_CLASS], context: null, meta: null });
+    const host = div(baseProps([ACCOUNT_LIST_CLASS]));
     const root = accountPanel({
         title: "Requests",
         body: [host, status],
-        footer: [paragraph({ classes: [FORM_HINT], text: FOOTER_HINT, context: null, meta: null })],
+        footer: [paragraph(textProps([FORM_HINT], FOOTER_HINT))],
     });
     const renderer = createConsentsRenderer(host, () => void consentsStore.refresh(), status);
     root.trackDispose(effect(() => renderer.render(consentsStore.list$())));

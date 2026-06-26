@@ -1,4 +1,4 @@
-import { div, effect, paragraph, signal, type Instance } from "../../../../../../../factory";
+import { div, effect, paragraph, signal, type Instance, baseProps, textProps } from "../../../../../../../factory";
 import { AUTO_HOOKS_PREVIEW_ROOT_CLASS } from "../../../../../../../../shared/constants/clan-manage-discord/auto-hook-constants.js";
 import { CLAN_MANAGE_AUTO_HOOKS_PREVIEW_PANE_LABEL_CLASS } from "../../../../../../../../shared/constants/clan/manage-constants.js";
 import { ensureLoaded } from "../../../../../../../../state/icons/discord-emojis-store.js";
@@ -9,12 +9,7 @@ import { renderEmbedPreview } from "./render-embed-preview.js";
 const EMPTY_HINT = "Focus a card's format editor to see a live preview here.";
 
 function emptyHintEl(): Instance {
-    return paragraph({
-        text: EMPTY_HINT,
-        context: null,
-        meta: null,
-        classes: [CLAN_MANAGE_AUTO_HOOKS_PREVIEW_PANE_LABEL_CLASS],
-    });
+    return paragraph(textProps([CLAN_MANAGE_AUTO_HOOKS_PREVIEW_PANE_LABEL_CLASS], EMPTY_HINT));
 }
 
 interface PreviewSlots {
@@ -47,11 +42,7 @@ export function buildPreviewPane(): Instance {
     const embedHost = div({ context: null, meta: null });
     contentHost.el.hidden = true;
     embedHost.el.hidden = true;
-    const root = div({ classes: [AUTO_HOOKS_PREVIEW_ROOT_CLASS], context: null, meta: null }, [
-        empty,
-        contentHost,
-        embedHost,
-    ]);
+    const root = div(baseProps([AUTO_HOOKS_PREVIEW_ROOT_CLASS]), [empty, contentHost, embedHost]);
     const slots: PreviewSlots = { empty, contentHost, embedHost };
     const emojisLoaded$ = signal<boolean>(false);
     void ensureLoaded().then(() => emojisLoaded$.set(true));

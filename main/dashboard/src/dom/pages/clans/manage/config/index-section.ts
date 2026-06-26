@@ -8,6 +8,8 @@ import {
     paragraph,
     signal,
     type Instance,
+    baseProps,
+    textProps,
 } from "../../../../factory";
 import { PLUGIN_CONFIG_FIELDS } from "../../../../../shared/constants/plugin-config/plugin-config-fields.js";
 import type { PluginConfigState } from "../../../../../state/clans/plugin-config/client.js";
@@ -56,12 +58,12 @@ function buildSectionHeader(args: { scope: BuildSectionArgs["scope"]; state: Bui
         context: null,
         meta: null,
     });
-    const metaEl = paragraph({
-        classes: [SECTION_META_CLASS],
-        text: derived(() => metaText(scope(), state())),
-        context: null,
-        meta: null,
-    });
+    const metaEl = paragraph(
+        textProps(
+            [SECTION_META_CLASS],
+            derived(() => metaText(scope(), state())),
+        ),
+    );
     return { titleEl, metaEl };
 }
 
@@ -69,7 +71,7 @@ function buildPublishBtn(args: BuildSectionArgs): Instance {
     const { slug, store, state, scope, values, status } = args;
     return button({
         variant: BTN_VARIANT_PRIMARY,
-        compact: true,
+        
         text: derived(() => publishLabel(scope())),
         context: "publish the plugin config to the active scope",
         meta: ["action", "plugin-config"],
@@ -90,7 +92,7 @@ function buildClearBtn(args: BuildSectionArgs): Instance {
     const { slug, store, state, scope, values, status } = args;
     return button({
         variant: BTN_VARIANT_OUTLINE,
-        compact: true,
+        
         text: derived(() => clearLabel(scope())),
         context: "clear the plugin config for the active scope",
         meta: ["action", "plugin-config"],
@@ -117,17 +119,19 @@ export function buildSection(args: BuildSectionArgs): Instance {
         { classes: [FIELD_LIST_CLASS], context: null, meta: null },
         PLUGIN_CONFIG_FIELDS.map((f) => buildFieldRow(f, values)),
     );
-    const scroll = div({ classes: [SCROLL_CLASS], context: null, meta: null }, [
-        fieldList,
-        buildRosterGrid(scope, state),
-    ]);
+    const scroll = div(baseProps([SCROLL_CLASS]), [fieldList, buildRosterGrid(scope, state)]);
     const publishBtn = buildPublishBtn(args);
     const clearBtn = buildClearBtn(args);
-    const statusEl = paragraph({ classes: [STATUS_CLASS], text: derived(() => status()), context: null, meta: null });
-    return div({ classes: [SECTION_CLASS], context: null, meta: null }, [
+    const statusEl = paragraph(
+        textProps(
+            [STATUS_CLASS],
+            derived(() => status()),
+        ),
+    );
+    return div(baseProps([SECTION_CLASS]), [
         titleEl,
         metaEl,
         scroll,
-        div({ classes: [ACTIONS_CLASS], context: null, meta: null }, [publishBtn, clearBtn, statusEl]),
+        div(baseProps([ACTIONS_CLASS]), [publishBtn, clearBtn, statusEl]),
     ]);
 }

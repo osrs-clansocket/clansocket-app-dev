@@ -1,4 +1,4 @@
-import { div, span, wireChange, type Instance } from "../../../factory";
+import { div, span, wireChange, type Instance, baseProps, textProps } from "../../../factory";
 import { checkbox } from "../../../factory/content-ops/form/inputs/checkbox.js";
 import { PERMISSION_FLAG_NAMES } from "../../../../shared/constants/clan-manage-discord/permission-flags-constants.js";
 import { formatPermissionName, safeBigInt } from "../util/permission-cycle.js";
@@ -13,14 +13,9 @@ const PERM_STATE_SET = "✓";
 const PERM_STATE_UNSET = "—";
 
 function readonlyPermRow(label: string, isSet: boolean): Instance {
-    const labelEl = span({ classes: [PERMS_LABEL_CLASS], text: label, context: null, meta: null });
-    const stateEl = span({
-        classes: [PERMS_STATE_CLASS],
-        text: isSet ? PERM_STATE_SET : PERM_STATE_UNSET,
-        context: null,
-        meta: null,
-    });
-    return div({ classes: [PERMS_ROW_CLASS], context: null, meta: null }, [stateEl, labelEl]);
+    const labelEl = span(textProps([PERMS_LABEL_CLASS], label));
+    const stateEl = span(textProps([PERMS_STATE_CLASS], isSet ? PERM_STATE_SET : PERM_STATE_UNSET));
+    return div(baseProps([PERMS_ROW_CLASS]), [stateEl, labelEl]);
 }
 
 interface PermRowMutators {
@@ -30,7 +25,7 @@ interface PermRowMutators {
 }
 
 function editablePermRow(label: string, mask: bigint, mut: PermRowMutators): Instance {
-    const labelEl = span({ classes: [PERMS_LABEL_CLASS], text: label, context: null, meta: null });
+    const labelEl = span(textProps([PERMS_LABEL_CLASS], label));
     const cb = checkbox({ context: null, meta: null });
     if ((mut.getLocal() & mask) !== 0n) cb.el.checked = true;
     wireChange(cb.el, () => {
@@ -38,7 +33,7 @@ function editablePermRow(label: string, mask: bigint, mut: PermRowMutators): Ins
         mut.setLocal(next);
         mut.onSave(next.toString());
     });
-    return div({ classes: [PERMS_ROW_CLASS], context: null, meta: null }, [cb, labelEl]);
+    return div(baseProps([PERMS_ROW_CLASS]), [cb, labelEl]);
 }
 
 function buildPermRow(name: string, bit: number, editable: boolean, mut: PermRowMutators): Instance {
@@ -63,8 +58,8 @@ export function editPerms(
         onSave,
     };
     const rows = PERMISSION_FLAG_NAMES.map((name, bit) => buildPermRow(name, bit, editable, mut));
-    return div({ classes: [DISCORD_INSPECTOR_SECTION_CLASS], context: null, meta: null }, [
+    return div(baseProps([DISCORD_INSPECTOR_SECTION_CLASS]), [
         buildLabelRow(title, null),
-        div({ classes: [PERMS_GRID_CLASS], context: null, meta: null }, rows),
+        div(baseProps([PERMS_GRID_CLASS]), rows),
     ]);
 }

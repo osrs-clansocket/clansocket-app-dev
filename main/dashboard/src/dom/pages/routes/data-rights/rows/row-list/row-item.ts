@@ -1,4 +1,4 @@
-import { div, effect, snapshot, type Instance, type ReadSignal } from "../../../../../factory/index.js";
+import { div, effect, snapshot, type Instance, type ReadSignal, baseProps } from "../../../../../factory/index.js";
 import { rowSummary } from "../../../../../../state/data-rights/summary.js";
 import { pkKeyOf } from "../../../../../../state/data-rights/page-state/formatters/pk-key-formatter.js";
 import {
@@ -43,7 +43,7 @@ export function mountDataRow(row: Record<string, unknown>, ctx: DataRowCtx): Ins
     const parts = buildSummaryParts(row, ctx.table, sum);
     const children: Instance[] = [buildRowButton(sum, parts, key, ctx.onSelect)];
     if (ctx.canDeleteRow) children.push(liveDeleteButton(key, ctx.table, ctx.onDelete));
-    const wrap = div({ classes: [DR_ROW_ITEM_CLASS], context: null, meta: null }, children);
+    const wrap = div(baseProps([DR_ROW_ITEM_CLASS]), children);
     wrap.trackDispose(effect(() => wrap.toggleClass(IS_SELECTED_CLASS, ctx.selectedKey() === key)));
     cellRefs.set(wrap.el, {
         primary: parts.primary,

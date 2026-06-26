@@ -1,6 +1,6 @@
-import { asFiniteNumber } from "../../shared/coerce.js";
 import { planForTable } from "../scopes/user-scope/index.js";
 import { buildRsnFilter, type BrowseRequest } from "./browse-shared.js";
+import { composeTsClause } from "./composer-ts-clause.js";
 import { introspectTable, placeholders, quoteIdent } from "./db-introspect.js";
 
 export interface UserBrowseBuilt {
@@ -28,27 +28,13 @@ export function userOrderBy(
     return orderParts.join(", ");
 }
 
-function buildTsClause(
-    args: BrowseRequest,
-    info: NonNullable<ReturnType<typeof introspectTable>>,
-): { sql: string; args: unknown[] } {
-    const tsCol = info.tsCol ? quoteIdent(info.tsCol) : null;
-    const from = asFiniteNumber(args.from);
-    const to = asFiniteNumber(args.to);
-    const useDateFilter = tsCol !== null && (from !== null || to !== null);
-    return {
-        sql: useDateFilter ? ` AND ${tsCol} BETWEEN ? AND ?` : "",
-        args: useDateFilter ? [from ?? 0, to ?? Number.MAX_SAFE_INTEGER] : [],
-    };
-}
-
 export function userWhereOrder(
     args: BrowseRequest,
     info: NonNullable<ReturnType<typeof introspectTable>>,
     plan: NonNullable<ReturnType<typeof planForTable>>,
 ): UserBrowseBuilt {
     const ownerQuoted = quoteIdent(plan.ownershipColumn);
-    const ts = buildTsClause(args, info);
+    const ts = composeTsClause(args, info);
     const rsnFilter = buildRsnFilter(
         args,
         info.cols.some((c) => c.name === "rsn"),

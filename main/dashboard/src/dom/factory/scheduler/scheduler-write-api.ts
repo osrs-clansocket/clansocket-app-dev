@@ -1,5 +1,5 @@
 import { queues } from "./scheduler-queues.js";
-import { ensureScheduled } from "./scheduler-loop.js";
+import { ensureScheduled } from "./scheduler-ensure.js";
 
 export function scheduleText(el: HTMLElement, value: string): void {
     queues.textQueue.set(el, value);

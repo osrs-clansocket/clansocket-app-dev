@@ -108,14 +108,6 @@
     border-radius: var(--radius-md);
     background: rgb(from var(--base-graphite-900) r g b / 0.3);
 }
-.clans-manage__auto-hooks-embed-editor .voxlab__picker {
-    flex: 1 1 0;
-    justify-content: flex-start;
-}
-.clans-manage__auto-hooks-embed-editor .voxlab__picker-swatch {
-    inline-size: 100%;
-    block-size: var(--sp-8);
-}
 .clans-manage__auto-hooks-emoji-picker {
     padding-block: var(--sp-1);
 }

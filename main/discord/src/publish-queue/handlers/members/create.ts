@@ -1,6 +1,7 @@
 import { PermissionsBitField, type Client, type Guild } from "discord.js";
 import { ensureBotPermission } from "../../../validators/bot-permission.js";
 import { registerPublisher } from "../../publisher-registry.js";
+import { OP_KINDS, ENTITY_TYPES } from "../../publish-vocab.js";
 import { runPublishOp } from "../../runners/op-runner.js";
 
 const SUBJECT_UNBAN = "unban";
@@ -20,6 +21,6 @@ export async function applyMemberCreate(client: Client, guild: Guild, data: Unba
 
 export type { UnbanState };
 
-registerPublisher("create", "discord_member", {
-    handler: (c, r) => runPublishOp(c, r, "create", (g, d) => applyMemberCreate(c, g, d as UnbanState)),
+registerPublisher(OP_KINDS.CREATE, ENTITY_TYPES.MEMBER, {
+    handler: (c, r) => runPublishOp(c, r, OP_KINDS.CREATE, (g, d) => applyMemberCreate(c, g, d as UnbanState)),
 });

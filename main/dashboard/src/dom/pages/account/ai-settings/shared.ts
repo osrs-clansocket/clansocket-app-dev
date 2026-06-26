@@ -1,4 +1,4 @@
-import { div, section, type Instance } from "../../../factory";
+import { div, section, type Instance, baseProps } from "../../../factory";
 import { ensureDefaultsLoaded } from "../../../../ai/persona-store/defaults-client.js";
 import type { SlotTier } from "../../../../ai/persona-store/index.js";
 import type { TabConcerns } from "../../../../state/ai-settings/panel-defs.js";
@@ -21,9 +21,9 @@ export interface MountOpts {
 
 export function mountConcernsTab({ host, config, tiers, tierLabel, tabClass }: MountOpts): void {
     void ensureDefaultsLoaded();
-    const accordion = div({ classes: [ACCORDION_CLASS], context: null, meta: null });
+    const accordion = div(baseProps([ACCORDION_CLASS]));
     for (const c of config.concerns) accordion.addChild(buildConcernSection(c));
-    const footer = div({ classes: [TAB_FOOTER_CLASS], context: null, meta: null }, [tabResetBtn(tiers, tierLabel)]);
-    const sec: Instance = section({ classes: [tabClass], context: null, meta: null }, [accordion, footer]);
+    const footer = div(baseProps([TAB_FOOTER_CLASS]), [tabResetBtn(tiers, tierLabel)]);
+    const sec: Instance = section(baseProps([tabClass]), [accordion, footer]);
     host.setChildren(sec);
 }

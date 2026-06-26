@@ -1,4 +1,14 @@
-import { div, heading, icon, image, paragraph, span, type Instance } from "../../../../../factory";
+import {
+    div,
+    heading,
+    icon,
+    image,
+    paragraph,
+    span,
+    type Instance,
+    baseProps,
+    textProps,
+} from "../../../../../factory";
 import {
     DISCORD_EMPTY_BADGES_CLASS,
     DISCORD_EMPTY_BADGE_PLUS_CLASS,
@@ -19,9 +29,9 @@ const HEADLINE_TEXT = "Connect ClanSocket to Discord";
 const LEDE_TEXT = "ClanSocket - Live, Open-Source platform for Old School RuneScape clans";
 
 function buildHeroBadges(): Instance {
-    return div({ classes: [DISCORD_EMPTY_BADGES_CLASS], context: null, meta: null }, [
+    return div(baseProps([DISCORD_EMPTY_BADGES_CLASS]), [
         image({ src: LOGO_SRC, alt: LOGO_ALT, classes: [DISCORD_EMPTY_LOGO_CLASS], context: null, meta: null }),
-        span({ classes: [DISCORD_EMPTY_BADGE_PLUS_CLASS], text: PLUS_TEXT, context: null, meta: null }),
+        span(textProps([DISCORD_EMPTY_BADGE_PLUS_CLASS], PLUS_TEXT)),
         icon({
             provider: DISCORD_ICON_PROVIDER,
             name: DISCORD_ICON_NAME,
@@ -34,9 +44,9 @@ function buildHeroBadges(): Instance {
 }
 
 export function buildHero(): Instance {
-    return div({ classes: [DISCORD_EMPTY_HERO_CLASS], context: null, meta: null }, [
+    return div(baseProps([DISCORD_EMPTY_HERO_CLASS]), [
         buildHeroBadges(),
         heading("h1", { classes: [DISCORD_EMPTY_HEADLINE_CLASS], text: HEADLINE_TEXT, context: null, meta: null }),
-        paragraph({ classes: [DISCORD_EMPTY_LEDE_CLASS], text: LEDE_TEXT, context: null, meta: null }),
+        paragraph(textProps([DISCORD_EMPTY_LEDE_CLASS], LEDE_TEXT)),
     ]);
 }

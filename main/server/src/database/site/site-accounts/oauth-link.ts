@@ -2,8 +2,6 @@ import { DB_NAMES, getDb } from "../../core/database.js";
 import { execMutation, getMany, getOne, runMutation } from "../../core/db-ops.js";
 import { LinkConflict, type OAuthLink, type OAuthProvider, type ProviderRow } from "./types.js";
 
-export { resolveAccount } from "./oauth-account-resolver.js";
-
 export function oAuthLink(provider: OAuthProvider, providerUserId: string): string | null {
     const row = getOne<{ site_account_id: string }>(
         getDb(DB_NAMES.APP),

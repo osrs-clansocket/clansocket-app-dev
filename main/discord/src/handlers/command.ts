@@ -1,4 +1,5 @@
 import logger from "@clansocket/logger";
+import { HTTP_METHOD_POST } from "../core/constants.js";
 import { dispatchEvent, eventErrCtx } from "../dispatchers/event-dispatcher.js";
 import { apiRequest } from "../fetchers/api-fetcher.js";
 import { trackInteractionPending, triggerInteractionCleanup } from "../interactions/ttl-tracker.js";
@@ -37,7 +38,7 @@ const handleGuildChange = (logFn: any, infoFn: any) =>
     }, "Guild event");
 
 async function autoBindServer(botId: string, guildId: string, guildName: string): Promise<void> {
-    await apiRequest("POST", "/api/discord/state/servers/auto-bind", {
+    await apiRequest(HTTP_METHOD_POST, "/api/discord/state/servers/auto-bind", {
         bot_id: botId,
         guild_id: guildId,
         guild_name: guildName,

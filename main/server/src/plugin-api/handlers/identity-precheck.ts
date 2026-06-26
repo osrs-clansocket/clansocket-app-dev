@@ -2,7 +2,7 @@ import { WS_CODE_POLICY_VIOLATION } from "../constants.js";
 import { accountByHash } from "../../database/site/site-accounts/index.js";
 import { logPluginError } from "../logger/index.js";
 import { send } from "../transport/send.js";
-import type { DispatchContext } from "./dispatch.js";
+import type { DispatchContext } from "./dispatch-types.js";
 import type { IdentityMsg } from "./identity-phases.js";
 
 export function identityPrechecks(ctx: DispatchContext, msg: IdentityMsg, clanName: string): boolean {

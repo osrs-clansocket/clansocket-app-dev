@@ -1,4 +1,4 @@
-import { BTN_VARIANT_OUTLINE, button, div, heading, span, type Instance } from "../../../factory";
+import { BTN_VARIANT_OUTLINE, button, div, heading, span, type Instance, baseProps, textProps } from "../../../factory";
 import type { ManagedClan } from "../../../../state/clans/clans-client/index.js";
 import { AppEvents, events, type BrandingChanged } from "../../../../managers/events";
 import { buildClanAvatar, buildInfo, buildRankBadge } from "./clan-row-parts.js";
@@ -55,7 +55,7 @@ function buildHeadChildren(clan: ManagedClan, isManager: boolean): Instance[] {
     const badge = buildRankBadge();
     const children: Instance[] = [avatar, name, info, badge];
     if (isManager) {
-        children.push(span({ classes: [ACCOUNT_CLAN_CHEVRON_CLASS], text: "▾", context: null, meta: null }));
+        children.push(span(textProps([ACCOUNT_CLAN_CHEVRON_CLASS], "▾")));
     }
     return children;
 }
@@ -82,7 +82,7 @@ function buildClanHead(isManager: boolean, clan: ManagedClan, headChildren: Inst
 function buildViewBtn(slug: string): Instance {
     return button({
         variant: BTN_VARIANT_OUTLINE,
-        compact: true,
+        
         classes: [ACCOUNT_CLAN_ROW_VIEW_CLASS],
         text: "View",
         context: "open this clan's public page",
@@ -110,8 +110,8 @@ function makeBrandingHandler(clan: ManagedClan, head: Instance): (...args: unkno
 export function buildClanRow(clan: ManagedClan, onToggle: (row: HTMLElement) => void): Instance {
     const isManager = clan.role !== MEMBER_ROLE;
     const headChildren = buildHeadChildren(clan, isManager);
-    const banner = div({ classes: [ACCOUNT_CLAN_ROW_BANNER_CLASS], context: null, meta: null });
-    const row = div({ classes: [ACCOUNT_CLAN_ROW_CLASS], context: null, meta: null }, [banner]);
+    const banner = div(baseProps([ACCOUNT_CLAN_ROW_BANNER_CLASS]));
+    const row = div(baseProps([ACCOUNT_CLAN_ROW_CLASS]), [banner]);
     ROW_INST.set(row.el, row);
     const head = buildClanHead(isManager, clan, headChildren, () => onToggle(row.el));
     banner.addChild(head);

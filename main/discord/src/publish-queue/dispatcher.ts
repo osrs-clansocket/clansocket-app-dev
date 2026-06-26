@@ -1,4 +1,5 @@
 import type { Client, PermissionResolvable } from "discord.js";
+import { FALLBACK_UNKNOWN } from "../core/constants.js";
 import { BaseQueueRunner, loadAndDrain } from "../base/base-queue-runner.js";
 import { pendingPublishQueue, type PendingPublishRow } from "../loaders/publish-queue-loader.js";
 import { failAndWarn } from "../shared/transitions/fail-and-warn.js";
@@ -59,7 +60,7 @@ class PublishRunner extends BaseQueueRunner<PendingPublishRow, PublisherRegistra
     }
 
     protected markFailed(row: PendingPublishRow, err: unknown): Promise<void> {
-        const msg = (err as { message?: string }).message ?? "unknown";
+        const msg = (err as { message?: string }).message ?? FALLBACK_UNKNOWN;
         return this.fail(row, JSON.stringify({ message: msg }), `Publish dispatch failed for ${row.queue_id}: ${msg}`);
     }
 

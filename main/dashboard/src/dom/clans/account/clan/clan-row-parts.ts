@@ -1,4 +1,14 @@
-import { clanAvatarInner, div, effect, image, scheduleText, span, type Instance } from "../../../factory";
+import {
+    clanAvatarInner,
+    div,
+    effect,
+    image,
+    scheduleText,
+    span,
+    type Instance,
+    baseProps,
+    textProps,
+} from "../../../factory";
 import type { ClanIconKind, ManagedClan } from "../../../../state/clans/clans-client/index.js";
 import { identificationStore } from "../../../../state/identity/stores/identification-store.js";
 import { rankIconPath } from "../../../../state/icons/rank-icons.js";
@@ -25,7 +35,7 @@ interface ClanAvatarOpts {
 }
 
 export function buildClanAvatar({ slug, iconKind, iconValue, color, imageVersion }: ClanAvatarOpts): Instance {
-    const avatar = span({ classes: [ACCOUNT_CLAN_AVATAR_CLASS], context: null, meta: null });
+    const avatar = span(baseProps([ACCOUNT_CLAN_AVATAR_CLASS]));
     if (color) avatar.el.style.setProperty("--clan-accent", color);
     avatar.addChild(
         clanAvatarInner({
@@ -72,7 +82,7 @@ export function buildInfo(clan: ManagedClan): Instance {
     const liveCount = members.filter((m) => m.isLive === true).length;
     const items: Instance[] = [buildInfoItem(`${memberCount} members`)];
     if (liveCount > 0) items.push(buildInfoItem(`${liveCount} live`));
-    return div({ classes: [ACCOUNT_CLAN_ROW_INFO_CLASS], context: null, meta: null }, items);
+    return div(baseProps([ACCOUNT_CLAN_ROW_INFO_CLASS]), items);
 }
 
 export function buildRankBadge(): Instance {
@@ -84,13 +94,8 @@ export function buildRankBadge(): Instance {
         context: null,
         meta: null,
     });
-    const label = span({
-        classes: [ACCOUNT_CLAN_ROW_BADGE_LABEL_CLASS],
-        text: UNKNOWN_RANK,
-        context: null,
-        meta: null,
-    });
-    const badge = span({ classes: [ACCOUNT_CLAN_ROW_BADGE_CLASS], context: null, meta: null }, [icon, label]);
+    const label = span(textProps([ACCOUNT_CLAN_ROW_BADGE_LABEL_CLASS], UNKNOWN_RANK));
+    const badge = span(baseProps([ACCOUNT_CLAN_ROW_BADGE_CLASS]), [icon, label]);
     const dispose = effect(() => {
         const rank = findUserRank();
         applyRankBadge(icon.el, label.el, rank);

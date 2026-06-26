@@ -1,4 +1,4 @@
-import { anchor, button, div, heading, input, paragraph, type Instance } from "../../../factory";
+import { anchor, button, div, heading, input, paragraph, type Instance, baseProps, textProps } from "../../../factory";
 import { performSignin, performSignup } from "./gate-signup-actions.js";
 import { FORM_HINT, FORM_INPUT } from "../../../forms/form-classes.js";
 import { ACCOUNT_EMPTY_CLASS } from "../../../../shared/constants/account-constants.js";
@@ -55,13 +55,8 @@ function buildSignupSubmit(args: {
 }
 
 function buildSigninLink(): Instance {
-    return div({ classes: [FORM_HINT, FORM_HINT_RIGHT_CLASS], context: null, meta: null }, [
-        paragraph({
-            classes: [GLASS_CONFIRM_HINT_TEXT_CLASS],
-            text: "already registered ur device? ",
-            context: null,
-            meta: null,
-        }),
+    return div(baseProps([FORM_HINT, FORM_HINT_RIGHT_CLASS]), [
+        paragraph(textProps([GLASS_CONFIRM_HINT_TEXT_CLASS], "already registered ur device? ")),
         paragraph({ context: null, meta: null }, [
             anchor({
                 href: "#",
@@ -78,13 +73,8 @@ function buildSigninLink(): Instance {
 }
 
 function buildRecoverLink(): Instance {
-    return div({ classes: [FORM_HINT], context: null, meta: null }, [
-        paragraph({
-            classes: [GLASS_CONFIRM_HINT_TEXT_CLASS],
-            text: "Lost access to all ur devices? ",
-            context: null,
-            meta: null,
-        }),
+    return div(baseProps([FORM_HINT]), [
+        paragraph(textProps([GLASS_CONFIRM_HINT_TEXT_CLASS], "Lost access to all ur devices? ")),
         paragraph({ context: null, meta: null }, [
             anchor({
                 href: "/recover",
@@ -108,18 +98,13 @@ function buildSignupHeader(): Instance[] {
             context: null,
             meta: null,
         }),
-        paragraph({
-            classes: [GLASS_CONFIRM_MESSAGE_CLASS],
-            text: "No ClanSocket passkey found on this device.",
-            context: null,
-            meta: null,
-        }),
+        paragraph(textProps([GLASS_CONFIRM_MESSAGE_CLASS], "No ClanSocket passkey found on this device.")),
     ];
 }
 
 export function buildSignupPanel(): Instance {
     const { nameInput, deviceInput } = buildSignupInputs();
-    const status = paragraph({ classes: [ACCOUNT_EMPTY_CLASS], context: null, meta: null });
+    const status = paragraph(baseProps([ACCOUNT_EMPTY_CLASS]));
     status.el.hidden = true;
     const continueBtn = button({
         text: "Continue",
@@ -127,7 +112,7 @@ export function buildSignupPanel(): Instance {
         meta: ["submit", "account"],
         onClick: buildSignupSubmit({ nameInput, deviceInput, status }),
     });
-    return div({ classes: [AI_BAR_AUTH_SIGNUP_PANEL_CLASS], context: null, meta: null }, [
+    return div(baseProps([AI_BAR_AUTH_SIGNUP_PANEL_CLASS]), [
         ...buildSignupHeader(),
         nameInput,
         deviceInput,

@@ -7,14 +7,12 @@ import {
     MAP_MINIMAP_TOGGLE_CLASS,
     MAP_MINIMAP_TOGGLE_ICON_CLASS,
 } from "../../../../shared/constants/clan/clan-map-constants.js";
+import { baseProps } from "../../../factory/index.js";
 
 function buildToggleIcons(): { eyeIcon: Instance; eyeSlashIcon: Instance; iconHost: Instance } {
     const eyeIcon = icon({ name: "eye", ariaHidden: true, context: null, meta: null });
     const eyeSlashIcon = icon({ name: "eye-slash", ariaHidden: true, context: null, meta: null });
-    const iconHost = div({ classes: [MAP_MINIMAP_TOGGLE_ICON_CLASS], context: null, meta: null }, [
-        eyeIcon,
-        eyeSlashIcon,
-    ]);
+    const iconHost = div(baseProps([MAP_MINIMAP_TOGGLE_ICON_CLASS]), [eyeIcon, eyeSlashIcon]);
     return { eyeIcon, eyeSlashIcon, iconHost };
 }
 

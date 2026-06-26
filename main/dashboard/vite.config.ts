@@ -3,7 +3,7 @@ import { resolve } from "path";
 import fs from "fs";
 import { compression } from "vite-plugin-compression2";
 import { sri } from "vite-plugin-sri3";
-import iconsSubsetPlugin from "./vite-icons-subset-plugin.mjs";
+import devParityPlugin from "./vite-dev-parity-plugin.mjs";
 
 const certDir = resolve(__dirname, "..", "server", "certs");
 const keyPath = resolve(certDir, "key.pem");
@@ -41,6 +41,8 @@ export default defineConfig(({ mode, command }) => {
             target: "esnext",
             cssMinify: "lightningcss",
             modulePreload: { polyfill: false },
+            // "hidden" emits .map files alongside each chunk WITHOUT the `//# sourceMappingURL=` comment in the JS. browsers skip them on cold load (no extra fetch), but Sentry / DevTools "load source maps from disk" + the lighthouse "missing source maps" audit both resolve them by path. zero perf cost, real debuggability.
+            sourcemap: "hidden",
             rollupOptions: {
                 input: resolve(__dirname, "..", "..", "index.html"),
                 output: {
@@ -54,16 +56,12 @@ export default defineConfig(({ mode, command }) => {
                         // them with their consumer route chunks rather than hauling them all
                         // into a single eager vendor mega-chunk. Each named lib here is a
                         // verified dashboard import that's >50 KB and only used by 1-2 lazy
-                        // routes (charting pages, voxlab, image-processing flows).
+                        // routes (charting pages, image-processing flows).
                         if (id.includes("node_modules/chart.js")) return undefined;
                         if (id.includes("node_modules/chartjs-")) return undefined;
                         if (id.includes("node_modules/date-fns")) return undefined;
-                        // three + three-mesh-bvh are voxlab/clan-model-icon only; route-chunk them.
-                        if (id.includes("node_modules/three/")) return undefined;
-                        if (id.includes("node_modules/three-mesh-bvh")) return undefined;
                         if (id.includes("node_modules/upng-js")) return undefined;
                         if (id.includes("node_modules/wawoff2")) return undefined;
-                        if (id.includes("node_modules/svg-pathdata")) return undefined;
                         if (id.includes("node_modules/dompurify")) return undefined;
 
                         // Everything else from node_modules goes into a single vendor chunk
@@ -90,7 +88,7 @@ export default defineConfig(({ mode, command }) => {
             },
         },
         plugins: [
-            iconsSubsetPlugin(),
+            devParityPlugin(),
             sri(),
             compression({ algorithms: ["brotliCompress"], exclude: [/\.(png|jpg|gif|woff2?)$/], threshold: 256 }),
         ],

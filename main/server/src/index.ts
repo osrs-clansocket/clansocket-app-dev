@@ -25,7 +25,7 @@ import { attachBootMiddleware } from "./boot-middleware.js";
 import { mountedApis } from "./api-registry.js";
 import { parseDecimal } from "./shared/parsers/decimal-parser.js";
 import { seedAll } from "./boot-seed-all.js";
-import { tryLoadMaster } from "./boot-try-load-master.js";
+import { loadMaster } from "./boot-vault-master.js";
 import "./api-loader.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -68,7 +68,7 @@ async function start(): Promise<void> {
     await initializeDatabase();
     runAiCleanup();
     runPluginCleanup();
-    tryLoadMaster();
+    loadMaster();
     seedAll();
     const behindProxy = process.env.BEHIND_PROXY === "1";
     const server = behindProxy ? http.createServer(app) : https.createServer(await ensureCerts(), app);

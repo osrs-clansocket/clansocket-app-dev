@@ -1,7 +1,7 @@
 import type { PositionRow, PositionsMapMeta } from "../../../../../state/clans/stores/positions-store.js";
 import type { AtlasBox } from "../../../../../shared/types/view-types.js";
 import { rowToPx } from "../mappers/coordinate-mapper.js";
-import { aspectFit } from "./viewport-auto.js";
+import { aspectFit } from "./viewport-aspect.js";
 
 export interface AroundBlipArgs {
     row: PositionRow;

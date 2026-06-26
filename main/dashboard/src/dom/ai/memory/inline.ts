@@ -1,4 +1,4 @@
-import { button, div, effect, inlineConfirm, wireClick, type Instance } from "../../factory";
+import { button, div, effect, inlineConfirm, wireClick, type Instance, baseProps, textProps } from "../../factory";
 import { memoryClient, type MemoryFile, type MemoryResult } from "../../../ai/memory-client";
 import { memoryStore } from "../../../state/stores/memory-store";
 import { createMemoryList, type MemoryListHandle } from "./list";
@@ -34,14 +34,7 @@ function setStatus(h: MemoryWidgets, text: string, isError = false): void {
 }
 
 function showPlaceholder(h: MemoryWidgets): void {
-    h.content.setChildren(
-        div({
-            classes: [AI_MEMORY_PLACEHOLDER_CLASS],
-            text: "Select a memory file or create a new one.",
-            context: null,
-            meta: null,
-        }),
-    );
+    h.content.setChildren(div(textProps([AI_MEMORY_PLACEHOLDER_CLASS], "Select a memory file or create a new one.")));
 }
 
 async function runWriteOp(h: MemoryWidgets, successMsg: string, op: () => Promise<MemoryResult>): Promise<void> {
@@ -99,9 +92,9 @@ function buildMemoryRoot(
     });
     const content = div({ classes: [AI_MEMORY_CONTENT_CLASS], data: { content: "" }, context: null, meta: null });
     const status = div({ classes: [AI_MEMORY_STATUS_CLASS], data: { status: "" }, context: null, meta: null });
-    const sidebar = div({ classes: [AI_MEMORY_SIDEBAR_CLASS], context: null, meta: null }, [newBtn.el, list.el]);
-    const body = div({ classes: [AI_MEMORY_INLINE_BODY_CLASS], context: null, meta: null }, [sidebar, content]);
-    const root = div({ classes: [AI_MEMORY_INLINE_CLASS], context: null, meta: null }, [body, status]);
+    const sidebar = div(baseProps([AI_MEMORY_SIDEBAR_CLASS]), [newBtn.el, list.el]);
+    const body = div(baseProps([AI_MEMORY_INLINE_BODY_CLASS]), [sidebar, content]);
+    const root = div(baseProps([AI_MEMORY_INLINE_CLASS]), [body, status]);
     return { root, handles: { list, content, status } };
 }
 

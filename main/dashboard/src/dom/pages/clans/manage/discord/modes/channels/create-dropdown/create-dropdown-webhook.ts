@@ -1,4 +1,4 @@
-import { div, type Instance } from "../../../../../../../factory";
+import { div, type Instance, baseProps } from "../../../../../../../factory";
 import { textInput } from "../../../../../../../factory/content-ops/form/inputs/text-input.js";
 import { FORM_FIELD_LABEL, FORM_INPUT } from "../../../../../../../forms/form-classes.js";
 import { label as labelEl } from "../../../../../../../factory/content-ops/form/input-label.js";
@@ -13,7 +13,7 @@ import {
 import { buildField, type FormRefs } from "./create-dropdown-fields.js";
 
 function webhookEmptyHint(): Instance {
-    return div({ classes: [], context: null, meta: null }, [
+    return div(baseProps([]), [
         labelEl({
             classes: [FORM_FIELD_LABEL],
             text: NO_WEBHOOK_CAPABLE_TEXT,
@@ -47,5 +47,5 @@ export function buildWebhookSection(opts: ToolbarOpts, refs: FormRefs): Instance
     emptyHint.el.hidden = hasCapable;
     channelField.el.hidden = !hasCapable;
     nameField.el.hidden = !hasCapable;
-    return div({ classes: [], context: null, meta: null }, [emptyHint, channelField, nameField]);
+    return div(baseProps([]), [emptyHint, channelField, nameField]);
 }

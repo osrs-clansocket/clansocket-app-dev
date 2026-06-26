@@ -1,5 +1,8 @@
 import { randomUUID } from "node:crypto";
 import { DB_NAMES, getDb } from "../../database/index.js";
+import type { PasskeyRow } from "./passkey-types.js";
+
+export type { PasskeyRow } from "./passkey-types.js";
 
 export { passkeyCredential } from "./passkey-credential.js";
 export { passkeyByCredential } from "./passkey-by-credential.js";
@@ -10,17 +13,6 @@ export function passkeyDescriptor(row: PasskeyRow): { id: string } {
 
 export function passkeyDeviceSummary(row: PasskeyRow): { deviceName: string | null; createdAt: number } {
     return { deviceName: row.device_name, createdAt: row.created_at };
-}
-
-export interface PasskeyRow {
-    id: string;
-    site_account_id: string;
-    credential_id: string;
-    public_key: Buffer;
-    sign_count: number;
-    device_name: string | null;
-    created_at: number;
-    last_used_at: number | null;
 }
 
 export interface NewPasskey {

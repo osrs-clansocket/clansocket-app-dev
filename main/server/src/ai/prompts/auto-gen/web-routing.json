@@ -29,10 +29,6 @@
             "description": "Clan management (manager-only; non-managers are redirected to the clan dashboard)."
         },
         {
-            "pattern": "/clans/varietyz/voxlab",
-            "description": "Voxlab — clan logo editor (manager-only; mounts the VoxlabEditor over the clan's current logo)."
-        },
-        {
             "pattern": "/data-rights",
             "description": "Your data-rights browser — export or delete your stored data."
         },
@@ -43,10 +39,6 @@
         {
             "pattern": "/terms",
             "description": "Terms of Service — placeholder shell pending legal text."
-        },
-        {
-            "pattern": "/voxlab",
-            "description": "Site voxlab — main logo editor (site-owner only)."
         }
     ]
 }

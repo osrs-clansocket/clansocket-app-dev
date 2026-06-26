@@ -1,4 +1,5 @@
 import type Database from "better-sqlite3";
+import { sqlPlaceholders } from "../../../core/operations/index.js";
 import { asNumberNullable } from "../projection-utils.js";
 import { safeItemName, safePrice } from "./bank-utils.js";
 
@@ -69,11 +70,9 @@ function reconcileBank(conn: Database.Database, accountHash: string, keepIds: nu
         conn.prepare(`DELETE FROM plugin_bank WHERE account_hash = ?`).run(accountHash);
         return;
     }
-    const ph = keepIds.map(() => "?").join(",");
-    conn.prepare(`DELETE FROM plugin_bank WHERE account_hash = ? AND item_id NOT IN (${ph})`).run(
-        accountHash,
-        ...keepIds,
-    );
+    conn.prepare(
+        `DELETE FROM plugin_bank WHERE account_hash = ? AND item_id NOT IN (${sqlPlaceholders(keepIds.length)})`,
+    ).run(accountHash, ...keepIds);
 }
 
 export interface UpsertBankItems {

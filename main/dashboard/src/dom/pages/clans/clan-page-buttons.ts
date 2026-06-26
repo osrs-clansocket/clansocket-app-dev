@@ -1,4 +1,4 @@
-import { BTN_VARIANT_OUTLINE, button, div, icon, onceEffect, paragraph, type Instance } from "../../factory";
+import { BTN_VARIANT_OUTLINE, button, div, icon, onceEffect, paragraph, type Instance, textProps } from "../../factory";
 import { router } from "../../../managers/router";
 import { CLAN_MANAGE_BTN_CLASS, CLAN_MISSING_CLASS } from "../../../shared/constants/clan/clan-page-constants.js";
 import { ROUTE_CLAN_CLASS, ROUTE_ROOT_CLASS } from "../../../shared/constants/route/route-constants.js";
@@ -11,7 +11,7 @@ export function buildMissing(): Instance {
             context: null,
             meta: null,
         },
-        [paragraph({ classes: [CLAN_MISSING_CLASS], text: "Clan not found.", context: null, meta: null })],
+        [paragraph(textProps([CLAN_MISSING_CLASS], "Clan not found."))],
     );
 }
 

@@ -1,5 +1,5 @@
 import "../../../../../../../styles/pages/clans/manage/discord/clan-discord-page.css";
-import { button, div, effect, image, paragraph, type Instance } from "../../../../../../factory";
+import { button, div, effect, image, paragraph, type Instance, baseProps, textProps } from "../../../../../../factory";
 import { reconcile } from "../../../../../../factory/live-ops/reconcile.js";
 import { stickersFeed } from "../../../../../../../state/discord/server-stickers/server-stickers-feed.js";
 import { selectDiscordItem } from "../../../../../../../state/discord/inspector-selection.js";
@@ -13,6 +13,7 @@ import {
     DISCORD_PANE_PLACEHOLDER_CLASS,
 } from "../../../../../../../shared/constants/clan-manage-discord/route-constants.js";
 import { subscribeTileFeed, type FeedHandle } from "../../../../../../../state/discord/tile-pane-base.js";
+import type { ModeContext } from "../../registry";
 
 const EMPTY_TEXT = "No server stickers in this guild yet.";
 const TILE_IMAGE_CLASS = "clans-manage__discord-emoji-tile-image";
@@ -48,15 +49,6 @@ function buildTile(sticker: DiscordServerSticker): Instance {
 function sortedByName(stickers: readonly DiscordServerSticker[]): DiscordServerSticker[] {
     return [...stickers].sort((a, b) => a.name.localeCompare(b.name));
 }
-
-import { defineDiscordMode } from "../../registry";
-
-defineDiscordMode({
-    key: "server-stickers",
-    label: "Server Stickers",
-    order: 60,
-    build: (ctx) => stickersMode(ctx.server.guild_id),
-});
 
 interface StickersPaneState {
     grid: Instance;
@@ -100,9 +92,9 @@ function subscribeStickers(state: StickersPaneState, guildId: string): () => voi
 }
 
 export function stickersMode(guildId: string): Instance {
-    const grid = div({ classes: [DISCORD_EMOJI_GRID_CLASS], context: null, meta: null });
-    const empty = paragraph({ classes: [DISCORD_PANE_PLACEHOLDER_CLASS], text: EMPTY_TEXT, context: null, meta: null });
-    const pane = div({ classes: [DISCORD_EMOJI_PANE_CLASS], context: null, meta: null }, [grid, empty]);
+    const grid = div(baseProps([DISCORD_EMOJI_GRID_CLASS]));
+    const empty = paragraph(textProps([DISCORD_PANE_PLACEHOLDER_CLASS], EMPTY_TEXT));
+    const pane = div(baseProps([DISCORD_EMOJI_PANE_CLASS]), [grid, empty]);
     grid.el.hidden = true;
     const tileState = new Map<string, Instance>();
     const latestRef: { v: DiscordServerSticker[] } = { v: [] };
@@ -117,3 +109,5 @@ export function stickersMode(guildId: string): Instance {
     });
     return pane;
 }
+
+export const build = (ctx: ModeContext): Instance => stickersMode(ctx.server.guild_id);

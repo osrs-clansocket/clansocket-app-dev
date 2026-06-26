@@ -1,4 +1,4 @@
-import { div, type Instance, type SlidePanelInstance } from "../../../../../../factory";
+import { div, type Instance, type SlidePanelInstance, baseProps } from "../../../../../../factory";
 import { linkerGate, type ByoBotStatus } from "../../../../../../../state/discord-byo-bot/clients/byo-bot-client.js";
 import type { DiscordServer } from "../../../../../../../state/discord/client.js";
 import { compactInviteBtn, hintPara } from "./mode-buttons.js";
@@ -33,9 +33,9 @@ export function linkedElsewhereView(opts: LinkedElsewhereOpts): Instance {
         sections.push(
             hintPara(`Linked by ${status.owner_display_name}. Only they (or the clan owner) can move routing.`),
         );
-        return div({ classes: rootClasses, context: null, meta: null }, sections);
+        return div(baseProps(rootClasses), sections);
     }
     sections.push(compactInviteBtn(status.application_id));
     sections.push(bindConfirmPanel);
-    return div({ classes: rootClasses, context: null, meta: null }, sections);
+    return div(baseProps(rootClasses), sections);
 }

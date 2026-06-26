@@ -1,4 +1,4 @@
-import { div, mainEl } from "../../dom/factory";
+import { div, mainEl, baseProps } from "../../dom/factory";
 import { buildAiBar, SHELL_AI_CLASS } from "./ai-bar.js";
 import { buildHeader } from "../../dom/pages/dashboard/header.js";
 import { ERROR_BANNER_HOST_CLASS } from "../../shared/constants/error-banner-constants.js";
@@ -25,15 +25,10 @@ async function initAi(wrapper: HTMLElement): Promise<void> {
 
 function mountShell(): ShellFrame {
     const headerEl = buildHeader();
-    const bannerHostEl = div({ classes: [ERROR_BANNER_HOST_CLASS], context: null, meta: null }).el;
+    const bannerHostEl = div(baseProps([ERROR_BANNER_HOST_CLASS])).el;
     const aiPanelEl = buildAiBar();
-    const routeRoot = div({ classes: [ROUTE_HOST_CLASS], context: null, meta: null }).el;
-    const shell = mainEl({ classes: [SHELL_CLASS], context: null, meta: null }, [
-        headerEl,
-        bannerHostEl,
-        routeRoot,
-        aiPanelEl,
-    ]).el;
+    const routeRoot = div(baseProps([ROUTE_HOST_CLASS])).el;
+    const shell = mainEl(baseProps([SHELL_CLASS]), [headerEl, bannerHostEl, routeRoot, aiPanelEl]).el;
     return { shell, routeRoot };
 }
 

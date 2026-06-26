@@ -1,4 +1,6 @@
 import logger from "@clansocket/logger";
+import { FALLBACK_UNKNOWN } from "../core/constants.js";
+import { HTTP_METHOD_POST } from "../core/constants.js";
 import type { Interaction } from "discord.js";
 import { apiRequest } from "../fetchers/api-fetcher.js";
 
@@ -12,7 +14,7 @@ const INTERACTION_KIND_BY_TYPE: Record<number, string> = {
 
 export async function trackInteractionPending(interaction: Interaction): Promise<void> {
     try {
-        const kind = INTERACTION_KIND_BY_TYPE[interaction.type] ?? "unknown";
+        const kind = INTERACTION_KIND_BY_TYPE[interaction.type] ?? FALLBACK_UNKNOWN;
         const body = {
             kind,
             interactionId: interaction.id,
@@ -22,7 +24,7 @@ export async function trackInteractionPending(interaction: Interaction): Promise
             userId: interaction.user.id,
             token: interaction.token,
         };
-        await apiRequest("POST", "/api/discord/interactions", body);
+        await apiRequest(HTTP_METHOD_POST, "/api/discord/interactions", body);
     } catch (err: any) {
         logger.warn(`Interaction TTL tracking failed: ${err.message}`);
     }
@@ -30,7 +32,7 @@ export async function trackInteractionPending(interaction: Interaction): Promise
 
 export async function triggerInteractionCleanup(): Promise<void> {
     try {
-        await apiRequest("POST", "/api/discord/interactions/cleanup");
+        await apiRequest(HTTP_METHOD_POST, "/api/discord/interactions/cleanup");
     } catch (err: any) {
         logger.warn(`Interaction cleanup failed: ${err.message}`);
     }

@@ -1,4 +1,4 @@
-import { div, span, type Instance } from "../../../../../factory/index.js";
+import { div, span, type Instance, baseProps, textProps } from "../../../../../factory/index.js";
 import type { createSliderSpecs } from "./sliders.js";
 import {
     TWEAKER_CONTROLS_CLASS,
@@ -8,11 +8,8 @@ import {
 
 export function buildTweakerControls(sliders: ReturnType<typeof createSliderSpecs>, statusEl: Instance): Instance {
     const sliderRow = (label: string, slider: Instance): Instance =>
-        div({ classes: [TWEAKER_ROW_CLASS], context: null, meta: null }, [
-            span({ classes: [TWEAKER_SLIDER_LABEL_CLASS], text: label, context: null, meta: null }),
-            slider,
-        ]);
-    return div({ classes: [TWEAKER_CONTROLS_CLASS], context: null, meta: null }, [
+        div(baseProps([TWEAKER_ROW_CLASS]), [span(textProps([TWEAKER_SLIDER_LABEL_CLASS], label)), slider]);
+    return div(baseProps([TWEAKER_CONTROLS_CLASS]), [
         sliderRow("Scale", sliders.scale),
         sliderRow("Rotate", sliders.rotate),
         sliderRow("Pos X", sliders.translateX),

@@ -1,10 +1,6 @@
 import { RSN_MAX_LEN } from "../../../database/index.js";
-import {
-    ASCII_HYPHEN,
-    ASCII_SPACE,
-    ASCII_UNDERSCORE,
-    isAsciiAlphanumeric,
-} from "../../../shared/parsers/ascii-bounds.js";
+import { ASCII_HYPHEN, ASCII_SPACE, ASCII_UNDERSCORE } from "../../../shared/parsers/ascii-codes.js";
+import { isAsciiAlphanumeric } from "../../../shared/parsers/predicate-ascii.js";
 
 function isRsnChar(c: number): boolean {
     return isAsciiAlphanumeric(c) || c === ASCII_SPACE || c === ASCII_UNDERSCORE || c === ASCII_HYPHEN;

@@ -1,6 +1,6 @@
 import "../../../styles/pages/clans/clan-map-page.css";
 import "../../../styles/pages/clans/clan-map-page-mobile.css";
-import { div, paragraph, type Instance, type ReadSignal } from "../../factory";
+import { div, paragraph, type Instance, type ReadSignal, baseProps, textProps } from "../../factory";
 import { clanMap } from "../../clans/clan-map/index.js";
 import { liveSlug } from "../../../managers/router/slug-paths.js";
 import { events } from "../../../managers/events";
@@ -18,21 +18,21 @@ import { ROUTE_ROOT_CLASS } from "../../../shared/constants/route/route-constant
 import { buildSidePanel } from "./clan-map-side.js";
 
 function renderEmpty(slug: string): Instance {
-    return div({ classes: [ROUTE_ROOT_CLASS, CLAN_MAP_ROUTE_CLASS], context: null, meta: null }, [
-        paragraph({
-            classes: [CLAN_MAP_EMPTY_CLASS],
-            text: `No live positions yet for ${slug}. Have a clan member open the plugin in-game.`,
-            context: null,
-            meta: null,
-        }),
+    return div(baseProps([ROUTE_ROOT_CLASS, CLAN_MAP_ROUTE_CLASS]), [
+        paragraph(
+            textProps(
+                [CLAN_MAP_EMPTY_CLASS],
+                `No live positions yet for ${slug}. Have a clan member open the plugin in-game.`,
+            ),
+        ),
     ]);
 }
 
 function buildPage(store: PositionsStore): Instance {
     const map = clanMap({ positions$: store.positions$ as ReadSignal<PositionsState> });
-    const mapHost = div({ classes: [CLAN_MAP_HOST_CLASS], context: null, meta: null }, [map.host]);
+    const mapHost = div(baseProps([CLAN_MAP_HOST_CLASS]), [map.host]);
     const side = buildSidePanel(store.liveStore, map);
-    return div({ classes: [ROUTE_ROOT_CLASS, CLAN_MAP_ROUTE_CLASS], context: null, meta: null }, [mapHost, side]);
+    return div(baseProps([ROUTE_ROOT_CLASS, CLAN_MAP_ROUTE_CLASS]), [mapHost, side]);
 }
 
 export function renderClanMap(path: string): Instance {

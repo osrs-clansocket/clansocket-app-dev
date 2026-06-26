@@ -1,4 +1,16 @@
-import { div, effect, image, rsnTag, scheduleText, signal, span, wireClick, type Instance } from "../../../../factory";
+import {
+    div,
+    effect,
+    image,
+    rsnTag,
+    scheduleText,
+    signal,
+    span,
+    wireClick,
+    type Instance,
+    baseProps,
+    textProps,
+} from "../../../../factory";
 import { IS_ACTIVE_CLASS } from "../../../../../shared/constants/state-modifier-constants.js";
 import type { PluginConfigMember, PluginConfigState } from "../../../../../state/clans/plugin-config/client.js";
 import {
@@ -18,7 +30,7 @@ const CUSTOM_MARKER_TEXT = "custom";
 
 function rosterCardBody(member: PluginConfigMember | null): Instance {
     if (member === null) {
-        return span({ classes: [ROSTER_CARD_BODY_CLASS], context: null, meta: null }, [
+        return span(baseProps([ROSTER_CARD_BODY_CLASS]), [
             image({
                 src: GLOBE_ICON_SRC,
                 alt: GLOBE_ICON_ALT,
@@ -26,7 +38,7 @@ function rosterCardBody(member: PluginConfigMember | null): Instance {
                 context: null,
                 meta: null,
             }),
-            span({ classes: [ROSTER_CARD_GLOBAL_LABEL_CLASS], text: GLOBAL_TITLE_TEXT, context: null, meta: null }),
+            span(textProps([ROSTER_CARD_GLOBAL_LABEL_CLASS], GLOBAL_TITLE_TEXT)),
         ]);
     }
     return rsnTag({
@@ -88,9 +100,9 @@ export function buildRosterCard(
 ): Instance {
     const isGlobal = member === null;
     const accountHash = isGlobal ? null : member.accountHash;
-    const card = div({ classes: [ROSTER_CARD_CLASS], context: null, meta: null }, [
+    const card = div(baseProps([ROSTER_CARD_CLASS]), [
         rosterCardBody(member),
-        span({ classes: [ROSTER_CARD_MARKER_CLASS], text: "", context: null, meta: null }),
+        span(textProps([ROSTER_CARD_MARKER_CLASS], "")),
     ]);
     card.setAttr("role", "button");
     card.setAttr("tabindex", "0");

@@ -1,4 +1,4 @@
-import { BTN_VARIANT_OUTLINE, button, input, span, type Instance } from "../../../factory";
+import { BTN_VARIANT_OUTLINE, button, input, span, type Instance, baseProps } from "../../../factory";
 import type { MetaTag } from "../../../factory/core/semantics/meta-tags.js";
 import {
     ACCOUNT_GREETING_EDIT_ROW_CLASS,
@@ -59,14 +59,14 @@ function buildEditButtons(
 ): { save: Instance; cancel: Instance } {
     const save = button({
         variant: BTN_VARIANT_OUTLINE,
-        compact: true,
+        
         text: "Save",
         context: `save the new ${ariaLabel.toLowerCase()}`,
         meta: ["submit", "account"],
         onClick: () => trySaveName(editor, onSave, restoreRef),
     });
     const cancel = button({
-        compact: true,
+        
         text: "Cancel",
         context: `cancel editing ${ariaLabel.toLowerCase()}`,
         meta: ["action"],
@@ -83,11 +83,7 @@ export function editName(opts: NameEditOpts): void {
     const editor = buildNameEditor(opts, ariaLabel, context, meta);
     const restoreRef: { fn: () => void } = { fn: () => undefined };
     const { save, cancel } = buildEditButtons(editor, ariaLabel, onSave, restoreRef);
-    const placeholder = span({ classes: [ACCOUNT_GREETING_EDIT_ROW_CLASS], context: null, meta: null }, [
-        editor,
-        save,
-        cancel,
-    ]);
+    const placeholder = span(baseProps([ACCOUNT_GREETING_EDIT_ROW_CLASS]), [editor, save, cancel]);
     nameEl.replaceWith(placeholder.el);
     iconEl.hidden = true;
     editor.el.focus();

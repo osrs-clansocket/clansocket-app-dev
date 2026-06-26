@@ -1,8 +1,8 @@
-import { randomUUID } from "node:crypto";
 import { upsertSiteAccount } from "../../../../database/site/site-accounts/index.js";
-import { CHALLENGE_PURPOSE_REGISTER, type ChallengeContext } from "../../challenge-store.js";
+import { type ChallengeContext } from "../../challenge-store.js";
 import { redeemBackupCode } from "../../backup-codes.js";
 import { consumeLinkCode } from "../../device-link-codes.js";
+import { MODE_CTX_BUILDERS } from "./mode-ctx-builders.js";
 
 export { challengeOf } from "../../challenge-store.js";
 
@@ -15,40 +15,9 @@ export interface RegisterBody {
     backupCode?: string;
 }
 
-function newRegisterCtx(opts: {
-    siteAccountId?: string | null;
-    displayName?: string | null;
-    linkCode?: string | null;
-    backupCode?: string | null;
-}): ChallengeContext {
-    return {
-        challenge: "",
-        purpose: CHALLENGE_PURPOSE_REGISTER,
-        siteAccountId: opts.siteAccountId ?? null,
-        displayName: opts.displayName ?? null,
-        linkCode: opts.linkCode ?? null,
-        backupCode: opts.backupCode ?? null,
-    };
-}
-
-function withTrimmed<T>(
-    raw: string | undefined,
-    errorCode: string,
-    build: (value: string) => T,
-): T | { error: string } {
-    const value = (raw ?? "").trim();
-    return value.length === 0 ? { error: errorCode } : build(value);
-}
-
 export function resolveContext(body: RegisterBody): ChallengeContext | { error: string } {
     const mode = body.mode ?? "new";
-    if (mode === "new")
-        return withTrimmed(body.displayName, "display_name_required", (v) =>
-            newRegisterCtx({ siteAccountId: randomUUID(), displayName: v }),
-        );
-    if (mode === "link")
-        return withTrimmed(body.linkCode, "link_code_required", (v) => newRegisterCtx({ linkCode: v }));
-    return withTrimmed(body.backupCode, "backup_code_required", (v) => newRegisterCtx({ backupCode: v }));
+    return (MODE_CTX_BUILDERS[mode] ?? MODE_CTX_BUILDERS.new)(body);
 }
 
 export function resolveTarget(

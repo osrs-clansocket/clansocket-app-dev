@@ -1,4 +1,5 @@
 import logger from "@clansocket/logger";
+import { HTTP_METHOD_POST, HTTP_STATUS_OK } from "../core/constants.js";
 import { apiRequest } from "../fetchers/api-fetcher.js";
 import type { BotIdentity } from "../shared/types/bot-types.js";
 
@@ -15,13 +16,12 @@ interface RawEmoji {
 }
 
 const DISCORD_API_BASE = "https://discord.com/api/v10";
-const HTTP_OK = 200;
 const ERROR_BODY_PREVIEW_LEN = 200;
 
 async function fetchApplicationEmojis(applicationId: string, token: string): Promise<DiscordEmoji[]> {
     const url = `${DISCORD_API_BASE}/applications/${applicationId}/emojis`;
     const res = await fetch(url, { headers: { Authorization: `Bot ${token}` } });
-    if (res.status !== HTTP_OK) {
+    if (res.status !== HTTP_STATUS_OK) {
         const body = await res.text();
         throw new Error(`Discord API ${res.status}: ${body.slice(0, ERROR_BODY_PREVIEW_LEN)}`);
     }
@@ -39,7 +39,7 @@ async function fetchApplicationEmojis(applicationId: string, token: string): Pro
 export async function syncEmojis(identity: BotIdentity): Promise<void> {
     try {
         const emojis = await fetchApplicationEmojis(identity.application_id, identity.token);
-        await apiRequest("POST", "/api/discord/emojis/sync", {
+        await apiRequest(HTTP_METHOD_POST, "/api/discord/emojis/sync", {
             botId: identity.bot_id,
             botName: identity.bot_name,
             emojis,

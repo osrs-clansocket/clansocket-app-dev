@@ -1,7 +1,7 @@
 import { randomInt } from "node:crypto";
 import { clanWomIdentity } from "../../database/wom/identity/get-clan-identity.js";
 import { updateBackfillStatus } from "../../database/wom/identity/update-backfill-status.js";
-import { MS_PER_DAY, MS_PER_HOUR } from "../../shared/time.js";
+import { MS_PER_DAY, MS_PER_HOUR } from "../../shared/time/index.js";
 import { scheduleWake } from "../dispatcher/wake-scheduler.js";
 import { safeEnqueueWom } from "./safe-enqueue.js";
 
@@ -26,10 +26,16 @@ function isStuckProgress(
     return nowMs - identity.last_backfill_at > STUCK_IN_PROGRESS_THRESHOLD_MS;
 }
 
+const requestSpec = (kind: string, path: string, label: string): { kind: string; path: string; label: string } => ({
+    kind,
+    path,
+    label,
+});
+
 function enqueueBackfillBatch(clanId: string, groupId: number, firstAttemptAt: number): number {
     const specs = [
-        { kind: REQUEST_KIND_GROUP_DETAILS, path: `/groups/${groupId}`, label: "group-details" },
-        { kind: REQUEST_KIND_GROUP_NAME_CHANGES, path: `/groups/${groupId}/name-changes`, label: "group-name-changes" },
+        requestSpec(REQUEST_KIND_GROUP_DETAILS, `/groups/${groupId}`, "group-details"),
+        requestSpec(REQUEST_KIND_GROUP_NAME_CHANGES, `/groups/${groupId}/name-changes`, "group-name-changes"),
     ];
     let enqueued = 0;
     for (const s of specs) {

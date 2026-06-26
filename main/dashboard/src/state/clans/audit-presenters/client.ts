@@ -7,7 +7,7 @@ export const CLIENT_PRESENTERS: Record<string, Presenter> = {
         return {
             title: "Clicked",
             detail: label ?? entry.targetId ?? "",
-            icon: "bi-cursor-fill",
+            icon: { provider: "bi", name: "cursor-fill" },
             semantic: "chain",
             hasExpansion: false,
         };
@@ -25,7 +25,7 @@ export const CLIENT_PRESENTERS: Record<string, Presenter> = {
         return {
             title: "Submitted",
             detail: parts.join(" · "),
-            icon: "bi-send-fill",
+            icon: { provider: "bi", name: "send-fill" },
             semantic: "chain",
             hasExpansion: false,
         };
@@ -33,7 +33,7 @@ export const CLIENT_PRESENTERS: Record<string, Presenter> = {
     "client:route": (entry) => ({
         title: "Navigated",
         detail: entry.targetId ?? "",
-        icon: "bi-arrow-right-circle",
+        icon: { provider: "bi", name: "arrow-right-circle" },
         semantic: "chain",
         hasExpansion: false,
     }),
@@ -43,7 +43,7 @@ export function defaultPresenter(entry: ClanAuditEntry): PresentedEntry {
     return {
         title: entry.action,
         detail: shortId(entry.targetId),
-        icon: "bi-circle",
+        icon: { provider: "bi", name: "circle" },
         semantic: "system",
         hasExpansion: false,
     };

@@ -1,4 +1,4 @@
-import { div, span, type Instance } from "../../../../factory";
+import { div, span, type Instance, baseProps, textProps } from "../../../../factory";
 import { isReservedKey, profileStore } from "../../../../../ai/profile-store";
 import {
     ROW_ACTIONS_CLASS,
@@ -13,19 +13,14 @@ import {
 } from "../state.js";
 import { iconBtn } from "../shared.js";
 import { renderEditableNode } from "./editable-node.js";
-import { buildTreeLink, type TreeNode } from "./tree.js";
+import { buildTreeLink } from "./tree.js";
 
-export interface NodeRenderArgs {
-    host: Instance;
-    node: TreeNode;
-    depth: number;
-    isLast: boolean;
-    parentPrefix: string;
-    rerender: () => void;
-}
+import type { NodeRenderArgs } from "./render-args.js";
+
+export type { NodeRenderArgs } from "./render-args.js";
 
 function buildRowActions(nodePath: string, hasChildren: boolean, rerender: () => void): Instance {
-    return div({ classes: [ROW_ACTIONS_CLASS], context: null, meta: null }, [
+    return div(baseProps([ROW_ACTIONS_CLASS]), [
         iconBtn("pencil", "edit", () => {
             setEditing({ kind: "edit-identity", key: nodePath });
             rerender();
@@ -55,14 +50,10 @@ interface StaticRowArgs {
 function buildStaticRow(args: StaticRowArgs): void {
     const { host, node, depth, isLast, isLeaf, isReserved, nodePath, hasChildren, rerender } = args;
     const link = buildTreeLink(depth, isLast);
-    const row = div({
-        classes: [TREE_ROW_CLASS, isLeaf ? TREE_LEAF_CLASS : TREE_BRANCH_CLASS],
-        context: null,
-        meta: null,
-    });
-    if (link.length > 0) row.addChild(span({ classes: [TREE_LINK_CLASS], text: link, context: null, meta: null }));
-    row.addChild(span({ classes: [TREE_SEGMENT_CLASS], text: node.name, context: null, meta: null }));
-    if (isLeaf) row.addChild(span({ classes: [TREE_VALUE_CLASS], text: node.value ?? "", context: null, meta: null }));
+    const row = div(baseProps([TREE_ROW_CLASS, isLeaf ? TREE_LEAF_CLASS : TREE_BRANCH_CLASS]));
+    if (link.length > 0) row.addChild(span(textProps([TREE_LINK_CLASS], link)));
+    row.addChild(span(textProps([TREE_SEGMENT_CLASS], node.name)));
+    if (isLeaf) row.addChild(span(textProps([TREE_VALUE_CLASS], node.value ?? "")));
     if (!isReserved) row.addChild(buildRowActions(nodePath, hasChildren, rerender));
     host.addChild(row);
 }

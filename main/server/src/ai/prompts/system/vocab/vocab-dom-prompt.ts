@@ -1,6 +1,6 @@
 import { promptLoader } from "../../../persona/prompt-loader/index.js";
 import type { DynamicContext, PromptFile } from "../../../persona/prompt-loader/types.js";
-import { formatMetaIndex } from "../../../persona/prompt/format-state.js";
+import { formatMetaIndex } from "../../../persona/prompt/formatters/format-state.js";
 import { DOM_VERBS } from "../../sources/dom/dom-verbs.js";
 import { PH_CHAIN_AUTO_LIMIT } from "../../sources/placeholder-tokens.js";
 import { MARKER_AUTO_LIMIT_REACHED, MARKER_DOM_ACTION_RESULTS } from "../../sources/protocol-markers.js";

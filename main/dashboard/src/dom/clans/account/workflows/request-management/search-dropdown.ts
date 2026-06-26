@@ -1,4 +1,4 @@
-import { BTN_VARIANT_DEFAULT, button, input, span, type Instance } from "../../../../factory";
+import { BTN_VARIANT_DEFAULT, button, input, span, type Instance, textProps } from "../../../../factory";
 import { clansClient, type ClanSearchHit } from "../../../../../state/clans/clans-client/index.js";
 import type { ChipController } from "./chips.js";
 import { buildClanGlyph } from "./clan-glyph-builder.js";
@@ -48,7 +48,7 @@ function buildHitRow(hit: ClanSearchHit, isSelected: boolean, onClick: () => voi
                 "account__autocomplete-avatar-img",
                 "account__autocomplete-avatar-glyph",
             ),
-            span({ classes: [ACCOUNT_AUTOCOMPLETE_NAME_CLASS], text: hit.displayName, context: null, meta: null }),
+            span(textProps([ACCOUNT_AUTOCOMPLETE_NAME_CLASS], hit.displayName)),
             buildColorDot(hit.color),
         ],
     );

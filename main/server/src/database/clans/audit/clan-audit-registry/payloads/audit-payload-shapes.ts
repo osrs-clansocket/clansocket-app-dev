@@ -1,5 +1,5 @@
 import type { CustomizeTransform } from "../../../../../clans/icon/transform.js";
-import type { AuditCommonPayload, BeforeAfter } from "../payload-types.js";
+import type { AuditCommonPayload, BeforeAfter } from "../audit-common-types.js";
 
 export interface RosterChangedPayload extends AuditCommonPayload {
     memberCount: number;

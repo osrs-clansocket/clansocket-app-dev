@@ -1,4 +1,4 @@
-import { div, paragraph, type Instance } from "../../../../factory";
+import { div, paragraph, type Instance, baseProps, textProps } from "../../../../factory";
 import { EMPTY_CLASS, LIST_CLASS, TREE_CLASS, getEditing, setEditing } from "../state.js";
 import { renderSectionHeader } from "../shared.js";
 import { renderEditableNode } from "./editable-node.js";
@@ -37,11 +37,11 @@ export function renderIdentity(host: Instance, identity: Record<string, string>,
         setEditing({ kind: "new-identity" });
         rerender();
     });
-    const list = div({ classes: [LIST_CLASS, TREE_CLASS], context: null, meta: null });
+    const list = div(baseProps([LIST_CLASS, TREE_CLASS]));
     const editing = getEditing();
     maybeRenderEditor(list, editing, rerender);
     if (Object.keys(identity).length === 0 && editing?.kind !== "new-identity") {
-        host.addChild(paragraph({ classes: [EMPTY_CLASS], text: "No identity facts yet", context: null, meta: null }));
+        host.addChild(paragraph(textProps([EMPTY_CLASS], "No identity facts yet")));
         return;
     }
     renderIdentityTree(list, identity, rerender);

@@ -1,4 +1,4 @@
-import { div, type Instance, type SlidePanelInstance } from "../../../../../../factory";
+import { div, type Instance, type SlidePanelInstance, baseProps } from "../../../../../../factory";
 import { linkerGate, type ByoBotStatus } from "../../../../../../../state/discord-byo-bot/clients/byo-bot-client.js";
 import type { DiscordServer } from "../../../../../../../state/discord/client.js";
 import { compactInviteBtn, hintPara } from "./mode-buttons.js";
@@ -13,7 +13,7 @@ export { linkedElsewhereView, type LinkedElsewhereOpts } from "./mode-view-elsew
 
 export function notLinkedView(linkPanel: Instance, server: DiscordServer): Instance {
     const lede = `${NOT_LINKED_LEDE} On submit, the bot will be bound to ${server.guild_name}.`;
-    return div({ classes: [ROOT_CLASS], context: null, meta: null }, [hintPara(lede), linkPanel]);
+    return div(baseProps([ROOT_CLASS]), [hintPara(lede), linkPanel]);
 }
 
 function linkedStatusRows(status: Extract<ByoBotStatus, { linked: true }>): Instance[] {
@@ -48,12 +48,12 @@ export function linkedHereView(opts: LinkedHereOpts): Instance {
                 `Linked by ${status.owner_display_name}. Only they (or the clan owner) can re-link, revoke, or move routing.`,
             ),
         );
-        return div({ classes: rootClasses, context: null, meta: null }, sections);
+        return div(baseProps(rootClasses), sections);
     }
     sections.push(relinkPanel);
     sections.push(compactInviteBtn(status.application_id));
     sections.push(unbindConfirmPanel);
     sections.push(revokeConfirmPanel);
     if (reassignPanel !== null && gate.canReassign) sections.push(reassignPanel);
-    return div({ classes: rootClasses, context: null, meta: null }, sections);
+    return div(baseProps(rootClasses), sections);
 }

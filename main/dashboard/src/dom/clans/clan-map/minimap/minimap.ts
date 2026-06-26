@@ -10,6 +10,7 @@ import type { AtlasBox } from "../../../../shared/types/view-types.js";
 import { wirePaintLoop } from "./minimap-paint.js";
 import { wirePointerDrag, wireWheelZoom } from "./minimap-input.js";
 import { buildMinimapSurface, buildToggleBtn } from "./minimap-chrome.js";
+import { baseProps } from "../../../factory/index.js";
 
 export interface MinimapProps {
     positions$: ReadSignal<PositionsState>;
@@ -33,9 +34,9 @@ export function clanMapMinimap(props: MinimapProps): Instance<HTMLElement> {
         }),
     );
     const collapsed$ = signal<boolean>(false);
-    const wrap = div({ classes: [MAP_MINIMAP_WRAP_CLASS], context: null, meta: null }, [bg, overlay]);
+    const wrap = div(baseProps([MAP_MINIMAP_WRAP_CLASS]), [bg, overlay]);
     const toggleBtn = buildToggleBtn(collapsed$);
-    const root = div({ classes: [MAP_MINIMAP_CLASS], context: null, meta: null }, [wrap, toggleBtn]);
+    const root = div(baseProps([MAP_MINIMAP_CLASS]), [wrap, toggleBtn]);
     root.trackDispose(
         effect(() => {
             root.el.classList.toggle(IS_COLLAPSED_CLASS, collapsed$());

@@ -1,4 +1,5 @@
 import { apiRequest } from "../fetchers/api-fetcher.js";
+import { HTTP_METHOD_POST } from "../core/constants.js";
 import { postOk } from "../shared/transitions/transition-cas.js";
 
 const STATE_IN_FLIGHT = "in_flight";
@@ -19,7 +20,7 @@ export async function transitionApplied(
     queueId: string,
     snowflakeResolved: string | null,
 ): Promise<void> {
-    await apiRequest("POST", transitionPath(clanId, guildId, queueId), {
+    await apiRequest(HTTP_METHOD_POST, transitionPath(clanId, guildId, queueId), {
         state: STATE_APPLIED,
         snowflakeResolved,
     });
@@ -31,7 +32,7 @@ export async function transitionFailed(
     queueId: string,
     errorJson: string | null,
 ): Promise<void> {
-    await apiRequest("POST", transitionPath(clanId, guildId, queueId), {
+    await apiRequest(HTTP_METHOD_POST, transitionPath(clanId, guildId, queueId), {
         state: STATE_FAILED,
         errorJson,
     });

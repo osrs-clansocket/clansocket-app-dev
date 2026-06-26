@@ -1,4 +1,4 @@
-import { button, div, heading, icon, type Instance } from "../../../factory/index.js";
+import { button, div, heading, icon, type Instance, baseProps } from "../../../factory/index.js";
 import {
     GLASS_CODEVIEW_CLOSE_CLASS,
     GLASS_CODEVIEW_HEADER_CLASS,
@@ -27,5 +27,5 @@ export function buildHeader(opts: CodeViewOptions, preEl: Instance, closeBtn: In
     ];
     if (opts.secret) headerChildren.push(buildSecretToggle(preEl, false));
     headerChildren.push(closeBtn);
-    return div({ classes: [GLASS_CODEVIEW_HEADER_CLASS], context: null, meta: null }, headerChildren);
+    return div(baseProps([GLASS_CODEVIEW_HEADER_CLASS]), headerChildren);
 }

@@ -21,14 +21,14 @@ export function buildMgmtBtns(d: MgmtBtnDeps): {
 } {
     const submitBtn: Instance<HTMLButtonElement> = button({
         variant: BTN_VARIANT_PRIMARY,
-        compact: true,
+        
         type: "submit",
         text: "Submit",
         context: "submit the manager request for the selected clans",
         meta: ["submit", "clan"],
     });
     const cancelBtn: Instance<HTMLButtonElement> = button({
-        compact: true,
+        
         text: "Cancel",
         context: "cancel the manager request",
         meta: ["action"],

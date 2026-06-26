@@ -1,4 +1,4 @@
-import { div, type Instance, type LiveChange } from "../../../../../factory/index.js";
+import { div, type Instance, type LiveChange, baseProps } from "../../../../../factory/index.js";
 import { type BrowseResponse } from "../../../../../../state/data-rights/data-rights-client/index.js";
 import { isLocalScope } from "../../../../../../state/data-rights/local-source.js";
 import { buildFilterBar } from "./filter-bar.js";
@@ -24,15 +24,8 @@ function assembleRowPane(args: {
     const listState = freshListState(config, w.info);
     const header = buildHeader(listState, config.handlers);
     const filter = buildFilterBar(listState, config.handlers);
-    const scrollWrap = div({ classes: [DR_ROW_SCROLL_WRAP_CLASS], context: null, meta: null }, [
-        w.scroll,
-        w.notify.notifyBtn,
-    ]);
-    return div({ classes: [GLASS_PANE_INNER_CLASS, DR_LIST_PANE_CLASS], context: null, meta: null }, [
-        header.instance,
-        filter,
-        scrollWrap,
-    ]);
+    const scrollWrap = div(baseProps([DR_ROW_SCROLL_WRAP_CLASS]), [w.scroll, w.notify.notifyBtn]);
+    return div(baseProps([GLASS_PANE_INNER_CLASS, DR_LIST_PANE_CLASS]), [header.instance, filter, scrollWrap]);
 }
 
 export async function buildRowList(config: RowListConfig): Promise<RowListHandle | null> {

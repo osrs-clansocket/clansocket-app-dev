@@ -1,4 +1,4 @@
-import { div, span, type Instance } from "../../factory";
+import { div, span, type Instance, baseProps, textProps } from "../../factory";
 import {
     AI_BAR_DIFF_CLASS,
     AI_BAR_DIFF_LINE_CLASS,
@@ -18,14 +18,14 @@ function buildDiffLine(line: DiffLine): Instance {
     return div(
         { classes: [AI_BAR_DIFF_LINE_CLASS, `${AI_BAR_DIFF_LINE_CLASS}--${line.kind}`], context: null, meta: null },
         [
-            span({ classes: [AI_BAR_DIFF_MARKER_CLASS], text: MARKER_FOR_KIND[line.kind], context: null, meta: null }),
-            span({ classes: [AI_BAR_DIFF_TEXT_CLASS], text: line.text, context: null, meta: null }),
+            span(textProps([AI_BAR_DIFF_MARKER_CLASS], MARKER_FOR_KIND[line.kind])),
+            span(textProps([AI_BAR_DIFF_TEXT_CLASS], line.text)),
         ],
     );
 }
 
 function buildDiffBlock(lines: DiffLine[]): Instance {
-    return div({ classes: [AI_BAR_DIFF_CLASS], context: null, meta: null }, lines.map(buildDiffLine));
+    return div(baseProps([AI_BAR_DIFF_CLASS]), lines.map(buildDiffLine));
 }
 
 function buildDiff(before: string, after: string): Instance {

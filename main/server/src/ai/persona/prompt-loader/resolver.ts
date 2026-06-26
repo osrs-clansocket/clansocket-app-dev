@@ -21,14 +21,6 @@ function addWithDeps(file: PromptFile, result: PromptFile[], loaded: Set<string>
     result.push(resolveDynamic(file, ctx));
 }
 
-function addAutoSchemas(mode: PromptFile, result: PromptFile[], loaded: Set<string>, ctx: DynamicContext): void {
-    if (!mode.auto_load_schemas) return;
-    for (const schemaId of mode.auto_load_schemas) {
-        const schema = getPromptFile(schemaId);
-        if (schema) addWithDeps(schema, result, loaded, ctx);
-    }
-}
-
 function buildResolved(seed: (result: PromptFile[], loaded: Set<string>) => void): PromptFile[] {
     const result: PromptFile[] = [];
     const loaded = new Set<string>();
@@ -51,9 +43,11 @@ export function resolveForMode(modeId: string, ctx: DynamicContext): PromptFile[
             if (file.always_load) addWithDeps(file, result, loaded, ctx);
         }
         const mode = getPromptFile(modeId);
-        if (mode) {
-            addWithDeps(mode, result, loaded, ctx);
-            addAutoSchemas(mode, result, loaded, ctx);
+        if (!mode) return;
+        addWithDeps(mode, result, loaded, ctx);
+        for (const schemaId of mode.auto_load_schemas ?? []) {
+            const schema = getPromptFile(schemaId);
+            if (schema) addWithDeps(schema, result, loaded, ctx);
         }
     });
 }

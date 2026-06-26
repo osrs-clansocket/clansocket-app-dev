@@ -1,4 +1,4 @@
-import { div, paragraph, span, type Instance } from "../../../factory";
+import { div, paragraph, span, type Instance, baseProps, textProps } from "../../../factory";
 import type { UserDataStats } from "../../../../state/data-rights/data-rights-client/index.js";
 import { formatBytes, formatCount, formatSince } from "./format.js";
 import { FORM_HINT } from "../../../forms/form-classes.js";
@@ -10,12 +10,9 @@ import {
 } from "../../../../shared/constants/account-constants.js";
 
 function buildStat(label: string, valueText: string, titleText?: string): Instance {
-    const value = span({ classes: [ACCOUNT_STAT_VALUE_CLASS], text: valueText, context: null, meta: null });
+    const value = span(textProps([ACCOUNT_STAT_VALUE_CLASS], valueText));
     if (titleText) value.setAttr("title", titleText);
-    return div({ classes: [ACCOUNT_STAT_CLASS], context: null, meta: null }, [
-        span({ classes: [ACCOUNT_STAT_LABEL_CLASS], text: label, context: null, meta: null }),
-        value,
-    ]);
+    return div(baseProps([ACCOUNT_STAT_CLASS]), [span(textProps([ACCOUNT_STAT_LABEL_CLASS], label)), value]);
 }
 
 function emptyStatsPara(text: string): ReturnType<typeof paragraph> {
@@ -29,7 +26,7 @@ function statsPlaceholder(stats: UserDataStats | null): ReturnType<typeof paragr
 }
 
 export function buildStatsGrid(): { el: HTMLElement; set(stats: UserDataStats | null): void } {
-    const wrap = div({ classes: [ACCOUNT_STATS_CLASS], context: null, meta: null }, [emptyStatsPara("Loading…")]);
+    const wrap = div(baseProps([ACCOUNT_STATS_CLASS]), [emptyStatsPara("Loading…")]);
     return {
         el: wrap.el,
         set(stats: UserDataStats | null): void {

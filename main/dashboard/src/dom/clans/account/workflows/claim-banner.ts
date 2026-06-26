@@ -1,4 +1,4 @@
-import { derived, div, effect, onceEffect, rsnTag, span, type Instance } from "../../../factory";
+import { derived, div, effect, onceEffect, rsnTag, span, type Instance, baseProps, textProps } from "../../../factory";
 import { timeStore } from "../../../../state/stores/time-store";
 import type { ConsentRecord, ConsentStatus } from "../../../../state/identity/consent/consent-client.js";
 import { MS_PER_MINUTE, MS_PER_SECOND } from "../../../../state/time-units.js";
@@ -89,8 +89,8 @@ function updateBannerEffect(banner: Instance, primary: Instance, c: ActiveClaim 
         // eslint-disable-next-line lvi/no-effect-rebuild
         primary.setChildren(
             rsnTag({ rsn: c.rsn, rank: null, context: null, meta: null }),
-            span({ classes: [ACCOUNT_CLAIM_BANNER_SEP_CLASS], text: " → ", context: null, meta: null }),
-            span({ classes: [ACCOUNT_CLAIM_BANNER_CLAN_CLASS], text: c.clanName, context: null, meta: null }),
+            span(textProps([ACCOUNT_CLAIM_BANNER_SEP_CLASS], " → ")),
+            span(textProps([ACCOUNT_CLAIM_BANNER_CLAN_CLASS], c.clanName)),
         );
         last.rsn = c.rsn;
         last.clan = c.clanName;
@@ -98,23 +98,19 @@ function updateBannerEffect(banner: Instance, primary: Instance, c: ActiveClaim 
 }
 
 function buildBannerMeta(activeClaim: () => ActiveClaim | null): Instance {
-    return span({
-        classes: [ACCOUNT_ROW_META_CLASS],
-        context: null,
-        meta: null,
-        text: derived(() => {
-            const c = activeClaim();
-            return c ? metaText(c, timeStore.now$()) : "";
-        }),
-    });
+    return span(
+        textProps(
+            [ACCOUNT_ROW_META_CLASS],
+            derived(() => {
+                const c = activeClaim();
+                return c ? metaText(c, timeStore.now$()) : "";
+            }),
+        ),
+    );
 }
 
 export function buildClaimBanner(activeClaim: () => ActiveClaim | null): Instance {
-    const primary = div({
-        classes: [ACCOUNT_ROW_PRIMARY_CLASS, ACCOUNT_CLAIM_BANNER_PRIMARY_CLASS],
-        context: null,
-        meta: null,
-    });
+    const primary = div(baseProps([ACCOUNT_ROW_PRIMARY_CLASS, ACCOUNT_CLAIM_BANNER_PRIMARY_CLASS]));
     const banner = div(
         {
             classes: [ACCOUNT_DEVICE_ROW_CLASS, ACCOUNT_CLAIM_BANNER_CLASS],

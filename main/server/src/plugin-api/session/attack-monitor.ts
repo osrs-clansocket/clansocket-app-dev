@@ -1,5 +1,5 @@
 import type { IncomingMessage } from "http";
-import { MS_PER_MINUTE } from "../../shared/time.js";
+import { MS_PER_MINUTE } from "../../shared/time/index.js";
 
 const WINDOW_MS = MS_PER_MINUTE;
 const MAX_FAILURES_IN_WINDOW = 5;

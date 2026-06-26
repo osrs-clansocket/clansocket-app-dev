@@ -1,4 +1,4 @@
-import { div, heading, section, span, type Instance } from "../../factory";
+import { div, heading, icon, section, span, type Instance, textProps } from "../../factory";
 import {
     ROUTE_HOME_RESOURCE_CLASS,
     ROUTE_HOME_RESOURCE_DESC_CLASS,
@@ -18,14 +18,16 @@ function buildResourceLink(r: ResourceLink): Instance {
         classes: [ROUTE_HOME_RESOURCE_CLASS],
         context: `open ${r.title} in a new tab`,
         children: [
-            span({
-                classes: [...r.iconClasses, ROUTE_HOME_RESOURCE_ICON_CLASS],
-                ariaHidden: "true",
+            icon({
+                provider: r.icon.provider,
+                name: r.icon.name,
+                classes: [ROUTE_HOME_RESOURCE_ICON_CLASS],
+                ariaHidden: true,
                 context: null,
                 meta: null,
             }),
-            span({ classes: [ROUTE_HOME_RESOURCE_TITLE_CLASS], text: r.title, context: null, meta: null }),
-            span({ classes: [ROUTE_HOME_RESOURCE_DESC_CLASS], text: r.desc, context: null, meta: null }),
+            span(textProps([ROUTE_HOME_RESOURCE_TITLE_CLASS], r.title)),
+            span(textProps([ROUTE_HOME_RESOURCE_DESC_CLASS], r.desc)),
         ],
     });
 }

@@ -1,7 +1,6 @@
 import { hasHexChars } from "./hex-detect.js";
 
 export { isHexChar, hasHexChars } from "./hex-detect.js";
-export { hexToHsl, hslToHex } from "./hsl.js";
 
 export const HUE_MAX = 360;
 export const PCT_MAX = 100;

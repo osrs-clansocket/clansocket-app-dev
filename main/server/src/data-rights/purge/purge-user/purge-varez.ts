@@ -1,7 +1,8 @@
 import logger from "@clansocket/logger";
 import { DB_NAMES, getDb } from "../../../database/index.js";
 import { VAREZ_TABLES_BY_SITE_ACCOUNT } from "../../scopes/manifest/index.js";
-import { accumulateTableChanges, prepareTableDelete } from "./purge-stmt-builder.js";
+import { prepareTableDelete } from "./builder-purge-stmt.js";
+import { accumulateTableChanges } from "./runner-purge-stmt.js";
 import type { PurgeUserResult } from "./types.js";
 
 export function purgeVarezTables(siteAccountId: string, result: PurgeUserResult): void {

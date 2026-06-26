@@ -101,7 +101,7 @@ export type {
     ManagerRequestStatus,
     CreateRequestArgs,
 } from "./clans/access/request-store.js";
-export { insert, insertIgnore, select, deleteRows, transaction } from "./core/operations.js";
+export { insert, insertIgnore, select, deleteRows, transaction } from "./core/operations/index.js";
 export {
     recordPluginDisconnect,
     recordPluginIdentity,

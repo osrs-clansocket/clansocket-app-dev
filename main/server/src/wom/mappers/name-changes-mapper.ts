@@ -1,4 +1,4 @@
-import { tryParseIso as parseIsoMs } from "../../shared/time.js";
+import { tryParseIso as parseIsoMs } from "../../shared/time/index.js";
 import { lookupOrFallback } from "./lookup-mapper.js";
 
 export type NameChangeStatus = "pending" | "approved" | "denied" | "unknown";

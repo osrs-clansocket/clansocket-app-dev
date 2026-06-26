@@ -26,6 +26,7 @@ export {
     svg,
     defs,
     path,
+    use,
     svgFilter,
     feGaussianBlur,
     feTurbulence,
@@ -45,3 +46,5 @@ export type { SvgInstance, SvgChild, SvgSpec, SvgPrimitive } from "./graphics/sv
 export { divider, vr, spacer, texture } from "./graphics/decoration.js";
 export { input, label, form, textarea, select, option } from "./form";
 export type { InputProps, LabelProps, TextareaProps, SelectProps, OptionProps } from "./form";
+export { loader } from "./loader";
+export type { LoaderProps } from "./loader";

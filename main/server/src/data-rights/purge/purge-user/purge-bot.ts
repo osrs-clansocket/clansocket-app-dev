@@ -4,7 +4,8 @@ import {
     DISCORD_BOT_TABLES_BY_DISCORD_USER_ID,
     DISCORD_BOT_TABLES_BY_SITE_ACCOUNT,
 } from "../../scopes/manifest/index.js";
-import { accumulateTableChanges, prepareTableDelete } from "./purge-stmt-builder.js";
+import { prepareTableDelete } from "./builder-purge-stmt.js";
+import { accumulateTableChanges } from "./runner-purge-stmt.js";
 import type { PurgeUserResult } from "./types.js";
 
 export function purgeBotTables(siteAccountId: string, discordUserId: string | null, result: PurgeUserResult): void {

@@ -8,13 +8,16 @@
 }
 
 .account-ai-settings__toggle-opt {
-    all: unset;
     flex: 1 1 0;
     min-inline-size: 0;
     padding: var(--sp-1) var(--sp-2);
+    border: 0;
     border-inline-start: var(--border-hairline-active);
+    border-radius: 0;
+    background: none;
     font-family: var(--font-heading);
     font-size: var(--fs-2xs);
+    font-weight: var(--fw-medium);
     line-height: var(--lh-tight);
     letter-spacing: var(--ls-wide);
     text-align: center;
@@ -24,6 +27,7 @@
         background var(--dur-fast) var(--ease-out),
         color var(--dur-fast) var(--ease-out);
     cursor: pointer;
+    appearance: none;
 }
 
 .account-ai-settings__toggle-opt:first-child {

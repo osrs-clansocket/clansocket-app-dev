@@ -72,11 +72,11 @@ interface ThemeDefaultsHost {
     defaults: { font: { family?: string; size?: number }; color?: string };
 }
 
-function applyThemeDefaults(host: ThemeDefaultsHost): void {
+export function applyChartDefaults(host: ThemeDefaultsHost): void {
     const theme = getChartTheme();
     host.defaults.font.family = theme.fontBody;
     host.defaults.font.size = DEFAULT_FONT_SIZE;
     host.defaults.color = theme.text;
 }
 
-export { getChartTheme, applyThemeDefaults as applyChartDefaults };
+export { getChartTheme };

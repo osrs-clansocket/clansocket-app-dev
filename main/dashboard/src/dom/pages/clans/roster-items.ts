@@ -1,4 +1,4 @@
-import { div, icon, image, snapshot, span, type Instance } from "../../factory";
+import { div, icon, image, snapshot, span, type Instance, baseProps, textProps } from "../../factory";
 import type { ClanRosterMember } from "../../../state/clans/clans-client/index.js";
 import { rankColorClass, rankIconPath } from "../../../state/icons/rank-icons.js";
 import { fmtJoined } from "../../../state/clans/roster/format.js";
@@ -24,7 +24,7 @@ import {
 function buildRankIcon(rank: string | null, large: boolean): Instance {
     const cls = large ? CLAN_ROSTER_RANK_ICON_LG_CLASS : CLAN_ROSTER_RANK_ICON_CLASS;
     if (rank === null || rank.length === 0) {
-        return span({ classes: [cls, CLAN_ROSTER_RANK_ICON_EMPTY_CLASS], context: null, meta: null });
+        return span(baseProps([cls, CLAN_ROSTER_RANK_ICON_EMPTY_CLASS]));
     }
     return image({ src: rankIconPath(rank), alt: rank, title: rank, classes: [cls], context: null, meta: null });
 }
@@ -46,10 +46,10 @@ function buildPluginBadge(m: ClanRosterMember): Instance | null {
 }
 
 function nameWithBadge(m: ClanRosterMember, nameCls: string): Instance {
-    const children: Instance[] = [span({ classes: [nameCls], text: m.name, context: null, meta: null })];
+    const children: Instance[] = [span(textProps([nameCls], m.name))];
     const badge = buildPluginBadge(m);
     if (badge) children.push(badge);
-    return span({ classes: [CLAN_ROSTER_NAME_WRAP_CLASS], context: null, meta: null }, children);
+    return span(baseProps([CLAN_ROSTER_NAME_WRAP_CLASS]), children);
 }
 
 function classesWith(base: string, rank: string | null): string[] {
@@ -58,32 +58,27 @@ function classesWith(base: string, rank: string | null): string[] {
 }
 
 function buildRosterRow(m: ClanRosterMember): Instance {
-    return div({ classes: classesWith(CLAN_ROSTER_ROW_CLASS, m.rank), context: null, meta: null }, [
+    return div(baseProps(classesWith(CLAN_ROSTER_ROW_CLASS, m.rank)), [
         buildRankIcon(m.rank, false),
         nameWithBadge(m, CLAN_ROSTER_NAME_CLASS),
-        span({ classes: [CLAN_ROSTER_RANK_CLASS], text: m.rank ?? "", context: null, meta: null }),
-        span({ classes: [CLAN_ROSTER_JOINED_CLASS], text: snapshot(fmtJoined(m.joinedAt)), context: null, meta: null }),
+        span(textProps([CLAN_ROSTER_RANK_CLASS], m.rank ?? "")),
+        span(textProps([CLAN_ROSTER_JOINED_CLASS], snapshot(fmtJoined(m.joinedAt)))),
     ]);
 }
 
 function buildRosterCard(m: ClanRosterMember): Instance {
-    return div({ classes: classesWith(CLAN_ROSTER_CARD_CLASS, m.rank), context: null, meta: null }, [
+    return div(baseProps(classesWith(CLAN_ROSTER_CARD_CLASS, m.rank)), [
         buildRankIcon(m.rank, true),
         nameWithBadge(m, CLAN_ROSTER_CARD_RSN_CLASS),
-        span({ classes: [CLAN_ROSTER_CARD_RANK_CLASS], text: m.rank ?? "", context: null, meta: null }),
-        span({
-            classes: [CLAN_ROSTER_CARD_JOINED_CLASS],
-            text: snapshot(fmtJoined(m.joinedAt)),
-            context: null,
-            meta: null,
-        }),
+        span(textProps([CLAN_ROSTER_CARD_RANK_CLASS], m.rank ?? "")),
+        span(textProps([CLAN_ROSTER_CARD_JOINED_CLASS], snapshot(fmtJoined(m.joinedAt)))),
     ]);
 }
 
 export function buildRosterList(members: ClanRosterMember[]): Instance {
-    return div({ classes: [CLAN_ROSTER_LIST_CLASS], context: null, meta: null }, members.map(buildRosterRow));
+    return div(baseProps([CLAN_ROSTER_LIST_CLASS]), members.map(buildRosterRow));
 }
 
 export function buildRosterGrid(members: ClanRosterMember[]): Instance {
-    return div({ classes: [CLAN_ROSTER_GRID_CLASS], context: null, meta: null }, members.map(buildRosterCard));
+    return div(baseProps([CLAN_ROSTER_GRID_CLASS]), members.map(buildRosterCard));
 }

@@ -1,5 +1,5 @@
 import { DB_NAMES } from "../../core/database.js";
-import { execDb, wasWritten } from "../../core/operations.js";
+import { execDb, wasWritten } from "../../core/operations/index.js";
 
 export function expirePendingConsents(now: number = Date.now()): number {
     return execDb(

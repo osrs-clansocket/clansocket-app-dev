@@ -1,4 +1,4 @@
-import { div, span } from "../../../../factory";
+import { div, span, baseProps, textProps } from "../../../../factory";
 import { profileStore, type SessionEntry } from "../../../../../ai/profile-store";
 import {
     LIST_ROW_CLASS,
@@ -16,9 +16,9 @@ export function buildSessionRow(entry: SessionEntry, rerender: () => void): HTML
     if (entry.learned) lines.push(`learned: ${entry.learned}`);
     if (entry.fix) lines.push(`fix: ${entry.fix}`);
     if (entry.failure) lines.push(`failure: ${entry.failure}`);
-    return div({ classes: [ROW_CLASS, LIST_ROW_CLASS, SURFACE_ROW_CLASS], context: null, meta: null }, [
-        span({ classes: [ROW_META_CLASS], text: lines.join(" · "), context: null, meta: null }),
-        div({ classes: [ROW_ACTIONS_CLASS], context: null, meta: null }, [
+    return div(baseProps([ROW_CLASS, LIST_ROW_CLASS, SURFACE_ROW_CLASS]), [
+        span(textProps([ROW_META_CLASS], lines.join(" · "))),
+        div(baseProps([ROW_ACTIONS_CLASS]), [
             iconBtn("pencil", "edit", () => {
                 setEditing({ kind: "edit-session", turn: entry.turn });
                 rerender();

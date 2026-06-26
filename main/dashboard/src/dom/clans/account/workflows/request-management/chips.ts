@@ -1,4 +1,4 @@
-import { button, span, type Instance } from "../../../../factory";
+import { button, span, type Instance, textProps } from "../../../../factory";
 import type { ClanSearchHit } from "../../../../../state/clans/clans-client/index.js";
 import { buildClanGlyph } from "./clan-glyph-builder.js";
 import {
@@ -17,7 +17,7 @@ export interface ChipController {
 function buildChipNode(hit: ClanSearchHit, closeBtn: Instance): Instance {
     const chip = span({ classes: [ACCOUNT_CHIP_CLASS], data: { slug: hit.slug }, context: null, meta: null }, [
         buildClanGlyph(hit, "account__chip-icon", "account__chip-icon-img", "account__chip-icon-glyph"),
-        span({ classes: [ACCOUNT_CHIP_NAME_CLASS], text: hit.displayName, context: null, meta: null }),
+        span(textProps([ACCOUNT_CHIP_NAME_CLASS], hit.displayName)),
         closeBtn,
     ]);
     if (hit.color) chip.el.style.setProperty("--clan-accent", hit.color);

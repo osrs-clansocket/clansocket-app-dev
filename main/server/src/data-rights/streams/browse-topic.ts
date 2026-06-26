@@ -3,7 +3,8 @@ import type { BrowseRequest } from "../access/browse-shared.js";
 import { isClanManager } from "../../database/clans/access/clan-manager-store.js";
 import { scopeKeyClan, auditScopeKey, scopeKeyPlugin } from "./writes-stream.js";
 import { SCOPE_CLAN, SCOPE_CLAN_AUDIT, SCOPE_PLUGIN, type Scope } from "../scopes/user-scope/index.js";
-import { defineTopic, type ProjectionTopic } from "./projection.js";
+import { defineTopic } from "./subscriber-projection.js";
+import type { ProjectionTopic } from "./projection-types.js";
 
 export interface BrowseTopicParams {
     scope: Scope;
@@ -42,7 +43,8 @@ export function browseTopic(siteAccountId: string, params: BrowseTopicParams): P
     return defineTopic({
         triggers: [{ scopeKey: scopeKeyOf(params.scope), table: params.table }],
         query: () => {
-            const { managerView: _mv, ...args } = params;
+            const { managerView, ...args } = params;
+            void managerView;
             const browseArgs: BrowseRequest = args;
             const res = useManagerMode
                 ? browseManagerRows(params.scope, browseArgs)

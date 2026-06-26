@@ -1,4 +1,14 @@
-import { BTN_VARIANT_OUTLINE, button, div, icon, paragraph, span, type Instance } from "../../../../factory/index.js";
+import {
+    BTN_VARIANT_OUTLINE,
+    button,
+    div,
+    icon,
+    paragraph,
+    span,
+    type Instance,
+    baseProps,
+    textProps,
+} from "../../../../factory/index.js";
 import { glassSecret } from "../../../../forms/glass/inputs/glass-secret.js";
 import type { BrowseResponse, Scope } from "../../../../../state/data-rights/data-rights-client/index.js";
 import { rowSummary } from "../../../../../state/data-rights/summary.js";
@@ -43,7 +53,7 @@ function buildFieldValue(col: string, text: string, isSecret: boolean, assetSrc:
     if (isSecret) valueChildren.push(glassSecret(text));
     else valueChildren.push(span({ text, classes: [DR_FIELD_TEXT_CLASS], context: null, meta: null }));
     if (needsExpand) valueChildren.push(buildExpandIcon(col, text, isSecret));
-    return div({ classes: [DR_FIELD_VALUE_CLASS], context: null, meta: null }, valueChildren);
+    return div(baseProps([DR_FIELD_VALUE_CLASS]), valueChildren);
 }
 
 interface BuildFieldArgs {
@@ -59,8 +69,8 @@ function buildField(args: BuildFieldArgs): Instance {
     const text = formatValue(value);
     const isSecret = secrets.has(col) && text !== "—";
     const assetSrc = resolveColumnAsset(table, col, value, row);
-    return div({ classes: [DR_FIELD_CLASS], context: null, meta: null }, [
-        span({ classes: [DR_FIELD_LABEL_CLASS], text: col, context: null, meta: null }),
+    return div(baseProps([DR_FIELD_CLASS]), [
+        span(textProps([DR_FIELD_LABEL_CLASS], col)),
         buildFieldValue(col, text, isSecret, assetSrc),
     ]);
 }
@@ -89,26 +99,21 @@ function buildHeader(state: RowDetailState, handlers: RowDetailHandlers): Instan
             }),
         );
     }
-    children.push(span({ classes: [DR_PANE_TITLE_CLASS], text: headerTitle(state), context: null, meta: null }));
-    return div({ classes: [DR_PANE_HEADER_CLASS], context: null, meta: null }, children);
+    children.push(span(textProps([DR_PANE_TITLE_CLASS], headerTitle(state))));
+    return div(baseProps([DR_PANE_HEADER_CLASS]), children);
 }
 
 function buildSecurityNote(excluded: readonly string[]): Instance {
     const text = `${excluded.length} field(s) hidden from this view: ${excluded.join(", ")}. These hold cryptographic material (hashes, keys, challenge tokens) that cant be reversed — withholding them from your own view limits exposure if your account is ever breached.`;
-    return div({ classes: [DR_SECURITY_NOTE_CLASS], context: null, meta: null }, [
+    return div(baseProps([DR_SECURITY_NOTE_CLASS]), [
         icon({
             name: "shield-lock-fill",
             classes: [DR_SECURITY_NOTE_ICON_CLASS],
             context: null,
             meta: null,
         }),
-        div({ classes: [DR_SECURITY_NOTE_BODY_CLASS], context: null, meta: null }, [
-            span({
-                classes: [DR_SECURITY_NOTE_TITLE_CLASS],
-                text: "Kept private for your security",
-                context: null,
-                meta: null,
-            }),
+        div(baseProps([DR_SECURITY_NOTE_BODY_CLASS]), [
+            span(textProps([DR_SECURITY_NOTE_TITLE_CLASS], "Kept private for your security")),
             paragraph({ text, classes: [DR_SECURITY_NOTE_TEXT_CLASS], context: null, meta: null }),
         ]),
     ]);
@@ -116,13 +121,8 @@ function buildSecurityNote(excluded: readonly string[]): Instance {
 
 export function buildRowDetail(state: RowDetailState, handlers: RowDetailHandlers): Instance {
     if (!state.row || !state.info) {
-        return div({ classes: [GLASS_PANE_INNER_CLASS, DR_DETAIL_PANE_CLASS], context: null, meta: null }, [
-            paragraph({
-                classes: [DR_EMPTY_CLASS],
-                text: "Select a row to view.",
-                context: null,
-                meta: null,
-            }),
+        return div(baseProps([GLASS_PANE_INNER_CLASS, DR_DETAIL_PANE_CLASS]), [
+            paragraph(textProps([DR_EMPTY_CLASS], "Select a row to view.")),
         ]);
     }
     const secrets = new Set(state.info.secretColumns);
@@ -133,9 +133,6 @@ export function buildRowDetail(state: RowDetailState, handlers: RowDetailHandler
     const bodyChildren: Instance[] = [];
     if (state.info.excludedColumns.length > 0) bodyChildren.push(buildSecurityNote(state.info.excludedColumns));
     bodyChildren.push(...fields);
-    const body = div({ classes: [DR_DETAIL_BODY_CLASS], context: null, meta: null }, bodyChildren);
-    return div({ classes: [GLASS_PANE_INNER_CLASS, DR_DETAIL_PANE_CLASS], context: null, meta: null }, [
-        buildHeader(state, handlers),
-        body,
-    ]);
+    const body = div(baseProps([DR_DETAIL_BODY_CLASS]), bodyChildren);
+    return div(baseProps([GLASS_PANE_INNER_CLASS, DR_DETAIL_PANE_CLASS]), [buildHeader(state, handlers), body]);
 }

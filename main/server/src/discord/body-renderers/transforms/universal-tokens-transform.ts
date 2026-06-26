@@ -20,10 +20,14 @@ export interface UniversalTokenInput {
     eventReceivedAt: number;
 }
 
+const PERIOD_THRESHOLDS: ReadonlyArray<readonly [hourBefore: number, label: string]> = [
+    [HOUR_NIGHT_END, PERIOD_NIGHT],
+    [HOUR_MORNING_END, PERIOD_MORNING],
+    [HOUR_AFTERNOON_END, PERIOD_AFTERNOON],
+];
+
 function periodFor(hour: number): string {
-    if (hour < HOUR_NIGHT_END) return PERIOD_NIGHT;
-    if (hour < HOUR_MORNING_END) return PERIOD_MORNING;
-    if (hour < HOUR_AFTERNOON_END) return PERIOD_AFTERNOON;
+    for (const [before, label] of PERIOD_THRESHOLDS) if (hour < before) return label;
     return PERIOD_EVENING;
 }
 

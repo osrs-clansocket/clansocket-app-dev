@@ -1,4 +1,5 @@
 import { getClanDb } from "../../../../core/database.js";
+import { sqlPlaceholders } from "../../../../core/operations/index.js";
 
 export function loadHashRsns(
     clanId: string,
@@ -7,11 +8,10 @@ export function loadHashRsns(
     const out: Record<string, { rsn: string; lastSeen: number }> = {};
     if (allHashes.size === 0) return out;
     const hashList = Array.from(allHashes);
-    const hashPlaceholders = hashList.map(() => "?").join(",");
     const rows = getClanDb(clanId)
         .prepare(
             `SELECT account_hash, latest_rsn, last_seen
-             FROM clan_accounts WHERE account_hash IN (${hashPlaceholders})`,
+             FROM clan_accounts WHERE account_hash IN (${sqlPlaceholders(hashList.length)})`,
         )
         .all(...hashList) as Array<{ account_hash: string; latest_rsn: string; last_seen: number }>;
     for (const row of rows) {

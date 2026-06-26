@@ -2,7 +2,7 @@ import logger from "@clansocket/logger";
 import { upsertPlayerFreshness } from "../../database/wom/freshness/upsert-freshness.js";
 import { clanWomIdentity } from "../../database/wom/identity/get-clan-identity.js";
 import { saturateGroupDetails } from "../ingestor/group-saturator.js";
-import { saturateMetricHiscores } from "../ingestor/hiscores-saturator.js";
+import { saturateHiscoreMetric } from "../ingestor/hiscores-saturator.js";
 import { saturatePlayerSnapshot } from "../ingestor/player-saturator.js";
 import { planSnapshots } from "../ingestor/snapshot-planner.js";
 import { mapChanges, type NameChangesResponse } from "../mappers/name-changes-mapper.js";
@@ -55,7 +55,7 @@ function dispatchWomKind(a: WomDispatchArgs): void {
         case KIND_GROUP_DETAILS:
             return routeGroupDetails(clanId, womGroupId, response);
         case KIND_GROUP_HISCORES:
-            saturateMetricHiscores(clanId, womGroupId, readMetricBody(bodyJson), response);
+            saturateHiscoreMetric(clanId, womGroupId, readMetricBody(bodyJson), response);
             return;
         case KIND_GROUP_NAME_CHANGES:
             return routeNameChanges(clanId, response);

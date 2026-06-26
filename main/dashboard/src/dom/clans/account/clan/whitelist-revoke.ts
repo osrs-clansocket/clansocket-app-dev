@@ -8,6 +8,7 @@ import {
     type Child,
     type Instance,
     type SlidePanelInstance,
+    baseProps,
 } from "../../../factory";
 import { clansClient } from "../../../../state/clans/clans-client/index.js";
 import {
@@ -26,7 +27,7 @@ function buildPanelMessage(text: string): Instance {
 }
 
 function buildPanelActions(children: Child[]): Instance {
-    const inst = div({ classes: [], context: null, meta: null }, children);
+    const inst = div(baseProps([]), children);
     inst.el.style.display = "flex";
     inst.el.style.flexDirection = "column";
     inst.el.style.gap = "var(--sp-2)";
@@ -44,7 +45,7 @@ interface RevokeArgs {
 function revokeCancelBtn(a: RevokeArgs): Instance {
     return button({
         variant: BTN_VARIANT_OUTLINE,
-        compact: true,
+        
         text: "Cancel",
         context: `keep ${a.rank} whitelisted`,
         meta: ["action"],
@@ -55,7 +56,7 @@ function revokeCancelBtn(a: RevokeArgs): Instance {
 function revokeConfirmBtn(a: RevokeArgs): Instance {
     return button({
         variant: BTN_VARIANT_OUTLINE,
-        compact: true,
+        
         text: "Revoke",
         context: `confirm revoking ${a.rank} from the whitelist`,
         meta: ["destructive"],
@@ -77,7 +78,7 @@ export interface RevokeBtnArgs {
 
 export function buildRevokeBtn(args: RevokeBtnArgs): { inst: SlidePanelInstance; btn: Instance } {
     const { triggerBtn, slug, rank, entryId, refresh } = args;
-    const panelHost = div({ classes: [], context: null, meta: null });
+    const panelHost = div(baseProps([]));
     const panelRef: { inst: SlidePanelInstance | null } = { inst: null };
     const renderPanelContent = (): void => {
         panelHost.setChildren(

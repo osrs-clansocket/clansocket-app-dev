@@ -1,4 +1,13 @@
-import { button, div, INLINE_CONFIRM_HOST_CLASS, inlineConfirm, span, type Instance } from "../../../factory/index.js";
+import {
+    button,
+    div,
+    INLINE_CONFIRM_HOST_CLASS,
+    inlineConfirm,
+    span,
+    type Instance,
+    baseProps,
+    textProps,
+} from "../../../factory/index.js";
 import { isPasskeyError, passkeyClient, type PasskeyDevice } from "../../../../state/passkey/client/index.js";
 import {
     ACCOUNT_DEVICE_ROW_CLASS,
@@ -40,7 +49,7 @@ async function performRevokeDevice(
 }
 
 export function buildDeviceRow(d: PasskeyDevice, onRevoked: (msg: string | null) => void): Instance {
-    const revokeHost = div({ classes: [INLINE_CONFIRM_HOST_CLASS], context: null, meta: null });
+    const revokeHost = div(baseProps([INLINE_CONFIRM_HOST_CLASS]));
     const deviceLabel = d.deviceName ?? "(unnamed)";
     const revokeBtn = button({
         classes: [ACCOUNT_TOKEN_REVOKE_CLASS],
@@ -50,14 +59,9 @@ export function buildDeviceRow(d: PasskeyDevice, onRevoked: (msg: string | null)
         onClick: () => void performRevokeDevice(d, deviceLabel, revokeHost, onRevoked),
     });
     revokeHost.addChild(revokeBtn);
-    return div({ classes: [ACCOUNT_DEVICE_ROW_CLASS], context: null, meta: null }, [
-        span({ classes: [ACCOUNT_ROW_PRIMARY_CLASS], text: deviceLabel, context: null, meta: null }),
-        span({
-            classes: [ACCOUNT_ROW_META_CLASS],
-            text: `Used ${fmtRelative(d.lastUsedAt)}`,
-            context: null,
-            meta: null,
-        }),
+    return div(baseProps([ACCOUNT_DEVICE_ROW_CLASS]), [
+        span(textProps([ACCOUNT_ROW_PRIMARY_CLASS], deviceLabel)),
+        span(textProps([ACCOUNT_ROW_META_CLASS], `Used ${fmtRelative(d.lastUsedAt)}`)),
         revokeHost,
     ]);
 }

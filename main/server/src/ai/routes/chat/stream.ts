@@ -10,11 +10,13 @@ export function sleep(ms: number, abortRef: { aborted: boolean }): Promise<void>
     if (ms <= 0) return Promise.resolve();
     return new Promise((resolve) => {
         const start = Date.now();
+        const schedule = (remaining: number): NodeJS.Timeout =>
+            setTimeout(tick, Math.min(ABORT_POLL_INTERVAL_MS, remaining));
         const tick = (): void => {
             if (abortRef.aborted || Date.now() - start >= ms) resolve();
-            else setTimeout(tick, Math.min(ABORT_POLL_INTERVAL_MS, ms - (Date.now() - start)));
+            else schedule(ms - (Date.now() - start));
         };
-        setTimeout(tick, Math.min(ABORT_POLL_INTERVAL_MS, ms));
+        schedule(ms);
     });
 }
 

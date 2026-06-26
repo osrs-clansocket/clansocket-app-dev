@@ -1,4 +1,5 @@
-import { BYTE_MAX, HUE_MAX, PCT_MAX, hslToHex, rgbToHex } from "./math.js";
+import { BYTE_MAX, HUE_MAX, PCT_MAX, rgbToHex } from "./math.js";
+import { hslToHex } from "./hsl.js";
 import { makeSlider, type SliderHandle } from "./sliders.js";
 import type { PickerSliders, PickerState } from "./color-picker-types.js";
 

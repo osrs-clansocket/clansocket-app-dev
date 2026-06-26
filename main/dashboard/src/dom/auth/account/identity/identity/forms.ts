@@ -1,4 +1,4 @@
-import { BTN_VARIANT_OUTLINE, button, div, input, type Instance } from "../../../../factory/index.js";
+import { BTN_VARIANT_OUTLINE, button, div, input, type Instance, baseProps } from "../../../../factory/index.js";
 import { identityClient, RSN_MAX_LEN } from "../../../../../state/identity/identity-client/index.js";
 import { setStatus } from "./formatting.js";
 import { FORM_FORM_ROW, FORM_INPUT } from "../../../../forms/form-classes.js";
@@ -35,11 +35,11 @@ export function buildClaimForm(refresh: () => void, status: Instance): Instance 
         context: "enter an RSN to claim and verify",
         meta: ["input", "rsn"],
     });
-    return div({ classes: [FORM_FORM_ROW], context: null, meta: null }, [
+    return div(baseProps([FORM_FORM_ROW]), [
         rsnInput,
         button({
             variant: BTN_VARIANT_OUTLINE,
-            compact: true,
+            
             text: "Verify",
             context: "verify and claim this RSN",
             meta: ["action", "rsn"],

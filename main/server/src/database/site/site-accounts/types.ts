@@ -1,5 +1,6 @@
 export type { OAuthProvider, ProviderRow, OAuthLink } from "./oauth-types.js";
-export { LinkConflict, buildOAuthLink } from "./oauth-types.js";
+export { LinkConflict } from "./oauth-types.js";
+export { oauthShape } from "./oauth-shaper.js";
 
 export const SITE_ACCOUNT_COLUMNS =
     "id, provider, provider_user_id, display_name, avatar_url, created_at, last_login_at";

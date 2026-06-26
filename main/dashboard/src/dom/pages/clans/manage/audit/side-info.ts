@@ -1,4 +1,12 @@
-import { div, slidePanel, span, type Instance, type SlidePanelInstance } from "../../../../factory";
+import {
+    div,
+    slidePanel,
+    span,
+    type Instance,
+    type SlidePanelInstance,
+    baseProps,
+    textProps,
+} from "../../../../factory";
 import {
     AUDIT_INTEGRITY_CLASS,
     AUDIT_INTEGRITY_LABEL_CLASS,
@@ -10,10 +18,10 @@ export { buildAnalyticsStrip } from "./side-info-strip.js";
 export { emptyStats, updateStats, type AggregateStats } from "../../../../../state/clans/audit/side-info-stats.js";
 
 export function buildIntegrityIndicator(slug: string, list: Instance): Instance {
-    const label = span({ classes: [AUDIT_INTEGRITY_LABEL_CLASS], text: "Verifying…", context: null, meta: null });
-    const trigger = div({ classes: [AUDIT_INTEGRITY_CLASS], context: null, meta: null }, [label]);
+    const label = span(textProps([AUDIT_INTEGRITY_LABEL_CLASS], "Verifying…"));
+    const trigger = div(baseProps([AUDIT_INTEGRITY_CLASS]), [label]);
     const lastRef = { v: { ok: false, breakAtId: null, breakReason: null, rowsChecked: 0 } as IntegrityState };
-    const panelHost = div({ classes: [], context: null, meta: null });
+    const panelHost = div(baseProps([]));
     const panelRef: { inst: SlidePanelInstance | null } = { inst: null };
     const renderPanelContent = buildPanelRenderer(panelHost, panelRef, lastRef, list);
     panelRef.inst = slidePanel(

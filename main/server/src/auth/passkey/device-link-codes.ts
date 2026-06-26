@@ -1,7 +1,7 @@
 import logger from "@clansocket/logger";
 import { randomInt } from "node:crypto";
 import { DB_NAMES, getDb } from "../../database/index.js";
-import { MS_PER_MINUTE } from "../../shared/time.js";
+import { MS_PER_MINUTE } from "../../shared/time/index.js";
 import { sweepExpiredRows } from "./sweep-expired.js";
 
 const LINK_CODE_TTL_MINUTES = 5;

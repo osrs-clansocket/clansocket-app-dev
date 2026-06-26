@@ -1,4 +1,5 @@
 import type { Client } from "discord.js";
+import { HTTP_METHOD_POST } from "../../core/constants.js";
 import type { PendingOutboundRow } from "../../loaders/outbound-loader.js";
 import { registerSender } from "../sender-registry.js";
 
@@ -16,7 +17,7 @@ export async function senderWebhookPost(_client: Client, event: PendingOutboundR
     const payload = JSON.parse(event.payload_json) as WebhookPostPayload;
     const url = `${WEBHOOK_URL_BASE}/${encodeURIComponent(payload.webhookId)}/${encodeURIComponent(payload.token)}?wait=true`;
     const res = await fetch(url, {
-        method: "POST",
+        method: HTTP_METHOD_POST,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload.envelope),
     });

@@ -1,4 +1,4 @@
-import { div, heading, span, type Instance } from "../../../../factory";
+import { div, heading, span, type Instance, baseProps, textProps } from "../../../../factory";
 import { effect } from "../../../../factory/reactive/index.js";
 import { rsnTag } from "../../../../factory/data-ops/identity/rsn-tag.js";
 import type { WomLinkedStatus, WomStatus } from "../../../../../state/wom/clients/wom-client.js";
@@ -32,15 +32,13 @@ function makeRenderLinker(linkerHost: Instance): (status: Extract<WomStatus, { l
                 rsnTag({ rsn: status.linker_rsn, rank: status.linker_rank, size: "sm", context: null, meta: null }),
             );
         } else {
-            linkerHost.setChildren(
-                span({ classes: [LINKER_VALUE_CLASS], text: status.linker_site_account_id, context: null, meta: null }),
-            );
+            linkerHost.setChildren(span(textProps([LINKER_VALUE_CLASS], status.linker_site_account_id)));
         }
     };
 }
 
 function applyUnlinkedStatus(refs: StatusPanelRefs): void {
-    refs.linkerHost.setChildren(span({ classes: [LINKER_VALUE_CLASS], text: NONE_VALUE, context: null, meta: null }));
+    refs.linkerHost.setChildren(span(textProps([LINKER_VALUE_CLASS], NONE_VALUE)));
     refs.lastVerifiedText.setText(NONE_VALUE);
     refs.lastBackfillText.setText(NONE_VALUE);
 }
@@ -70,21 +68,18 @@ function makeStatusEffect(
 
 export function statusPanel(statusSignal: () => WomStatus): StatusHandle {
     const internalRow = (label: string, valueInst: Instance): Instance =>
-        div({ classes: [INTERNAL_ROW_CLASS], context: null, meta: null }, [
-            span({ classes: [INTERNAL_LABEL_CLASS], text: label, context: null, meta: null }),
-            valueInst,
-        ]);
+        div(baseProps([INTERNAL_ROW_CLASS]), [span(textProps([INTERNAL_LABEL_CLASS], label)), valueInst]);
     const refs: StatusPanelRefs = {
-        linkerHost: div({ classes: [INTERNAL_VALUE_CLASS], context: null, meta: null }),
-        lastVerifiedText: span({ classes: [INTERNAL_VALUE_CLASS], text: NONE_VALUE, context: null, meta: null }),
-        lastBackfillText: span({ classes: [INTERNAL_VALUE_CLASS], text: NONE_VALUE, context: null, meta: null }),
+        linkerHost: div(baseProps([INTERNAL_VALUE_CLASS])),
+        lastVerifiedText: span(textProps([INTERNAL_VALUE_CLASS], NONE_VALUE)),
+        lastBackfillText: span(textProps([INTERNAL_VALUE_CLASS], NONE_VALUE)),
     };
-    const grid = div({ classes: [INTERNAL_GRID_CLASS], context: null, meta: null }, [
+    const grid = div(baseProps([INTERNAL_GRID_CLASS]), [
         internalRow("Linked by", refs.linkerHost),
         internalRow("Last verified", refs.lastVerifiedText),
         internalRow("Last backfill", refs.lastBackfillText),
     ]);
-    const section = div({ classes: [SECTION_CLASS], context: null, meta: null }, [
+    const section = div(baseProps([SECTION_CLASS]), [
         heading("h3", { classes: [SECTION_TITLE_CLASS], text: "ClanSocket status", context: null, meta: null }),
         grid,
     ]);

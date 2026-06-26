@@ -39,7 +39,7 @@ export interface ModerationAuditPayload {
 }
 
 export function moderationAfter(subject: string, targetUserId: string, reason: string | undefined): ModerationAfter {
-    return { subject, reason: reason ?? null, targetUserId };
+    return { subject, targetUserId, reason: reason ?? null };
 }
 
 export function moderationAuditPayload(

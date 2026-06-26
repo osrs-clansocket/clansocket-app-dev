@@ -13,16 +13,18 @@ export type ChallengeError = { kind: "error"; error: string; status: number };
 export type ChallengeOk = { kind: "ok"; passkey: PasskeyRow; verification: VerifiedAuthenticationResponse };
 export type ChallengeResult = ChallengeOk | ChallengeError;
 
+const unauthorizedError = (error: string): ChallengeError => ({ error, kind: "error", status: HTTP_UNAUTHORIZED });
+
 export async function verifyPasskeyChallenge(
     req: Request,
     response: AuthenticationResponseJSON,
     ownsPasskey?: (passkey: PasskeyRow) => boolean,
 ): Promise<ChallengeResult> {
     const ctx = consumeChallenge(challengeOf(response), CHALLENGE_PURPOSE_AUTHENTICATE);
-    if (!ctx) return { kind: "error", error: "challenge_invalid", status: HTTP_UNAUTHORIZED };
+    if (!ctx) return unauthorizedError("challenge_invalid");
     const passkey = passkeyByCredential(response.id);
     if (!passkey || (ownsPasskey !== undefined && !ownsPasskey(passkey))) {
-        return { kind: "error", error: "credential_unknown", status: HTTP_UNAUTHORIZED };
+        return unauthorizedError("credential_unknown");
     }
     const verification = await verifyAuthenticationResponse({
         response,
@@ -31,7 +33,7 @@ export async function verifyPasskeyChallenge(
         expectedRPID: rpId(req),
         credential: passkeyCredential(passkey),
     });
-    if (!verification.verified) return { kind: "error", error: "verification_failed", status: HTTP_UNAUTHORIZED };
+    if (!verification.verified) return unauthorizedError("verification_failed");
     updateAfterAuth(passkey.id, verification.authenticationInfo.newCounter);
     return { kind: "ok", passkey, verification };
 }

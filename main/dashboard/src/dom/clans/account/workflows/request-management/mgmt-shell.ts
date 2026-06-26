@@ -1,4 +1,13 @@
-import { BTN_VARIANT_OUTLINE, button, div, input, paragraph, type Instance } from "../../../../factory";
+import {
+    BTN_VARIANT_OUTLINE,
+    button,
+    div,
+    input,
+    paragraph,
+    type Instance,
+    baseProps,
+    textProps,
+} from "../../../../factory";
 import { FORM_ERROR, FORM_HINT, FORM_INPUT } from "../../../../forms/form-classes.js";
 import { createChipController } from "./chips.js";
 import { createSearchController } from "./search-dropdown.js";
@@ -14,7 +23,7 @@ export function buildOpenBtn(
 ): Instance<HTMLButtonElement> {
     const btn: Instance<HTMLButtonElement> = button({
         variant: BTN_VARIANT_OUTLINE,
-        compact: true,
+        
         text: "Join clan as manager",
         context: "open the join-clan-as-manager form",
         meta: ["action", "clan"],
@@ -39,18 +48,18 @@ export function buildClanField(clanInput: Instance<HTMLInputElement>): { clanFie
         },
         [clanInput],
     );
-    const dropdown = div({ classes: [ACCOUNT_AUTOCOMPLETE_CLASS], context: null, meta: null });
+    const dropdown = div(baseProps([ACCOUNT_AUTOCOMPLETE_CLASS]));
     dropdown.el.hidden = true;
     return { clanField, dropdown };
 }
 
 export function buildHintEl(): Instance {
-    return paragraph({
-        classes: [ACCOUNT_INSTRUCTIONS_CLASS],
-        text: "Select one or more clans. Auto-granted if your verified RSN has a whitelisted rank in the clan. Otherwise existing managers approve. The RSN field is optional context.",
-        context: null,
-        meta: null,
-    });
+    return paragraph(
+        textProps(
+            [ACCOUNT_INSTRUCTIONS_CLASS],
+            "Select one or more clans. Auto-granted if your verified RSN has a whitelisted rank in the clan. Otherwise existing managers approve. The RSN field is optional context.",
+        ),
+    );
 }
 
 export function makeEmptyRefs(openBtn: Instance<HTMLButtonElement>, formElRef: { el: Instance | null }): ReqMgmtRefs {
@@ -83,9 +92,9 @@ export function fillRefsControllers(
         context: "enter your RSN as optional context for the request",
         meta: ["input", "rsn"],
     });
-    refs.statusEl = div({ classes: [FORM_HINT, ACCOUNT_STATUS_CLASS], context: null, meta: null });
+    refs.statusEl = div(baseProps([FORM_HINT, ACCOUNT_STATUS_CLASS]));
     refs.statusEl.el.hidden = true;
-    refs.errorEl = paragraph({ classes: [FORM_ERROR], context: null, meta: null });
+    refs.errorEl = paragraph(baseProps([FORM_ERROR]));
     refs.errorEl.el.hidden = true;
 }
 

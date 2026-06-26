@@ -1,6 +1,9 @@
 import type { Channel, Guild, PermissionOverwriteOptions } from "discord.js";
+import type { OverwriteKind } from "../../../state-sync/types.js";
+import { orThrow } from "../../../shared/nullable.js";
 import { PermissionsBitField } from "discord.js";
 import { registerPublisher } from "../../publisher-registry.js";
+import { OP_KINDS, ENTITY_TYPES } from "../../publish-vocab.js";
 import { runPublishOp } from "../../runners/op-runner.js";
 import { dispatcherBySubject } from "../../../shared/subject-dispatcher.js";
 
@@ -17,7 +20,7 @@ interface ChannelEditState {
 
 interface ChannelPermissionsState {
     subject: typeof SUBJECT_PERMISSIONS;
-    overwriteKind: "role" | "member";
+    overwriteKind: OverwriteKind;
     overwriteTargetId: string;
     allow: string;
     deny: string;
@@ -25,7 +28,7 @@ interface ChannelPermissionsState {
 
 interface ChannelPermissionsDelete {
     subject: typeof SUBJECT_PERMISSIONS_DELETE;
-    overwriteKind: "role" | "member";
+    overwriteKind: OverwriteKind;
     overwriteTargetId: string;
 }
 
@@ -59,8 +62,7 @@ const SUBJECT_APPLIERS: Record<string, (guild: Guild, channelId: string, data: a
 };
 
 async function applyChannelEdit(guild: Guild, channelId: string, data: ChannelEditState): Promise<void> {
-    const channel = await guild.channels.fetch(channelId);
-    if (!channel) throw new Error(`channel ${channelId} not found`);
+    const channel = orThrow(await guild.channels.fetch(channelId), `channel ${channelId} not found`);
     await channel.edit({
         name: data.name,
         topic: data.topic,
@@ -72,9 +74,9 @@ async function applyChannelEdit(guild: Guild, channelId: string, data: ChannelEd
 
 export const applyChannelUpdate = dispatcherBySubject<ChannelEditState>(SUBJECT_APPLIERS, applyChannelEdit);
 
-registerPublisher("update", "discord_channel", {
+registerPublisher(OP_KINDS.UPDATE, ENTITY_TYPES.CHANNEL, {
     handler: (c, r) =>
-        runPublishOp(c, r, "update", (g, d) =>
+        runPublishOp(c, r, OP_KINDS.UPDATE, (g, d) =>
             applyChannelUpdate(g, r.target_id_or_temp, d as Record<string, unknown>),
         ),
     requiredBotPermission: PermissionsBitField.Flags.ManageChannels,

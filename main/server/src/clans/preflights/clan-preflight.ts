@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { requireAccount } from "../../auth/site-routes/oauth-session.js";
+import { requireAccount } from "../../auth/site-routes/requirer-oauth-account.js";
 import { isClanManager } from "../../database/clans/access/clan-manager-store.js";
 import { clanBySlug } from "../../database/index.js";
 import { HTTP_FORBIDDEN, HTTP_NOT_FOUND } from "../../shared/http/http-status.js";

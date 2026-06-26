@@ -6,6 +6,12 @@ const ACCOUNT_HREF = "/account";
 const CLAIM_RESOLVED = "claim_consent_resolved";
 const KIND_CLAIM_REJECTED = "claim_rejected";
 
+const notifyEnvelope = (kind: string, title: string, body: string): { kind: string; title: string; body: string } => ({
+    kind,
+    title,
+    body,
+});
+
 function notifyClaim(accountId: string, kind: string, title: string, body: string): void {
     insertNotification({ kind, title, body, siteAccountId: accountId, href: ACCOUNT_HREF });
 }
@@ -42,11 +48,11 @@ export function rejectClaim(
         consent,
         clanId,
         declaredClanName,
-        notify: {
-            kind: KIND_CLAIM_REJECTED,
-            title: "Clan claim rejected",
-            body: `The holder of '${consent.target_rsn}' rejected the claim on '${declaredClanName}'.`,
-        },
+        notify: notifyEnvelope(
+            KIND_CLAIM_REJECTED,
+            "Clan claim rejected",
+            `The holder of '${consent.target_rsn}' rejected the claim on '${declaredClanName}'.`,
+        ),
         audit: { action: ClanAuditActions.ClaimConsentRejected },
     });
 }
@@ -61,11 +67,11 @@ export function reportFinalizeFailure(
         consent,
         clanId,
         declaredClanName,
-        notify: {
-            kind: KIND_CLAIM_REJECTED,
-            title: "Clan claim failed",
-            body: `Claim on '${declaredClanName}' could not finalize (${reason}).`,
-        },
+        notify: notifyEnvelope(
+            KIND_CLAIM_REJECTED,
+            "Clan claim failed",
+            `Claim on '${declaredClanName}' could not finalize (${reason}).`,
+        ),
         audit: { action: ClanAuditActions.ClaimRejected, extra: { reason } },
     });
 }
@@ -79,7 +85,7 @@ export function confirmClaim(
         consent,
         clanId,
         declaredClanName,
-        notify: { kind: "claim_confirmed", title: "Clan claimed", body: `You now own '${declaredClanName}'.` },
+        notify: notifyEnvelope("claim_confirmed", "Clan claimed", `You now own '${declaredClanName}'.`),
         audit: { action: ClanAuditActions.ClaimConsentConfirmed },
     });
 }

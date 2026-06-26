@@ -1,5 +1,5 @@
 import "./tabs";
-import { button, div, heading, section, type Instance } from "../../../factory";
+import { button, div, heading, section, type Instance, baseProps } from "../../../factory";
 import { tabDefs, type TabDef } from "./registry";
 
 const CARD_CLASS = "account__card";
@@ -80,7 +80,7 @@ function aiCard(): Instance {
     };
     const selectTab = makeSelectTab(state);
     mountTabButtons({ tabs, selectTab, tabButtons: state.tabButtons, nav: state.nav, active: state.activeRef.v });
-    const card = section({ classes: [CARD_CLASS, CARD_VARIANT_CLASS], context: null, meta: null }, [
+    const card = section(baseProps([CARD_CLASS, CARD_VARIANT_CLASS]), [
         heading("h2", { classes: [SECTION_TITLE_CLASS], text: "AI Settings", context: null, meta: null }),
         state.nav,
         state.body,

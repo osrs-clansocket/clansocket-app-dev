@@ -1,4 +1,4 @@
-import { button, div, type Instance } from "../../../factory";
+import { button, div, type Instance, baseProps } from "../../../factory";
 import { renderVaultSetup } from "./vault-setup.js";
 import { renderVaultUnlock } from "./vault-unlock.js";
 import { addKeyForm } from "./add-key-form";
@@ -36,7 +36,7 @@ const STATE = new WeakMap<HTMLElement, VaultGateState>();
 function ensureVaultState(container: HTMLElement): VaultGateState {
     const cached = STATE.get(container);
     if (cached !== undefined) return cached;
-    const host = div({ classes: [AI_BAR_VAULT_HOST_CLASS], context: null, meta: null });
+    const host = div(baseProps([AI_BAR_VAULT_HOST_CLASS]));
     host.mount(container);
     const state: VaultGateState = { host, cardHandle: null, formWrap: null };
     STATE.set(container, state);
@@ -59,7 +59,7 @@ function clearGate(container: HTMLElement): void {
 function mountForm(container: HTMLElement, state: VaultState): void {
     clearGate(container);
     const gateState = ensureVaultState(container);
-    const wrap = div({ classes: [FORM_WRAP_CLASS], context: null, meta: null });
+    const wrap = div(baseProps([FORM_WRAP_CLASS]));
     gateState.host.addChild(wrap);
     gateState.formWrap = wrap;
     const onCancel = (): void => {

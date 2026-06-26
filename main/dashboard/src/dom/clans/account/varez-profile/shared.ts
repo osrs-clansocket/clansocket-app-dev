@@ -1,4 +1,4 @@
-import { BTN_VARIANT_OUTLINE, button, div, icon, span, type Instance } from "../../../factory";
+import { BTN_VARIANT_OUTLINE, button, div, icon, span, type Instance, baseProps, textProps } from "../../../factory";
 import { FIELD_LABEL_CLASS, HEADER_ROW_CLASS, ICON_BTN_CLASS } from "./state.js";
 
 export function iconBtn(name: string, label: string, onClick: () => void): ReturnType<typeof button> {
@@ -16,11 +16,11 @@ export function iconBtn(name: string, label: string, onClick: () => void): Retur
 }
 
 export function renderSectionHeader(host: Instance, title: string, addLabel: string, onAdd: () => void): void {
-    const hdr = div({ classes: [HEADER_ROW_CLASS], context: null, meta: null }, [
-        span({ classes: [FIELD_LABEL_CLASS], text: title, context: null, meta: null }),
+    const hdr = div(baseProps([HEADER_ROW_CLASS]), [
+        span(textProps([FIELD_LABEL_CLASS], title)),
         button({
             variant: BTN_VARIANT_OUTLINE,
-            compact: true,
+            
             text: addLabel,
             ariaLabel: addLabel,
             context: addLabel,

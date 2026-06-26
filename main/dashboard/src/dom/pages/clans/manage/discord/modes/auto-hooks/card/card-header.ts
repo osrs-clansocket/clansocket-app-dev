@@ -1,4 +1,13 @@
-import { BTN_VARIANT_BARE, button, div, icon, span, type Instance } from "../../../../../../../factory";
+import {
+    BTN_VARIANT_BARE,
+    button,
+    div,
+    icon,
+    span,
+    type Instance,
+    baseProps,
+    textProps,
+} from "../../../../../../../factory";
 import { buildGlassCheck } from "../../../../../../../forms/glass/inputs/glass-check.js";
 import { editName } from "../../../../../../../clans/account/workflows/display-name-edit.js";
 import {
@@ -6,10 +15,6 @@ import {
     ACCOUNT_GREETING_NAME_CLASS,
     ACCOUNT_GREETING_NAME_ROW_CLASS,
 } from "../../../../../../../../shared/constants/account-constants.js";
-import {
-    BS_ICON_CLASS,
-    BS_ICON_PENCIL_CLASS,
-} from "../../../../../../../../shared/constants/bootstrap-icon-constants.js";
 import type { AutoHookRow } from "../../../../../../../../state/discord/auto-hooks/client.js";
 import {
     AUTO_HOOKS_CARD_DELETE_CLASS,
@@ -30,7 +35,7 @@ export interface CardCallbacks {
 function buildEditIcon(nameEl: Instance, onSaveName: (n: string) => void): Instance<HTMLButtonElement> {
     const editIcon: Instance<HTMLButtonElement> = button(
         {
-            compact: true,
+            
             classes: [ACCOUNT_GREETING_EDIT_CLASS],
             ariaLabel: `Edit ${NAME_LABEL}`,
             title: `Edit ${NAME_LABEL}`,
@@ -45,19 +50,19 @@ function buildEditIcon(nameEl: Instance, onSaveName: (n: string) => void): Insta
                     onSave: onSaveName,
                 }),
         },
-        [span({ classes: [BS_ICON_CLASS, BS_ICON_PENCIL_CLASS], context: null, meta: null })],
+        [icon({ provider: "bi", name: "pencil", ariaHidden: true, context: null, meta: null })],
     );
     return editIcon;
 }
 
 function buildNameRow(name: string, setName: (n: string) => void): Instance {
-    const nameEl = span({ classes: [ACCOUNT_GREETING_NAME_CLASS], text: name, context: null, meta: null });
+    const nameEl = span(textProps([ACCOUNT_GREETING_NAME_CLASS], name));
     const onSaveName = (next: string): void => {
         setName(next);
         nameEl.setText(next);
     };
     const editIcon = buildEditIcon(nameEl, onSaveName);
-    return div({ classes: [ACCOUNT_GREETING_NAME_ROW_CLASS], context: null, meta: null }, [nameEl, editIcon]);
+    return div(baseProps([ACCOUNT_GREETING_NAME_ROW_CLASS]), [nameEl, editIcon]);
 }
 
 function buildEnableGroup(row: AutoHookRow, cb: CardCallbacks): Instance {
@@ -67,8 +72,8 @@ function buildEnableGroup(row: AutoHookRow, cb: CardCallbacks): Instance {
         ariaLabel: ENABLED_LABEL,
         onChange: (next) => void cb.onToggle(row.auto_hook_id, next),
     });
-    return div({ classes: [AUTO_HOOKS_EMBED_TOGGLE_CLASS], context: null, meta: null }, [
-        span({ classes: [AUTO_HOOKS_CARD_LABEL_CLASS], text: `${ENABLED_LABEL}:`, context: null, meta: null }),
+    return div(baseProps([AUTO_HOOKS_EMBED_TOGGLE_CLASS]), [
+        span(textProps([AUTO_HOOKS_CARD_LABEL_CLASS], `${ENABLED_LABEL}:`)),
         toggleEl,
     ]);
 }
@@ -88,7 +93,7 @@ function buildDeleteBtn(row: AutoHookRow, cb: CardCallbacks): Instance {
 }
 
 export function buildHeader(name: string, row: AutoHookRow, cb: CardCallbacks, setName: (n: string) => void): Instance {
-    return div({ classes: [AUTO_HOOKS_CARD_HEADER_CLASS], context: null, meta: null }, [
+    return div(baseProps([AUTO_HOOKS_CARD_HEADER_CLASS]), [
         buildNameRow(name, setName),
         buildEnableGroup(row, cb),
         buildDeleteBtn(row, cb),

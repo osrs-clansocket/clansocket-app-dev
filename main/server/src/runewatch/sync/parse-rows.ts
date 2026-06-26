@@ -9,10 +9,10 @@ const EMPTY = "";
 const RW = "RW";
 const WDR = "WDR";
 
+const KNOWN_SOURCES = new Set<RunewatchSource>([RW, WDR]);
+
 function toSource(s: string): RunewatchSource | null {
-    if (s === RW) return RW;
-    if (s === WDR) return WDR;
-    return null;
+    return KNOWN_SOURCES.has(s as RunewatchSource) ? (s as RunewatchSource) : null;
 }
 
 function tryParseRow(u: RunewatchUpstreamRow, now: number): RunewatchCaseRow | null {

@@ -1,14 +1,30 @@
 import { createFetchStore, type FetchStore } from "../../stores/lazy-store.js";
 import { boundedRegistry } from "../../stores/bounded-store-registry.js";
 import type { ReadSignal } from "../../../dom/factory/reactive";
-import { listCases, listFlagged, type FlaggedMember, type RunewatchCase } from "./runewatch-client.js";
+import {
+    getCooldown,
+    listCases,
+    listFlagged,
+    type FlaggedMember,
+    type RunewatchCase,
+    type RunewatchCooldownState,
+} from "./runewatch-client.js";
 
 export interface RunewatchData {
     cases: RunewatchCase[];
     flagged: FlaggedMember[];
+    cooldown: RunewatchCooldownState | null;
 }
 
-const INITIAL: RunewatchData = { cases: [], flagged: [] };
+export function buildRunewatchData(
+    cases: RunewatchCase[],
+    flagged: FlaggedMember[],
+    cooldown: RunewatchCooldownState | null,
+): RunewatchData {
+    return { cases, flagged, cooldown };
+}
+
+const INITIAL: RunewatchData = buildRunewatchData([], [], null);
 const MAX_CLAN_STORES = 4;
 
 export type RunewatchStore = FetchStore & { readonly data$: ReadSignal<RunewatchData> };
@@ -20,8 +36,12 @@ function buildRunewatchStore(slug: string): RunewatchStore {
         key: "data$",
         initial: INITIAL,
         load: async () => {
-            const [cases, flagged] = await Promise.all([listCases(slug), listFlagged(slug)]);
-            return { cases, flagged };
+            const [cases, flagged, cooldown] = await Promise.all([
+                listCases(slug),
+                listFlagged(slug),
+                getCooldown(slug).catch(() => null),
+            ]);
+            return buildRunewatchData(cases, flagged, cooldown);
         },
         subscribe: () => () => {},
     });
@@ -33,8 +53,4 @@ export function getRunewatchStore(slug: string): RunewatchStore {
 
 export function preloadRunewatchStore(slug: string): void {
     getRunewatchStore(slug).ensure();
-}
-
-export function clearRunewatchStores(): void {
-    registry.clear();
 }

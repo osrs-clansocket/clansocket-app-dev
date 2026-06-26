@@ -1,4 +1,4 @@
-import { div, wireChange, wireFocus, type Instance } from "../../../../../../../factory";
+import { div, wireChange, wireFocus, type Instance, baseProps } from "../../../../../../../factory";
 import { buildGlassSelect, type SelectOption } from "../../../../../../../forms/glass/inputs/select/index.js";
 import type { AutoHookRow } from "../../../../../../../../state/discord/auto-hooks/client.js";
 import {
@@ -98,18 +98,18 @@ function buildBodyActions(
 ): Instance {
     const bodyResult = buildBodyResult(opts, state, triggerBus);
     wireFocus(bodyResult.formatTextarea.el, "focus", () => publishPreview(state));
-    const actions = div({ classes: [AUTO_HOOKS_ACTIONS_CLASS], context: null, meta: null }, [
+    const actions = div(baseProps([AUTO_HOOKS_ACTIONS_CLASS]), [
         buildTestBtn(state, opts.row),
         buildSaveBtn(state, opts.row, opts.cb),
     ]);
-    return div({ classes: [AUTO_HOOKS_CARD_BODY_CLASS], context: null, meta: null }, [bodyResult.root, actions]);
+    return div(baseProps([AUTO_HOOKS_CARD_BODY_CLASS]), [bodyResult.root, actions]);
 }
 
 export function autoHookCard(opts: CardOptions): Instance {
     const state = freshCardState(opts.row);
     const triggerBus = makeTriggerBus();
     const body = buildBodyActions(opts, state, triggerBus);
-    return div({ classes: [AUTO_HOOKS_CARD_CLASS], context: null, meta: null }, [
+    return div(baseProps([AUTO_HOOKS_CARD_CLASS]), [
         buildHeader(state.name, opts.row, opts.cb, (n) => {
             state.name = n;
             publishPreview(state);

@@ -3,16 +3,7 @@ import { listUndismissed } from "./list-undismissed.js";
 
 export { listUndismissed } from "./list-undismissed.js";
 
-export interface NotificationRow {
-    id: number;
-    site_account_id: string;
-    kind: string;
-    title: string;
-    body: string;
-    href: string | null;
-    dismissed: number;
-    created_at: number;
-}
+export type { NotificationRow } from "./notification-row-types.js";
 
 export interface NewNotification {
     siteAccountId: string;

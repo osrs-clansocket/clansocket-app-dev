@@ -1,4 +1,15 @@
-import { anchor, div, heading, paragraph, section, span, type Instance } from "../../factory";
+import {
+    anchor,
+    div,
+    heading,
+    icon,
+    paragraph,
+    section,
+    span,
+    type Instance,
+    baseProps,
+    textProps,
+} from "../../factory";
 import {
     ROUTE_HOME_DOWNLOAD_CLASS,
     ROUTE_HOME_DOWNLOAD_GRID_CLASS,
@@ -17,21 +28,26 @@ import {
     URL_DOWNLOAD_LINUX,
     URL_DOWNLOAD_WIN,
 } from "../../../shared/constants/home/render-home-data.js";
+import type { IconEntry } from "../../../icons/providers.js";
+
+function downloadIcon(entry: IconEntry): Instance {
+    return icon({
+        provider: entry.provider,
+        name: entry.name,
+        classes: [ROUTE_HOME_DOWNLOAD_ICON_CLASS],
+        ariaHidden: true,
+        context: null,
+        meta: null,
+    });
+}
 
 function buildDownloadLink(props: {
     href: string;
     label: string;
-    iconClasses: readonly string[];
+    icon: IconEntry;
     modifierClass: string;
     context: string;
 }): Instance {
-    const iconEl = span({
-        classes: [...props.iconClasses, ROUTE_HOME_DOWNLOAD_ICON_CLASS],
-        ariaHidden: "true",
-        context: null,
-        meta: null,
-    });
-    const labelEl = span({ classes: [ROUTE_HOME_DOWNLOAD_LABEL_CLASS], text: props.label, context: null, meta: null });
     return anchor(
         {
             href: props.href,
@@ -40,23 +56,23 @@ function buildDownloadLink(props: {
             context: props.context,
             meta: ["action"],
         },
-        [iconEl, labelEl],
+        [downloadIcon(props.icon), span(textProps([ROUTE_HOME_DOWNLOAD_LABEL_CLASS], props.label))],
     );
 }
 
 function buildDownloadsGrid(): Instance {
-    return div({ classes: [ROUTE_HOME_DOWNLOAD_GRID_CLASS], context: null, meta: null }, [
+    return div(baseProps([ROUTE_HOME_DOWNLOAD_GRID_CLASS]), [
         buildDownloadLink({
             href: URL_DOWNLOAD_WIN,
             label: "Windows",
-            iconClasses: ["ti", "ti-brand-windows"],
+            icon: { provider: "ti", name: "brand-windows" },
             modifierClass: ROUTE_HOME_DOWNLOAD_WIN_CLASS,
             context: "download the Windows installer",
         }),
         buildDownloadLink({
             href: URL_DOWNLOAD_LINUX,
             label: "Linux",
-            iconClasses: ["ph", "ph-linux-logo"],
+            icon: { provider: "ph", name: "linux-logo" },
             modifierClass: ROUTE_HOME_DOWNLOAD_LINUX_CLASS,
             context: "download the Linux tar.gz",
         }),
@@ -77,7 +93,7 @@ export function buildDownloads(): Instance {
                 context: null,
                 meta: null,
             }),
-            paragraph({ classes: [ROUTE_HOME_SECTION_BODY_CLASS], text: DOWNLOADS_BODY, context: null, meta: null }),
+            paragraph(textProps([ROUTE_HOME_SECTION_BODY_CLASS], DOWNLOADS_BODY)),
             buildDownloadsGrid(),
         ],
     );

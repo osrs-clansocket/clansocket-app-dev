@@ -1,4 +1,4 @@
-import { button, div, span, type Instance } from "../../factory";
+import { button, div, span, type Instance, textProps } from "../../factory";
 import { reconcile } from "../../factory/live-ops/reconcile.js";
 import { aiClient } from "../../../ai/client";
 
@@ -9,13 +9,13 @@ const CLOSE_CLASS = "ai-bar__ctx-close";
 function buildCtxTag(id: string): Instance {
     const closeBtn = button({
         classes: [CLOSE_CLASS],
-        compact: true,
+        
         text: "×",
         data: { unpin: id },
         context: "unpin this ai context tag",
         meta: ["action"],
     });
-    return span({ classes: [TAG_CLASS], text: id, context: null, meta: null }, [closeBtn]);
+    return span(textProps([TAG_CLASS], id), [closeBtn]);
 }
 
 interface CtxState {

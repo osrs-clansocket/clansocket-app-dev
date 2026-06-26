@@ -1,4 +1,4 @@
-import { anchor, div, paragraph, span } from "../../../../factory";
+import { anchor, div, paragraph, span, baseProps, textProps } from "../../../../factory";
 import { rsnTag } from "../../../../factory/data-ops/identity/rsn-tag.js";
 import type { Instance } from "../../../../factory";
 import type { FlaggedMember, RunewatchCase } from "../../../../../state/clans/runewatch/runewatch-client.js";
@@ -28,12 +28,16 @@ function runewatchCaseUrl(hash: string): string {
     return `${RUNEWATCH_CASE_URL_BASE}${hash}`;
 }
 
+function pickByTier<T>(tier: string, hard: T, soft: T): T {
+    return tier === "hard" ? hard : soft;
+}
+
 function tierClass(tier: string): string {
-    return tier === "hard" ? CARD_HARD_CLASS : CARD_SOFT_CLASS;
+    return pickByTier(tier, CARD_HARD_CLASS, CARD_SOFT_CLASS);
 }
 
 function tierBadgeClass(tier: string): string {
-    return tier === "hard" ? BADGE_HARD_CLASS : BADGE_SOFT_CLASS;
+    return pickByTier(tier, BADGE_HARD_CLASS, BADGE_SOFT_CLASS);
 }
 
 function fmtDate(ms: number | null): string {
@@ -42,16 +46,11 @@ function fmtDate(ms: number | null): string {
 }
 
 function tierBadge(tier: string): Instance<HTMLElement> {
-    return span({
-        classes: [BADGE_CLASS, tierBadgeClass(tier)],
-        text: tier === "hard" ? "Hard" : "Soft",
-        context: null,
-        meta: null,
-    });
+    return span(textProps([BADGE_CLASS, tierBadgeClass(tier)], tier === "hard" ? "Hard" : "Soft"));
 }
 
 function sourceBadge(source: string): Instance<HTMLElement> {
-    return span({ classes: [BADGE_CLASS, BADGE_SOURCE_CLASS], text: source, context: null, meta: null });
+    return span(textProps([BADGE_CLASS, BADGE_SOURCE_CLASS], source));
 }
 
 function fieldLabel(text: string): Instance<HTMLElement> {
@@ -75,14 +74,14 @@ function caseLink(href: string, label: string): Instance<HTMLElement> {
 }
 
 function buildCaseHead(rsn: string, tier: string, source: string): Instance<HTMLElement> {
-    return div({ classes: [CARD_HEAD_CLASS], context: null, meta: null }, [
+    return div(baseProps([CARD_HEAD_CLASS]), [
         rsnTag({ rsn, iconSrc: HELM_ICON_SRC, iconAlt: HELM_ALT, context: null, meta: null }),
-        div({ classes: [CARD_BADGES_CLASS], context: null, meta: null }, [tierBadge(tier), sourceBadge(source)]),
+        div(baseProps([CARD_BADGES_CLASS]), [tierBadge(tier), sourceBadge(source)]),
     ]);
 }
 
 function buildCaseBody(c: RunewatchCase): Instance<HTMLElement> {
-    const body = div({ classes: [CARD_BODY_CLASS], context: null, meta: null });
+    const body = div(baseProps([CARD_BODY_CLASS]));
     body.addChild(fieldLabel("Reason"));
     body.addChild(fieldValue(c.reason));
     body.addChild(fieldLabel("Evidence"));
@@ -91,7 +90,7 @@ function buildCaseBody(c: RunewatchCase): Instance<HTMLElement> {
     body.addChild(fieldValue(fmtDate(c.published_at)));
     body.addChild(fieldLabel("Case"));
     if (c.hash) {
-        const value = div({ classes: [FIELD_VALUE_CLASS], context: null, meta: null });
+        const value = div(baseProps([FIELD_VALUE_CLASS]));
         value.addChild(caseLink(runewatchCaseUrl(c.hash), c.hash));
         body.addChild(value);
     } else {
@@ -101,14 +100,14 @@ function buildCaseBody(c: RunewatchCase): Instance<HTMLElement> {
 }
 
 export function buildCaseCard(c: RunewatchCase): Instance<HTMLElement> {
-    const card = div({ classes: [CARD_CLASS, tierClass(c.tier)], context: null, meta: null });
+    const card = div(baseProps([CARD_CLASS, tierClass(c.tier)]));
     card.setChildren(buildCaseHead(c.accused_rsn, c.tier, c.source), buildCaseBody(c));
     return card;
 }
 
 function buildFlaggedBody(m: FlaggedMember): Instance<HTMLElement> {
     const newest = m.cases[0];
-    const body = div({ classes: [CARD_BODY_CLASS], context: null, meta: null });
+    const body = div(baseProps([CARD_BODY_CLASS]));
     body.addChild(fieldLabel("Matches"));
     body.addChild(fieldValue(`${m.cases.length} case${m.cases.length === 1 ? "" : "s"}`));
     if (newest) {
@@ -120,7 +119,7 @@ function buildFlaggedBody(m: FlaggedMember): Instance<HTMLElement> {
         }
         if (newest.hash) {
             body.addChild(fieldLabel("Case"));
-            const value = div({ classes: [FIELD_VALUE_CLASS], context: null, meta: null });
+            const value = div(baseProps([FIELD_VALUE_CLASS]));
             value.addChild(caseLink(runewatchCaseUrl(newest.hash), newest.hash));
             body.addChild(value);
         }
@@ -131,7 +130,7 @@ function buildFlaggedBody(m: FlaggedMember): Instance<HTMLElement> {
 export function buildFlaggedCard(m: FlaggedMember): Instance<HTMLElement> {
     const tier = m.cases.some((c) => c.tier === "hard") ? "hard" : "soft";
     const source = m.cases[0]?.source ?? "RW";
-    const card = div({ classes: [CARD_CLASS, tierClass(tier)], context: null, meta: null });
+    const card = div(baseProps([CARD_CLASS, tierClass(tier)]));
     card.setChildren(buildCaseHead(m.member_name, tier, source), buildFlaggedBody(m));
     return card;
 }

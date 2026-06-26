@@ -9,6 +9,8 @@ import {
     span,
     type Instance,
     type SlidePanelInstance,
+    baseProps,
+    textProps,
 } from "../../../../factory";
 import {
     AUDIT_PANEL_MESSAGE_CLASS,
@@ -21,7 +23,7 @@ export function buildPanelMessage(text: string): Instance {
 }
 
 export function buildActionsCluster(children: Instance[]): Instance {
-    const inst = div({ classes: [], context: null, meta: null }, children);
+    const inst = div(baseProps([]), children);
     inst.el.style.display = "flex";
     inst.el.style.alignItems = "center";
     inst.el.style.gap = "var(--sp-2)";
@@ -30,7 +32,7 @@ export function buildActionsCluster(children: Instance[]): Instance {
 }
 
 export function buildPanelRow(message: Instance, actions: Instance): Instance {
-    const row = div({ classes: [], context: null, meta: null }, [message, actions]);
+    const row = div(baseProps([]), [message, actions]);
     row.el.style.display = "grid";
     row.el.style.gridTemplateColumns = "1fr auto";
     row.el.style.alignItems = "start";
@@ -51,7 +53,7 @@ export function buildCloseBtn(panelRef: { inst: SlidePanelInstance | null }): In
             {
                 classes: [],
                 variant: BTN_VARIANT_BARE,
-                compact: true,
+                
                 ariaLabel: "Close",
                 context: "close the integrity status panel",
                 meta: ["action"],
@@ -70,13 +72,14 @@ export function buildShowBtn(breakAt: number, showRow: (n: number) => void): Ins
             {
                 classes: [],
                 variant: BTN_VARIANT_OUTLINE,
-                compact: true,
+                
+                ariaLabel: "Show broken audit row",
                 context: "scroll to and highlight the broken audit entry",
                 meta: ["action"],
                 onClick: () => showRow(breakAt),
             },
             [
-                span({ classes: [AUDIT_SHOW_ROW_LABEL_CLASS], text: "Show row", context: null, meta: null }),
+                span(textProps([AUDIT_SHOW_ROW_LABEL_CLASS], "Show row")),
                 icon({ name: "chevron-right", classes: [], context: null, meta: null }),
             ],
         ),

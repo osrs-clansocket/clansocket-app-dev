@@ -13,7 +13,7 @@ export function compactBtn(text: string, ctx: string, onClick: () => void): Inst
         onClick,
         classes: [],
         variant: BTN_VARIANT_OUTLINE,
-        compact: true,
+        
         context: ctx,
         meta: ["action"],
     });

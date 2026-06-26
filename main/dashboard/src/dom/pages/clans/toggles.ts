@@ -1,4 +1,4 @@
-import { button, div, type Instance } from "../../factory";
+import { button, div, type Instance, baseProps } from "../../factory";
 import type { ClanRosterMember } from "../../../state/clans/clans-client/index.js";
 import { sortMembers, type ClanRankLadder } from "../../../state/icons/rank-sort.js";
 import type { RosterSort, RosterView } from "../../../state/clans/roster/prefs.js";
@@ -30,7 +30,7 @@ export function buildViewToggle(current: RosterView, onChange: (v: RosterView) =
     const gridBtn = makeViewBtn("Grid", "grid", onPick);
     const listBtn = makeViewBtn("List", "list", onPick);
     apply(current);
-    return div({ classes: [CLAN_VIEW_TOGGLE_CLASS], context: null, meta: null }, [gridBtn, listBtn]);
+    return div(baseProps([CLAN_VIEW_TOGGLE_CLASS]), [gridBtn, listBtn]);
 }
 
 export function buildSortToggle(current: RosterSort, onChange: (v: RosterSort) => void): Instance {
@@ -54,7 +54,7 @@ export function buildSortToggle(current: RosterSort, onChange: (v: RosterSort) =
         opts.forEach((o, i) => btns[i].toggleClass(CLAN_VIEW_BTN_ACTIVE_CLASS, o.value === v));
     };
     apply(current);
-    return div({ classes: [CLAN_VIEW_TOGGLE_CLASS], context: null, meta: null }, btns);
+    return div(baseProps([CLAN_VIEW_TOGGLE_CLASS]), btns);
 }
 
 function rosterNameKey(m: ClanRosterMember): string {

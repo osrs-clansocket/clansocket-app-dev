@@ -5,7 +5,7 @@ import { HTTP_BAD_REQUEST, HTTP_FORBIDDEN } from "../../shared/http/http-status.
 
 import { requireSiteAccount } from "../../auth/site-middleware.js";
 import { isSiteOwner } from "../site-owner.js";
-import { readLogoScale, writeLogoScale } from "../site-asset-storage.js";
+import { readLogoScale, writeLogoScale } from "../logo-scale-store.js";
 import { mountedRouter } from "./_mount-registry.js";
 
 const DEFAULT_SCALE = 1;

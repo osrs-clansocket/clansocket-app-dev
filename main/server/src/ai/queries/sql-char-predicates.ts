@@ -1,4 +1,4 @@
-import { inRange } from "../../shared/parsers/ascii-bounds.js";
+import { inRange } from "../../shared/parsers/ascii-codes.js";
 
 function isAlphaDigit(ch: string): boolean {
     return inRange(ch, "A", "Z") || inRange(ch, "a", "z") || inRange(ch, "0", "9");

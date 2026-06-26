@@ -1,4 +1,4 @@
-import { div, heading, type Child, type Instance } from "../../factory";
+import { div, heading, type Child, type Instance, baseProps } from "../../factory";
 import {
     ACCOUNT_CLAN_PANEL_CLASS,
     ACCOUNT_PANEL_BODY_CLASS,
@@ -15,10 +15,10 @@ export interface AccountPanelProps {
 export function accountPanel(props: AccountPanelProps): Instance {
     const children: Instance[] = [
         heading("h3", { classes: [ACCOUNT_PANEL_TITLE_CLASS], text: props.title, context: null, meta: null }),
-        div({ classes: [ACCOUNT_PANEL_BODY_CLASS], context: null, meta: null }, [...props.body]),
+        div(baseProps([ACCOUNT_PANEL_BODY_CLASS]), [...props.body]),
     ];
     if (props.footer !== undefined && props.footer.length > 0) {
-        children.push(div({ classes: [ACCOUNT_PANEL_FOOTER_CLASS], context: null, meta: null }, [...props.footer]));
+        children.push(div(baseProps([ACCOUNT_PANEL_FOOTER_CLASS]), [...props.footer]));
     }
-    return div({ classes: [ACCOUNT_CLAN_PANEL_CLASS], context: null, meta: null }, children);
+    return div(baseProps([ACCOUNT_CLAN_PANEL_CLASS]), children);
 }

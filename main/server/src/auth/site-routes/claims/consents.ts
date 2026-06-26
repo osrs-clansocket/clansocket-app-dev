@@ -1,9 +1,10 @@
 import { HTTP_BAD_REQUEST, HTTP_CONFLICT, HTTP_FORBIDDEN, HTTP_NOT_FOUND } from "../../../shared/http/http-status.js";
+import { consentRequestedBy } from "../../../database/site/consent/query.js";
 import { type Request, type Response } from "express";
 import { cancelConsentRequest, allByAccount, consentById } from "../../../database/index.js";
 import { broadcastIdentityUpdate } from "../../../data-rights/streams/identity-stream.js";
 import { pushClaimCancel } from "../../../plugin-api/consent/claim-push.js";
-import { requireAccount } from "../oauth-session.js";
+import { requireAccount } from "../requirer-oauth-account.js";
 import { mountedRouter } from "../_mount-registry.js";
 
 const router = mountedRouter();
@@ -40,7 +41,7 @@ function gateConsentCancel(
         return null;
     }
     const consent = consentById(id);
-    if (!consent || consent.requesting_site_account_id !== siteAccountId) {
+    if (!consentRequestedBy(consent, siteAccountId)) {
         res.status(HTTP_NOT_FOUND).json({ ok: false, error: "not_found" });
         return null;
     }

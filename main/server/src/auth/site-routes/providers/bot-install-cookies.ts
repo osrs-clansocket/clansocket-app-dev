@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
-import { TEN_MINUTES_MS } from "../../../shared/time.js";
-import { isHttps, readCookie } from "../oauth-session.js";
+import { TEN_MINUTES_MS } from "../../../shared/time/index.js";
+import { isHttps, readCookie } from "../reader-oauth-cookie.js";
 
 const INSTALL_CLAN_COOKIE = "bot_install_clan_id";
 const COOKIE_MAX_AGE_MS = TEN_MINUTES_MS;

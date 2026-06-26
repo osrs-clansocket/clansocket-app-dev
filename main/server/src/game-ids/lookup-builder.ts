@@ -1,5 +1,5 @@
 import { getStaticDb, placeholdersFor, STATIC_DB_NAMES } from "../database/index.js";
-import { selectOneStatic } from "../database/core/operations.js";
+import { selectOneStatic } from "../database/core/operations/index.js";
 
 export interface LookupSpec {
     table: string;

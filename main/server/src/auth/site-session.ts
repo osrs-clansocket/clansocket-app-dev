@@ -1,6 +1,6 @@
 import { randomBytes } from "node:crypto";
 import { getDb, DB_NAMES } from "../database/core/database.js";
-import { MS_PER_DAY } from "../shared/time.js";
+import { MS_PER_DAY } from "../shared/time/index.js";
 import { isNonBlank } from "../shared/validators/type-guards.js";
 
 const SESSION_TTL_MS = 30 * MS_PER_DAY;

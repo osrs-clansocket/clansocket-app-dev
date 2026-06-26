@@ -104,6 +104,20 @@ function isThinHelperWrapper(body) {
     return false;
 }
 
+// Shaper pattern carve-out: typed-projection factory whose body is `return { ...shorthand };`.
+// `function fooShape(a, b, c, d): FooShape { return { a, b, c, d }; }` — every shorthand
+// shaper has identical AST body shape because the type signature IS the discriminator.
+// Per axis 2 `shaper` role (rules.md ## architecture). Same family as the cross-file
+// SHAPER_FACTORY allowlist (no-cross-file-duplication.allowlist.cjs).
+function isShaperReturnBody(body) {
+    if (!body || body.type !== "BlockStatement" || body.body.length !== 1) return false;
+    const only = body.body[0];
+    if (only.type !== "ReturnStatement" || !only.argument || only.argument.type !== "ObjectExpression") return false;
+    const obj = only.argument;
+    if (obj.properties.length < 2) return false;
+    return obj.properties.every((p) => p.type === "Property" && p.shorthand === true);
+}
+
 /** @type {import('eslint').Rule.RuleModule} */
 module.exports = {
   meta: {
@@ -217,6 +231,8 @@ module.exports = {
         // shape. Multiple thin wrappers around the same helper are the DRY-compressed form,
         // not duplication. Same intent as the cross-file rule's option-bag carve-out.
         if (isThinHelperWrapper(node.body)) return;
+        // Shaper carve-out: typed-projection factory bodies (axis 2 `shaper` role).
+        if (isShaperReturnBody(node.body)) return;
         const hash = hashNode(node.body, 0);
         if (hash.length < 15) return; // skip trivial functions
         const name = node.id?.name || getEnclosing(node);

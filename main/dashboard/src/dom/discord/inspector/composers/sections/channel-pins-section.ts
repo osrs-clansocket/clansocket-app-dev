@@ -1,4 +1,4 @@
-import { derived, div, effect, span, type Instance } from "../../../../factory";
+import { derived, div, effect, span, type Instance, baseProps, textProps } from "../../../../factory";
 import { reconcile } from "../../../../factory/live-ops/reconcile.js";
 import type { DiscordChannel, DiscordChannelPin } from "../../../../../state/discord/client.js";
 import { channelPinsStore } from "../../../../../state/discord/channel-pins-store.js";
@@ -23,19 +23,9 @@ function truncateContent(s: string | null): string {
 function buildPinItem(p: DiscordChannelPin): Instance {
     const date = new Date(p.timestamp).toISOString().slice(0, ISO_DATE_END).replace("T", " ");
     const author = p.author_name ?? p.author_user_id ?? "unknown";
-    return div({ classes: [PIN_ITEM_CLASS], context: null, meta: null }, [
-        span({
-            classes: [PIN_META_CLASS],
-            text: `${author} · ${date}`,
-            context: null,
-            meta: null,
-        }),
-        span({
-            classes: [PIN_CONTENT_CLASS],
-            text: truncateContent(p.content),
-            context: null,
-            meta: null,
-        }),
+    return div(baseProps([PIN_ITEM_CLASS]), [
+        span(textProps([PIN_META_CLASS], `${author} · ${date}`)),
+        span(textProps([PIN_CONTENT_CLASS], truncateContent(p.content))),
     ]);
 }
 
@@ -71,18 +61,14 @@ function bindPinsEffect(
 
 export function buildPinsSection(channel: DiscordChannel): Instance {
     const store = channelPinsStore(channel.guild_id, channel.channel_id);
-    const meta = span({
-        classes: [PIN_META_CLASS],
-        text: derived(() => pinMetaText(store.pins$())),
-        context: null,
-        meta: null,
-    });
-    const itemsHost = div({ classes: [PIN_LIST_CLASS], context: null, meta: null });
+    const meta = span(
+        textProps(
+            [PIN_META_CLASS],
+            derived(() => pinMetaText(store.pins$())),
+        ),
+    );
+    const itemsHost = div(baseProps([PIN_LIST_CLASS]));
     const itemState = new Map<string, Instance>();
     bindPinsEffect(itemsHost, itemState, store.pins$);
-    return div({ classes: [DISCORD_INSPECTOR_SECTION_CLASS], context: null, meta: null }, [
-        buildLabelRow("Pinned messages", null),
-        meta,
-        itemsHost,
-    ]);
+    return div(baseProps([DISCORD_INSPECTOR_SECTION_CLASS]), [buildLabelRow("Pinned messages", null), meta, itemsHost]);
 }

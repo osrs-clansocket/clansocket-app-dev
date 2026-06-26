@@ -1,4 +1,5 @@
 import logger from "@clansocket/logger";
+import { orThrow } from "../shared/nullable.js";
 import type { Client, PermissionResolvable } from "discord.js";
 
 export interface BotPermissionInput {
@@ -23,6 +24,8 @@ export async function ensureBotPermission(
     guildId: string,
     requiredPermission: PermissionResolvable,
 ): Promise<void> {
-    const ok = await validateBotPermission({ client, guildId, requiredPermission });
-    if (!ok) throw new Error(`bot_permission_denied: ${String(requiredPermission)}`);
+    orThrow(
+        await validateBotPermission({ client, guildId, requiredPermission }),
+        `bot_permission_denied: ${String(requiredPermission)}`,
+    );
 }

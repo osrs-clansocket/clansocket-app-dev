@@ -1,4 +1,13 @@
-import { button, createInstance, div, heading, modal, paragraph, type Instance } from "../../../factory/index.js";
+import {
+    button,
+    createInstance,
+    div,
+    heading,
+    modal,
+    paragraph,
+    type Instance,
+    baseProps,
+} from "../../../factory/index.js";
 import { isEnter } from "../../keys.js";
 
 const CLASS_OVERLAY = "glass-confirm__overlay";
@@ -94,7 +103,7 @@ function buildConfirmModal(args: {
     settle: (r: boolean) => void;
 }): ReturnType<typeof modal> {
     const { d, cancelBtn, confirmBtn, settle } = args;
-    const actions = div({ classes: [CLASS_ACTIONS], context: null, meta: null }, [cancelBtn, confirmBtn]);
+    const actions = div(baseProps([CLASS_ACTIONS]), [cancelBtn, confirmBtn]);
     return modal(
         {
             overlayClasses: [CLASS_OVERLAY],

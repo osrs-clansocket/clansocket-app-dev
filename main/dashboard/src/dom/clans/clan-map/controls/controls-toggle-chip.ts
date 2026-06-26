@@ -16,7 +16,7 @@ export function toggleChip(spec: ToggleSpec): Instance<HTMLButtonElement> {
         {
             ariaLabel: spec.ariaLabel,
             variant: "chip",
-            compact: true,
+            
             classes: [spec.klass],
             onClick: () => spec.signal$.set(!spec.signal$()),
             context: spec.context,

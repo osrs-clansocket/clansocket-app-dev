@@ -1,4 +1,4 @@
-import { button, div, span, type Instance } from "../../../../factory/index.js";
+import { button, div, span, type Instance, baseProps, textProps } from "../../../../factory/index.js";
 import { DATA_KEY_NAV_DIR, GD_NAV, GD_NAV_BTN, GD_TITLE } from "./classes.js";
 import { monthTitle } from "./date-month-utils.js";
 
@@ -21,6 +21,6 @@ export function buildNavRow(viewDate: Date): Instance {
         context: "show the next month",
         meta: ["action"],
     });
-    const title = span({ classes: [GD_TITLE], text: monthTitle(viewDate), context: null, meta: null });
-    return div({ classes: [GD_NAV], context: null, meta: null }, [prev, title, next]);
+    const title = span(textProps([GD_TITLE], monthTitle(viewDate)));
+    return div(baseProps([GD_NAV]), [prev, title, next]);
 }

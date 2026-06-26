@@ -12,7 +12,6 @@ const CLAN_PREFIX = "/clans/";
 const SINGULAR_CLAN_PREFIX = "/clan/";
 const MANAGE_SEGMENT = "/manage";
 const LIVE_SEGMENT = "/live";
-const VOXLAB_SEGMENT = "/voxlab";
 
 function inRange(c: number, lo: number, hi: number): boolean {
     return c >= lo && c <= hi;
@@ -94,18 +93,6 @@ export function matchLive(path: string): boolean {
 
 export function liveSlug(path: string): string {
     return liveSlugBody(path).toLowerCase();
-}
-
-function voxlabSlugBody(path: string): string {
-    return slugBodyOf(path, VOXLAB_SEGMENT);
-}
-
-export function matchVoxlab(path: string): boolean {
-    return voxlabSlugBody(path).length > 0;
-}
-
-export function voxlabSlug(path: string): string {
-    return voxlabSlugBody(path).toLowerCase();
 }
 
 function manageSlugSegments(path: string): readonly string[] {

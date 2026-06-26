@@ -1,4 +1,4 @@
-import { div, heading, paragraph, type Instance } from "../../../../../factory";
+import { div, heading, paragraph, type Instance, baseProps, textProps } from "../../../../../factory";
 import { GLASS_PANE_CLASS } from "../../../../../../shared/constants/glass-constants.js";
 import {
     DISCORD_EMPTY_INFO_BODY_CLASS,
@@ -15,14 +15,14 @@ const INFO_2_BODY =
     "The ClanSocket bot installed in your guild with managed-namespace permissions. Permissions only apply to objects ClanSocket creates; nothing else in your server is touched.";
 
 function buildInfoCard(title: string, body: string): Instance {
-    return div({ classes: [GLASS_PANE_CLASS, DISCORD_EMPTY_INFO_CARD_CLASS], context: null, meta: null }, [
+    return div(baseProps([GLASS_PANE_CLASS, DISCORD_EMPTY_INFO_CARD_CLASS]), [
         heading("h3", { classes: [DISCORD_EMPTY_INFO_TITLE_CLASS], text: title, context: null, meta: null }),
-        paragraph({ classes: [DISCORD_EMPTY_INFO_BODY_CLASS], text: body, context: null, meta: null }),
+        paragraph(textProps([DISCORD_EMPTY_INFO_BODY_CLASS], body)),
     ]);
 }
 
 export function buildInfoGrid(): Instance {
-    return div({ classes: [DISCORD_EMPTY_INFO_GRID_CLASS], context: null, meta: null }, [
+    return div(baseProps([DISCORD_EMPTY_INFO_GRID_CLASS]), [
         buildInfoCard(INFO_1_TITLE, INFO_1_BODY),
         buildInfoCard(INFO_2_TITLE, INFO_2_BODY),
     ]);

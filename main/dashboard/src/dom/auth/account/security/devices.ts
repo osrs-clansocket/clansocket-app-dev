@@ -1,4 +1,14 @@
-import { BTN_VARIANT_OUTLINE, button, div, effect, input, paragraph, type Instance } from "../../../factory/index.js";
+import {
+    BTN_VARIANT_OUTLINE,
+    button,
+    div,
+    effect,
+    input,
+    paragraph,
+    type Instance,
+    baseProps,
+    textProps,
+} from "../../../factory/index.js";
 import { isPasskeyError, passkeyClient } from "../../../../state/passkey/client/index.js";
 import { devicesStore } from "../../../../state/passkey/stores/devices-store.js";
 import { createDevicesRenderer } from "./devices-renderer.js";
@@ -52,7 +62,7 @@ function buildDevicesFooter(refresh: () => void, status: Instance): Instance {
     const deviceInput = buildNameInput();
     const addBtn: Instance<HTMLButtonElement> = button({
         variant: BTN_VARIANT_OUTLINE,
-        compact: true,
+        
         text: "Add",
         context: "register a passkey on this device",
         meta: ["action", "device"],
@@ -60,20 +70,20 @@ function buildDevicesFooter(refresh: () => void, status: Instance): Instance {
     });
     const linkBtn: Instance<HTMLButtonElement> = button({
         variant: BTN_VARIANT_OUTLINE,
-        compact: true,
+        
         text: "Link",
         context: "generate a device-link code to add another device",
         meta: ["action", "device"],
         onClick: () => runCreateCode(linkBtn, status),
     });
-    return div({ classes: [FORM_FORM_ROW], context: null, meta: null }, [deviceInput, addBtn, linkBtn]);
+    return div(baseProps([FORM_FORM_ROW]), [deviceInput, addBtn, linkBtn]);
 }
 
 defineAccountPanel({ key: "devices", order: 30, build: () => buildDevicesPanel() });
 
 export function buildDevicesPanel(): Instance {
-    const devicesHost = div({ classes: [ACCOUNT_LIST_CLASS], context: null, meta: null });
-    const status = paragraph({ classes: [FORM_HINT], text: "", context: null, meta: null });
+    const devicesHost = div(baseProps([ACCOUNT_LIST_CLASS]));
+    const status = paragraph(textProps([FORM_HINT], ""));
     status.el.hidden = true;
     const onRevoked = (msg: string | null): void => {
         if (msg !== null) {

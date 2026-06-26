@@ -1,4 +1,4 @@
-import { div, type Instance, type ReadSignal } from "../../factory";
+import { div, type Instance, baseProps } from "../../factory";
 import type { PositionRow } from "../../../state/clans/stores/positions-store.js";
 import {
     CLAN_MAP_LABEL_ROW_CLASS,
@@ -10,13 +10,9 @@ import { IS_CLICKABLE_CLASS } from "../../../shared/constants/state-modifier-con
 import { buildBlipRail, buildRowParts, type RowParts } from "./map-row-parts.js";
 import { buildActionRow } from "./map-row-actions.js";
 
-export interface RowHandlers {
-    onFocus: (hash: string) => void;
-    onToggleFollow: (hash: string) => void;
-    onToggleAlert: (hash: string) => void;
-    followedHash$: ReadSignal<string | null>;
-    alertedHashes$: ReadSignal<ReadonlySet<string>>;
-}
+import type { RowHandlers } from "./row-handlers-types.js";
+
+export type { RowHandlers } from "./row-handlers-types.js";
 
 export interface RowRefs {
     instance: Instance;
@@ -39,12 +35,9 @@ export interface RowRefs {
 }
 
 function buildRowInstance(row: PositionRow, h: RowHandlers, parts: RowParts, actions: Instance): Instance {
-    const main = div({ classes: [CLAN_MAP_ROW_MAIN_CLASS], context: null, meta: null }, [
-        parts.topLine,
-        parts.statsRow,
-    ]);
-    const upper = div({ classes: [CLAN_MAP_ROW_UPPER_CLASS], context: null, meta: null }, [main, actions]);
-    const content = div({ classes: [CLAN_MAP_ROW_CONTENT_CLASS], context: null, meta: null }, [upper, parts.band]);
+    const main = div(baseProps([CLAN_MAP_ROW_MAIN_CLASS]), [parts.topLine, parts.statsRow]);
+    const upper = div(baseProps([CLAN_MAP_ROW_UPPER_CLASS]), [main, actions]);
+    const content = div(baseProps([CLAN_MAP_ROW_CONTENT_CLASS]), [upper, parts.band]);
     return div(
         {
             classes: [CLAN_MAP_LABEL_ROW_CLASS, IS_CLICKABLE_CLASS],

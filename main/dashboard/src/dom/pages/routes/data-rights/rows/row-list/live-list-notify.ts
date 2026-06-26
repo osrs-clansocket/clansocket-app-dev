@@ -1,4 +1,4 @@
-import { button, createLiveStore, icon, span, type Instance } from "../../../../../factory/index.js";
+import { button, createLiveStore, icon, span, type Instance, textProps } from "../../../../../factory/index.js";
 import {
     DR_NEW_ENTRIES_CLASS,
     DR_NEW_ENTRIES_COUNT_CLASS,
@@ -41,7 +41,7 @@ function buildNotifyBtn(d: NotifyBuildDeps): Instance<HTMLButtonElement> {
 }
 
 export function buildNotifyKit(scroll: Instance): NotifyKit {
-    const notifyCount = span({ classes: [DR_NEW_ENTRIES_COUNT_CLASS], text: "", context: null, meta: null });
+    const notifyCount = span(textProps([DR_NEW_ENTRIES_COUNT_CLASS], ""));
     const countRef = { v: 0 };
     const updateNotifyRef: { fn: () => void } = { fn: () => undefined };
     const notifyBtn = buildNotifyBtn({ scroll, countRef, notifyCount, updateNotifyRef });

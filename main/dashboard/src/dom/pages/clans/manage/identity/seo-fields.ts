@@ -1,4 +1,4 @@
-import { div, effect, paragraph, type Instance } from "../../../../factory";
+import { div, effect, paragraph, type Instance, baseProps, textProps } from "../../../../factory";
 import { glassInput } from "../../../../forms/glass/inputs/glass-input.js";
 import { glassTextarea } from "../../../../forms/glass/inputs/glass-textarea.js";
 import { buildGlassCheck } from "../../../../forms/glass/inputs/glass-check.js";
@@ -65,17 +65,11 @@ export function buildToggleRow(state: PanelState): Instance {
         ariaLabel: TOGGLE_LABEL,
         onChange: (next) => updateField(state, "isPublic", next),
     });
-    return div({ classes: [SEO_TOGGLE_CLASS], context: null, meta: null }, [
-        check,
-        paragraph({ classes: [SEO_TOGGLE_LABEL_CLASS], text: TOGGLE_LABEL, context: null, meta: null }),
-    ]);
+    return div(baseProps([SEO_TOGGLE_CLASS]), [check, paragraph(textProps([SEO_TOGGLE_LABEL_CLASS], TOGGLE_LABEL))]);
 }
 
 export function buildField(labelText: string, control: Instance): Instance {
-    return div({ classes: [SEO_FIELD_CLASS], context: null, meta: null }, [
-        paragraph({ classes: [SEO_LABEL_CLASS], text: labelText, context: null, meta: null }),
-        control,
-    ]);
+    return div(baseProps([SEO_FIELD_CLASS]), [paragraph(textProps([SEO_LABEL_CLASS], labelText)), control]);
 }
 
 export type { TextKey };

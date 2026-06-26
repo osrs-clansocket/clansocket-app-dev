@@ -1,4 +1,4 @@
-import { inRange } from "../../shared/parsers/ascii-bounds.js";
+import { inRange } from "../../shared/parsers/ascii-codes.js";
 import { isNonEmpty } from "../../shared/validators/non-empty-validator.js";
 import type { WomPayload } from "../types/payload-type.js";
 

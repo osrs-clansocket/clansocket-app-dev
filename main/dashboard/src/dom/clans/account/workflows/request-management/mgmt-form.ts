@@ -1,4 +1,4 @@
-import { div, form, type Instance } from "../../../../factory";
+import { div, form, type Instance, baseProps } from "../../../../factory";
 import { FORM_CLAIM_FORM, FORM_FORM_ROW } from "../../../../forms/form-classes.js";
 import type { ReqMgmtRefs } from "./mgmt-types.js";
 
@@ -31,7 +31,7 @@ export function buildMgmtForm(args: BuildMgmtArgs): Instance {
             args.refs.rsnInput,
             args.refs.statusEl,
             args.refs.errorEl,
-            div({ classes: [FORM_FORM_ROW], context: null, meta: null }, [args.submitBtn, args.cancelBtn]),
+            div(baseProps([FORM_FORM_ROW]), [args.submitBtn, args.cancelBtn]),
         ],
     );
 }

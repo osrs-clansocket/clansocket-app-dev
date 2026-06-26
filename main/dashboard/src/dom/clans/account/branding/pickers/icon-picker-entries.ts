@@ -4,7 +4,6 @@ const MIN_SEARCH_LEN = 1;
 
 let allKeys: readonly string[] | null = null;
 let entriesPromise: Promise<readonly string[]> | null = null;
-let lastFilter: { needle: string; matches: readonly string[] } = { needle: "", matches: [] };
 
 function entriesToKeys(entries: readonly IconEntry[]): readonly string[] {
     const out: string[] = Array.from<string>({ length: entries.length });
@@ -15,18 +14,21 @@ function entriesToKeys(entries: readonly IconEntry[]): readonly string[] {
     return out;
 }
 
-export function filterKeys(needle: string): readonly string[] {
-    const keys = allKeys ?? [];
-    if (needle === lastFilter.needle && lastFilter.matches.length > 0) return lastFilter.matches;
-    if (needle.length < MIN_SEARCH_LEN) {
-        lastFilter = { needle, matches: keys };
-        return keys;
-    }
+function keysForFamily(family: string): readonly string[] {
+    if (!allKeys) return [];
+    const prefix = `${family}-`;
+    const out: string[] = [];
+    for (const k of allKeys) if (k.startsWith(prefix)) out.push(k);
+    return out;
+}
+
+export function filterFamilyKeys(family: string, needle: string): readonly string[] {
+    const inFamily = keysForFamily(family);
+    if (needle.length < MIN_SEARCH_LEN) return inFamily;
     const lower = needle.toLowerCase();
-    const matches: string[] = [];
-    for (const k of keys) if (k.includes(lower)) matches.push(k);
-    lastFilter = { needle, matches };
-    return matches;
+    const out: string[] = [];
+    for (const k of inFamily) if (k.includes(lower)) out.push(k);
+    return out;
 }
 
 export async function ensureEntries(): Promise<readonly string[]> {
@@ -35,7 +37,6 @@ export async function ensureEntries(): Promise<readonly string[]> {
     entriesPromise = loadIcons().then((entries) => {
         const keys = entriesToKeys(entries);
         allKeys = keys;
-        lastFilter = { needle: "", matches: keys };
         return keys;
     });
     return entriesPromise;

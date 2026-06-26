@@ -1,5 +1,6 @@
 import type { DeltaBatch, SnapshotBaseline } from "@clansocket/realtime";
-import { applyDelta, commitState, freshStoreState, applyBaseline, type LiveStoreState } from "./live-store-delta.js";
+import { applyDelta, commitState, freshStoreState, type LiveStoreState } from "./live-store-delta.js";
+import { applyBaseline } from "./live-store-baseline.js";
 import type { LiveRow, LiveStore, LiveStoreConfig } from "./live-store-types.js";
 export type { LiveChange, LiveRow, LiveSource, LiveStore, LiveStoreConfig } from "./live-store-types.js";
 

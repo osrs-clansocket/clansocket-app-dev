@@ -25,22 +25,18 @@ const router = mutationRoute({
         const body = req.body as WelcomeScreenBody;
         const guildId = req.params.guildId as string;
         const description = body.description ?? null;
+        const state = (enabled: boolean | null, ch: WelcomeScreenChannel[] | null, desc: string | null) => ({
+            enabled,
+            subject: "welcome-screen",
+            description: desc,
+            welcomeChannels: ch,
+        });
         return {
             actorUserId: body.userId,
             targetIdOrTemp: guildId,
-            before: { subject: "welcome-screen", enabled: null, description: null, welcomeChannels: null },
-            after: {
-                subject: "welcome-screen",
-                enabled: body.enabled,
-                welcomeChannels: body.welcomeChannels ?? [],
-                description,
-            },
-            auditPayload: {
-                targetName: body.guildName,
-                enabled: body.enabled,
-                guildId,
-                description,
-            },
+            before: state(null, null, null),
+            after: state(body.enabled, body.welcomeChannels ?? [], description),
+            auditPayload: { targetName: body.guildName, enabled: body.enabled, guildId, description },
         };
     },
 });

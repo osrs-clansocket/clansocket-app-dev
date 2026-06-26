@@ -8,6 +8,8 @@ import {
     paragraph,
     snapshot,
     type Instance,
+    baseProps,
+    textProps,
 } from "../../factory";
 import { isPasskeyError, passkeyClient, LINK_CODE_DIGITS } from "../../../state/passkey/client";
 import { setStatus, statusLine } from "../status-line.js";
@@ -68,14 +70,14 @@ async function runLinkSubmit(
 }
 
 function buildLinkHint(): Instance {
-    return paragraph({
-        classes: [ACCOUNT_SECTION_HINT_CLASS],
-        text: snapshot(
-            `On the device that already has access: account → sign-in devices → Link code. Paste the ${LINK_CODE_DIGITS} digits here.`,
+    return paragraph(
+        textProps(
+            [ACCOUNT_SECTION_HINT_CLASS],
+            snapshot(
+                `On the device that already has access: account → sign-in devices → Link code. Paste the ${LINK_CODE_DIGITS} digits here.`,
+            ),
         ),
-        context: null,
-        meta: null,
-    });
+    );
 }
 
 function buildLinkBtn(args: {
@@ -86,7 +88,7 @@ function buildLinkBtn(args: {
     const { codeInput, deviceInput, status } = args;
     const submit: Instance<HTMLButtonElement> = button({
         variant: BTN_VARIANT_OUTLINE,
-        compact: true,
+        
         text: "Link this device",
         context: "link this device to your existing account",
         meta: ["action", "device"],
@@ -100,7 +102,7 @@ export function buildLinkCard(): Instance {
     const codeInput = buildCodeInput();
     const deviceInput = buildDeviceInput();
     const submit = buildLinkBtn({ codeInput, deviceInput, status });
-    return div({ classes: [ACCOUNT_CARD_CLASS], context: null, meta: null }, [
+    return div(baseProps([ACCOUNT_CARD_CLASS]), [
         heading("h3", {
             classes: [ACCOUNT_SECTION_TITLE_CLASS],
             text: "Link this device to an existing account",
@@ -108,9 +110,9 @@ export function buildLinkCard(): Instance {
             meta: null,
         }),
         buildLinkHint(),
-        label({ classes: [FORM_FIELD_LABEL], text: "Link code", context: null, meta: null }),
+        label(textProps([FORM_FIELD_LABEL], "Link code")),
         codeInput,
-        label({ classes: [FORM_FIELD_LABEL], text: "Device name (optional)", context: null, meta: null }),
+        label(textProps([FORM_FIELD_LABEL], "Device name (optional)")),
         deviceInput,
         submit,
         status,

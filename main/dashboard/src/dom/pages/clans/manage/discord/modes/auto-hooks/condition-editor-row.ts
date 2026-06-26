@@ -1,4 +1,4 @@
-import { BTN_VARIANT_BARE, button, div, icon, wireChange, type Instance } from "../../../../../../factory";
+import { BTN_VARIANT_BARE, button, div, icon, wireChange, type Instance, baseProps } from "../../../../../../factory";
 import { buildGlassSelect } from "../../../../../../forms/glass/inputs/select/index.js";
 import type { SelectOption } from "../../../../../../forms/glass/inputs/select/index.js";
 import {
@@ -59,10 +59,5 @@ export function buildRow(ctx: RowContext): Instance {
     fieldSel.el.classList.add(AUTO_HOOKS_CARD_VALUE_CLASS);
     opSel.el.classList.add(AUTO_HOOKS_CARD_VALUE_CLASS);
     valueCtrl.el.classList.add(AUTO_HOOKS_CARD_VALUE_CLASS);
-    return div({ classes: [AUTO_HOOKS_CARD_ROW_CLASS], context: null, meta: null }, [
-        fieldSel,
-        opSel,
-        valueCtrl,
-        delBtn,
-    ]);
+    return div(baseProps([AUTO_HOOKS_CARD_ROW_CLASS]), [fieldSel, opSel, valueCtrl, delBtn]);
 }

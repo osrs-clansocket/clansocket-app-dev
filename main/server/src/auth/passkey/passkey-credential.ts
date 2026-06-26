@@ -1,5 +1,5 @@
 import type { AuthenticatorTransportFuture, WebAuthnCredential } from "@simplewebauthn/server";
-import type { PasskeyRow } from "./passkey-store.js";
+import type { PasskeyRow } from "./passkey-types.js";
 
 export function passkeyCredential(passkey: PasskeyRow): WebAuthnCredential {
     return {

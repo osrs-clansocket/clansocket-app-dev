@@ -18,10 +18,9 @@ function pickBestRsn(
 export function resolveActorDisplays(clanId: string, siteAccountIds: readonly string[]): Record<string, string> {
     const out: Record<string, string> = {};
     if (siteAccountIds.length === 0) return out;
-    const placeholders = siteAccountIds.map(() => "?").join(",");
     const appDb = getDb(DB_NAMES.APP);
-    const accountLabels = loadAccountLabels(appDb, placeholders, siteAccountIds);
-    const { hashesByAccount, allHashes } = loadAccountBindings(appDb, placeholders, siteAccountIds);
+    const accountLabels = loadAccountLabels(appDb, siteAccountIds);
+    const { hashesByAccount, allHashes } = loadAccountBindings(appDb, siteAccountIds);
     const rsnByHash = loadHashRsns(clanId, allHashes);
     for (const id of siteAccountIds) {
         const best = pickBestRsn(hashesByAccount[id] ?? [], rsnByHash);

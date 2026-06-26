@@ -1,5 +1,5 @@
 import rateLimit, { type RateLimitRequestHandler } from "express-rate-limit";
-import { MS_PER_MINUTE } from "../time.js";
+import { MS_PER_MINUTE } from "../time/index.js";
 
 interface PerMinuteOpts {
     max: number;

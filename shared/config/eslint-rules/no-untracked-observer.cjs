@@ -11,8 +11,8 @@
  * If none of these, the observer is a permanent subscription on the
  * observed element — the browser keeps the callback alive as long as the
  * observation is active. Per-mount observers (clan-map ResizeObserver,
- * clan-model-icon IntersectionObserver, runewatch IntersectionObserver)
- * leak one observer per mount; route changes accumulate them.
+ * runewatch IntersectionObserver) leak one observer per mount; route
+ * changes accumulate them.
  *
  * Why: observers are the third leak class after createInstance(rawEl)
  * temp wrappers and bare effect() — different mechanism, same outcome.
@@ -33,7 +33,6 @@
  *
  * Exempt files:
  *   src/dom/factory/**          — factory's own internals
- *   src/managers/voxlab/**      — voxlab class managers handle observer disposal in stop()
  */
 const { getModuleForFile } = require("../resolve-paths.cjs");
 const { build4DReport, trace } = require("./report-builder.cjs");
@@ -41,7 +40,6 @@ const { build4DReport, trace } = require("./report-builder.cjs");
 const OBSERVER_CTORS = new Set(["ResizeObserver", "IntersectionObserver", "MutationObserver", "PerformanceObserver"]);
 const EXEMPT_PATH_SEGMENTS = [
     "/dom/factory/",
-    "/managers/voxlab/",
 ];
 
 function isExemptPath(normPath) {

@@ -1,4 +1,4 @@
-import { div, type Instance } from "../../../../../../../factory";
+import { div, type Instance, baseProps } from "../../../../../../../factory";
 import { textInput } from "../../../../../../../factory/content-ops/form/inputs/text-input.js";
 import { FORM_FIELD, FORM_FIELD_LABEL, FORM_INPUT } from "../../../../../../../forms/form-classes.js";
 import { label as labelEl } from "../../../../../../../factory/content-ops/form/input-label.js";
@@ -25,7 +25,7 @@ function jointCheckRow(
             applyVisibility();
         },
     });
-    return div({ classes: [FORM_FIELD], context: null, meta: null }, [
+    return div(baseProps([FORM_FIELD]), [
         labelEl({
             classes: [FORM_FIELD_LABEL],
             text: JOINT_CHECK_LABEL,

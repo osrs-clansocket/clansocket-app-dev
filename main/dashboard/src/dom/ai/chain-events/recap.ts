@@ -1,4 +1,4 @@
-import { details, div, pre, span, summary, type Instance } from "../../factory";
+import { details, div, pre, span, summary, type Instance, baseProps, textProps } from "../../factory";
 import { insertAboveThinking } from "./render";
 import type { Payload } from "./summaries";
 import {
@@ -62,24 +62,19 @@ function resolveRecapFields(payload: Payload): { fields: RecapField[]; raw: stri
 }
 
 function buildRecapRow(f: RecapField): Instance {
-    return div({ classes: [AI_BAR_RECAP_ROW_CLASS], context: null, meta: null }, [
-        span({
-            classes: [AI_BAR_RECAP_TAG_CLASS, `${AI_BAR_RECAP_TAG_CLASS}--${f.field.toLowerCase()}`],
-            text: f.field,
-            context: null,
-            meta: null,
-        }),
-        span({ classes: [AI_BAR_RECAP_VAL_CLASS], text: f.value, context: null, meta: null }),
+    return div(baseProps([AI_BAR_RECAP_ROW_CLASS]), [
+        span(textProps([AI_BAR_RECAP_TAG_CLASS, `${AI_BAR_RECAP_TAG_CLASS}--${f.field.toLowerCase()}`], f.field)),
+        span(textProps([AI_BAR_RECAP_VAL_CLASS], f.value)),
     ]);
 }
 
 function buildRecapGrid(fields: RecapField[]): Instance {
-    return div({ classes: [AI_BAR_RECAP_GRID_CLASS], context: null, meta: null }, fields.map(buildRecapRow));
+    return div(baseProps([AI_BAR_RECAP_GRID_CLASS]), fields.map(buildRecapRow));
 }
 
 function buildRecapBody(fields: RecapField[], raw: string): Instance {
     if (fields.length > 0) return buildRecapGrid(fields);
-    return pre({ classes: [AI_BAR_CONTINUATION_BODY_CLASS], text: raw, context: null, meta: null });
+    return pre(textProps([AI_BAR_CONTINUATION_BODY_CLASS], raw));
 }
 
 function renderContinuation(container: HTMLElement, payload: Payload, scroll: (c: HTMLElement) => void): void {
@@ -91,12 +86,7 @@ function renderContinuation(container: HTMLElement, payload: Payload, scroll: (c
             meta: ["disclosure"],
         },
         [
-            summary({
-                classes: [AI_BAR_CONTINUATION_LABEL_CLASS],
-                text: `Chain Turn — ${payload.turn ?? "continuing"}`,
-                context: null,
-                meta: null,
-            }),
+            summary(textProps([AI_BAR_CONTINUATION_LABEL_CLASS], `Chain Turn — ${payload.turn ?? "continuing"}`)),
             buildRecapBody(fields, raw),
         ],
     );

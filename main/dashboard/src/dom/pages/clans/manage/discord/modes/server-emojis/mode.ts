@@ -1,5 +1,5 @@
 import "../../../../../../../styles/pages/clans/manage/discord/clan-discord-page.css";
-import { button, div, effect, image, paragraph, type Instance } from "../../../../../../factory";
+import { button, div, effect, image, paragraph, type Instance, baseProps, textProps } from "../../../../../../factory";
 import { reconcile } from "../../../../../../factory/live-ops/reconcile.js";
 import { emojisFeed } from "../../../../../../../state/discord/server-emojis/server-emojis-feed.js";
 import { selectDiscordItem } from "../../../../../../../state/discord/inspector-selection.js";
@@ -13,6 +13,7 @@ import {
     DISCORD_PANE_PLACEHOLDER_CLASS,
 } from "../../../../../../../shared/constants/clan-manage-discord/route-constants.js";
 import { subscribeTileFeed, type FeedHandle } from "../../../../../../../state/discord/tile-pane-base.js";
+import type { ModeContext } from "../../registry";
 
 const EMPTY_TEXT = "No server emojis in this guild yet.";
 const TILE_IMAGE_CLASS = "clans-manage__discord-emoji-tile-image";
@@ -49,15 +50,6 @@ function buildTile(emoji: DiscordServerEmoji): Instance {
 function sortedByName(emojis: readonly DiscordServerEmoji[]): DiscordServerEmoji[] {
     return [...emojis].sort((a, b) => a.name.localeCompare(b.name));
 }
-
-import { defineDiscordMode } from "../../registry";
-
-defineDiscordMode({
-    key: "server-emojis",
-    label: "Server Emojis",
-    order: 50,
-    build: (ctx) => emojisMode(ctx.server.guild_id),
-});
 
 interface EmojisPaneState {
     grid: Instance;
@@ -101,9 +93,9 @@ function subscribeEmojis(state: EmojisPaneState, guildId: string): () => void {
 }
 
 export function emojisMode(guildId: string): Instance {
-    const grid = div({ classes: [DISCORD_EMOJI_GRID_CLASS], context: null, meta: null });
-    const empty = paragraph({ classes: [DISCORD_PANE_PLACEHOLDER_CLASS], text: EMPTY_TEXT, context: null, meta: null });
-    const pane = div({ classes: [DISCORD_EMOJI_PANE_CLASS], context: null, meta: null }, [grid, empty]);
+    const grid = div(baseProps([DISCORD_EMOJI_GRID_CLASS]));
+    const empty = paragraph(textProps([DISCORD_PANE_PLACEHOLDER_CLASS], EMPTY_TEXT));
+    const pane = div(baseProps([DISCORD_EMOJI_PANE_CLASS]), [grid, empty]);
     grid.el.hidden = true;
     const tileState = new Map<string, Instance>();
     const latestRef: { v: DiscordServerEmoji[] } = { v: [] };
@@ -118,3 +110,5 @@ export function emojisMode(guildId: string): Instance {
     });
     return pane;
 }
+
+export const build = (ctx: ModeContext): Instance => emojisMode(ctx.server.guild_id);

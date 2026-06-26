@@ -1,16 +1,17 @@
 import { PermissionsBitField, type Client } from "discord.js";
+import { orThrow } from "../../../shared/nullable.js";
 import type { PendingPublishRow } from "../../../loaders/publish-queue-loader.js";
 import { registerPublisher } from "../../publisher-registry.js";
+import { OP_KINDS, ENTITY_TYPES } from "../../publish-vocab.js";
 
 export async function deleteRoleHandler(client: Client, row: PendingPublishRow): Promise<{ snowflakeResolved: null }> {
     const guild = await client.guilds.fetch(row.guild_id);
-    const role = await guild.roles.fetch(row.target_id_or_temp);
-    if (!role) throw new Error(`role ${row.target_id_or_temp} not found`);
+    const role = orThrow(await guild.roles.fetch(row.target_id_or_temp), `role ${row.target_id_or_temp} not found`);
     await role.delete();
     return { snowflakeResolved: null };
 }
 
-registerPublisher("delete", "discord_role", {
+registerPublisher(OP_KINDS.DELETE, ENTITY_TYPES.ROLE, {
     handler: deleteRoleHandler,
     requiredBotPermission: PermissionsBitField.Flags.ManageRoles,
 });

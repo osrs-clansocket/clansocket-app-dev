@@ -1,3 +1,5 @@
+import { orThrow } from "../shared/nullable.js";
+
 export abstract class BaseFactory<TKey, TInput, TOutput> {
     protected readonly creators = new Map<TKey, (input: TInput) => TOutput>();
 
@@ -6,8 +8,7 @@ export abstract class BaseFactory<TKey, TInput, TOutput> {
     }
 
     create(key: TKey, input: TInput): TOutput {
-        const creator = this.creators.get(key);
-        if (!creator) throw new Error(`BaseFactory: no creator registered for key=${String(key)}`);
+        const creator = orThrow(this.creators.get(key), `BaseFactory: no creator registered for key=${String(key)}`);
         return creator(input);
     }
 

@@ -1,4 +1,4 @@
-import { effect, input, label, path, span, svg, wireChange, type Instance } from "../../../factory/index.js";
+import { effect, input, label, path, span, svg, wireChange, type Instance, baseProps } from "../../../factory/index.js";
 
 const CLASS_ROOT = "glass-check";
 const CLASS_NATIVE = "glass-check__native";
@@ -51,10 +51,7 @@ function buildGlassCheck(opts: GlassCheckOptions): Instance<HTMLLabelElement> {
     const markEl = buildCheckMark();
     wireCheckEffect(checkbox, markEl, checked);
     if (onChange) wireChange(checkbox.el, () => onChange(checkbox.el.checked));
-    return label({ classes: [CLASS_ROOT], context: null, meta: null }, [
-        checkbox,
-        span({ classes: [CLASS_VISUAL], context: null, meta: null }, [markEl]),
-    ]);
+    return label(baseProps([CLASS_ROOT]), [checkbox, span(baseProps([CLASS_VISUAL]), [markEl])]);
 }
 
 export { buildGlassCheck };

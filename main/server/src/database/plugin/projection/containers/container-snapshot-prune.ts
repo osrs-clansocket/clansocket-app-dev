@@ -1,4 +1,5 @@
 import type Database from "better-sqlite3";
+import { sqlPlaceholders } from "../../../core/operations/index.js";
 
 export interface SnapshotPruneArgs {
     conn: Database.Database;
@@ -16,10 +17,7 @@ export function snapshotPrune(args: SnapshotPruneArgs): void {
         conn.prepare(`DELETE FROM ${table} WHERE account_hash = ?${extraClause}`).run(accountHash, ...extraParams);
         return;
     }
-    const ph = keepKeys.map(() => "?").join(",");
-    conn.prepare(`DELETE FROM ${table} WHERE account_hash = ?${extraClause} AND ${keyCol} NOT IN (${ph})`).run(
-        accountHash,
-        ...extraParams,
-        ...keepKeys,
-    );
+    conn.prepare(
+        `DELETE FROM ${table} WHERE account_hash = ?${extraClause} AND ${keyCol} NOT IN (${sqlPlaceholders(keepKeys.length)})`,
+    ).run(accountHash, ...extraParams, ...keepKeys);
 }

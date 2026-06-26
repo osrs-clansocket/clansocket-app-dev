@@ -1,6 +1,6 @@
 import type { Request, Router } from "express";
 import { ClanAuditActions, type ClanAuditAction } from "../../../../database/clans/audit/clan-audit-actions.js";
-import { mutationRoute, type HttpMethod, type MutationBuiltPayload } from "../../route-common/mutation-route.js";
+import { mutationRoute, type MutationMethod, type MutationBuiltPayload } from "../../route-common/mutation-route.js";
 import { MOUNT_MEMBERS } from "../../route-common/route-paths.js";
 import { registerMount } from "../../_mount-registry.js";
 import { TARGET_DISCORD_MEMBER } from "../../route-common/target-kinds.js";
@@ -13,13 +13,19 @@ interface RoleMutationBody {
 
 interface RoleVerb {
     verb: "add" | "remove";
-    method: HttpMethod;
+    method: MutationMethod;
     auditAction: ClanAuditAction;
 }
 
+const roleVerb = (verb: RoleVerb["verb"], method: MutationMethod, auditAction: ClanAuditAction): RoleVerb => ({
+    verb,
+    method,
+    auditAction,
+});
+
 const VERBS: Record<"add" | "remove", RoleVerb> = {
-    add: { verb: "add", method: "post", auditAction: ClanAuditActions.DiscordMembersAddRole },
-    remove: { verb: "remove", method: "delete", auditAction: ClanAuditActions.DiscordMembersRemoveRole },
+    add: roleVerb("add", "post", ClanAuditActions.DiscordMembersAddRole),
+    remove: roleVerb("remove", "delete", ClanAuditActions.DiscordMembersRemoveRole),
 };
 
 function buildRolePayload(req: Request, verb: "add" | "remove"): MutationBuiltPayload {

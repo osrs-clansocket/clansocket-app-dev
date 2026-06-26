@@ -1,5 +1,5 @@
 import type Database from "better-sqlite3";
-import { wasWritten } from "../../database/core/operations.js";
+import { wasWritten } from "../../database/core/operations/index.js";
 import { broadcastDbWrite } from "./writes-stream.js";
 import { extractWrite, type WriteSig } from "./sql-write-parser.js";
 

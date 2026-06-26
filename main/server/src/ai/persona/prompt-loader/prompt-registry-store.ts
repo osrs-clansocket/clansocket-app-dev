@@ -17,3 +17,7 @@ export function getPromptFile(id: string): PromptFile | undefined {
 export function listPromptFiles(): IterableIterator<PromptFile> {
     return _registry.values();
 }
+
+export function isValidPromptFile(file: PromptFile): boolean {
+    return Boolean(file.id && file.type && file.content);
+}

@@ -1,4 +1,4 @@
-import { div, paragraph, type Instance } from "../../../../../../factory";
+import { div, paragraph, type Instance, baseProps } from "../../../../../../factory";
 import type { AutoHookRow } from "../../../../../../../state/discord/auto-hooks/client.js";
 import type { SelectOption } from "../../../../../../forms/glass/inputs/select/index.js";
 import {
@@ -29,5 +29,5 @@ export function hooksList(opts: ListOptions): Instance {
         context: null,
         meta: null,
     });
-    return div({ classes: [AUTO_HOOKS_LIST_CLASS], context: null, meta: null }, [...cards, empty]);
+    return div(baseProps([AUTO_HOOKS_LIST_CLASS]), [...cards, empty]);
 }

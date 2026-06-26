@@ -1,4 +1,4 @@
-import { div, span, type Instance } from "../../../../../../factory";
+import { div, span, type Instance, baseProps, textProps } from "../../../../../../factory";
 import {
     DISCORD_INSPECTOR_LABEL_ROW_CLASS,
     DISCORD_INSPECTOR_SECTION_CLASS,
@@ -15,14 +15,12 @@ export function formatDate(ms: number | null): string {
 }
 
 export function statusInspectorRow(label: string): Instance {
-    return div({ classes: [DISCORD_INSPECTOR_LABEL_ROW_CLASS], context: null, meta: null }, [
-        span({ classes: [PANEL_LABEL_CLASS], text: label, context: null, meta: null }),
-    ]);
+    return div(baseProps([DISCORD_INSPECTOR_LABEL_ROW_CLASS]), [span(textProps([PANEL_LABEL_CLASS], label))]);
 }
 
 export function statusRow(label: string, value: string): Instance {
-    return div({ classes: [DISCORD_INSPECTOR_SECTION_CLASS], context: null, meta: null }, [
+    return div(baseProps([DISCORD_INSPECTOR_SECTION_CLASS]), [
         statusInspectorRow(label),
-        span({ classes: [DISCORD_INSPECTOR_VALUE_CLASS], text: value, context: null, meta: null }),
+        span(textProps([DISCORD_INSPECTOR_VALUE_CLASS], value)),
     ]);
 }

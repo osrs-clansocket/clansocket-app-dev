@@ -1,4 +1,4 @@
-import { div, type Instance } from "../../../../factory/index.js";
+import { div, type Instance, baseProps } from "../../../../factory/index.js";
 import { GD_GRID } from "./classes.js";
 import { isoDate } from "./iso.js";
 import { DAYS_PER_WEEK, monthFirstUTC } from "./date-month-utils.js";
@@ -16,8 +16,5 @@ export function buildPopupContents(viewDate: Date, selectedIso: string): Instanc
     const start = new Date(first);
     start.setUTCDate(1 - firstDow);
     const cells = buildDayCells(start, month, today, selectedIso);
-    return div({ context: null, meta: null }, [
-        buildNavRow(viewDate),
-        div({ classes: [GD_GRID], context: null, meta: null }, cells),
-    ]);
+    return div({ context: null, meta: null }, [buildNavRow(viewDate), div(baseProps([GD_GRID]), cells)]);
 }

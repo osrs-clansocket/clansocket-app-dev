@@ -1,4 +1,4 @@
-import type { TabConcerns } from "./panel-defs.js";
+import type { TabConcerns } from "./panel-defs-types.js";
 
 const DEFAULT_OPEN = true as const;
 

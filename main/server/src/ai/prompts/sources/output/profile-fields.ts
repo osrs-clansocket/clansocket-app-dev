@@ -68,10 +68,9 @@ const RAW_IDENTITY_KEYS: readonly IdentityKeyTuple[] = [
     ["rules.never.<key>", "user-stated never-do rules (hard gates)"],
 ];
 
-export const IDENTITY_KEY_CONVENTIONS: readonly IdentityKey[] = RAW_IDENTITY_KEYS.map(([key, meaning]) => ({
-    key,
-    meaning,
-}));
+const toIdentityKey = ([key, meaning]: IdentityKeyTuple): IdentityKey => ({ key, meaning });
+
+export const IDENTITY_KEY_CONVENTIONS: readonly IdentityKey[] = RAW_IDENTITY_KEYS.map(toIdentityKey);
 
 export interface SessionField {
     readonly name: string;
@@ -94,12 +93,7 @@ const OPTIONAL_RAW: readonly SessionFieldTuple[] = [
     ],
 ];
 
-export const REQUIRED_SESSION_FIELDS: readonly SessionField[] = REQUIRED_RAW.map(([name, description]) => ({
-    name,
-    description,
-}));
+const toSessionField = ([name, description]: SessionFieldTuple): SessionField => ({ name, description });
 
-export const OPTIONAL_SESSION_FIELDS: readonly SessionField[] = OPTIONAL_RAW.map(([name, description]) => ({
-    name,
-    description,
-}));
+export const REQUIRED_SESSION_FIELDS: readonly SessionField[] = REQUIRED_RAW.map(toSessionField);
+export const OPTIONAL_SESSION_FIELDS: readonly SessionField[] = OPTIONAL_RAW.map(toSessionField);

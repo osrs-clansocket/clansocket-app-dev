@@ -1,4 +1,13 @@
-import { BTN_VARIANT_PRIMARY, button, div, input, paragraph, snapshot, type Instance } from "../../../../factory";
+import {
+    BTN_VARIANT_PRIMARY,
+    button,
+    div,
+    input,
+    paragraph,
+    snapshot,
+    type Instance,
+    baseProps,
+} from "../../../../factory";
 import { clansClient } from "../../../../../state/clans/clans-client/index.js";
 import { FORM_ERROR, FORM_INPUT } from "../../../../forms/form-classes.js";
 import { recordToActive, type ActiveClaim } from "../claim-banner";
@@ -36,7 +45,7 @@ function buildClaimInputs(): {
     showError: (msg: string) => void;
     reset: () => void;
 } {
-    const errorEl = paragraph({ classes: [FORM_ERROR], context: null, meta: null });
+    const errorEl = paragraph(baseProps([FORM_ERROR]));
     errorEl.el.hidden = true;
     const rsnInput = buildRsnInput();
     const reset = (): void => {
@@ -93,14 +102,14 @@ function buildClaimButtons(args: { reset: () => void; callbacks: ClaimFormCallba
 } {
     const submitBtn = button({
         variant: BTN_VARIANT_PRIMARY,
-        compact: true,
+        
         type: "submit",
         text: "Submit claim",
         context: "submit the clan claim for verification",
         meta: ["submit", "clan"],
     });
     const cancelBtn = button({
-        compact: true,
+        
         text: "Cancel",
         context: "cancel the clan claim",
         meta: ["action"],
@@ -117,7 +126,7 @@ export function buildClaimForm(callbacks: ClaimFormCallbacks): ClaimFormHandle {
     const handleSubmit = (): Promise<void> => runClaimSubmit({ rsnInput, errorEl, showError, reset, callbacks });
     const { submitBtn, cancelBtn } = buildClaimButtons({ reset, callbacks });
     const claimForm = buildClaimEl({ rsnInput, errorEl, submitBtn, cancelBtn, handleSubmit });
-    const wrapper = div({ classes: [ACCOUNT_ADD_CLAN_FORM_CLASS], context: null, meta: null }, [claimForm]);
+    const wrapper = div(baseProps([ACCOUNT_ADD_CLAN_FORM_CLASS]), [claimForm]);
     wrapper.el.hidden = true;
     return {
         el: wrapper.el,

@@ -6,7 +6,7 @@ import { randomBytes } from "node:crypto";
 import {
     LinkConflict,
     type OAuthLink,
-    buildOAuthLink,
+    oauthShape,
     linkAccount,
     resolveAccount,
 } from "../../../database/site/site-accounts/index.js";
@@ -17,16 +17,10 @@ import {
     exchangeCodeToken as exchangeGithubCode,
     fetchUser as fetchGithubUser,
 } from "../../oauth/github.js";
-import {
-    consumeLinkCookie,
-    githubConfigured,
-    publicBaseUrl,
-    requireAccount,
-    setLinkCookie,
-    setSessionCookie,
-    setStateCookie,
-    validateOauthState,
-} from "../oauth-session.js";
+import { consumeLinkCookie, setLinkCookie, setSessionCookie, setStateCookie } from "../writer-oauth-cookie.js";
+import { githubConfigured, publicBaseUrl } from "../reader-oauth-config.js";
+import { requireAccount } from "../requirer-oauth-account.js";
+import { validateOauthState } from "../validator-oauth-state.js";
 import { mountedRouter } from "../_mount-registry.js";
 
 const router = mountedRouter();
@@ -76,7 +70,7 @@ async function exchangeForLink(req: Request, code: string): Promise<OAuthLink> {
         redirectUri,
     );
     const ghUser = await fetchGithubUser(accessToken);
-    return buildOAuthLink(OAUTH_PROVIDER_GITHUB, String(ghUser.id), ghUser.name ?? ghUser.login, ghUser.avatar_url);
+    return oauthShape(OAUTH_PROVIDER_GITHUB, String(ghUser.id), ghUser.name ?? ghUser.login, ghUser.avatar_url);
 }
 
 (() => {

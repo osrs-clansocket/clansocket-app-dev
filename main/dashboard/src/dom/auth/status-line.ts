@@ -1,8 +1,8 @@
-import { paragraph, type Instance } from "../factory";
+import { paragraph, type Instance, textProps } from "../factory";
 import { ACCOUNT_EMPTY_CLASS } from "../../shared/constants/account-constants.js";
 
 export function statusLine(): Instance {
-    const p = paragraph({ classes: [ACCOUNT_EMPTY_CLASS], text: "", context: null, meta: null });
+    const p = paragraph(textProps([ACCOUNT_EMPTY_CLASS], ""));
     p.el.hidden = true;
     return p;
 }

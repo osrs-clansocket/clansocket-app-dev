@@ -1,4 +1,4 @@
-import { div } from "../../factory";
+import { div, textProps } from "../../factory";
 import { reconcile } from "../../factory/live-ops/reconcile.js";
 import type { MemoryFile } from "../../../ai/memory-client";
 import { AI_MEMORY_EMPTY_CLASS } from "../../../shared/constants/ai-memory-constants.js";
@@ -8,12 +8,7 @@ import { clearItems, clearListRefs, type MemoryListState } from "./list-state.js
 
 function renderEmpty(s: MemoryListState): void {
     clearItems(s);
-    s.emptyRef.v = div({
-        classes: [AI_MEMORY_EMPTY_CLASS],
-        text: "No memory files yet.",
-        context: null,
-        meta: null,
-    });
+    s.emptyRef.v = div(textProps([AI_MEMORY_EMPTY_CLASS], "No memory files yet."));
     s.container.addChild(s.emptyRef.v);
 }
 

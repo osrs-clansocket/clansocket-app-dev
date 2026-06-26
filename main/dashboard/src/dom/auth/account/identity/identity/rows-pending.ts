@@ -1,4 +1,14 @@
-import { button, derived, div, effect, rsnTag, span, type Instance } from "../../../../factory/index.js";
+import {
+    button,
+    derived,
+    div,
+    effect,
+    rsnTag,
+    span,
+    type Instance,
+    baseProps,
+    textProps,
+} from "../../../../factory/index.js";
 import { identityClient, type PendingRsnRequest } from "../../../../../state/identity/identity-client/index.js";
 import { timeStore } from "../../../../../state/stores/time-store.js";
 import { formatRemaining, setStatus } from "./formatting.js";
@@ -45,16 +55,16 @@ function pendingExpiryEffect(req: PendingRsnRequest, refresh: () => void): { exp
 }
 
 export function buildPendingRow(req: PendingRsnRequest, refresh: () => void, status: Instance): Instance {
-    const countdown = span({
-        classes: [ACCOUNT_ROW_META_CLASS],
-        context: null,
-        meta: null,
-        text: derived(() => formatRemaining(req.expiresAt, timeStore.now$())),
-    });
-    const row = div({ classes: [ACCOUNT_DEVICE_ROW_CLASS], context: null, meta: null }, [
-        span({ classes: [ACCOUNT_ROW_PRIMARY_CLASS], context: null, meta: null }, [
+    const countdown = span(
+        textProps(
+            [ACCOUNT_ROW_META_CLASS],
+            derived(() => formatRemaining(req.expiresAt, timeStore.now$())),
+        ),
+    );
+    const row = div(baseProps([ACCOUNT_DEVICE_ROW_CLASS]), [
+        span(baseProps([ACCOUNT_ROW_PRIMARY_CLASS]), [
             rsnTag({ rsn: req.targetRsn, context: null, meta: null }),
-            span({ classes: [ACCOUNT_ROW_PENDING_CLASS], text: " pending", context: null, meta: null }),
+            span(textProps([ACCOUNT_ROW_PENDING_CLASS], " pending")),
         ]),
         countdown,
         pendingCancelBtn(req, refresh, status),

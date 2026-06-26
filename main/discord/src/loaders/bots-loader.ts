@@ -1,4 +1,5 @@
 import logger from "@clansocket/logger";
+import { orThrow } from "../shared/nullable.js";
 import { apiGet } from "../fetchers/api-fetcher.js";
 import type { BotIdentity } from "../shared/types/bot-types.js";
 
@@ -19,8 +20,10 @@ function retryDelay(ms: number): Promise<void> {
 }
 
 async function fetchBots(): Promise<BotIdentity[]> {
-    const body = await apiGet<{ bots: BotIdentity[] }>(BOTS_PATH);
-    if (!body) throw new Error(`loadBots: unexpected null response from ${BOTS_PATH}`);
+    const body = orThrow(
+        await apiGet<{ bots: BotIdentity[] }>(BOTS_PATH),
+        `loadBots: unexpected null response from ${BOTS_PATH}`,
+    );
     return body.bots;
 }
 

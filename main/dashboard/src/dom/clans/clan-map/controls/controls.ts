@@ -14,6 +14,7 @@ import {
     zoomButton,
     type ViewMode,
 } from "./controls-buttons.js";
+import { baseProps } from "../../../factory/index.js";
 export type { ViewMode } from "./controls-buttons.js";
 import {
     MAP_CHIP_ROW_CLASS,
@@ -48,7 +49,7 @@ function planeButton(plane: number, activePlane$: Signal<number>): Instance<HTML
         {
             ariaLabel: `Plane ${plane}`,
             variant: "chip",
-            compact: true,
+            
             classes: [MAP_PLANE_BTN_CLASS],
             onClick: () => activePlane$.set(plane),
             context: `select plane ${plane}`,
@@ -61,7 +62,7 @@ function planeButton(plane: number, activePlane$: Signal<number>): Instance<HTML
 }
 
 function planeLabel(activePlane$: Signal<number>, positions$: ControlsProps["positions$"]): Instance<HTMLElement> {
-    const labelSpan = span({ classes: [MAP_PLANE_COUNT_CLASS], context: null, meta: null }, [""]);
+    const labelSpan = span(baseProps([MAP_PLANE_COUNT_CLASS]), [""]);
     labelSpan.trackDispose(
         effect(() => {
             const plane = activePlane$();
@@ -84,7 +85,7 @@ function countOnPlane(state: PositionsState, plane: number): number {
 }
 
 function hoverReadout(hoverRegion$: Signal<MapRegion | null>): Instance<HTMLElement> {
-    const labelSpan = span({ classes: [MAP_HOVER_READOUT_CLASS], context: null, meta: null }, [""]);
+    const labelSpan = span(baseProps([MAP_HOVER_READOUT_CLASS]), [""]);
     labelSpan.trackDispose(
         effect(() => {
             const r = hoverRegion$();
@@ -103,7 +104,7 @@ function hoverReadout(hoverRegion$: Signal<MapRegion | null>): Instance<HTMLElem
 }
 
 function buildModeChips(props: ControlsProps): Instance<HTMLElement> {
-    return div({ classes: [MAP_CHIP_ROW_CLASS], context: null, meta: null }, [
+    return div(baseProps([MAP_CHIP_ROW_CLASS]), [
         layersButton(props.mergedLayersVisible$),
         modeButton(props.mode$),
         gridButton(props.gridVisible$),
@@ -117,19 +118,16 @@ export function clanMapControls(props: ControlsProps): Instance<HTMLElement> {
         { classes: [MAP_CHIP_ROW_CLASS], context: null, meta: null },
         PLANES.map((p) => planeButton(p, props.activePlane$)),
     );
-    const zoomChips = div({ classes: [MAP_CHIP_ROW_CLASS], context: null, meta: null }, [
+    const zoomChips = div(baseProps([MAP_CHIP_ROW_CLASS]), [
         zoomButton("−", props.onZoomOut, "zoom out"),
         zoomButton("+", props.onZoomIn, "zoom in"),
         resetButton(props.onResetView),
     ]);
-    const topRow = div({ classes: [MAP_CONTROLS_ROW_CLASS], context: null, meta: null }, [
+    const topRow = div(baseProps([MAP_CONTROLS_ROW_CLASS]), [
         planeChips,
         buildModeChips(props),
         zoomChips,
         planeLabel(props.activePlane$, props.positions$),
     ]);
-    return div({ classes: [MAP_CONTROLS_CLASS], context: null, meta: null }, [
-        topRow,
-        hoverReadout(props.hoverRegion$),
-    ]);
+    return div(baseProps([MAP_CONTROLS_CLASS]), [topRow, hoverReadout(props.hoverRegion$)]);
 }

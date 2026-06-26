@@ -6,7 +6,7 @@ import {
 } from "../../../../../../../state/discord-byo-bot/clients/byo-bot-client.js";
 import { confirmPanel } from "./mode-confirm.js";
 import { BIND_BTN } from "../../../../../../../shared/constants/clan-manage-discord/byo-bot-text.js";
-import type { ModeCtx } from "../../../../../../../state/discord/byo-bot/mode-wiring.js";
+import type { ModeCtx } from "./mode-wiring-context.js";
 
 type Track = { trackOpen: (p: SlidePanelInstance) => void; trackClose: () => void };
 

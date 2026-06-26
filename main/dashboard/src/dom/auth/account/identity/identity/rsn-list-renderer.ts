@@ -1,4 +1,4 @@
-import { createInstance, paragraph, type Instance } from "../../../../factory/index.js";
+import { createInstance, paragraph, type Instance, textProps } from "../../../../factory/index.js";
 import { ACCOUNT_EMPTY_CLASS } from "../../../../../shared/constants/account-constants.js";
 import type { Identification } from "../../../../../state/identity/identity-client/index.js";
 import { buildDisplacedBanner, buildVerifiedRow } from "./rows.js";
@@ -52,12 +52,7 @@ function syncBanner(state: RendererState, data: Identification): void {
 
 function syncEmpty(state: RendererState, isEmpty: boolean): void {
     if (isEmpty && state.emptyInst === null) {
-        state.emptyInst = paragraph({
-            classes: [ACCOUNT_EMPTY_CLASS],
-            text: "No verified rsns yet.",
-            context: null,
-            meta: null,
-        });
+        state.emptyInst = paragraph(textProps([ACCOUNT_EMPTY_CLASS], "No verified rsns yet."));
         return;
     }
     if (!isEmpty) state.emptyInst = destroyAndNull(state.emptyInst);
@@ -80,12 +75,7 @@ function assembleChildren(state: RendererState, rowPool: Map<string, Instance>, 
 
 function ensureFailed(state: RendererState): Instance {
     if (state.failedInst === null) {
-        state.failedInst = paragraph({
-            classes: [ACCOUNT_EMPTY_CLASS],
-            text: "Failed to load.",
-            context: null,
-            meta: null,
-        });
+        state.failedInst = paragraph(textProps([ACCOUNT_EMPTY_CLASS], "Failed to load."));
     }
     return state.failedInst;
 }

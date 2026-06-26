@@ -12,9 +12,10 @@ export {
 } from "./clan-db-paths.js";
 export { guildDbFile, guildDbKey } from "./guild-db-paths.js";
 export { staticDbPath, staticDbKey } from "./static-db-paths.js";
+export { DATA_DIR } from "./db-paths-base.js";
+import { DATA_DIR } from "./db-paths-base.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-export const DATA_DIR = resolve(__dirname, "..", "..", "..", "data");
 
 export function schemasDir(schemaKey: string): string {
     return resolve(__dirname, "..", "schemas", schemaKey);

@@ -6,6 +6,7 @@ import {
     paragraph,
     type Child,
     type Instance,
+    textProps,
 } from "../../../factory/index.js";
 import { isPasskeyError, passkeyClient } from "../../../../state/passkey/client/index.js";
 import { backupMetaStore, type BackupMetaState } from "../../../../state/passkey/stores/backup-meta-store.js";
@@ -21,7 +22,7 @@ function metaText(state: BackupMetaState): string {
 function generateBtn(codesHost: Instance): Instance {
     const btn = button({
         variant: BTN_VARIANT_OUTLINE,
-        compact: true,
+        
         text: "Generate",
         context: "generate a fresh set of backup codes",
         meta: ["action", "account"],
@@ -44,12 +45,12 @@ defineAccountPanel({ key: "backup-codes", order: 40, build: () => backupCodesPan
 
 export function backupCodesPanel(): Instance {
     const codesHost = div({ context: null, meta: null });
-    const meta = paragraph({
-        classes: [FORM_HINT],
-        text: derived(() => metaText(backupMetaStore.state$())),
-        context: null,
-        meta: null,
-    });
+    const meta = paragraph(
+        textProps(
+            [FORM_HINT],
+            derived(() => metaText(backupMetaStore.state$())),
+        ),
+    );
     const btn = generateBtn(codesHost);
     const bodyChildren: Child[] = [meta];
     const fresh = consumeCodes();

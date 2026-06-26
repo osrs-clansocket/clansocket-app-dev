@@ -1,7 +1,8 @@
 import { SQL_TABLES } from "../../database/core/sql-columns.js";
 import { listNotificationViews } from "../../notifications/notification-store.js";
 import { SCOPE_APP } from "../scopes/user-scope/index.js";
-import { defineTopic, type ProjectionTopic } from "./projection.js";
+import { defineTopic } from "./subscriber-projection.js";
+import type { ProjectionTopic } from "./projection-types.js";
 
 export function notificationsTopic(siteAccountId: string): ProjectionTopic {
     return defineTopic({

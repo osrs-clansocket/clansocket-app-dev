@@ -1,8 +1,9 @@
 import { effectivePreset } from "../../database/index.js";
+import { sessionReady } from "../session/socket-state.js";
 import { send } from "../transport/send.js";
 import { eachClient } from "../transport/wss-registry.js";
 import { broadcastMessage } from "../types/index.js";
-import type { DispatchContext } from "./dispatch.js";
+import type { DispatchContext } from "./dispatch-types.js";
 
 const COLOR_BRAND = "ffcc33";
 const COLOR_UPDATE = "5fd47f";
@@ -20,7 +21,7 @@ function formatUpdateBroadcast(body: string): string {
 
 export function handleClanConfig(ctx: DispatchContext): void {
     const { ws, state } = ctx;
-    if (!state.authed || !state.sockClanId || !state.sessionAccount) return;
+    if (!sessionReady(state)) return;
     const preset = effectivePreset(state.sockClanId, state.sessionAccount);
     if (!preset) return;
     send(ws, { type: "clan_config_push", payload: preset });

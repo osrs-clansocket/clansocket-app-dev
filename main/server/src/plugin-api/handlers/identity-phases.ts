@@ -15,7 +15,7 @@ import { send } from "../transport/send.js";
 import { isTelemetryAllowed } from "../session/telemetry-gate.js";
 import { enforceAccountCap } from "../session/account-cap.js";
 import type { PluginClientMessage } from "../types/index.js";
-import type { DispatchContext } from "./dispatch.js";
+import type { DispatchContext } from "./dispatch-types.js";
 
 export type IdentityMsg = Extract<PluginClientMessage, { type: "identity" }>;
 

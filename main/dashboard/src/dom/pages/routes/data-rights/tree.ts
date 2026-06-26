@@ -1,4 +1,14 @@
-import { BTN_VARIANT_OUTLINE, button, div, header, span, treeView, type Instance } from "../../../factory";
+import {
+    BTN_VARIANT_OUTLINE,
+    button,
+    div,
+    header,
+    span,
+    treeView,
+    type Instance,
+    baseProps,
+    textProps,
+} from "../../../factory";
 import type { ScopeListItem } from "../../../../state/data-rights/data-rights-client/index.js";
 import { folderNodeFor, scopeKeyFor, type LeafRef } from "./tree-nodes.js";
 export { scopeKeyFor } from "./tree-nodes.js";
@@ -39,8 +49,8 @@ function buildTreeHeader(handlers: TreeHandlers): Instance {
             }),
         );
     }
-    children.push(span({ classes: [DR_PANE_TITLE_CLASS], text: TITLE_HEADING, context: null, meta: null }));
-    return header({ classes: [DR_PANE_HEADER_CLASS], context: null, meta: null }, children);
+    children.push(span(textProps([DR_PANE_TITLE_CLASS], TITLE_HEADING)));
+    return header(baseProps([DR_PANE_HEADER_CLASS]), children);
 }
 
 export interface TreeInstance extends Instance {
@@ -71,9 +81,6 @@ export function buildTree(state: TreeState, handlers: TreeHandlers): TreeInstanc
         }),
     );
     const treeEl = treeView(nodes);
-    const root = div({ classes: [GLASS_PANE_INNER_CLASS, DR_TREE_WRAP_CLASS], context: null, meta: null }, [
-        buildTreeHeader(handlers),
-        treeEl,
-    ]);
+    const root = div(baseProps([GLASS_PANE_INNER_CLASS, DR_TREE_WRAP_CLASS]), [buildTreeHeader(handlers), treeEl]);
     return Object.assign(root, { setTableHasRows: makeSetRows(leafRefs) });
 }

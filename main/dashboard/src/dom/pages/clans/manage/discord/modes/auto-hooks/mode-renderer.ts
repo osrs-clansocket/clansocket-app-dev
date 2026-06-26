@@ -1,4 +1,4 @@
-import { paragraph, type Instance } from "../../../../../../factory";
+import { paragraph, type Instance, textProps } from "../../../../../../factory";
 import type { SelectOption } from "../../../../../../forms/glass/inputs/select/index.js";
 import { type DiscordChannel } from "../../../../../../../state/discord/client.js";
 import { valueOptionsFactory } from "../../../../../../../state/discord/auto-hooks/stores/value-options-store.js";
@@ -58,9 +58,7 @@ function renderHooksList(d: RendererDeps, triggerOptions: SelectOption[], webhoo
 
 export function makeRenderer(deps: RendererDeps): () => void {
     const renderEmpty = (): void => {
-        deps.root.setChildren(
-            paragraph({ classes: [DISCORD_PANE_PLACEHOLDER_CLASS], text: NO_WEBHOOKS_TEXT, context: null, meta: null }),
-        );
+        deps.root.setChildren(paragraph(textProps([DISCORD_PANE_PLACEHOLDER_CLASS], NO_WEBHOOKS_TEXT)));
     };
     return () => {
         const triggerOptions = buildTriggerOptions();

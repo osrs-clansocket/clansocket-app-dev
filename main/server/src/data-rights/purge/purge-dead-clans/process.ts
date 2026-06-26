@@ -1,6 +1,7 @@
 import { DB_NAMES, getDb, listAccountManagers, listClanManagers } from "../../../database/index.js";
+import { sqlPlaceholders } from "../../../database/core/operations/index.js";
 import { hasRecent, insertNotification } from "../../../notifications/notification-store.js";
-import { MS_PER_DAY } from "../../../shared/time.js";
+import { MS_PER_DAY } from "../../../shared/time/index.js";
 import { recordAction } from "../../cooldown.js";
 import { ACTION_CLAN_AUTO_PURGED } from "../../scopes/action-kinds.js";
 import { purgeClanData } from "../purge-clan.js";
@@ -54,13 +55,12 @@ export function activeClansFor(siteAccountId: string): ActiveClanRow[] {
     const managed = listAccountManagers(siteAccountId);
     if (managed.length === 0) return [];
     const ids = managed.map((m) => m.clan_id);
-    const placeholders = ids.map(() => "?").join(",");
     const appDb = getDb(DB_NAMES.APP);
     return appDb
         .prepare(
             `SELECT id, slug, display_name, status, claimed_at, created_at
              FROM clansocket_clans
-             WHERE id IN (${placeholders}) AND status = 'active' AND archived_at IS NULL`,
+             WHERE id IN (${sqlPlaceholders(ids.length)}) AND status = 'active' AND archived_at IS NULL`,
         )
         .all(...ids) as ActiveClanRow[];
 }

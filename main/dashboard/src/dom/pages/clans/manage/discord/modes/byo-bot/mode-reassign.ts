@@ -6,6 +6,8 @@ import {
     slidePanel,
     type Instance,
     type SlidePanelInstance,
+    baseProps,
+    textProps,
 } from "../../../../../../factory";
 import { type ClanManagerRow } from "../../../../../../../state/clans/clans-client/people/index.js";
 import { clanManagersStore } from "../../../../../../../state/clans/stores/clan-managers-store.js";
@@ -40,7 +42,7 @@ interface ReassignState {
 
 function renderReassignError(state: ReassignState, message: string): void {
     state.panelHost.setChildren(
-        paragraph({ classes: [DISCORD_PANE_PLACEHOLDER_CLASS], text: message, context: null, meta: null }),
+        paragraph(textProps([DISCORD_PANE_PLACEHOLDER_CLASS], message)),
         compactBtn(CANCEL_BTN, "close the reassign-linker panel after a failure", () => state.panelInstRef.v?.close()),
     );
 }
@@ -63,27 +65,20 @@ function buildOptionBtn(state: ReassignState, m: ClanManagerRow): Instance {
 function renderReassignEligible(state: ReassignState, eligible: ClanManagerRow[]): void {
     if (eligible.length === 0) {
         state.panelHost.setChildren(
-            paragraph({ classes: [DISCORD_PLACEHOLDER_HINT_CLASS], text: REASSIGN_EMPTY, context: null, meta: null }),
+            paragraph(textProps([DISCORD_PLACEHOLDER_HINT_CLASS], REASSIGN_EMPTY)),
             compactBtn(CANCEL_BTN, "close the reassign-linker panel", () => state.panelInstRef.v?.close()),
         );
         return;
     }
     state.panelHost.setChildren(
-        paragraph({ classes: [DISCORD_PLACEHOLDER_HINT_CLASS], text: REASSIGN_LEDE, context: null, meta: null }),
+        paragraph(textProps([DISCORD_PLACEHOLDER_HINT_CLASS], REASSIGN_LEDE)),
         ...eligible.map((m) => buildOptionBtn(state, m)),
         compactBtn(CANCEL_BTN, "cancel the reassign-linker action", () => state.panelInstRef.v?.close()),
     );
 }
 
 async function renderReassignManagers(state: ReassignState): Promise<void> {
-    state.panelHost.setChildren(
-        paragraph({
-            classes: [DISCORD_PLACEHOLDER_HINT_CLASS],
-            text: LOADING_MANAGERS_TEXT,
-            context: null,
-            meta: null,
-        }),
-    );
+    state.panelHost.setChildren(paragraph(textProps([DISCORD_PLACEHOLDER_HINT_CLASS], LOADING_MANAGERS_TEXT)));
     try {
         await state.managersStore.refresh();
     } catch (e) {
@@ -129,7 +124,7 @@ function reassignSlidePanel(state: ReassignState): SlidePanelInstance {
 export function buildReassignPanel(opts: ReassignPanelOptions): SlidePanelInstance {
     const state: ReassignState = {
         opts,
-        panelHost: div({ classes: [], context: null, meta: null }),
+        panelHost: div(baseProps([])),
         panelInstRef: { v: null },
         managersStore: clanManagersStore(opts.slug),
     };

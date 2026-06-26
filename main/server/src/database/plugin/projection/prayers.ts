@@ -2,7 +2,7 @@ import type Database from "better-sqlite3";
 import { SQL_COLUMNS } from "../../core/sql-columns.js";
 import { buildChangeEmitter } from "./change-inserter.js";
 import type { HandlerCtx } from "./handler-ctx.js";
-import { applyPrayerActivations, applyPrayerDeactivations } from "./prayer-activations.js";
+import { applyPrayerToggles } from "./dispatcher-prayer.js";
 import { extractWhere, type PlayerIdentity } from "./projection-utils.js";
 
 interface PrayerEntry {
@@ -73,7 +73,8 @@ export function handlePrayers(ctx: HandlerCtx): void {
             if (typeof p.id !== "number") continue;
             incomingActive.set(p.id, typeof p.name === "string" ? p.name : "");
         }
-        applyPrayerActivations({ emitter, ctx, where, priorActive, incomingActive, upsert: upsertPrayer });
-        applyPrayerDeactivations({ emitter, ctx, where, priorActive, incomingActive, upsert: upsertPrayer });
+        const toggleArgs = { emitter, ctx, where, priorActive, incomingActive, upsert: upsertPrayer };
+        applyPrayerToggles(toggleArgs, "on");
+        applyPrayerToggles(toggleArgs, "off");
     })();
 }

@@ -1,10 +1,11 @@
 import { recordChat } from "../../../database/index.js";
+import { sessionReady } from "../../session/socket-state.js";
 import { EVENT_CHAT } from "../../event-types.js";
 import { logPluginError, logPluginEvent } from "../../logger/index.js";
 import { send } from "../../transport/send.js";
 import { isTelemetryAllowed, rejectUnauthed } from "../../session/telemetry-gate.js";
 import type { PluginClientMessage } from "../../types/index.js";
-import type { DispatchContext } from "../dispatch.js";
+import type { DispatchContext } from "../dispatch-types.js";
 
 type ChatMsg = Extract<PluginClientMessage, { type: "chat" }>;
 
@@ -38,7 +39,7 @@ function persistChat(ctx: DispatchContext, msg: ChatMsg, timestampMs: number): v
 
 export function handleChat(ctx: DispatchContext, msg: ChatMsg): void {
     const { ws, state } = ctx;
-    if (!state.authed || !state.sockClanId || !state.sessionAccount || !state.sessionRsn) {
+    if (!sessionReady(state) || !state.sessionRsn) {
         rejectUnauthed(ws, state);
         return;
     }

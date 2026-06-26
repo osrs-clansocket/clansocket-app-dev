@@ -22,16 +22,36 @@
     border-color: var(--base-gold-500);
     outline: none;
 }
+.account__branding-grid-wrap {
+    position: relative;
+    min-block-size: 8rem;
+}
+.account__branding-grid-wrap > .account__branding-grid {
+    max-block-size: 14rem;
+    min-block-size: 8rem;
+}
+.account__branding-grid-wrap > .loader {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: rgb(from var(--base-graphite-900) r g b / 0.94);
+    pointer-events: all;
+}
 .account__branding-grid {
     display: grid;
     gap: var(--sp-0);
     grid-template-columns: repeat(auto-fill, minmax(var(--sp-6), 1fr));
-    max-block-size: 14rem;
     overflow-block: auto;
     padding: var(--sp-0);
     border: 0.0625rem solid var(--base-graphite-500);
     border-radius: var(--radius-md);
     background: var(--base-graphite-900);
+}
+.account__branding-family-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-1);
+    padding-block-end: var(--sp-1);
 }
 .account__branding-icon {
     display: flex;
@@ -48,10 +68,7 @@
     cursor: pointer;
 }
 .account__branding-icon-glyph {
-    display: block;
-    inline-size: 100%;
-    block-size: 100%;
-    object-fit: contain;
+    display: inline-block;
 }
 .account__branding-icon[hidden] {
     display: none;

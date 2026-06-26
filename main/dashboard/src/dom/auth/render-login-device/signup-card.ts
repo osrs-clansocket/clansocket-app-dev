@@ -1,4 +1,15 @@
-import { BTN_VARIANT_OUTLINE, button, div, heading, input, label, paragraph, type Instance } from "../../factory";
+import {
+    BTN_VARIANT_OUTLINE,
+    button,
+    div,
+    heading,
+    input,
+    label,
+    paragraph,
+    type Instance,
+    baseProps,
+    textProps,
+} from "../../factory";
 import { isPasskeyError, passkeyClient } from "../../../state/passkey/client";
 import { DISPLAY_NAME_MAX_LEN } from "../../../state/identity/identity-client/index.js";
 import { setStatus, statusLine } from "../status-line.js";
@@ -74,7 +85,7 @@ function buildSubmitBtn(args: {
     const { nameInput, deviceInput, status } = args;
     const submit: Instance<HTMLButtonElement> = button({
         variant: BTN_VARIANT_OUTLINE,
-        compact: true,
+        
         text: "Create account + add this device",
         context: "create your account and register a passkey for this device",
         meta: ["action", "account"],
@@ -91,12 +102,12 @@ function buildSignupHeader(): Instance[] {
             context: null,
             meta: null,
         }),
-        paragraph({
-            classes: [ACCOUNT_SECTION_HINT_CLASS],
-            text: "Pick a display name + register a passkey for this device. Backup codes will be shown once on the next page.",
-            context: null,
-            meta: null,
-        }),
+        paragraph(
+            textProps(
+                [ACCOUNT_SECTION_HINT_CLASS],
+                "Pick a display name + register a passkey for this device. Backup codes will be shown once on the next page.",
+            ),
+        ),
     ];
 }
 
@@ -105,11 +116,11 @@ export function buildSignupCard(): Instance {
     const nameInput = buildNameInput();
     const deviceInput = buildDeviceInput();
     const submit = buildSubmitBtn({ nameInput, deviceInput, status });
-    return div({ classes: [ACCOUNT_CARD_CLASS], context: null, meta: null }, [
+    return div(baseProps([ACCOUNT_CARD_CLASS]), [
         ...buildSignupHeader(),
-        label({ classes: [FORM_FIELD_LABEL], text: "Display name", context: null, meta: null }),
+        label(textProps([FORM_FIELD_LABEL], "Display name")),
         nameInput,
-        label({ classes: [FORM_FIELD_LABEL], text: "Device name (optional)", context: null, meta: null }),
+        label(textProps([FORM_FIELD_LABEL], "Device name (optional)")),
         deviceInput,
         submit,
         status,

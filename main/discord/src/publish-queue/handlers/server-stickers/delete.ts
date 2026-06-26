@@ -1,19 +1,23 @@
 import { PermissionsBitField, type Client } from "discord.js";
+import { orThrow } from "../../../shared/nullable.js";
 import type { PendingPublishRow } from "../../../loaders/publish-queue-loader.js";
 import { registerPublisher } from "../../publisher-registry.js";
+import { OP_KINDS, ENTITY_TYPES } from "../../publish-vocab.js";
 
 export async function deleteServerSticker(
     client: Client,
     row: PendingPublishRow,
 ): Promise<{ snowflakeResolved: null }> {
     const guild = await client.guilds.fetch(row.guild_id);
-    const sticker = await guild.stickers.fetch(row.target_id_or_temp);
-    if (!sticker) throw new Error(`server sticker ${row.target_id_or_temp} not found`);
+    const sticker = orThrow(
+        await guild.stickers.fetch(row.target_id_or_temp),
+        `server sticker ${row.target_id_or_temp} not found`,
+    );
     await sticker.delete();
     return { snowflakeResolved: null };
 }
 
-registerPublisher("delete", "discord_server_sticker", {
+registerPublisher(OP_KINDS.DELETE, ENTITY_TYPES.SERVER_STICKER, {
     handler: deleteServerSticker,
     requiredBotPermission: PermissionsBitField.Flags.ManageGuildExpressions,
 });

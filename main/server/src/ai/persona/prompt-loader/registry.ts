@@ -1,7 +1,7 @@
 import { EXT_JSON, EXT_MD } from "../../../shared/http/http-mime.js";
 import logger from "@clansocket/logger";
 import { watch } from "fs";
-import { PROMPTS_DIR } from "./file-reader.js";
+import { PROMPTS_DIR } from "./prompt-paths.js";
 import { reloadPrompts } from "./reload-prompts.js";
 
 export { setPromptFile, deletePromptFile, getPromptFile, listPromptFiles } from "./prompt-registry-store.js";

@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { requireAccount } from "../../../auth/site-routes/oauth-session.js";
+import { requireAccount } from "../../../auth/site-routes/requirer-oauth-account.js";
 import { isClanManager } from "../../../database/clans/access/clan-manager-store.js";
 import { serverByGuild } from "../../../database/discord/resolve-server.js";
 import type { RoutedServerRow } from "../../../database/discord/types.js";

@@ -1,6 +1,6 @@
 import logger from "@clansocket/logger";
 import { clanAuditDb } from "../../../database/core/database.js";
-import { wasWritten } from "../../../database/core/operations.js";
+import { wasWritten } from "../../../database/core/operations/index.js";
 import { getClanDb } from "../../../database/index.js";
 import {
     CLAN_AUDIT_DB_SITE_ACCOUNT_TABLES,

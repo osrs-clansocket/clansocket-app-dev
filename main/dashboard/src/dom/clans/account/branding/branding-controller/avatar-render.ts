@@ -1,6 +1,6 @@
 import { clanAvatarInner, createInstance, type Instance } from "../../../../factory";
 
-type AvatarIconKind = "builtin" | "image" | "voxlab" | null;
+type AvatarIconKind = "builtin" | "image" | null;
 
 export interface AvatarRenderArgs {
     avatarEl: HTMLElement;

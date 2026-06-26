@@ -1,4 +1,4 @@
-import { button, div, image, paragraph } from "../../../../factory";
+import { button, div, image, paragraph, baseProps, textProps } from "../../../../factory";
 import { glassInput } from "../../../../forms/glass/inputs/glass-input.js";
 import type { Instance } from "../../../../factory";
 import { CARD_LIST_CLASS } from "./index-cards.js";
@@ -19,7 +19,7 @@ const BRAND_ICON_SRC = "/resources/clan/runewatch.webp";
 const BRAND_TITLE = "RuneWatch";
 
 export function brandHead(): Instance<HTMLElement> {
-    const head = div({ classes: [BRAND_HEAD_CLASS], context: null, meta: null });
+    const head = div(baseProps([BRAND_HEAD_CLASS]));
     head.addChild(
         image({ src: BRAND_ICON_SRC, alt: BRAND_TITLE, classes: [BRAND_ICON_CLASS], context: null, meta: null }),
     );
@@ -34,12 +34,7 @@ export interface TopPaneKit {
 }
 
 function buildTopHeader(onRefresh: () => void): { row: Instance; refreshBtn: Instance<HTMLButtonElement> } {
-    const topHeader = paragraph({
-        classes: [HEADER_CLASS],
-        text: "Clan members on the runewatch list",
-        context: null,
-        meta: null,
-    });
+    const topHeader = paragraph(textProps([HEADER_CLASS], "Clan members on the runewatch list"));
     const refreshBtn: Instance<HTMLButtonElement> = button({
         classes: [REFRESH_BTN_CLASS],
         text: "Refresh now",
@@ -47,14 +42,14 @@ function buildTopHeader(onRefresh: () => void): { row: Instance; refreshBtn: Ins
         meta: ["action", "audit"],
         onClick: onRefresh,
     });
-    const row = div({ classes: [HEADER_ROW_CLASS], context: null, meta: null });
+    const row = div(baseProps([HEADER_ROW_CLASS]));
     row.setChildren(topHeader, refreshBtn);
     return { row, refreshBtn };
 }
 
 export function buildTopPane(onRefresh: () => void): TopPaneKit {
     const { row: topHeaderRow, refreshBtn } = buildTopHeader(onRefresh);
-    const topList = div({ classes: [CARD_LIST_CLASS], context: null, meta: null });
+    const topList = div(baseProps([CARD_LIST_CLASS]));
     const topEmpty = paragraph({
         classes: [EMPTY_CLASS, EMPTY_GOOD_CLASS],
         text: "✓  No clan members are currently flagged.",
@@ -62,7 +57,7 @@ export function buildTopPane(onRefresh: () => void): TopPaneKit {
         context: null,
         meta: null,
     });
-    const topPane = div({ classes: [TOP_PANE_CLASS], context: null, meta: null });
+    const topPane = div(baseProps([TOP_PANE_CLASS]));
     topPane.setChildren(topHeaderRow, topList, topEmpty);
     return { topPane, topList, topEmpty, refreshBtn };
 }
@@ -81,22 +76,17 @@ function buildSearchRow(onSearchInput: (q: string) => void): Instance {
         meta: ["input", "audit"],
         onInput: (e: Event) => onSearchInput((e.target as HTMLInputElement).value),
     });
-    const searchRow = div({ classes: [SEARCH_ROW_CLASS], context: null, meta: null });
+    const searchRow = div(baseProps([SEARCH_ROW_CLASS]));
     searchRow.addChild(search);
     return searchRow;
 }
 
 export function buildBottomPane(onSearchInput: (q: string) => void): BottomPaneKit {
-    const bottomHeader = paragraph({
-        classes: [HEADER_CLASS],
-        text: "Browse all runewatch cases",
-        context: null,
-        meta: null,
-    });
-    const bottomHeaderRow = div({ classes: [HEADER_ROW_CLASS], context: null, meta: null });
+    const bottomHeader = paragraph(textProps([HEADER_CLASS], "Browse all runewatch cases"));
+    const bottomHeaderRow = div(baseProps([HEADER_ROW_CLASS]));
     bottomHeaderRow.setChildren(bottomHeader);
     const searchRow = buildSearchRow(onSearchInput);
-    const bottomList = div({ classes: [CARD_LIST_CLASS], context: null, meta: null });
+    const bottomList = div(baseProps([CARD_LIST_CLASS]));
     const bottomEmpty = paragraph({
         classes: [EMPTY_CLASS],
         text: "No cases match.",
@@ -104,8 +94,8 @@ export function buildBottomPane(onSearchInput: (q: string) => void): BottomPaneK
         context: null,
         meta: null,
     });
-    const sentinel = div({ classes: [SENTINEL_CLASS], context: null, meta: null });
-    const bottomPane = div({ classes: [BOTTOM_PANE_CLASS], context: null, meta: null });
+    const sentinel = div(baseProps([SENTINEL_CLASS]));
+    const bottomPane = div(baseProps([BOTTOM_PANE_CLASS]));
     bottomPane.setChildren(bottomHeaderRow, searchRow, bottomList, bottomEmpty);
     return { bottomPane, bottomList, bottomEmpty, sentinel };
 }

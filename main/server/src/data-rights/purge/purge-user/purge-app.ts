@@ -2,7 +2,9 @@ import type Database from "better-sqlite3";
 import logger from "@clansocket/logger";
 import { DB_NAMES, getDb } from "../../../database/index.js";
 import { APP_TABLES_BY_ACCOUNT_HASH, APP_TABLES_BY_SITE_ACCOUNT } from "../../scopes/manifest/index.js";
-import { accumulateTableChanges, buildDeleteStmt, type TableColSpec } from "./purge-stmt-builder.js";
+import { buildDeleteStmt } from "./builder-purge-stmt.js";
+import { accumulateTableChanges } from "./runner-purge-stmt.js";
+import type { TableColSpec } from "./purge-stmt-types.js";
 import type { PurgeUserResult } from "./types.js";
 
 function prepareKeyedDelete(db: Database.Database, spec: TableColSpec): { key: string; stmt: Database.Statement } {

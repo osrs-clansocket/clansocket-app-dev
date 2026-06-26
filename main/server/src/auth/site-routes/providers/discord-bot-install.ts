@@ -7,14 +7,10 @@ import { clanById, clanBySlug, accountById } from "../../../database/index.js";
 import { installServer } from "../../../database/discord/servers/install.js";
 import { resolveInstallerIdentity } from "../../../database/site/site-accounts/account-hash-binding.js";
 import { botInstallUrl, exchangeInstall } from "../../oauth/discord-bot-install.js";
-import {
-    discordClientId,
-    discordConfigured,
-    publicBaseUrl,
-    requireAccount,
-    setStateCookie,
-    validateOauthState,
-} from "../oauth-session.js";
+import { discordClientId, discordConfigured, publicBaseUrl } from "../reader-oauth-config.js";
+import { requireAccount } from "../requirer-oauth-account.js";
+import { setStateCookie } from "../writer-oauth-cookie.js";
+import { validateOauthState } from "../validator-oauth-state.js";
 import { mountedRouter } from "../_mount-registry.js";
 import { consumeClanCookie, setClanCookie } from "./bot-install-cookies.js";
 

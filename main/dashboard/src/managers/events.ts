@@ -44,7 +44,7 @@ const AppEvents = {
     AI_VAULT_CHANGED: "ai:vault-changed",
 } as const;
 
-type BrandingIconKind = "builtin" | "image" | "voxlab" | null;
+type BrandingIconKind = "builtin" | "image" | null;
 
 export interface BrandingChanged {
     slug: string;

@@ -9,12 +9,14 @@ import {
     signal,
     span,
     type Instance,
+    baseProps,
+    textProps,
 } from "../../../../factory";
 import { modesStore } from "../../../../../ai/modes-store/index.js";
 import { personaStore } from "../../../../../ai/persona-store/index.js";
 import type { ConcernDef } from "../../../../../state/ai-settings/panel-defs.js";
 import { ATTR_HIDDEN, HIDDEN_FALSE, HIDDEN_TRUE } from "../../../../../shared/constants/hidden-attr-constants.js";
-import { buildRow } from "./composers/field-composer.js";
+import { buildRow } from "../../../../../ai-settings/composers/field-composer.js";
 
 const SECTION_CLASS = "account-ai-settings__concern";
 const SECTION_OPEN_CLASS = "account-ai-settings__concern--open";
@@ -93,10 +95,10 @@ function bindSectionEffects(args: SectionEffectsArgs): void {
 
 export function buildConcernSection(def: ConcernDef): Instance {
     const open = signal<boolean>(def.defaultOpen === true);
-    const body = div({ classes: [BODY_CLASS], context: null, meta: null });
+    const body = div(baseProps([BODY_CLASS]));
     for (const row of def.rows) body.addChild(buildRow(row));
     body.el.id = `concern-body-${def.id}`;
-    const badge = span({ classes: [HEAD_BADGE_CLASS], text: "overridden", context: null, meta: null });
+    const badge = span(textProps([HEAD_BADGE_CLASS], "overridden"));
     const head = buildConcernHead(def, open, badge);
     const section = div({ classes: [SECTION_CLASS], data: { "concern-id": def.id }, context: null, meta: null }, [
         head,

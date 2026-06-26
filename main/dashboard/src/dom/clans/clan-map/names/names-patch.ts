@@ -9,8 +9,6 @@ import { patchCardPosition } from "./names-patch-pos.js";
 
 export type NamesRow = PositionsState["byHash"] extends Map<string, infer R> ? R : never;
 
-export { upsertCardIn, purgeStaleCards } from "./names-patch-pool.js";
-
 export function patchCard(card: CardRefs, row: NamesRow, px: number, py: number): void {
     patchVitals(card, row);
     const lines = combatLines(row, Date.now());

@@ -1,4 +1,4 @@
-import { anchor, BTN_VARIANT_PRIMARY, button, div, paragraph } from "../factory";
+import { anchor, BTN_VARIANT_PRIMARY, button, div, paragraph, baseProps, textProps } from "../factory";
 import { FORM_HINT } from "../forms/form-classes.js";
 import {
     ACCOUNT_BOOTSTRAP_CLASS,
@@ -27,14 +27,14 @@ export function downloadFile(filename: string, content: string): void {
 export function renderCodesPanel(codes: string[], fileContent: string, intro: string): HTMLElement {
     const scroll = div(
         { classes: [ACCOUNT_CODES_SCROLL_CLASS], context: null, meta: null },
-        codes.map((c) => paragraph({ classes: [ACCOUNT_TOKEN_PLAINTEXT_CLASS], text: c, context: null, meta: null })),
+        codes.map((c) => paragraph(textProps([ACCOUNT_TOKEN_PLAINTEXT_CLASS], c))),
     );
-    return div({ classes: [ACCOUNT_BOOTSTRAP_CLASS], context: null, meta: null }, [
-        paragraph({ classes: [FORM_HINT], text: intro, context: null, meta: null }),
+    return div(baseProps([ACCOUNT_BOOTSTRAP_CLASS]), [
+        paragraph(textProps([FORM_HINT], intro)),
         scroll,
         button({
             variant: BTN_VARIANT_PRIMARY,
-            compact: true,
+            
             text: "Download as .txt",
             context: "download the backup codes as a .txt file",
             meta: ["action", "account"],

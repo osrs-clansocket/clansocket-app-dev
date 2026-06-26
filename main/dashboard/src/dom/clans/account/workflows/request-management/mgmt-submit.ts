@@ -1,4 +1,4 @@
-import { paragraph, type Instance } from "../../../../factory";
+import { paragraph, type Instance, textProps } from "../../../../factory";
 import { clansClient, type ManagerSubmitResult } from "../../../../../state/clans/clans-client/index.js";
 import { formatResultLine } from "./result-line-formatter.js";
 import { ACCOUNT_REQUEST_RESULT_LINE_CLASS } from "../../../../../shared/constants/account-constants.js";
@@ -12,12 +12,9 @@ function appendResultLines(
     statusEl.clear();
     for (let i = 0; i < results.length; i++) {
         statusEl.addChild(
-            paragraph({
-                classes: [ACCOUNT_REQUEST_RESULT_LINE_CLASS],
-                text: formatResultLine(results[i], targets[i].displayName),
-                context: null,
-                meta: null,
-            }),
+            paragraph(
+                textProps([ACCOUNT_REQUEST_RESULT_LINE_CLASS], formatResultLine(results[i], targets[i].displayName)),
+            ),
         );
     }
 }

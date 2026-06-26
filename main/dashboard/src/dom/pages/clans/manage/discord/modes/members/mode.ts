@@ -1,11 +1,11 @@
 import "../../../../../../../styles/pages/clans/manage/discord/clan-discord-page.css";
-import { paragraph, buildTreeNode, TREE_CLASS, div, type Instance } from "../../../../../../factory";
+import { paragraph, buildTreeNode, TREE_CLASS, div, type Instance, baseProps } from "../../../../../../factory";
 import { reconcile } from "../../../../../../factory/live-ops/reconcile.js";
 import { createMembersFeed } from "../../../../../../../state/discord/members/members-feed.js";
 import type { DiscordMember } from "../../../../../../../state/discord/client.js";
 import { memberLeafFor, sortedByLabel } from "./mode-nodes.js";
 import { DISCORD_PANE_PLACEHOLDER_CLASS } from "../../../../../../../shared/constants/clan-manage-discord/route-constants.js";
-import { defineDiscordMode } from "../../registry";
+import type { ModeContext } from "../../registry";
 
 const EMPTY_TEXT = "No members in this guild yet.";
 const MODE_HOST_CLASS = "clans-manage__discord-mode";
@@ -76,13 +76,6 @@ function makeMembersRerender(args: MembersRerenderArgs): () => void {
     };
 }
 
-defineDiscordMode({
-    key: "members",
-    label: "Members",
-    order: 40,
-    build: (ctx) => buildMembersMode(ctx.server.guild_id),
-});
-
 function makeEmptyEl(): Instance {
     return paragraph({
         classes: [DISCORD_PANE_PLACEHOLDER_CLASS],
@@ -94,7 +87,7 @@ function makeEmptyEl(): Instance {
 }
 
 export function buildMembersMode(guildId: string): Instance {
-    const treeHost = div({ classes: [TREE_CLASS], context: null, meta: null });
+    const treeHost = div(baseProps([TREE_CLASS]));
     const empty = makeEmptyEl();
     treeHost.el.hidden = true;
     const leafState = new Map<string, Instance>();
@@ -108,7 +101,7 @@ export function buildMembersMode(guildId: string): Instance {
         },
         rerender,
     );
-    const modeHost = div({ classes: [MODE_HOST_CLASS], context: null, meta: null }, [treeHost, empty]);
+    const modeHost = div(baseProps([MODE_HOST_CLASS]), [treeHost, empty]);
     modeHost.trackDispose({
         dispose: () => {
             for (const inst of leafState.values()) inst.destroy();
@@ -118,3 +111,5 @@ export function buildMembersMode(guildId: string): Instance {
     });
     return modeHost;
 }
+
+export const build = (ctx: ModeContext): Instance => buildMembersMode(ctx.server.guild_id);

@@ -1,4 +1,4 @@
-import { div, type Instance } from "../../../../../../../factory";
+import { div, type Instance, baseProps } from "../../../../../../../factory";
 import { textInput } from "../../../../../../../factory/content-ops/form/inputs/text-input.js";
 import { FORM_INPUT } from "../../../../../../../forms/form-classes.js";
 import { buildGlassSelect } from "../../../../../../../forms/glass/inputs/select/index.js";
@@ -41,12 +41,10 @@ export function buildChannelSection(opts: ToolbarOpts, refs: FormRefs, applyVisi
     const parentField = buildField("Category", "channel-create-parent", pSel);
     refs.channelParentField = parentField;
     const jointRows = jointField(refs, applyVisibility);
-    return div({ classes: [], context: null, meta: null }, [
+    return div(baseProps([]), [
         buildField("Type", "channel-create-type", tSel),
         parentField,
         buildField("Name", "channel-create-name", cnIn),
         ...jointRows,
     ]);
 }
-
-export { buildWebhookSection } from "./create-dropdown-webhook.js";

@@ -1,10 +1,14 @@
-import express from "express";
-import { memoryStore, type MemoryOp } from "../memory/memory-store/index.js";
-import { HTTP_BAD_REQUEST, HTTP_NOT_FOUND } from "../../shared/http/http-status.js";
+import express, { type Response } from "express";
+import { memoryStore, type MemoryOp, type MemoryResult } from "../memory/memory-store/index.js";
+import { HTTP_BAD_REQUEST, HTTP_NOT_FOUND, HTTP_OK } from "../../shared/http/http-status.js";
 import { requireSiteAccount } from "../../auth/site-middleware.js";
 import { registerApi } from "../../api-registry.js";
 
 const router = express.Router();
+
+function respondMemoryResult(res: Response, result: MemoryResult): void {
+    res.status(result.ok ? HTTP_OK : HTTP_BAD_REQUEST).json(result);
+}
 
 (() => {
     router.get("/", requireSiteAccount, (_req, res) => {
@@ -26,35 +30,20 @@ const router = express.Router();
 (() => {
     router.post("/", requireSiteAccount, (req, res) => {
         const body = req.body as Partial<MemoryOp>;
-        const result = memoryStore.apply({ ...body, action: "create" } as MemoryOp);
-        if (!result.ok) {
-            res.status(HTTP_BAD_REQUEST).json(result);
-            return;
-        }
-        res.json(result);
+        respondMemoryResult(res, memoryStore.apply({ ...body, action: "create" } as MemoryOp));
     });
 })();
 
 (() => {
     router.put("/:id", requireSiteAccount, (req, res) => {
         const body = req.body as Partial<MemoryOp>;
-        const result = memoryStore.apply({ ...body, id: req.params.id, action: "update" } as MemoryOp);
-        if (!result.ok) {
-            res.status(HTTP_BAD_REQUEST).json(result);
-            return;
-        }
-        res.json(result);
+        respondMemoryResult(res, memoryStore.apply({ ...body, id: req.params.id, action: "update" } as MemoryOp));
     });
 })();
 
 (() => {
     router.delete("/:id", requireSiteAccount, (req, res) => {
-        const result = memoryStore.apply({ id: req.params.id as string, action: "delete" });
-        if (!result.ok) {
-            res.status(HTTP_BAD_REQUEST).json(result);
-            return;
-        }
-        res.json(result);
+        respondMemoryResult(res, memoryStore.apply({ id: req.params.id as string, action: "delete" }));
     });
 })();
 

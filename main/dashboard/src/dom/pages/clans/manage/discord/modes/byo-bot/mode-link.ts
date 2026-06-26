@@ -11,6 +11,7 @@ import {
     LABEL_PUBLIC_KEY,
     SUBMIT_BTN,
 } from "../../../../../../../shared/constants/clan-manage-discord/byo-bot-text.js";
+import { baseProps } from "../../../../../../factory/index.js";
 
 export interface LinkPanelOptions {
     triggerLabel: string;
@@ -36,9 +37,9 @@ async function submitLinkPanel(opts: LinkPanelOptions, refs: LinkPanelRefs): Pro
 }
 
 function buildPanelFields(refs: LinkPanelRefs): Instance[] {
-    refs.appId = textInput({ classes: [FORM_INPUT], context: null, meta: null });
-    refs.token = textInput({ classes: [FORM_INPUT], context: null, meta: null });
-    refs.pk = textInput({ classes: [FORM_INPUT], context: null, meta: null });
+    refs.appId = textInput(baseProps([FORM_INPUT]));
+    refs.token = textInput(baseProps([FORM_INPUT]));
+    refs.pk = textInput(baseProps([FORM_INPUT]));
     return [
         buildField(LABEL_APP_ID, FIELD_ID_APP_ID, refs.appId),
         buildField(LABEL_BOT_TOKEN, FIELD_ID_BOT_TOKEN, refs.token),

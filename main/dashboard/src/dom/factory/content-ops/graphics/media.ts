@@ -3,14 +3,16 @@ import { applyEffects } from "../../effects/effect-applier.js";
 import type { EffectProp } from "../../effects/effect-types.js";
 import type { ContextProps } from "../../core/types.js";
 import type { ReactiveValue } from "../../reactive/index.js";
-import { buildIconClasses, buildIconSrc, ensureFamilyCss, getProvider } from "../../../../icons/providers.js";
+import { buildIconSrc, getProvider } from "../../../../icons/providers.js";
 import { picture, type PictureProps } from "./media-picture.js";
 import { canvas, scratchCanvas, type CanvasProps, type ScratchCanvasProps } from "./media-canvas.js";
+import { svg, use } from "./svg.js";
 export { picture, canvas, scratchCanvas };
 export type { PictureProps, CanvasProps, ScratchCanvasProps };
 
 const TAG_I = "i";
 const TAG_IMG = "img";
+const TAG_SPAN = "span";
 const LOADING_LAZY = "lazy";
 const ATTR_SRC = "src";
 const ATTR_ALT = "alt";
@@ -19,7 +21,15 @@ const ATTR_HEIGHT = "height";
 const ATTR_LOADING = "loading";
 const ATTR_TITLE = "title";
 const ATTR_ARIA_HIDDEN = "aria-hidden";
+const ATTR_STYLE = "style";
+const ATTR_FETCHPRIORITY = "fetchpriority";
+const ATTR_SRCSET = "srcset";
+const ATTR_SIZES = "sizes";
 const DEFAULT_ICON_PROVIDER = "bi";
+
+const SVG_ICON_STYLE = "display:inline-block;inline-size:1em;block-size:1em;line-height:0;";
+
+type FetchPriority = "high" | "low" | "auto";
 
 interface IconProps extends ContextProps {
     name: string;
@@ -33,11 +43,14 @@ interface IconProps extends ContextProps {
 
 interface ImageProps extends ContextProps {
     src: ReactiveValue<string>;
+    srcset?: string;
+    sizes?: string;
     alt?: ReactiveValue<string>;
     title?: ReactiveValue<string>;
     width?: number;
     height?: number;
     lazy?: boolean;
+    fetchPriority?: FetchPriority;
     classes?: readonly string[];
 }
 
@@ -63,17 +76,34 @@ function rasterIcon(provider: string, props: IconProps, ariaHiddenAttr: string |
     });
 }
 
+function svgIcon(provider: string, props: IconProps, ariaHiddenAttr: string | undefined): Instance<HTMLElement> {
+    const href = `/svg-sprite/${provider}.svg#${props.name}`;
+    const inner = svg({ attrs: { width: "1em", height: "1em", fill: "currentColor" } }, [
+        use({ attrs: { href } }),
+    ]);
+    const host = build({
+        tag: TAG_SPAN,
+        classes: props.classes && props.classes.length > 0 ? props.classes : undefined,
+        attrs: buildAttrs([
+            [ATTR_STYLE, SVG_ICON_STYLE],
+            [ATTR_TITLE, props.title ?? props.name],
+            [ATTR_ARIA_HIDDEN, ariaHiddenAttr],
+        ]),
+        effects: props.effects,
+        context: props.context,
+        meta: props.meta,
+    });
+    host.el.appendChild(inner.el);
+    return host;
+}
+
 function icon(props: IconProps): Instance<HTMLElement> {
     const provider = props.provider ?? DEFAULT_ICON_PROVIDER;
-    ensureFamilyCss(provider, props.name);
     const cfg = getProvider(provider);
     const ariaHiddenAttr = props.ariaHidden ? "true" : undefined;
     if (cfg && cfg.kind === "raster") return rasterIcon(provider, props, ariaHiddenAttr);
-    const providerClasses = buildIconClasses(provider, props.name);
-    const classes =
-        props.classes && props.classes.length > 0 ? [...providerClasses, ...props.classes] : providerClasses;
+    if (cfg && cfg.kind === "svg") return svgIcon(provider, props, ariaHiddenAttr);
     return build({
-        classes,
         tag: TAG_I,
         attrs: ariaHiddenAttr ? { [ATTR_ARIA_HIDDEN]: ariaHiddenAttr } : undefined,
         effects: props.effects,
@@ -88,6 +118,9 @@ function baseAttrs(props: ImageProps): AttrEntry[] {
         [ATTR_WIDTH, asStr(props.width)],
         [ATTR_HEIGHT, asStr(props.height)],
         [ATTR_LOADING, loading],
+        [ATTR_FETCHPRIORITY, props.fetchPriority],
+        [ATTR_SRCSET, props.srcset],
+        [ATTR_SIZES, props.sizes],
     ];
 }
 
@@ -110,4 +143,4 @@ function image(props: ImageProps): Instance<HTMLImageElement> {
 }
 
 export { icon, image };
-export type { IconProps, ImageProps };
+export type { IconProps, ImageProps, FetchPriority };

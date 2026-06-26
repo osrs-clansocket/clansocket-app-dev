@@ -14,11 +14,16 @@ interface SetAfkBody {
 }
 
 function buildAfkPayload(body: SetAfkBody, guildId: string) {
+    const state = (afkChannelId: string | null, afkTimeout: number | null) => ({
+        afkChannelId,
+        afkTimeout,
+        subject: "afk",
+    });
     return {
         actorUserId: body.userId,
         targetIdOrTemp: guildId,
-        before: { subject: "afk", afkChannelId: body.beforeAfkChannelId, afkTimeout: body.beforeAfkTimeout },
-        after: { subject: "afk", afkChannelId: body.afkChannelId, afkTimeout: body.afkTimeout },
+        before: state(body.beforeAfkChannelId, body.beforeAfkTimeout),
+        after: state(body.afkChannelId, body.afkTimeout),
         auditPayload: {
             guildId,
             targetName: body.guildName,

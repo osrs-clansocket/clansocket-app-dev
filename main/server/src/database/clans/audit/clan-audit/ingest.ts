@@ -3,18 +3,12 @@ import logger from "@clansocket/logger";
 import { clanAuditDb } from "../../../core/database.js";
 import { auditContext } from "../../../../shared/audit-context.js";
 import { getLastHash, hashRow } from "./chain.js";
-import { type ActorKind, broadcastById } from "./list/index.js";
+import { broadcastById } from "./list/index.js";
 import { prefetchDups } from "./ingest-dup-prefetch.js";
 
-export interface ClientAuditEntry {
-    sessionId: string;
-    seq: number;
-    ts: number;
-    action: string;
-    target?: string | null;
-    meta?: Record<string, unknown> | null;
-    actor_kind?: ActorKind;
-}
+import type { ClientAuditEntry } from "./ingest-types.js";
+
+export type { ClientAuditEntry } from "./ingest-types.js";
 
 export interface IngestResult {
     accepted: number;

@@ -86,3 +86,9 @@ export function initialSocketState(onIdentityTimeout: () => void): PluginSocketS
         ...initialManagerSection(),
     };
 }
+
+export function sessionReady(
+    state: PluginSocketState,
+): state is PluginSocketState & { sockClanId: string; sessionAccount: string } {
+    return state.authed && state.sockClanId !== null && state.sessionAccount !== null;
+}

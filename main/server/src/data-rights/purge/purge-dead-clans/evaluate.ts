@@ -1,5 +1,5 @@
 import { clanPluginDb, pluginModes } from "../../../database/index.js";
-import { MS_PER_DAY } from "../../../shared/time.js";
+import { MS_PER_DAY } from "../../../shared/time/index.js";
 import { CLAN_INACTIVITY_THRESHOLD_MS } from "../../../shared/clan/clan-retention.js";
 
 export const DEAD_CLAN_THRESHOLD_MS = CLAN_INACTIVITY_THRESHOLD_MS;

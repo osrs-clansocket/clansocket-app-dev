@@ -1,4 +1,4 @@
-import { anchor, div, heading, paragraph, span, type Instance } from "../../../../factory";
+import { anchor, div, heading, paragraph, span, type Instance, baseProps, textProps } from "../../../../factory";
 import { effect, type ReadSignal } from "../../../../factory/reactive/index.js";
 import type { WomGroupDetails, WomLinkedStatus } from "../../../../../state/wom/clients/wom-client.js";
 import {
@@ -47,7 +47,7 @@ function makeChipPool(): IdentityChipPool {
         homeworld: makeChip("Homeworld"),
         created: makeChip("Created"),
     };
-    const verified = span({ classes: [VERIFIED_CHIP_CLASS], text: "Verified", context: null, meta: null });
+    const verified = span(textProps([VERIFIED_CHIP_CLASS], "Verified"));
     return {
         ...chips,
         verified,
@@ -113,16 +113,11 @@ function buildIdentityElements(status: WomLinkedStatus): {
         context: null,
         meta: null,
     });
-    const descEl = paragraph({ classes: [IDENTITY_DESC_CLASS], text: "", context: null, meta: null });
+    const descEl = paragraph(textProps([IDENTITY_DESC_CLASS], ""));
     descEl.el.hidden = true;
     const chipPool = makeChipPool();
-    const metaRow = div({ classes: [META_ROW_CLASS], context: null, meta: null }, chipPool.children);
-    const panel = div({ classes: [SECTION_CLASS], context: null, meta: null }, [
-        nameEl,
-        descEl,
-        metaRow,
-        identityWomLink(status),
-    ]);
+    const metaRow = div(baseProps([META_ROW_CLASS]), chipPool.children);
+    const panel = div(baseProps([SECTION_CLASS]), [nameEl, descEl, metaRow, identityWomLink(status)]);
     return { nameEl, descEl, chipPool, panel };
 }
 

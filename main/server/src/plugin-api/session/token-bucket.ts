@@ -1,4 +1,4 @@
-import { MS_PER_SECOND } from "../../shared/time.js";
+import { MS_PER_SECOND } from "../../shared/time/index.js";
 
 export interface TokenBucket {
     tryConsume(n?: number): boolean;

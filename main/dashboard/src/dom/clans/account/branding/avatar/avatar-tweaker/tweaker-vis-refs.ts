@@ -8,9 +8,7 @@ export function buildVisRefs(ctrl: BrandingController, kit: TweakerKit): Tweaker
         labelEl: kit.labelEl,
         controls: kit.controls,
         canvasInst: kit.canvasInst,
-        voxlabHost: kit.voxlabHost,
         bodyEl: kit.bodyEl,
         revertBtn: kit.actions.revertBtn,
-        voxlabBtn: kit.actions.voxlabBtn,
     };
 }

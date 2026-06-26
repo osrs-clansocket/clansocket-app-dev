@@ -1,18 +1,14 @@
 import type { Request } from "express";
+import { envOrFallback } from "./reader-env.js";
 
 export { issueSession } from "./session-issuer.js";
 
-function isProduction(): boolean {
-    return process.env.NODE_ENV === "production";
-}
-
 export function rpId(req: Request): string {
-    const env = process.env.WEBAUTHN_RP_ID;
-    if (env) return env;
-    if (isProduction()) {
-        throw new Error("WEBAUTHN_RP_ID must be set in production");
-    }
-    return req.hostname ?? "localhost";
+    return envOrFallback(
+        "WEBAUTHN_RP_ID",
+        "WEBAUTHN_RP_ID must be set in production",
+        () => req.hostname ?? "localhost",
+    );
 }
 
 export function rpName(): string {
@@ -21,11 +17,9 @@ export function rpName(): string {
 }
 
 export function expectedOrigin(req: Request): string {
-    if (process.env.WEBAUTHN_ORIGIN) return process.env.WEBAUTHN_ORIGIN;
-    if (isProduction()) {
-        throw new Error("WEBAUTHN_ORIGIN must be set in production");
-    }
-    const proto = req.header("x-forwarded-proto") ?? req.protocol;
-    const host = req.get("host") ?? "localhost";
-    return `${proto}://${host}`;
+    return envOrFallback("WEBAUTHN_ORIGIN", "WEBAUTHN_ORIGIN must be set in production", () => {
+        const proto = req.header("x-forwarded-proto") ?? req.protocol;
+        const host = req.get("host") ?? "localhost";
+        return `${proto}://${host}`;
+    });
 }

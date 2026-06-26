@@ -1,20 +1,19 @@
-import { button, span } from "../../factory";
+import { button, icon, span, textProps } from "../../factory";
 import {
     DASH_LOGIN_OPTION_CLASS,
     DASH_LOGIN_OPTION_TEXT_CLASS,
 } from "../../../shared/constants/dashboard-shell-constants.js";
-import { bsSpan } from "./header-bs-span.js";
 
 interface LoginOptionSpec {
     provider: string;
-    iconClass: string;
+    iconName: string;
     label: string;
 }
 
 export const LOGIN_OPTIONS: ReadonlyArray<LoginOptionSpec> = [
-    { provider: "github", iconClass: "bi-github", label: "GitHub" },
-    { provider: "discord", iconClass: "bi-discord", label: "Discord" },
-    { provider: "device", iconClass: "bi-fingerprint", label: "Device" },
+    { provider: "github", iconName: "github", label: "GitHub" },
+    { provider: "discord", iconName: "discord", label: "Discord" },
+    { provider: "device", iconName: "fingerprint", label: "Device" },
 ];
 
 export function buildLoginOption(spec: LoginOptionSpec): HTMLElement {
@@ -22,12 +21,13 @@ export function buildLoginOption(spec: LoginOptionSpec): HTMLElement {
         {
             classes: [DASH_LOGIN_OPTION_CLASS],
             data: { "login-provider": spec.provider },
+            ariaLabel: `Sign in with ${spec.label}`,
             context: `sign in with ${spec.label}`,
             meta: ["action", "account"],
         },
         [
-            bsSpan(spec.iconClass),
-            span({ classes: [DASH_LOGIN_OPTION_TEXT_CLASS], text: spec.label, context: null, meta: null }).el,
+            icon({ provider: "bi", name: spec.iconName, ariaHidden: true, context: null, meta: null }).el,
+            span(textProps([DASH_LOGIN_OPTION_TEXT_CLASS], spec.label)).el,
         ],
     ).el;
 }

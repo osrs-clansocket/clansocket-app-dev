@@ -1,0 +1,7 @@
+[sqlfluff]
+# sqlfluff 4.2.1's sqlite dialect cannot parse `COLLATE NOCASE` inside a
+# CREATE INDEX column list, which is valid SQLite and required for the
+# case-insensitive `name` lookups on the static game_ids catalog.
+# Scope parse-error suppression to this directory only so real parse errors
+# elsewhere in schemas/ stay caught.
+ignore = parsing

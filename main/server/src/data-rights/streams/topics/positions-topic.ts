@@ -1,7 +1,8 @@
 import { clanPluginDb } from "../../../database/index.js";
 import { SQL_TABLES } from "../../../database/core/sql-columns.js";
 import { scopeKeyPlugin } from "../writes-stream.js";
-import { defineTopic, type ProjectionTopic } from "../projection.js";
+import { defineTopic } from "../subscriber-projection.js";
+import type { ProjectionTopic } from "../projection-types.js";
 
 const POSITION_COLUMNS = [
     "pcs.account_hash",

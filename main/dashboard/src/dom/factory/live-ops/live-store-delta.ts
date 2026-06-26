@@ -1,8 +1,6 @@
 import type { RowDelta } from "@clansocket/realtime";
 import type { LiveChange, LiveRow } from "./live-store-types.js";
 
-export { applyBaseline } from "./live-store-baseline.js";
-
 export interface LiveStoreState<Row> {
     byKey: Map<string, Row>;
     insertion: string[];

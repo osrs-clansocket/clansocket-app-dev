@@ -20,10 +20,10 @@ export interface MutationBuiltPayload {
     responseExtras?: object;
 }
 
-export type HttpMethod = "post" | "put" | "patch" | "delete";
+export type MutationMethod = "post" | "put" | "patch" | "delete";
 
 export interface MutationRouteSpec {
-    method: HttpMethod;
+    method: MutationMethod;
     path: string;
     targetKind: string;
     opKind: "create" | "update" | "delete";

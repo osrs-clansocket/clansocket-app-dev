@@ -1,4 +1,13 @@
-import { BTN_VARIANT_OUTLINE, button, div, paragraph, section, type Instance } from "../../../factory";
+import {
+    BTN_VARIANT_OUTLINE,
+    button,
+    div,
+    paragraph,
+    section,
+    type Instance,
+    baseProps,
+    textProps,
+} from "../../../factory";
 import { profileStore, type ProfileContext } from "../../../../ai/profile-store";
 import { FORM_CLASS, FORM_ROW_CLASS, HINT_CLASS, setEditing } from "./state.js";
 import { renderIdentity } from "./identity/index.js";
@@ -11,7 +20,7 @@ defineTab({ key: "profile", label: "User", order: 20, mount: (host) => renderVar
 function buildClearBtn(rerender: () => void): Instance {
     return button({
         variant: BTN_VARIANT_OUTLINE,
-        compact: true,
+        
         text: "Clear profile",
         ariaLabel: "Clear Varez profile",
         context: "clear the entire Varez profile",
@@ -27,17 +36,17 @@ function buildClearBtn(rerender: () => void): Instance {
 function renderVarezProfile(host: Instance): void {
     const profile: ProfileContext = profileStore.load();
     const rerender = (): void => renderVarezProfile(host);
-    const helpEl = paragraph({
-        classes: [HINT_CLASS],
-        text: "Varez's picture of you, built across conversations. Stored only in this browser — edit any field, clear any time.",
-        context: null,
-        meta: null,
-    });
-    const sec = section({ classes: [FORM_CLASS], context: null, meta: null }, [helpEl]);
+    const helpEl = paragraph(
+        textProps(
+            [HINT_CLASS],
+            "Varez's picture of you, built across conversations. Stored only in this browser — edit any field, clear any time.",
+        ),
+    );
+    const sec = section(baseProps([FORM_CLASS]), [helpEl]);
     renderIdentity(sec, profile.identity, rerender);
     renderFocus(sec, profile.focus, rerender);
     renderSession(sec, profile.session, rerender);
-    sec.addChild(div({ classes: [FORM_ROW_CLASS], context: null, meta: null }, [buildClearBtn(rerender)]));
+    sec.addChild(div(baseProps([FORM_ROW_CLASS]), [buildClearBtn(rerender)]));
     host.setChildren(sec);
 }
 

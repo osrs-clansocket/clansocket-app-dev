@@ -1,4 +1,4 @@
-import { hasElapsed, MS_PER_HOUR } from "../../shared/time.js";
+import { hasElapsed, MS_PER_HOUR } from "../../shared/time/index.js";
 
 const RECOMMENDED_PLAYER_UPDATE_INTERVAL_MS = 6 * MS_PER_HOUR;
 

@@ -1,4 +1,4 @@
-import { div, span, type Instance } from "../../../../../../../factory";
+import { div, span, type Instance, baseProps } from "../../../../../../../factory";
 import { renderMarkdownNodes } from "./render-markdown/render-markdown.js";
 import { maybeImage } from "./render-embed-substitute.js";
 
@@ -14,10 +14,10 @@ export function buildEmbedAuthor(name: string, iconUrl: string): Instance | null
     });
     if (icon !== null) children.push(icon);
     if (name.length > 0) {
-        const nameWrap = span({ classes: [], context: null, meta: null }, renderMarkdownNodes(name));
+        const nameWrap = span(baseProps([]), renderMarkdownNodes(name));
         children.push(nameWrap);
     }
-    const wrap = div({ classes: [], context: null, meta: null }, children);
+    const wrap = div(baseProps([]), children);
     wrap.el.style.fontSize = "var(--fs-3xs)";
     wrap.el.style.color = "var(--base-cream-100)";
     return wrap;
@@ -35,10 +35,10 @@ export function buildFooter(text: string, iconUrl: string): Instance | null {
     });
     if (icon !== null) children.push(icon);
     if (text.length > 0) {
-        const textWrap = span({ classes: [], context: null, meta: null }, renderMarkdownNodes(text));
+        const textWrap = span(baseProps([]), renderMarkdownNodes(text));
         children.push(textWrap);
     }
-    const wrap = div({ classes: [], context: null, meta: null }, children);
+    const wrap = div(baseProps([]), children);
     wrap.el.style.fontSize = "var(--fs-3xs)";
     wrap.el.style.color = "var(--base-graphite-300)";
     wrap.el.style.paddingBlockStart = "0.25rem";

@@ -1,4 +1,4 @@
-import { div, snapshot } from "../../../../../factory";
+import { div, snapshot, baseProps } from "../../../../../factory";
 import type { QuipSet } from "../quip-types.js";
 
 const QUIP_CLASS = "ai-bar__auth-quip";
@@ -6,7 +6,7 @@ const QUIP_CLASS = "ai-bar__auth-quip";
 export function measureQuipSize(refEl: HTMLElement, set: QuipSet): number {
     const parent = refEl.parentElement;
     if (parent === null) return 0;
-    const probe = div({ classes: [QUIP_CLASS], context: null, meta: null });
+    const probe = div(baseProps([QUIP_CLASS]));
     const s = probe.el.style;
     s.position = "absolute";
     s.visibility = "hidden";

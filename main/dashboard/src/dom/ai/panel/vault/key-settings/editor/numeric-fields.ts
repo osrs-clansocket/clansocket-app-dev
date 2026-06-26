@@ -5,6 +5,7 @@ import { applyNearSnap } from "../value-snapper.js";
 import { priorityWord } from "../priority-formatter.js";
 import { FORM_ROW_CLASS, FORM_ROW_FILL_CLASS, HINT_CLASS, TOKEN_DEFAULT, TOKEN_MAX, TOKEN_MIN } from "../constants.js";
 import { ACCOUNT_TOKEN_SLIDER_CLASS } from "../../../../../../shared/constants/account-constants.js";
+import { baseProps, textProps } from "../../../../../factory/index.js";
 
 function buildTokenSlider(value: number, onChange: (snapped: number, raw: number) => void): ReturnType<typeof input> {
     const slider = input({
@@ -31,13 +32,13 @@ export function buildTokensField(initialTokens: number): {
     slider: ReturnType<typeof input>;
 } {
     const value = initialTokens > 0 ? initialTokens : TOKEN_DEFAULT;
-    const label = span({ classes: [HINT_CLASS], text: `${value} max tokens`, context: null, meta: null });
+    const label = span(textProps([HINT_CLASS], `${value} max tokens`));
     const slider = buildTokenSlider(value, (snapped, raw) => {
         if (snapped !== raw) slider.el.value = String(snapped);
         label.setText(`${snapped} max tokens`);
     });
     return {
-        wrap: div({ classes: [FORM_ROW_CLASS, FORM_ROW_FILL_CLASS], context: null, meta: null }, [slider, label]),
+        wrap: div(baseProps([FORM_ROW_CLASS, FORM_ROW_FILL_CLASS]), [slider, label]),
         slider,
     };
 }

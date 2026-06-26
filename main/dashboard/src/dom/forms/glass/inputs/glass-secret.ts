@@ -1,23 +1,36 @@
-import { button, div, icon, span, type Instance } from "../../../factory/index.js";
+import { button, div, icon, span, type Instance, baseProps, textProps } from "../../../factory/index.js";
 
 const CLASS_ROOT = "glass-secret";
 const CLASS_REVEALED = "glass-secret--revealed";
 const CLASS_VALUE = "glass-secret__value";
 const CLASS_TOGGLE = "glass-secret__toggle";
+const CLASS_ICON_WRAP = "glass-secret__icon";
 const ICON_HIDDEN = "eye-slash";
 const ICON_REVEALED = "eye";
 
-function applyRevealState(toggle: Instance, iconEl: Instance, isRevealed: boolean): void {
+function renderRevealIcon(wrap: Instance, isRevealed: boolean): void {
+    wrap.clear();
+    wrap.addChild(
+        icon({
+            provider: "bi",
+            name: isRevealed ? ICON_REVEALED : ICON_HIDDEN,
+            context: null,
+            meta: null,
+        }),
+    );
+}
+
+function applyRevealState(toggle: Instance, iconWrap: Instance, isRevealed: boolean): void {
     toggle.setAttr("aria-label", isRevealed ? "hide" : "reveal");
     toggle.setAttr("title", isRevealed ? "hide" : "reveal");
-    iconEl.el.classList.remove(`bi-${ICON_HIDDEN}`, `bi-${ICON_REVEALED}`);
-    iconEl.el.classList.add(`bi-${isRevealed ? ICON_REVEALED : ICON_HIDDEN}`);
+    renderRevealIcon(iconWrap, isRevealed);
 }
 
 export function glassSecret(value: string): Instance {
-    const valueEl = span({ classes: [CLASS_VALUE], text: value, context: null, meta: null });
-    const iconEl = icon({ name: ICON_HIDDEN, context: null, meta: null });
-    const root = div({ classes: [CLASS_ROOT], context: null, meta: null }, [valueEl]);
+    const valueEl = span(textProps([CLASS_VALUE], value));
+    const iconWrap = span(baseProps([CLASS_ICON_WRAP]));
+    renderRevealIcon(iconWrap, false);
+    const root = div(baseProps([CLASS_ROOT]), [valueEl]);
     const toggle = button(
         {
             classes: [CLASS_TOGGLE],
@@ -28,10 +41,10 @@ export function glassSecret(value: string): Instance {
             meta: ["action"],
             onClick: (e) => {
                 e.stopPropagation();
-                applyRevealState(toggle, iconEl, root.el.classList.toggle(CLASS_REVEALED));
+                applyRevealState(toggle, iconWrap, root.el.classList.toggle(CLASS_REVEALED));
             },
         },
-        [iconEl],
+        [iconWrap],
     );
     root.addChild(toggle);
     return root;

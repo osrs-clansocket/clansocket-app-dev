@@ -1,7 +1,7 @@
 import logger from "@clansocket/logger";
 import { type Request, type Response } from "express";
 import { handleAsync } from "../../../api/middleware.js";
-import { requireAccount } from "../../../auth/site-routes/oauth-session.js";
+import { requireAccount } from "../../../auth/site-routes/requirer-oauth-account.js";
 import { listAllEmojis, listEmojisBot } from "../../../database/discord/emojis/list.js";
 import { HTTP_INTERNAL_ERROR } from "../../../shared/http/http-status.js";
 

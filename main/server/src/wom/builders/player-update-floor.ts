@@ -1,4 +1,4 @@
-import { hasElapsed, msUntilNext, MS_PER_HOUR } from "../../shared/time.js";
+import { hasElapsed, elapsedRemaining, MS_PER_HOUR } from "../../shared/time/index.js";
 
 export { isUpdateRecommended } from "./update-recommended.js";
 
@@ -9,5 +9,5 @@ export function isUpdateAllowed(lastUpdateAtMs: number | null, nowMs: number = D
 }
 
 export function msUntilAllowed(lastUpdateAtMs: number | null, nowMs: number = Date.now()): number {
-    return msUntilNext(lastUpdateAtMs, MIN_PLAYER_UPDATE_INTERVAL_MS, nowMs);
+    return elapsedRemaining(lastUpdateAtMs, MIN_PLAYER_UPDATE_INTERVAL_MS, nowMs);
 }

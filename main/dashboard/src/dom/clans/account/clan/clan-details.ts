@@ -8,6 +8,7 @@ import {
     inlineConfirm,
     snapshot,
     type Instance,
+    baseProps,
 } from "../../../factory";
 import { profileStore } from "../../../../state/identity/stores/profile-store.js";
 import { clansClient, type ManagedClan } from "../../../../state/clans/clans-client/index.js";
@@ -27,7 +28,7 @@ import {
 function buildNavBtn(args: { text: string; href: string; context: string }): Instance<HTMLButtonElement> {
     return button({
         variant: BTN_VARIANT_OUTLINE,
-        compact: true,
+        
         text: args.text,
         context: args.context,
         meta: ["nav", "clan"],
@@ -60,7 +61,7 @@ async function runRemoveFlow(args: {
 function buildRemoveBtn(clan: ManagedClan, removeHost: Instance): Instance<HTMLButtonElement> {
     const removeBtn: Instance<HTMLButtonElement> = button({
         variant: BTN_VARIANT_OUTLINE,
-        compact: true,
+        
         classes: [ACCOUNT_REMOVE_BTN_CLASS],
         text: "Remove clan",
         context: "permanently delete this clan and all its data",
@@ -73,7 +74,7 @@ function buildRemoveBtn(clan: ManagedClan, removeHost: Instance): Instance<HTMLB
 function buildTransferBtn(clan: ManagedClan): Instance<HTMLButtonElement> {
     const transferBtn: Instance<HTMLButtonElement> = button({
         variant: BTN_VARIANT_OUTLINE,
-        compact: true,
+        
         text: "Request ownership transfer",
         context: "request transfer of this clan's ownership",
         meta: ["action", "clan"],
@@ -88,7 +89,7 @@ function buildTransferBtn(clan: ManagedClan): Instance<HTMLButtonElement> {
 }
 
 function buildClanNav(clan: ManagedClan): Instance {
-    return div({ classes: [ACCOUNT_CLAN_ACTIONS_ROW_CLASS], context: null, meta: null }, [
+    return div(baseProps([ACCOUNT_CLAN_ACTIONS_ROW_CLASS]), [
         buildNavBtn({ text: "View clan", href: `/clans/${clan.slug}`, context: "open this clan's public page" }),
         buildNavBtn({
             text: "Manage clan",
@@ -99,9 +100,9 @@ function buildClanNav(clan: ManagedClan): Instance {
 }
 
 function buildActionsPanel(clan: ManagedClan): Instance {
-    const removeHost = div({ classes: [INLINE_CONFIRM_HOST_CLASS], context: null, meta: null });
+    const removeHost = div(baseProps([INLINE_CONFIRM_HOST_CLASS]));
     removeHost.addChild(buildRemoveBtn(clan, removeHost));
-    return div({ classes: [ACCOUNT_CLAN_PANEL_CLASS], context: null, meta: null }, [
+    return div(baseProps([ACCOUNT_CLAN_PANEL_CLASS]), [
         heading("h3", { classes: [ACCOUNT_PANEL_TITLE_CLASS], text: "Actions", context: null, meta: null }),
         buildClanNav(clan),
         removeHost,
@@ -109,18 +110,14 @@ function buildActionsPanel(clan: ManagedClan): Instance {
 }
 
 export function buildClanDetails(clan: ManagedClan): Instance {
-    const sessionsPanel = div({
-        classes: [ACCOUNT_CLAN_PANEL_CLASS, ACCOUNT_CLAN_SESSIONS_CLASS],
-        context: null,
-        meta: null,
-    });
+    const sessionsPanel = div(baseProps([ACCOUNT_CLAN_PANEL_CLASS, ACCOUNT_CLAN_SESSIONS_CLASS]));
     sessionsPanel.el.hidden = true;
-    const details = div({ classes: [ACCOUNT_CLAN_DETAILS_CLASS], context: null, meta: null }, [
+    const details = div(baseProps([ACCOUNT_CLAN_DETAILS_CLASS]), [
         sessionsPanel,
         buildActionsPanel(clan),
         buildClanWhitelist(clan),
         managerRequests(clan),
-        div({ classes: [ACCOUNT_CLAN_FOOTER_CLASS], context: null, meta: null }, [buildTransferBtn(clan)]),
+        div(baseProps([ACCOUNT_CLAN_FOOTER_CLASS]), [buildTransferBtn(clan)]),
     ]);
     const sessionsRenderer = createSessionsRenderer(sessionsPanel);
     details.trackDispose(effect(() => sessionsRenderer.render(clan.id, profileStore.sessions$())));

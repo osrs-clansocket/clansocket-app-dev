@@ -1,5 +1,5 @@
 import { DB_NAMES, getDb } from "../../core/database.js";
-import { selectColumn } from "../../core/operations.js";
+import { selectColumn } from "../../core/operations/index.js";
 import { RSN_DISPLACED_CLEANUP_MS, type DisplacedSiteAccount } from "./state.js";
 
 const DISPLACED_PURGE_SQL = `WITH account_last AS (

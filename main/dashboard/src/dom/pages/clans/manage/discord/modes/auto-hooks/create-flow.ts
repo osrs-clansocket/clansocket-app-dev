@@ -1,4 +1,4 @@
-import { div, wireInput, type Instance } from "../../../../../../factory";
+import { div, wireInput, type Instance, baseProps } from "../../../../../../factory";
 import { buildCreateForm } from "../../../../../../forms/slide-panels/create-form.js";
 import { buildGlassSelect } from "../../../../../../forms/glass/inputs/select/index.js";
 import type { SelectOption } from "../../../../../../forms/glass/inputs/select/index.js";
@@ -105,5 +105,5 @@ export function autoHookFlow(opts: CreateFlowOptions): Instance {
 }
 
 export function emptyPlaceholder(): Instance {
-    return div({ classes: [], context: null, meta: null });
+    return div(baseProps([]));
 }

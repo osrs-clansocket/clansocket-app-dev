@@ -1,5 +1,5 @@
-import { div, snapshot, span, type Child, type Instance } from "../../../../factory";
-import { fmtSpan } from "../../../../../state/clans/audit/format.js";
+import { div, snapshot, span, type Child, type Instance, baseProps, textProps } from "../../../../factory";
+import { fmtSpan } from "../../../../../state/clans/audit/formatter-audit.js";
 import {
     AUDIT_STATS_BREAKDOWN_CLASS,
     AUDIT_STATS_CLASS,
@@ -21,22 +21,15 @@ function breakdownText(stats: AggregateStats): string {
 export function buildAnalyticsStrip(stats: AggregateStats): Instance {
     const total = stats.total;
     const children: Child[] = [
-        span({
-            classes: [AUDIT_STATS_TOTAL_CLASS],
-            text: `${total} ${total === 1 ? "entry" : "entries"}`,
-            context: null,
-            meta: null,
-        }),
+        span(textProps([AUDIT_STATS_TOTAL_CLASS], `${total} ${total === 1 ? "entry" : "entries"}`)),
     ];
     const breakdown = breakdownText(stats);
     if (breakdown.length > 0) {
-        children.push(span({ classes: [AUDIT_STATS_BREAKDOWN_CLASS], text: breakdown, context: null, meta: null }));
+        children.push(span(textProps([AUDIT_STATS_BREAKDOWN_CLASS], breakdown)));
     }
     const span_ = fmtSpan(stats.earliestTs, stats.latestTs);
     if (span_.length > 0) {
-        children.push(
-            span({ classes: [AUDIT_STATS_SPAN_CLASS], text: snapshot(`Spanning ${span_}`), context: null, meta: null }),
-        );
+        children.push(span(textProps([AUDIT_STATS_SPAN_CLASS], snapshot(`Spanning ${span_}`))));
     }
-    return div({ classes: [AUDIT_STATS_CLASS], context: null, meta: null }, children);
+    return div(baseProps([AUDIT_STATS_CLASS]), children);
 }

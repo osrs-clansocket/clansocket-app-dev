@@ -1,5 +1,5 @@
 import { getStaticDb, STATIC_DB_NAMES } from "../database/index.js";
-import { selectOneStatic } from "../database/core/operations.js";
+import { selectOneStatic } from "../database/core/operations/index.js";
 
 const META_QUERY =
     "SELECT width, height, tiles_per_region, pixels_per_tile, region_px," +

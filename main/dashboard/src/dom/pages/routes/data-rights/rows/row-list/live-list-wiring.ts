@@ -1,4 +1,11 @@
-import { div, liveView, type Instance, type LiveViewHandle, type ReadSignal } from "../../../../../factory/index.js";
+import {
+    div,
+    liveView,
+    type Instance,
+    type LiveViewHandle,
+    type ReadSignal,
+    baseProps,
+} from "../../../../../factory/index.js";
 import { type BrowseResponse, type Scope } from "../../../../../../state/data-rights/data-rights-client/index.js";
 import { createBrowseStore, type BrowseStoreHandle } from "../../../../../../state/data-rights/stores/browse-store.js";
 import { mountDataRow, patchDataRow, type DataRowCtx } from "./row-item.js";
@@ -65,7 +72,7 @@ export async function buildRowWiring(config: RowListConfig, local: boolean): Pro
     if (!handle) return null;
     const { info, store } = handle;
     const ctx = makeRowCtx(config, info);
-    const scroll = div({ classes: [DR_ROW_SCROLL_CLASS], context: null, meta: null });
+    const scroll = div(baseProps([DR_ROW_SCROLL_CLASS]));
     const view: LiveViewHandle = liveView<Record<string, unknown>>({
         store,
         container: scroll,

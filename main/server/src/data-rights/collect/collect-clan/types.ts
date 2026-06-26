@@ -1,8 +1,10 @@
+import { SQL_TABLES } from "../../../database/core/sql-columns.js";
+
 export const APP_TABLES_BY_CLAN_ID: readonly { table: string; column: string }[] = [
-    { table: "clansocket_clans", column: "id" },
-    { table: "clansocket_clan_managers", column: "clan_id" },
-    { table: "clansocket_clan_manager_requests", column: "clan_id" },
-    { table: "clansocket_clan_whitelists", column: "clan_id" },
+    { table: SQL_TABLES.CLANSOCKET_CLANS, column: "id" },
+    { table: SQL_TABLES.CLANSOCKET_CLAN_MANAGERS, column: "clan_id" },
+    { table: SQL_TABLES.CLANSOCKET_CLAN_MANAGER_REQUESTS, column: "clan_id" },
+    { table: SQL_TABLES.CLANSOCKET_CLAN_WHITELISTS, column: "clan_id" },
 ];
 
 export const ICON_EXTS: readonly string[] = ["png", "jpg", "jpeg", "webp", "gif", "svg", "ico"];

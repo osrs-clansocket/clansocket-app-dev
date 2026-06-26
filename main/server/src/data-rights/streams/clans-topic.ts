@@ -2,7 +2,8 @@ import { SQL_TABLES } from "../../database/core/sql-columns.js";
 import { listAccountManagers } from "../../database/clans/access/clan-manager-store.js";
 import { listManagedClans } from "../../clans/read-managed.js";
 import { SCOPE_APP } from "../scopes/user-scope/index.js";
-import { defineTopic, type ProjectionTopic, type ProjectionTrigger } from "./projection.js";
+import { defineTopic } from "./subscriber-projection.js";
+import type { ProjectionTopic, ProjectionTrigger } from "./projection-types.js";
 import { scopeKeyClan } from "./writes-stream.js";
 
 export function clansTopic(siteAccountId: string): ProjectionTopic {

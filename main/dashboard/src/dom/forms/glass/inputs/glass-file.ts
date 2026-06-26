@@ -1,10 +1,9 @@
-import "../../../../styles/pages/voxlab/picker-page.css";
-import { div, input, label } from "../../../factory/index.js";
+import { div, input, label, baseProps } from "../../../factory/index.js";
 
-const CLS_CONTROL = "voxlab__control";
-const CLS_FILE = "voxlab__control--file";
-const CLS_FILE_INPUT = "voxlab__picker-file-input";
-const CLS_FILE_LABEL = "voxlab__picker-file-label";
+const CLS_CONTROL = "picker__control";
+const CLS_FILE = "picker__control--file";
+const CLS_FILE_INPUT = "picker-file-input";
+const CLS_FILE_LABEL = "picker-file-label";
 
 export interface FilePickerHandle {
     wrapper: HTMLElement;
@@ -28,8 +27,8 @@ export function createFilePicker(options: GlassFileOptions): FilePickerHandle {
         context: `pick file: ${options.label}`,
         meta: ["input"],
     });
-    const wrapper = div({ classes: [CLS_CONTROL, CLS_FILE], context: null, meta: null }, [
-        label({ classes: [CLS_FILE_LABEL], context: null, meta: null }, [options.label]),
+    const wrapper = div(baseProps([CLS_CONTROL, CLS_FILE]), [
+        label(baseProps([CLS_FILE_LABEL]), [options.label]),
         fileInput,
     ]);
     return {

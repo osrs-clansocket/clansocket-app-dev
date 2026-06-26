@@ -1,0 +1,23 @@
+.clan-icon {
+    position: relative;
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+}
+
+.clan-icon[hidden] {
+    display: none;
+}
+
+.clan-icon__image {
+    position: absolute;
+    inset: 0;
+    z-index: var(--z-raised);
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    will-change: opacity, transform;
+    object-fit: contain;
+}

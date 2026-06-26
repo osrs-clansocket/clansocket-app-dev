@@ -33,7 +33,6 @@ export const DISCORD_FRAME_CLASS = "clans-manage__discord-frame";
 export const DISCORD_HEADER_CLASS = "clans-manage__discord-header";
 
 export const DISCORD_RAIL_LEFT_CLASS = "clans-manage__discord-rail-left";
-export const DISCORD_RAIL_ITEM_PLACEHOLDER_CLASS = "clans-manage__discord-rail-item--placeholder";
 
 export const DISCORD_PANE_CENTER_CLASS = "clans-manage__discord-pane-center";
 export const DISCORD_PANE_PLACEHOLDER_CLASS = "clans-manage__discord-pane-placeholder";

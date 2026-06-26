@@ -1,4 +1,4 @@
-import { button, div, slidePanel, wireClick, type Instance } from "../../../factory";
+import { button, div, slidePanel, wireClick, type Instance, baseProps } from "../../../factory";
 import { identityClient } from "../../../../state/identity/identity-client/index.js";
 import { PASSKEY_ERR, isPasskeyError, passkeyClient } from "../../../../state/passkey/client";
 import { readStored } from "../../../../state/persistence";
@@ -70,7 +70,7 @@ const STATE = new WeakMap<HTMLElement, AuthGateState>();
 function ensureAuthState(containerEl: HTMLElement): AuthGateState {
     const cached = STATE.get(containerEl);
     if (cached !== undefined) return cached;
-    const host = div({ classes: [AI_BAR_AUTH_HOST_CLASS], context: null, meta: null });
+    const host = div(baseProps([AI_BAR_AUTH_HOST_CLASS]));
     host.mount(containerEl);
     const state: AuthGateState = { host, cardHandle: null };
     STATE.set(containerEl, state);

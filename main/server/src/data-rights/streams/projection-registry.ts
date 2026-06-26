@@ -1,4 +1,4 @@
-import type { ProjectionTopic } from "./projection.js";
+import type { ProjectionTopic } from "./projection-types.js";
 
 export type TopicBuilder = (siteAccountId: string, query: Record<string, unknown>) => ProjectionTopic | null;
 

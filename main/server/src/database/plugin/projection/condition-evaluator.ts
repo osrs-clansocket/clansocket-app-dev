@@ -4,14 +4,6 @@ export interface AutoHookCondition {
     value: string;
 }
 
-const OP_EQ = "eq";
-const OP_NE = "ne";
-const OP_GT = "gt";
-const OP_GTE = "gte";
-const OP_LT = "lt";
-const OP_LTE = "lte";
-const OP_CONTAINS = "contains";
-
 function asString(v: unknown): string {
     return v === null || v === undefined ? "" : String(v);
 }
@@ -21,19 +13,28 @@ function asNumber(v: unknown): number {
     return Number.isFinite(n) ? n : NaN;
 }
 
+const STRING_OPS: Record<string, (raw: unknown, val: string) => boolean> = {
+    eq: (raw, val) => asString(raw) === val,
+    ne: (raw, val) => asString(raw) !== val,
+    contains: (raw, val) => asString(raw).toLowerCase().includes(val.toLowerCase()),
+};
+
+const NUMBER_OPS: Record<string, (l: number, r: number) => boolean> = {
+    gt: (l, r) => l > r,
+    gte: (l, r) => l >= r,
+    lt: (l, r) => l < r,
+    lte: (l, r) => l <= r,
+};
+
 function evaluateOne(payload: Record<string, unknown>, c: AutoHookCondition): boolean {
     const raw = payload[c.field];
-    if (c.op === OP_EQ) return asString(raw) === c.value;
-    if (c.op === OP_NE) return asString(raw) !== c.value;
-    if (c.op === OP_CONTAINS) return asString(raw).toLowerCase().includes(c.value.toLowerCase());
+    const strOp = STRING_OPS[c.op];
+    if (strOp) return strOp(raw, c.value);
+    const numOp = NUMBER_OPS[c.op];
+    if (!numOp) return false;
     const left = asNumber(raw);
     const right = asNumber(c.value);
-    if (Number.isNaN(left) || Number.isNaN(right)) return false;
-    if (c.op === OP_GT) return left > right;
-    if (c.op === OP_GTE) return left >= right;
-    if (c.op === OP_LT) return left < right;
-    if (c.op === OP_LTE) return left <= right;
-    return false;
+    return !Number.isNaN(left) && !Number.isNaN(right) && numOp(left, right);
 }
 
 export function evaluateConditions(conditionsJson: string | null, payload: object): boolean {

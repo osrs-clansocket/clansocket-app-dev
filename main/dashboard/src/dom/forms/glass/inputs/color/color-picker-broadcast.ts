@@ -1,5 +1,6 @@
 import type { Instance } from "../../../../factory/index.js";
-import { hexToHsl, hexToRgb } from "./math.js";
+import { hexToRgb } from "./math.js";
+import { hexToHsl } from "./hsl.js";
 import { setSlider } from "./sliders.js";
 import type { PickerSliders, PickerState } from "./color-picker-types.js";
 

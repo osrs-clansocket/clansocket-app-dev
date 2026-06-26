@@ -1,4 +1,5 @@
-import { ASCII_UPPER_TO_LOWER_OFFSET, isAsciiUpper } from "./ascii-bounds.js";
+import { ASCII_UPPER_TO_LOWER_OFFSET } from "./ascii-codes.js";
+import { isAsciiUpper } from "./predicate-ascii.js";
 
 export function lowercaseAsciiChar(ch: string): string {
     const code = ch.charCodeAt(0);

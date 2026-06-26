@@ -1,4 +1,4 @@
-import { parseIsoMs } from "../../shared/time.js";
+import { parseIsoMs } from "../../shared/time/index.js";
 
 const CLUE_PREFIX = "clue_scrolls_";
 

@@ -1,4 +1,5 @@
 import { Events } from "discord.js";
+import { STATE_KINDS } from "../../../../core/constants.js";
 import { registerListener } from "../../listener-registry.js";
 import { pEmoji } from "../../specs/payloads.js";
 import { deleteOf } from "../../specs/persisters.js";
@@ -9,5 +10,5 @@ registerListener({
     triggerId: "discord:server-emojis.deleted",
     selectEntity: passthrough,
     buildPayload: pEmoji,
-    persist: deleteOf("server-emojis"),
+    persist: deleteOf(STATE_KINDS.SERVER_EMOJIS),
 });

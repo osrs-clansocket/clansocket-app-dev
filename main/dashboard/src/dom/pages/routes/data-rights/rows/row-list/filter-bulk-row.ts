@@ -5,11 +5,12 @@ import {
     INLINE_CONFIRM_HOST_CLASS,
     inlineConfirm,
     type Instance,
+    baseProps,
 } from "../../../../../factory/index.js";
 import type { RowListHandlers, RowListState } from "./types.js";
 
 export function buildBulkRow(state: RowListState, handlers: RowListHandlers): Instance {
-    const bulkHost = div({ classes: [INLINE_CONFIRM_HOST_CLASS], context: null, meta: null });
+    const bulkHost = div(baseProps([INLINE_CONFIRM_HOST_CLASS]));
     const bulk = button({
         variant: BTN_VARIANT_OUTLINE,
         text: "Delete range",

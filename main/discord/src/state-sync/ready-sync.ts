@@ -1,4 +1,5 @@
 import logger from "@clansocket/logger";
+import { STATE_KINDS } from "../core/constants.js";
 import type { Client, Guild } from "discord.js";
 import { loadBotServers } from "../loaders/bot-servers-loader.js";
 import type { BotIdentity } from "../shared/types/bot-types.js";
@@ -79,13 +80,13 @@ export async function syncOneGuild(
     const channels = await collectChannelRows(guildId, guild);
     const roles = [...guild.roles.cache.values()].map(extractRoleRow);
     const members = await collectMembers(guild);
-    await bulkReplace("channels", guildId, channels);
-    await bulkReplace("roles", guildId, roles);
-    await bulkReplace("members", guildId, members);
+    await bulkReplace(STATE_KINDS.CHANNELS, guildId, channels);
+    await bulkReplace(STATE_KINDS.ROLES, guildId, roles);
+    await bulkReplace(STATE_KINDS.MEMBERS, guildId, members);
     await postServerFeatures(guildId, [...guild.features]);
     await syncAllWebhooks(guildId, guild, botId, botName);
-    await bulkReplace("server-emojis", guildId, [...guild.emojis.cache.values()].map(extractEmojiRow));
-    await bulkReplace("server-stickers", guildId, [...guild.stickers.cache.values()].map(extractStickerRow));
+    await bulkReplace(STATE_KINDS.SERVER_EMOJIS, guildId, [...guild.emojis.cache.values()].map(extractEmojiRow));
+    await bulkReplace(STATE_KINDS.SERVER_STICKERS, guildId, [...guild.stickers.cache.values()].map(extractStickerRow));
     const settings = await extractSettingsRow(guild);
     await upsertSettings(guildId, settings);
     await syncAllOverwrites(guildId, guild);

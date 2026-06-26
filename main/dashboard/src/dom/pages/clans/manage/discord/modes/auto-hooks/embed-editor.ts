@@ -1,4 +1,4 @@
-import { div, span, wireInput, type Instance } from "../../../../../../factory";
+import { div, span, wireInput, type Instance, baseProps, textProps } from "../../../../../../factory";
 import { glassInput } from "../../../../../../forms/glass/inputs/glass-input.js";
 import { glassTextarea } from "../../../../../../forms/glass/inputs/glass-textarea.js";
 import {
@@ -11,22 +11,9 @@ import { buildEmbedSecondary } from "./embed-secondary.js";
 
 const DEFAULT_EMBED_COLOR = "#5865F2";
 
-export interface EmbedState {
-    title: string;
-    description: string;
-    color: string;
-    url: string;
-    authorName: string;
-    authorIconUrl: string;
-    footerText: string;
-    footerIconUrl: string;
-    thumbnailUrl: string;
-    imageUrl: string;
-}
+import type { EmbedState, EmbedEditorCallbacks } from "./embed-editor-types.js";
 
-export interface EmbedEditorCallbacks {
-    onChange: (next: Partial<EmbedState>) => void;
-}
+export type { EmbedState, EmbedEditorCallbacks } from "./embed-editor-types.js";
 
 export interface EmbedEditorExtras {
     buildDescAccessories?: (textareaEl: HTMLTextAreaElement) => readonly Instance[];
@@ -34,8 +21,8 @@ export interface EmbedEditorExtras {
 
 function buildRow(label: string, control: Instance): Instance {
     control.el.classList.add(AUTO_HOOKS_CARD_VALUE_CLASS);
-    return div({ classes: [AUTO_HOOKS_CARD_ROW_CLASS], context: null, meta: null }, [
-        span({ classes: [AUTO_HOOKS_CARD_LABEL_CLASS], text: label, context: null, meta: null }),
+    return div(baseProps([AUTO_HOOKS_CARD_ROW_CLASS]), [
+        span(textProps([AUTO_HOOKS_CARD_LABEL_CLASS], label)),
         control,
     ]);
 }
@@ -84,7 +71,7 @@ export function buildEmbedEditor(
 ): Instance {
     const descTextarea = buildEmbedDesc(state.description, (v) => cb.onChange({ description: v }));
     const accessories = extras.buildDescAccessories?.(descTextarea.el as HTMLTextAreaElement) ?? [];
-    return div({ classes: [AUTO_HOOKS_EMBED_EDITOR_CLASS], context: null, meta: null }, [
+    return div(baseProps([AUTO_HOOKS_EMBED_EDITOR_CLASS]), [
         ...buildTextRows(state, cb),
         buildRow("Description", descTextarea),
         ...accessories,

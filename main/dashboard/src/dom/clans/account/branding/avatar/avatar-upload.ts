@@ -1,4 +1,4 @@
-import { div, input, span, type Instance } from "../../../../factory/index.js";
+import { div, input, span, type Instance, baseProps, textProps } from "../../../../factory/index.js";
 import type { BrandingController } from "../branding-controller/index.js";
 import { FORM_FIELD_LABEL } from "../../../../forms/form-classes.js";
 import {
@@ -48,8 +48,8 @@ export function buildAvatarUpload(ctrl: BrandingController): Instance {
     avatar.setAttr("role", "button").setAttr("tabindex", "0").setAttr("aria-label", "upload custom image");
     avatar.el.title = "click to upload .ico / .png / .svg / .webp / .jpg";
     ctrl.triggerUpload = () => fileInput.el.click();
-    return div({ classes: [ACCOUNT_BRANDING_AVATAR_BLOCK_CLASS], context: null, meta: null }, [
-        span({ classes: [FORM_FIELD_LABEL], text: "Preview", context: null, meta: null }),
+    return div(baseProps([ACCOUNT_BRANDING_AVATAR_BLOCK_CLASS]), [
+        span(textProps([FORM_FIELD_LABEL], "Preview")),
         avatar,
         uploadCaptionSpan(() => fileInput.el.click()),
         fileInput,

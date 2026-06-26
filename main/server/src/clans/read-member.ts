@@ -1,4 +1,5 @@
 import { DB_NAMES, getClanDb, getDb } from "../database/index.js";
+import { sqlPlaceholders } from "../database/core/operations/index.js";
 import { listAccountManagers } from "../database/clans/access/clan-manager-store.js";
 import { hashesForAccount } from "../database/site/site-accounts/index.js";
 import { buildClanView, type ClanRow, type ManagedClanView } from "./clan-view-builder.js";
@@ -9,9 +10,8 @@ const MEMBER_GRANTED_AT = 0;
 
 function hasRosterRow(clanId: string, hashes: readonly string[]): boolean {
     if (hashes.length === 0) return false;
-    const ph = hashes.map(() => "?").join(",");
     const row = getClanDb(clanId)
-        .prepare(`SELECT 1 FROM clan_members WHERE account_hash IN (${ph}) LIMIT 1`)
+        .prepare(`SELECT 1 FROM clan_members WHERE account_hash IN (${sqlPlaceholders(hashes.length)}) LIMIT 1`)
         .get(...hashes);
     return Boolean(row);
 }

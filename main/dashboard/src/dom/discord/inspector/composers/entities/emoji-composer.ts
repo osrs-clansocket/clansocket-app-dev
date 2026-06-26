@@ -6,6 +6,7 @@ import {
     INLINE_CONFIRM_HOST_CLASS,
     inlineConfirm,
     type Instance,
+    baseProps,
 } from "../../../../factory";
 import { identityStore } from "../../../../../state/identity/stores/identity-store.js";
 import { deleteServerEmoji, updateServerEmoji, type DiscordServerEmoji } from "../../../../../state/discord/client.js";
@@ -51,11 +52,11 @@ function roleRestrictionDerived(emoji: DiscordServerEmoji): () => string {
 }
 
 function buildDeleteSection(emoji: DiscordServerEmoji): Instance {
-    const deleteHost = div({ classes: [INLINE_CONFIRM_HOST_CLASS], context: null, meta: null });
+    const deleteHost = div(baseProps([INLINE_CONFIRM_HOST_CLASS]));
     const deleteBtn = button({
         classes: [],
         variant: BTN_VARIANT_OUTLINE,
-        compact: true,
+        
         text: "Delete emoji",
         ariaLabel: `Delete server emoji ${emoji.name}`,
         context: `delete the ${emoji.name} server emoji`,
@@ -63,7 +64,7 @@ function buildDeleteSection(emoji: DiscordServerEmoji): Instance {
         onClick: () => void confirmEmojiDelete(deleteHost, emoji),
     });
     deleteHost.addChild(deleteBtn);
-    return div({ classes: [DISCORD_INSPECTOR_SECTION_CLASS], context: null, meta: null }, [deleteHost]);
+    return div(baseProps([DISCORD_INSPECTOR_SECTION_CLASS]), [deleteHost]);
 }
 
 export function serverEmojiSections(emoji: DiscordServerEmoji): Instance[] {

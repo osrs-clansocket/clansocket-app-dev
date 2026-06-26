@@ -35,5 +35,5 @@ defineIconFamily({
         kind: "raster",
         resolveSrc: resolveOsrsSrc,
     },
-    glyphLoader: async () => (await import("../../osrs.json")).default as Record<string, number>,
+    glyphLoader: async () => (await import("../../osrs.json")).default as readonly string[],
 });

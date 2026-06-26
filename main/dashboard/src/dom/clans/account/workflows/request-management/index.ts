@@ -1,4 +1,4 @@
-import { div, input, type Instance } from "../../../../factory";
+import { div, input, type Instance, baseProps } from "../../../../factory";
 import { MIN_SEARCH_LEN, SEARCH_DEBOUNCE_MS } from "./constants.js";
 import { buildMgmtBtns, buildMgmtForm, submitManagerRequests, type ReqMgmtRefs } from "./mgmt-form.js";
 import {
@@ -67,5 +67,5 @@ export function buildRequestManagement(onResolved: () => void): Instance {
     });
     formEl.el.hidden = true;
     formElRef.el = formEl;
-    return div({ classes: [ACCOUNT_ADD_CLAN_CLASS], context: null, meta: null }, [openBtn, formEl]);
+    return div(baseProps([ACCOUNT_ADD_CLAN_CLASS]), [openBtn, formEl]);
 }

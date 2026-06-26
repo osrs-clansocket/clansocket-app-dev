@@ -1,6 +1,6 @@
 import logger from "@clansocket/logger";
 import { getDb, DB_NAMES } from "../../database/index.js";
-import { MS_PER_MINUTE } from "../../shared/time.js";
+import { MS_PER_MINUTE } from "../../shared/time/index.js";
 
 const MS_PER_SECOND = 1000;
 
@@ -24,6 +24,12 @@ function normalizeTarget(target: string): string {
     return target.toLowerCase().trim();
 }
 
+const gateResult = (allowed: boolean, reason: string | null, remainingSeconds: number): GateResult => ({
+    allowed,
+    reason,
+    remainingSeconds,
+});
+
 function check(siteAccountId: string, action: string, target = ""): GateResult {
     const norm = normalizeTarget(target);
     const db = getDb(DB_NAMES.AI);
@@ -33,25 +39,18 @@ function check(siteAccountId: string, action: string, target = ""): GateResult {
         )
         .get(siteAccountId, action, norm) as { cooldown_minutes: number; executed_at: number } | undefined;
 
-    if (!row) return { allowed: true, reason: null, remainingSeconds: 0 };
+    if (!row) return gateResult(true, null, 0);
 
     const elapsed = Date.now() - row.executed_at;
-    const cooldownMs = row.cooldown_minutes * MS_PER_MINUTE;
-    const remaining = cooldownMs - elapsed;
-
-    if (remaining <= 0) return { allowed: true, reason: null, remainingSeconds: 0 };
+    const remaining = row.cooldown_minutes * MS_PER_MINUTE - elapsed;
+    if (remaining <= 0) return gateResult(true, null, 0);
 
     const remainingSeconds = Math.ceil(remaining / 1000);
     const mins = Math.floor(remainingSeconds / 60);
     const secs = remainingSeconds % 60;
     const timeStr = mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
     const label = norm ? `${action}:${norm}` : action;
-
-    return {
-        allowed: false,
-        reason: `"${label}" is on cooldown. Available in ${timeStr}.`,
-        remainingSeconds,
-    };
+    return gateResult(false, `"${label}" is on cooldown. Available in ${timeStr}.`, remainingSeconds);
 }
 
 function record(siteAccountId: string, action: string, target = "", cooldownMinutes = DEFAULT_COOLDOWN_MINUTES): void {

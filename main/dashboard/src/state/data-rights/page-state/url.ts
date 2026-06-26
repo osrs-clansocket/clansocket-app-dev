@@ -1,3 +1,4 @@
+import { findOrNull } from "../../../shared/util/util-finder.js";
 import type { ScopeListItem } from "../data-rights-client/index.js";
 import type { PageState } from "./types.js";
 
@@ -48,7 +49,7 @@ export function readUrl(scopes: ScopeListItem[]): {
         if ((s.clanId ?? "") !== (clan ?? "")) return false;
         return (s.mode ?? "") === (mode ?? "");
     };
-    const scope = scopes.find(matchesScope) ?? null;
+    const scope = findOrNull(scopes, matchesScope);
     const fromRaw = params.get(URL_FROM);
     const toRaw = params.get(URL_TO);
     return {

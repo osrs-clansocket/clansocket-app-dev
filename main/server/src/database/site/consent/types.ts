@@ -3,6 +3,12 @@ import { CLAIM_CONSENT_TTL_MS, RSN_VERIFY_TTL_MS } from "../rsn/state.js";
 export type ConsentKind = "rsn" | "claim";
 export type ConsentStatus = "pending" | "confirmed" | "rejected" | "expired" | "cancelled";
 
+export const CONSENT_PENDING = "pending" satisfies ConsentStatus;
+export const CONSENT_CONFIRMED = "confirmed" satisfies ConsentStatus;
+export const CONSENT_REJECTED = "rejected" satisfies ConsentStatus;
+export const CONSENT_EXPIRED = "expired" satisfies ConsentStatus;
+export const CONSENT_CANCELLED = "cancelled" satisfies ConsentStatus;
+
 export const TTL_BY_KIND: Record<ConsentKind, number> = {
     rsn: RSN_VERIFY_TTL_MS,
     claim: CLAIM_CONSENT_TTL_MS,

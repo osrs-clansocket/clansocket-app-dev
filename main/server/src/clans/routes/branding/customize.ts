@@ -9,7 +9,7 @@ import { ClanAuditActions, recordClanAudit } from "../../../database/index.js";
 import { ensureClanDir } from "../../../database/core/database.js";
 import { requireSiteAccount } from "../../../auth/site-middleware.js";
 import { loadOwnedClan } from "../../load-owned-clan.js";
-import { pristineIconPath, removeCustomizedIcon, writeTransformSidecar } from "../../icon/filesystem.js";
+import { pristineIconPath, removeCustomizedIcon, writeTransformSidecar } from "../../icon/index.js";
 import { SHARP_READABLE_EXTS, bakeCustomizedIcon } from "../../icon/bake.js";
 import { parseTransform, type CustomizeTransform } from "../../icon/transform.js";
 import { mountedRouter } from "../_mount-registry.js";

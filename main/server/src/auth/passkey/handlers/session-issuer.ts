@@ -2,7 +2,7 @@ import type { Request, Response } from "express";
 import { mintSiteSession } from "../../site-session.js";
 import { COOKIE_SITE_SESSION } from "../../oauth-providers.js";
 import { secureCookieOptions } from "../../secure-cookie.js";
-import { MS_PER_DAY } from "../../../shared/time.js";
+import { MS_PER_DAY } from "../../../shared/time/index.js";
 
 const SESSION_COOKIE_MAX_AGE_DAYS = 30;
 

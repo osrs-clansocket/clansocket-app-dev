@@ -1,4 +1,5 @@
 import { Events } from "discord.js";
+import { STATE_KINDS } from "../../../../core/constants.js";
 import { extractRoleRow } from "../../../../state-sync/roles/extract.js";
 import { registerListener } from "../../listener-registry.js";
 import { pRoleCU } from "../../specs/payloads.js";
@@ -10,5 +11,5 @@ registerListener({
     triggerId: "discord:roles.created",
     selectEntity: passthrough,
     buildPayload: pRoleCU,
-    persist: upsertOf("roles", extractRoleRow),
+    persist: upsertOf(STATE_KINDS.ROLES, extractRoleRow),
 });

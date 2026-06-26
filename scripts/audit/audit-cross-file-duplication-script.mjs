@@ -9,6 +9,13 @@ const { parse } = require("@typescript-eslint/typescript-estree");
 const { hashNode, getObjKeys } = require("../../shared/config/eslint-rules/duplication-hash.cjs");
 const { build4DReport } = require("../../shared/config/eslint-rules/report-builder.cjs");
 const pathsConfig = require("../../shared/config/paths.json");
+const ALLOWLIST = require("../../shared/config/eslint-rules/no-cross-file-duplication.allowlist.cjs");
+
+function isAllowlisted(type, key) {
+    const mod = key.split("::")[0];
+    const fp = key.slice(mod.length + 2);
+    return Object.prototype.hasOwnProperty.call(ALLOWLIST[type] || {}, fp);
+}
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, "..", "..");
@@ -281,6 +288,7 @@ function analyze(collectors) {
     for (const [key, group] of collectors.literals) {
         if (group.length < THRESHOLDS.literal) continue;
         if (uniqueFiles(group) < 2) continue;
+        if (isAllowlisted("literal", key)) continue;
         const val = serializeLiteral(group[0].value);
         const mod = moduleOf(key);
         const narrative = `Cross-file literal duplication. Value ${val} repeated ${group.length}× across ${uniqueFiles(group)} files in module [${mod}]. Inline literals diverge silently — extract to a named constant so every consumer reads the same value.`;
@@ -289,6 +297,7 @@ function analyze(collectors) {
     for (const [key, group] of collectors.funcs) {
         if (group.length < THRESHOLDS.structural) continue;
         if (uniqueFiles(group) < 2) continue;
+        if (isAllowlisted("structural", key)) continue;
         const mod = moduleOf(key);
         const names = group.map(g => g.name).join(", ");
         const narrative = `Cross-file structural duplication. ${group.length} functions with identical body across ${uniqueFiles(group)} files: ${names}. Same logic in N places = N-1 forgotten patches when behavior changes.`;
@@ -297,6 +306,7 @@ function analyze(collectors) {
     for (const [key, group] of collectors.conditions) {
         if (group.length < THRESHOLDS.logical) continue;
         if (uniqueFiles(group) < 2) continue;
+        if (isAllowlisted("logical", key)) continue;
         const mod = moduleOf(key);
         const narrative = `Cross-file logical duplication. Same if-condition repeated ${group.length}× across ${uniqueFiles(group)} files in module [${mod}]. Predicate logic must live in one place — guard functions are the standard pattern.`;
         if (report("logical", group, mod, narrative, `Extract to a named predicate: const isX = (...) => ...; import it in every consumer.`)) violations++;
@@ -304,6 +314,7 @@ function analyze(collectors) {
     for (const [key, group] of collectors.shapes) {
         if (group.length < THRESHOLDS.data) continue;
         if (uniqueFiles(group) < 2) continue;
+        if (isAllowlisted("data", key)) continue;
         const mod = moduleOf(key);
         const keys = group[0].keys.join(", ");
         const narrative = `Cross-file data duplication. Object shape {${keys}} repeated ${group.length}× across ${uniqueFiles(group)} files in module [${mod}]. Repeated shapes signal a missing type/factory.`;
@@ -312,6 +323,7 @@ function analyze(collectors) {
     for (const [key, group] of collectors.handlers) {
         if (group.length < THRESHOLDS.behavioral) continue;
         if (uniqueFiles(group) < 2) continue;
+        if (isAllowlisted("behavioral", key)) continue;
         const mod = moduleOf(key);
         const narrative = `Cross-file behavioral duplication. Same "${group[0].event}" handler pattern repeated ${group.length}× across ${uniqueFiles(group)} files in module [${mod}]. Identical handler logic = a missing shared function.`;
         if (report("behavioral", group, mod, narrative, `Create a shared handler function in a -helpers.ts or -events.ts and reference it from every listener registration.`)) violations++;
@@ -319,6 +331,7 @@ function analyze(collectors) {
     for (const [key, group] of collectors.validations) {
         if (group.length < THRESHOLDS.validation) continue;
         if (uniqueFiles(group) < 2) continue;
+        if (isAllowlisted("validation", key)) continue;
         const mod = moduleOf(key);
         const narrative = `Cross-file validation duplication. Same typeof check repeated ${group.length}× across ${uniqueFiles(group)} files in module [${mod}]. Type guards belong in one named function — drift means inconsistent validation.`;
         if (report("validation", group, mod, narrative, `Create a type guard: function isType(x): x is T { ... }. Import it everywhere you currently inline the check.`)) violations++;
@@ -326,6 +339,7 @@ function analyze(collectors) {
     for (const [key, group] of collectors.timers) {
         if (group.length < THRESHOLDS.temporal) continue;
         if (uniqueFiles(group) < 2) continue;
+        if (isAllowlisted("temporal", key)) continue;
         const mod = moduleOf(key);
         const narrative = `Cross-file temporal duplication. Same ${group[0].kind} pattern repeated ${group.length}× across ${uniqueFiles(group)} files in module [${mod}]. Timer/scheduler patterns drift in subtle ways — centralize them.`;
         if (report("temporal", group, mod, narrative, `Extract to a parameterized scheduler helper. All timer registrations call the helper.`)) violations++;

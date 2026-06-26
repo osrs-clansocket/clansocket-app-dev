@@ -5,7 +5,7 @@ import { isTelemetryAllowed } from "../session/telemetry-gate.js";
 import { pushPending } from "../consent/rsn-verify.js";
 import { pushByRsn } from "../consent/claim-push.js";
 import type { PluginSocketState } from "../session/socket-state.js";
-import type { DispatchContext } from "./dispatch.js";
+import type { DispatchContext } from "./dispatch-types.js";
 import {
     evaluateClanMembership,
     evaluateManagerBinding,
@@ -19,7 +19,7 @@ import {
 import { identityPrechecks } from "./identity-precheck.js";
 import { validateRsnIdentity } from "./validate-rsn-identity.js";
 
-function populateIdentity(state: PluginSocketState, msg: IdentityMsg, clanRow: ClanRow | null, mode: string): void {
+function updateIdentityState(state: PluginSocketState, msg: IdentityMsg, clanRow: ClanRow | null, mode: string): void {
     state.sockMode = mode;
     state.sockClanId = clanRow?.id ?? null;
     state.clanStatus = clanRow?.status ?? null;
@@ -28,7 +28,7 @@ function populateIdentity(state: PluginSocketState, msg: IdentityMsg, clanRow: C
     state.currentWorld = msg.world;
 }
 
-function logAccepted(sessionId: string, msg: IdentityMsg, mode: string): void {
+function logIdentityAccepted(sessionId: string, msg: IdentityMsg, mode: string): void {
     logPluginIdentity(sessionId, {
         mode,
         rsn: msg.rsn,
@@ -66,9 +66,9 @@ export function handleIdentity(ctx: DispatchContext, msg: IdentityMsg): void {
     if (clanResolution === "error") return;
     const clanRow = clanResolution;
     const mode = modeKey(msg.worldTypes, msg.activity);
-    populateIdentity(state, msg, clanRow, mode);
+    updateIdentityState(state, msg, clanRow, mode);
     if (clanRow && isTelemetryAllowed(state.clanStatus) && !recordIdentityDb(ctx, msg, clanRow, mode)) return;
-    logAccepted(sessionId, msg, mode);
+    logIdentityAccepted(sessionId, msg, mode);
     postAuth(ctx, msg);
     if (!clanRow) return;
     evaluateManagerBinding(ctx, clanRow);

@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync } from "fs";
 import { resolve } from "path";
 import { CLANS_SUBDIR, PLUGIN_DB_PREFIX } from "./db-constants.js";
-import { DATA_DIR } from "./db-paths.js";
+import { DATA_DIR } from "./db-paths-base.js";
 
 export function clanDirPath(clanId: string): string {
     return resolve(DATA_DIR, CLANS_SUBDIR, clanId);

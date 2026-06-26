@@ -1,29 +1,22 @@
-import { div, type Instance } from "../../factory";
-import { clanModelIcon } from "../../factory/data-ops/identity/clan-model-icon.js";
-import { siteOwnerStore } from "../../../state/identity/stores/site-owner-store.js";
+import { div, type Instance, baseProps } from "../../factory";
+import { clanIcon } from "../../factory/data-ops/identity/clan-icon.js";
 import { ROUTE_HOME_HERO_LOGO_CLASS } from "../../../shared/constants/route/route-home-constants.js";
 import {
-    MOBILE_LOGO_PAN_X,
-    SITE_LOGO_RECORD_URL,
+    SITE_LOGO_THUMBNAIL_SIZES,
     SITE_LOGO_SLUG,
+    SITE_LOGO_THUMBNAIL_SRCSET,
     SITE_LOGO_THUMBNAIL_URL,
 } from "../../../shared/constants/home/render-home-data.js";
 
-function withVersion(url: string, version: string): string {
-    if (version.length === 0) return url;
-    const sep = url.includes("?") ? "&" : "?";
-    return `${url}${sep}v=${version}`;
-}
-
 export function buildHeroLogo(): Instance {
-    const version = siteOwnerStore.logoVersion();
-    const logoWrapper = div({ classes: [ROUTE_HOME_HERO_LOGO_CLASS], context: null, meta: null });
+    const logoWrapper = div(baseProps([ROUTE_HOME_HERO_LOGO_CLASS]));
     logoWrapper.addChild(
-        clanModelIcon({
+        clanIcon({
             slug: SITE_LOGO_SLUG,
-            recordUrl: withVersion(SITE_LOGO_RECORD_URL, version),
-            thumbnailUrl: withVersion(SITE_LOGO_THUMBNAIL_URL, version),
-            mobilePanX: MOBILE_LOGO_PAN_X,
+            thumbnailUrl: SITE_LOGO_THUMBNAIL_URL,
+            thumbnailSrcset: SITE_LOGO_THUMBNAIL_SRCSET,
+            thumbnailSizes: SITE_LOGO_THUMBNAIL_SIZES,
+            eager: true,
             context: null,
             meta: null,
         }),

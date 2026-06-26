@@ -1,4 +1,13 @@
-import { createInstance, div, heading, modal, paragraph, type Instance } from "../../../factory/index.js";
+import {
+    createInstance,
+    div,
+    heading,
+    modal,
+    paragraph,
+    type Instance,
+    baseProps,
+    textProps,
+} from "../../../factory/index.js";
 import { ACCOUNT_EMPTY_CLASS } from "../../../../shared/constants/account-constants.js";
 import { buildActionBtn, buildRecoverLink, buildSigninLink, buildTextInput } from "./glass-signup-parts.js";
 
@@ -22,7 +31,7 @@ interface SignupFields {
 function buildSignupFields(): SignupFields {
     const nameInput = buildTextInput("display name", NAME_MAXLEN);
     const deviceInput = buildTextInput("device name (optional)", NAME_MAXLEN);
-    const status = paragraph({ classes: [ACCOUNT_EMPTY_CLASS], context: null, meta: null });
+    const status = paragraph(baseProps([ACCOUNT_EMPTY_CLASS]));
     status.el.hidden = true;
     return { nameInput, deviceInput, status };
 }
@@ -48,12 +57,7 @@ function buildSignupContent(args: {
     const { fields, actions, settle } = args;
     return [
         heading("h2", { classes: [TITLE_CLASS], text: "Create ClanSocket account", context: null, meta: null }),
-        paragraph({
-            classes: [MESSAGE_CLASS],
-            text: "No ClanSocket passkey found on this device.",
-            context: null,
-            meta: null,
-        }),
+        paragraph(textProps([MESSAGE_CLASS], "No ClanSocket passkey found on this device.")),
         fields.nameInput,
         fields.deviceInput,
         fields.status,
@@ -68,7 +72,7 @@ function buildSignupModal(
     settle: (r: SignupPromptResult | null) => void,
     submit: () => void,
 ): ReturnType<typeof modal> {
-    const actions = div({ classes: [ACTIONS_CLASS], context: null, meta: null }, [
+    const actions = div(baseProps([ACTIONS_CLASS]), [
         buildActionBtn("Cancel", "cancel", () => settle(null)),
         buildActionBtn("Continue", "confirm", submit),
     ]);

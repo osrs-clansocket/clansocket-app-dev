@@ -1,4 +1,5 @@
 import { getDb, DB_NAMES, getClanDb } from "../../core/database.js";
+import { sqlPlaceholders } from "../../core/operations/index.js";
 import { hashesForAccount } from "../../site/site-accounts/index.js";
 
 export type ClanPosture = "owner" | "manager" | "member";
@@ -20,9 +21,8 @@ function activeManagerRole(siteAccountId: string, clanId: string): "owner" | "ma
 
 function hasHashRow(clanId: string, table: string, hashes: readonly string[]): boolean {
     if (hashes.length === 0) return false;
-    const ph = hashes.map(() => "?").join(",");
     const row = getClanDb(clanId)
-        .prepare(`SELECT 1 FROM ${table} WHERE account_hash IN (${ph}) LIMIT 1`)
+        .prepare(`SELECT 1 FROM ${table} WHERE account_hash IN (${sqlPlaceholders(hashes.length)}) LIMIT 1`)
         .get(...hashes);
     return Boolean(row);
 }

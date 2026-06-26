@@ -24,6 +24,11 @@
 const { getModuleForFile } = require("../resolve-paths.cjs");
 const { build4DReport, trace } = require("./report-builder.cjs");
 
+const SHAPER_CALLEES = new Map([
+    ["baseProps", { contextIdx: 1, metaIdx: 2 }],
+    ["textProps", { contextIdx: 2, metaIdx: 3 }],
+]);
+
 const COVERED = new Set([
     "build",
     "container",
@@ -102,10 +107,29 @@ function calleeName(call) {
     return null;
 }
 
+const NULL_LITERAL = { type: "Literal", value: null };
+
+function synthesizeFromShaper(shaperCall, shaperMeta) {
+    const args = shaperCall.arguments || [];
+    const ctxArg = args[shaperMeta.contextIdx] ?? NULL_LITERAL;
+    const metaArg = args[shaperMeta.metaIdx] ?? NULL_LITERAL;
+    return {
+        properties: [
+            { type: "Property", key: { name: "context" }, value: ctxArg },
+            { type: "Property", key: { name: "meta" }, value: metaArg },
+        ],
+    };
+}
+
 function propsObject(call) {
     if (!call.arguments) return null;
     for (const arg of call.arguments) {
-        if (arg && arg.type === "ObjectExpression") return arg;
+        if (!arg) continue;
+        if (arg.type === "ObjectExpression") return arg;
+        if (arg.type === "CallExpression" && arg.callee && arg.callee.type === "Identifier") {
+            const shaperMeta = SHAPER_CALLEES.get(arg.callee.name);
+            if (shaperMeta) return synthesizeFromShaper(arg, shaperMeta);
+        }
     }
     return null;
 }

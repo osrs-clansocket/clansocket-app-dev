@@ -5,10 +5,11 @@ import {
     resolveConsentRequest,
     orCreateClan,
 } from "../../../database/index.js";
+import { CONSENT_CONFIRMED, CONSENT_REJECTED } from "../../../database/site/consent/types.js";
 import { EVENT_REIDENTIFY } from "../../event-types.js";
 import { logPluginError } from "../../logger/index.js";
 import { send } from "../../transport/send.js";
-import type { DispatchContext } from "../../handlers/dispatch.js";
+import type { DispatchContext } from "../../handlers/dispatch-types.js";
 import { confirmClaim, rejectClaim, reportFinalizeFailure } from "./claim-notifications.js";
 import { ingestRosterClaim, ingestTitlesClaim, type ClaimConsentResponse } from "./ingest.js";
 import { deriveClaimSlug } from "./slug.js";
@@ -74,12 +75,12 @@ export function handleClaimConsent(ctx: DispatchContext, msg: ClaimConsentRespon
     const { declaredClanName, sessionAccount, sessionRsn } = validated;
     const clan = orCreateClan(declaredClanName);
     if (action === "reject") {
-        if (!resolveConsentRequest(requestId, "rejected")) return;
+        if (!resolveConsentRequest(requestId, CONSENT_REJECTED)) return;
         rejectClaim(consent, clan.id, declaredClanName);
         return;
     }
     if (!validateClaimAuthorization(ctx, clan.id, requestId)) return;
-    if (!resolveConsentRequest(requestId, "confirmed")) return;
+    if (!resolveConsentRequest(requestId, CONSENT_CONFIRMED)) return;
     if (!applyFinalize(ctx, { consent, declaredClanName, sessionAccount, sessionRsn, clanId: clan.id })) return;
     ingestClaimProof(ctx, clan.id, sessionAccount, msg.clanProof);
     confirmClaim(consent, clan.id, declaredClanName);

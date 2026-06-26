@@ -1,4 +1,4 @@
-import { div, iconLabel, ICON_LABEL_SIZE_SM, rsnTag, span, type Instance } from "../../factory";
+import { div, iconLabel, ICON_LABEL_SIZE_SM, rsnTag, span, type Instance, baseProps } from "../../factory";
 import type { PositionRow } from "../../../state/clans/stores/positions-store.js";
 import {
     CLAN_MAP_LABEL_REGION_CLASS,
@@ -40,7 +40,7 @@ export interface RowParts {
 }
 
 export function buildBlipRail(): Instance {
-    const rail = div({ classes: [CLAN_MAP_ROW_RAIL_CLASS], context: null, meta: null });
+    const rail = div(baseProps([CLAN_MAP_ROW_RAIL_CLASS]));
     rail.el.style.background = BLIP_COLOR;
     return rail;
 }
@@ -58,7 +58,7 @@ function statPair(name: string, alt: string): ReturnType<typeof iconLabel> {
 }
 
 function buildCombatRow(): { combatDmgInst: Instance; combatPair: ReturnType<typeof iconLabel>; combatInst: Instance } {
-    const combatDmgInst = span({ classes: [CLAN_MAP_ROW_COMBAT_DMG_CLASS], context: null, meta: null });
+    const combatDmgInst = span(baseProps([CLAN_MAP_ROW_COMBAT_DMG_CLASS]));
     combatDmgInst.el.style.color = BLIP_COLOR;
     const combatPair = iconLabel({
         name: ATTACK_ICON_NAME,
@@ -70,7 +70,7 @@ function buildCombatRow(): { combatDmgInst: Instance; combatPair: ReturnType<typ
         context: null,
         meta: null,
     });
-    const combatInst = div({ classes: [CLAN_MAP_ROW_COMBAT_CLASS], context: null, meta: null }, [combatPair.instance]);
+    const combatInst = div(baseProps([CLAN_MAP_ROW_COMBAT_CLASS]), [combatPair.instance]);
     return { combatDmgInst, combatPair, combatInst };
 }
 
@@ -85,30 +85,20 @@ function buildStatsCluster(): {
 } {
     const hpPair = statPair(HP_ICON_NAME, "HP");
     const prayerPair = statPair(PRAYER_ICON_NAME, "Prayer");
-    const worldInst = span({ classes: [CLAN_MAP_ROW_META_CLASS], context: null, meta: null });
-    const activityInst = span({ classes: [CLAN_MAP_ROW_META_CLASS], context: null, meta: null });
-    const prayersInst = div({ classes: [CLAN_MAP_ROW_PRAYERS_CLASS], context: null, meta: null });
-    const metaGroup = div({ classes: [CLAN_MAP_ROW_META_GROUP_CLASS], context: null, meta: null }, [
-        worldInst,
-        activityInst,
-    ]);
-    const statsRow = div({ classes: [CLAN_MAP_ROW_STATS_CLASS], context: null, meta: null }, [
-        hpPair.instance,
-        prayerPair.instance,
-        metaGroup,
-    ]);
+    const worldInst = span(baseProps([CLAN_MAP_ROW_META_CLASS]));
+    const activityInst = span(baseProps([CLAN_MAP_ROW_META_CLASS]));
+    const prayersInst = div(baseProps([CLAN_MAP_ROW_PRAYERS_CLASS]));
+    const metaGroup = div(baseProps([CLAN_MAP_ROW_META_GROUP_CLASS]), [worldInst, activityInst]);
+    const statsRow = div(baseProps([CLAN_MAP_ROW_STATS_CLASS]), [hpPair.instance, prayerPair.instance, metaGroup]);
     return { hpPair, prayerPair, worldInst, activityInst, prayersInst, metaGroup, statsRow };
 }
 
 export function buildRowParts(row: PositionRow): RowParts {
     const stats = buildStatsCluster();
-    const regionInst = span({ classes: [CLAN_MAP_LABEL_REGION_CLASS], context: null, meta: null });
+    const regionInst = span(baseProps([CLAN_MAP_LABEL_REGION_CLASS]));
     const rsnTagInst = rsnTag({ rsn: row.latest_rsn, context: null, meta: null });
-    const topLine = div({ classes: [CLAN_MAP_ROW_TOP_CLASS], context: null, meta: null }, [rsnTagInst, regionInst]);
+    const topLine = div(baseProps([CLAN_MAP_ROW_TOP_CLASS]), [rsnTagInst, regionInst]);
     const { combatDmgInst, combatPair, combatInst } = buildCombatRow();
-    const band = div({ classes: [CLAN_MAP_ROW_BAND_CLASS], context: null, meta: null }, [
-        stats.prayersInst,
-        combatInst,
-    ]);
+    const band = div(baseProps([CLAN_MAP_ROW_BAND_CLASS]), [stats.prayersInst, combatInst]);
     return { ...stats, regionInst, rsnTagInst, topLine, combatDmgInst, combatPair, combatInst, band };
 }

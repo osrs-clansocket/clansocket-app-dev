@@ -73,6 +73,7 @@ const svg: SvgPrimitive<SVGSVGElement> = (props = {}, children = []) => {
 };
 const defs = svgPrimitive("defs");
 const path = svgPrimitive<SVGPathElement>("path");
+const use = svgPrimitive<SVGUseElement>("use");
 const svgFilter = svgPrimitive("filter");
 const feGaussianBlur = svgPrimitive("feGaussianBlur");
 const feTurbulence = svgPrimitive("feTurbulence");
@@ -89,6 +90,7 @@ export {
     svg,
     defs,
     path,
+    use,
     svgFilter,
     feGaussianBlur,
     feTurbulence,

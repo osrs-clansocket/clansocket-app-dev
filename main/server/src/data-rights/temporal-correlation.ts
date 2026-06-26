@@ -3,6 +3,7 @@ import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { DB_NAMES, getClanDb, hashesForAccount } from "../database/index.js";
 import { clanDirPath } from "../database/core/database.js";
+import { sqlPlaceholders } from "../database/core/operations/index.js";
 import { selectColumns, selectRows } from "../shared/loaders/db-rows.js";
 
 interface RsnHistoryRow {
@@ -30,11 +31,10 @@ export function clanIds(): string[] {
 
 function windowsForHashes(hashes: readonly string[]): OwnedRsnWindow[] {
     if (hashes.length === 0) return [];
-    const placeholders = hashes.map(() => "?").join(",");
     return selectRows<RsnHistoryRow>(
         DB_NAMES.APP,
         `SELECT rsn, account_hash AS accountHash, first_seen AS firstSeen, last_seen AS lastSeen
-         FROM clansocket_account_rsns WHERE account_hash IN (${placeholders})`,
+         FROM clansocket_account_rsns WHERE account_hash IN (${sqlPlaceholders(hashes.length)})`,
         ...hashes,
     );
 }
@@ -80,7 +80,7 @@ function clanDbExists(clanId: string): boolean {
     return existsSync(resolve(clanDirPath(clanId), "clan.db"));
 }
 
-function skipWindowsForClan(clanId: string, windows: OwnedRsnWindow[]): boolean {
+function skipClanWindows(clanId: string, windows: OwnedRsnWindow[]): boolean {
     return windows.length === 0 || !clanDbExists(clanId);
 }
 
@@ -90,7 +90,7 @@ function selectMemberWindow(stmt: Database.Statement, w: OwnedRsnWindow): ClanMe
 }
 
 export function ownedMembers(clanId: string, windows: OwnedRsnWindow[]): ClanMemberRow[] {
-    if (skipWindowsForClan(clanId, windows)) return [];
+    if (skipClanWindows(clanId, windows)) return [];
     const clanDb = getClanDb(clanId);
     const stmt = clanDb.prepare(
         `SELECT member_name, rank, joined_at, first_observed_at, last_observed_at
@@ -109,7 +109,7 @@ function selectDiffWindow(stmt: Database.Statement, w: OwnedRsnWindow): RosterDi
 }
 
 export function ownedDiffs(clanId: string, windows: OwnedRsnWindow[]): RosterDiffRow[] {
-    if (skipWindowsForClan(clanId, windows)) return [];
+    if (skipClanWindows(clanId, windows)) return [];
     const clanDb = getClanDb(clanId);
     const stmt = clanDb.prepare(
         `SELECT id, from_fingerprint, to_fingerprint, event_type, member_name, old_value, new_value, detected_at

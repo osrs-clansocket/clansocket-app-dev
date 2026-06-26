@@ -1,4 +1,15 @@
-import { BTN_VARIANT_OUTLINE, button, div, input, paragraph, span, type Child, type Instance } from "../../../factory";
+import {
+    BTN_VARIANT_OUTLINE,
+    button,
+    div,
+    input,
+    paragraph,
+    span,
+    type Child,
+    type Instance,
+    baseProps,
+    textProps,
+} from "../../../factory";
 import { profileStore } from "../../../../ai/profile-store";
 import {
     EMPTY_CLASS,
@@ -21,12 +32,12 @@ function buildHeaderChildren(
     editing: ReturnType<typeof getEditing>,
     rerender: () => void,
 ): Child[] {
-    const children: Child[] = [span({ classes: [FIELD_LABEL_CLASS], text: "Focus", context: null, meta: null })];
+    const children: Child[] = [span(textProps([FIELD_LABEL_CLASS], "Focus"))];
     if (focus === null && editing?.kind !== "edit-focus") {
         children.push(
             button({
                 variant: BTN_VARIANT_OUTLINE,
-                compact: true,
+                
                 text: "+ set",
                 ariaLabel: "Set focus",
                 context: "set a focus thread phrase",
@@ -78,12 +89,9 @@ function renderEditingRow(root: Instance, focus: string | null, rerender: () => 
     const cancel = (): void => exitEditing(rerender);
     ref.input = buildFocusInput({ focus, save, cancel });
     root.addChild(
-        div({ classes: [ROW_CLASS, ROW_EDITING_CLASS, LIST_ROW_CLASS, SURFACE_ROW_CLASS], context: null, meta: null }, [
+        div(baseProps([ROW_CLASS, ROW_EDITING_CLASS, LIST_ROW_CLASS, SURFACE_ROW_CLASS]), [
             ref.input,
-            div({ classes: [ROW_ACTIONS_CLASS], context: null, meta: null }, [
-                iconBtn("check-lg", "save", save),
-                iconBtn("x-lg", "cancel", cancel),
-            ]),
+            div(baseProps([ROW_ACTIONS_CLASS]), [iconBtn("check-lg", "save", save), iconBtn("x-lg", "cancel", cancel)]),
         ]),
     );
     queueMicrotask(() => ref.input!.el.focus());
@@ -91,9 +99,9 @@ function renderEditingRow(root: Instance, focus: string | null, rerender: () => 
 
 function renderValueRow(root: Instance, focus: string, rerender: () => void): void {
     root.addChild(
-        div({ classes: [ROW_CLASS, LIST_ROW_CLASS, SURFACE_ROW_CLASS], context: null, meta: null }, [
-            span({ classes: [ROW_PRIMARY_CLASS], text: focus, context: null, meta: null }),
-            div({ classes: [ROW_ACTIONS_CLASS], context: null, meta: null }, [
+        div(baseProps([ROW_CLASS, LIST_ROW_CLASS, SURFACE_ROW_CLASS]), [
+            span(textProps([ROW_PRIMARY_CLASS], focus)),
+            div(baseProps([ROW_ACTIONS_CLASS]), [
                 iconBtn("pencil", "edit", () => {
                     setEditing({ kind: "edit-focus" });
                     rerender();
@@ -109,15 +117,13 @@ function renderValueRow(root: Instance, focus: string, rerender: () => void): vo
 
 export function renderFocus(host: Instance, focus: string | null, rerender: () => void): void {
     const editing = getEditing();
-    host.addChild(
-        div({ classes: [HEADER_ROW_CLASS], context: null, meta: null }, buildHeaderChildren(focus, editing, rerender)),
-    );
+    host.addChild(div(baseProps([HEADER_ROW_CLASS]), buildHeaderChildren(focus, editing, rerender)));
     if (editing?.kind === "edit-focus") {
         renderEditingRow(host, focus, rerender);
         return;
     }
     if (focus === null) {
-        host.addChild(paragraph({ classes: [EMPTY_CLASS], text: "No focus set", context: null, meta: null }));
+        host.addChild(paragraph(textProps([EMPTY_CLASS], "No focus set")));
         return;
     }
     renderValueRow(host, focus, rerender);

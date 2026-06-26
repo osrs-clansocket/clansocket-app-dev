@@ -27,4 +27,5 @@ CREATE INDEX IF NOT EXISTS idx_clan_audit_log_target ON clan_audit_log (target_t
 CREATE INDEX IF NOT EXISTS idx_clan_audit_log_session_seq ON clan_audit_log (session_id, seq);
 CREATE INDEX IF NOT EXISTS idx_clan_audit_log_request ON clan_audit_log (request_id);
 CREATE INDEX IF NOT EXISTS idx_clan_audit_log_row_hash ON clan_audit_log (row_hash);
-CREATE INDEX IF NOT EXISTS idx_clan_audit_log_guild ON clan_audit_log (guild_id, ts DESC) WHERE guild_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_clan_audit_log_guild ON clan_audit_log (guild_id, ts DESC)
+WHERE guild_id IS NOT NULL;

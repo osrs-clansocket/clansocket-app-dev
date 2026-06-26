@@ -9,6 +9,8 @@ import {
     inlineConfirm,
     span,
     type Instance,
+    baseProps,
+    textProps,
 } from "../../../../factory";
 import { identityStore } from "../../../../../state/identity/stores/identity-store.js";
 import { deleteChannelPermissions, type DiscordChannelOverwrite } from "../../../../../state/discord/client.js";
@@ -51,16 +53,16 @@ function permissionCard(o: DiscordChannelOverwrite, bit: number, name: string): 
                 context: null,
                 meta: null,
             }),
-            span({ classes: [PERMISSION_CARD_LABEL_CLASS], text: name, context: null, meta: null }),
+            span(textProps([PERMISSION_CARD_LABEL_CLASS], name)),
         ],
     );
 }
 
 function permissionCardGrid(o: DiscordChannelOverwrite): Instance {
     const cards = PERMISSION_FLAG_NAMES.map((name, i) => permissionCard(o, i, name));
-    return div({ classes: [DISCORD_INSPECTOR_SECTION_CLASS], context: null, meta: null }, [
+    return div(baseProps([DISCORD_INSPECTOR_SECTION_CLASS]), [
         buildLabelRow("Permissions (click to cycle)", null),
-        div({ classes: [PERMISSION_GRID_CLASS], context: null, meta: null }, cards),
+        div(baseProps([PERMISSION_GRID_CLASS]), cards),
     ]);
 }
 
@@ -93,11 +95,11 @@ function targetNameDerived(o: DiscordChannelOverwrite): () => string {
 }
 
 function buildDeleteSection(o: DiscordChannelOverwrite, tid: string): Instance {
-    const deleteHost = div({ classes: [INLINE_CONFIRM_HOST_CLASS], context: null, meta: null });
+    const deleteHost = div(baseProps([INLINE_CONFIRM_HOST_CLASS]));
     const deleteBtn = button({
         classes: [],
         variant: BTN_VARIANT_OUTLINE,
-        compact: true,
+        
         text: "Delete overwrite",
         ariaLabel: `Delete ${o.kind} permission overwrite for ${tid}`,
         context: `delete the ${o.kind} permission overwrite for ${tid}`,
@@ -105,7 +107,7 @@ function buildDeleteSection(o: DiscordChannelOverwrite, tid: string): Instance {
         onClick: () => void confirmOverwriteDelete(deleteHost, o),
     });
     deleteHost.addChild(deleteBtn);
-    return div({ classes: [DISCORD_INSPECTOR_SECTION_CLASS], context: null, meta: null }, [deleteHost]);
+    return div(baseProps([DISCORD_INSPECTOR_SECTION_CLASS]), [deleteHost]);
 }
 
 export function channelOverwriteSections(o: DiscordChannelOverwrite): Instance[] {

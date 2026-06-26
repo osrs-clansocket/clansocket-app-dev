@@ -1,4 +1,5 @@
 import { apiRequest } from "../../fetchers/api-fetcher.js";
+import { HTTP_METHOD_POST } from "../../core/constants.js";
 import type { WebhookRow } from "../types.js";
 import type { WebhookTokenSync } from "./extract-token.js";
 
@@ -20,5 +21,5 @@ export function replaceWebhooks(args: PostWebhooksReplace): Promise<{ ok: boolea
     const body: object = args.replacement
         ? { channelId: args.channelId, webhooks: args.webhooks, tokens: args.tokens, replacement: args.replacement }
         : { channelId: args.channelId, webhooks: args.webhooks, tokens: args.tokens };
-    return apiRequest<{ ok: boolean; count: number }>("POST", path, body);
+    return apiRequest<{ ok: boolean; count: number }>(HTTP_METHOD_POST, path, body);
 }

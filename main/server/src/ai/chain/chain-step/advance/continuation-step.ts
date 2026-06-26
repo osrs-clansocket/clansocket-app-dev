@@ -1,24 +1,13 @@
 import logger from "@clansocket/logger";
 import type { AiMessage } from "../../../types.js";
-import type { ParsedResponse } from "../../response-parser/index.js";
-import { chainStateStore, type ChainState } from "../../chain-state-store.js";
+import { chainStateStore } from "../../chain-state-store.js";
 import { KIND_CALL_LLM, type ChainEvent, type ChainStepResult } from "../types.js";
 import { buildNextSystem } from "./continuation-effects.js";
 import { emitContinuationStatus } from "./continuation-events.js";
 import { prepareContinuation } from "./prepare-continuation.js";
+import type { ContinuationArgs } from "./advance-types.js";
 
-export interface ContinuationArgs {
-    chainId: string;
-    state: ChainState;
-    parsed: ParsedResponse;
-    parsedRecap: Record<string, string> | undefined;
-    readIds: string[];
-    queries: ParsedResponse["query"];
-    nextCtx: string[];
-    appendedUserInput: string[];
-    llmResponse: string;
-    events: ChainEvent[];
-}
+export type { ContinuationArgs } from "./advance-types.js";
 
 interface ContinuationResult {
     chainId: string;

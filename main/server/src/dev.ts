@@ -5,7 +5,8 @@ import path from "path";
 import { fileURLToPath } from "url";
 import dotenv from "dotenv";
 import { ensureCerts } from "./certs.js";
-import { attachExitHandler, buildServerCommand } from "./dev-server-proc.js";
+import { bindProcessExit } from "./dev-server-proc.js";
+import { buildServerCommand } from "./builder-server-command.js";
 import { parseDecimal } from "./shared/parsers/decimal-parser.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -53,7 +54,7 @@ async function main(): Promise<void> {
         cwd: SERVER_ROOT,
         env: { ...process.env, NODE_ENV: "development" },
     });
-    attachExitHandler(server);
+    bindProcessExit(server);
     logger.info("[dev] Waiting for server...");
     await waitForServer(`https://localhost:${PORT}/`);
     logger.info("[dev] Server ready");

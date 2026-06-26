@@ -9,7 +9,8 @@ import {
 } from "../../../../database/index.js";
 import { CHAIN_DB, CHAIN_VIEW, CLAN_DB } from "../types.js";
 import { CLAN_PURPOSE_NOTE, DB_PURPOSE, PLUGIN_PURPOSE_NOTE } from "./purpose.js";
-import { appendTableCols, listTables } from "./table-appender.js";
+import { appendTableCols } from "./table-appender.js";
+import { listTables } from "./lister-tables.js";
 
 const STATIC_CATALOG_DBS = new Set<string>(Object.values(STATIC_DB_NAMES));
 

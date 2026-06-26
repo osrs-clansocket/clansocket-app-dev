@@ -2,7 +2,7 @@ import { discordGuildDb } from "../../../database/index.js";
 import { guildIdsOf } from "../../discord-guild-iterator.js";
 import { DISCORD_GUILD_DB_SITE_ACCOUNT_TABLES } from "../../scopes/manifest/index.js";
 import { statOne } from "./stat-ops.js";
-import type { StatsAcc } from "./per-clan-stats.js";
+import type { StatsAcc } from "./stats-acc-types.js";
 import { acc } from "./utils.js";
 
 function oneGuildStats(s: StatsAcc, clanId: string, guildId: string, siteAccountId: string): void {

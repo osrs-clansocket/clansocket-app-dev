@@ -1,7 +1,7 @@
-import { button, div, input, wireClick, type Instance } from "../../../../factory/index.js";
+import { button, div, input, wireClick, type Instance, baseProps } from "../../../../factory/index.js";
 
-const PICKER_HOST = "voxlab__picker";
-const PICKER_SWATCH = "voxlab__picker-swatch";
+const PICKER_HOST = "picker";
+const PICKER_SWATCH = "picker__swatch";
 const KEY_ESCAPE = "Escape";
 const POPUP_MARGIN = 8;
 
@@ -51,10 +51,7 @@ function buildSwatchInputs(opts: { ariaLabel: string; initial: string }): {
         context: "open color picker popup",
         meta: ["action"],
     });
-    const host = div({ classes: [PICKER_HOST], context: null, meta: null }, [
-        swatchBtn,
-        carrier,
-    ]) as Instance<HTMLDivElement>;
+    const host = div(baseProps([PICKER_HOST]), [swatchBtn, carrier]) as Instance<HTMLDivElement>;
     return { carrier, swatchBtn, host };
 }
 

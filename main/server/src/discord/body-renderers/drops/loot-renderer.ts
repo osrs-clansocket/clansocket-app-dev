@@ -18,7 +18,7 @@ interface LootPayload {
 
 const CATEGORY = "Loot";
 
-function formatItems(items: readonly LootItem[]): string {
+function formatLootItems(items: readonly LootItem[]): string {
     return items.map((it) => (it.qty > 1 ? `${it.name} × ${it.qty}` : it.name)).join(", ");
 }
 
@@ -45,11 +45,11 @@ function formatGpShort(gp: number | null | undefined): string {
     return String(gp);
 }
 
-function buildSubject(p: LootPayload): string {
+function buildLootSubject(p: LootPayload): string {
     return p.sourceLevel == null ? p.source : `${p.source} - Lvl ${p.sourceLevel}`;
 }
 
-function buildContent(rsn: string, p: LootPayload, itemsText: string, gpText: string): string {
+function buildLootContent(rsn: string, p: LootPayload, itemsText: string, gpText: string): string {
     const parts: string[] = [`**\`${rsn}\`** received ${itemsText}`];
     if (gpText.length > 0) parts.push(`Worth **\`${gpText} gp\`**`);
     if (p.kc != null) parts.push(`**\`[KC ${p.kc}]\`**`);
@@ -82,15 +82,15 @@ export const renderLoot: Renderer = ({ payload, context }) => {
     const username = assembleCategoryUsername({
         emoji: lookupCategoryEmoji(CATEGORY).unicode,
         category: CATEGORY,
-        subject: buildSubject(p),
+        subject: buildLootSubject(p),
         clanName: context.clanName,
     });
-    const itemsText = formatItems(p.items);
+    const itemsText = formatLootItems(p.items);
     const gpText = formatGp(p.gp);
     const gpShortText = formatGpShort(p.gp);
     return renderResult({
         username,
-        content: buildContent(context.rsn, p, itemsText, gpText),
+        content: buildLootContent(context.rsn, p, itemsText, gpText),
         tokens: buildLootTokens({ p, context, itemsText, gpText, gpShortText }),
     });
 };

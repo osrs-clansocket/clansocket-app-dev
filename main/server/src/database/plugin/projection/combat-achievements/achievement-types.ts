@@ -20,16 +20,8 @@ export interface AchievementSpec {
     points: number;
 }
 
-export function achievementSpec(
-    taskId: number,
-    taskName: string,
-    bossId: number | null,
-    bossName: string | null,
-    tier: string,
-    taskType: string | null,
-    points: number,
-): AchievementSpec {
-    return { taskId, taskName, bossId, bossName, tier, taskType, points };
+export function achievementSpec(spec: AchievementSpec): AchievementSpec {
+    return spec;
 }
 
 export interface UpsertAchievementArgs {

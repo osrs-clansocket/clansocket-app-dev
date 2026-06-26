@@ -1,5 +1,5 @@
 import { getDb, DB_NAMES } from "../database/index.js";
-import { hasElapsed, msUntilNext, FIVE_MINUTES_MS } from "../shared/time.js";
+import { hasElapsed, elapsedRemaining, FIVE_MINUTES_MS } from "../shared/time/index.js";
 
 export type DataActionKind =
     | "user.export"
@@ -31,7 +31,7 @@ export function checkCooldown(siteAccountId: string, kind: DataActionKind, targe
     if (!row) return { ok: true };
     const lastAt = row.performed_at;
     if (hasElapsed(lastAt, COOLDOWN_MS)) return { ok: true, lastAt };
-    return { lastAt, ok: false, retryAfterMs: msUntilNext(lastAt, COOLDOWN_MS) };
+    return { lastAt, ok: false, retryAfterMs: elapsedRemaining(lastAt, COOLDOWN_MS) };
 }
 
 export function recordAction(siteAccountId: string, kind: DataActionKind, targetId: string | null): void {

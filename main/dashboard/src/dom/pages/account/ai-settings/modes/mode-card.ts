@@ -1,4 +1,4 @@
-import { button, div, effect, icon, label, span, type Instance } from "../../../../factory";
+import { button, div, effect, icon, label, span, type Instance, baseProps, textProps } from "../../../../factory";
 import { buildGlassCheck } from "../../../../forms/glass/inputs/glass-check.js";
 import { MODE_TOOLTIPS, modesStore, type ModeMeta } from "../../../../../ai/modes-store/index.js";
 import { ATTR_HIDDEN, HIDDEN_FALSE, HIDDEN_TRUE } from "../shared.js";
@@ -18,9 +18,9 @@ const TIP_KEY_CLASS = "account-ai-settings__tip-key";
 const TIP_VAL_CLASS = "account-ai-settings__tip-val";
 
 function tipRow(key: string, val: string): Instance {
-    return div({ classes: [TIP_ROW_CLASS], context: null, meta: null }, [
-        span({ classes: [TIP_KEY_CLASS], text: key, context: null, meta: null }),
-        span({ classes: [TIP_VAL_CLASS], text: val, context: null, meta: null }),
+    return div(baseProps([TIP_ROW_CLASS]), [
+        span(textProps([TIP_KEY_CLASS], key)),
+        span(textProps([TIP_VAL_CLASS], val)),
     ]);
 }
 
@@ -40,7 +40,7 @@ function buildTipPop(meta: ModeMeta): Instance | null {
         tipRow("Why it's needed", tip.why),
         tipRow("How to use it", tip.how),
     ]);
-    return div({ classes: [TIP_CLASS], context: null, meta: null }, [trigger, pop]);
+    return div(baseProps([TIP_CLASS]), [trigger, pop]);
 }
 
 function buildToggle(meta: ModeMeta): Instance<HTMLLabelElement> {
@@ -74,7 +74,7 @@ function buildResetButton(meta: ModeMeta): Instance<HTMLButtonElement> {
 
 export function buildModeCard(meta: ModeMeta): Instance {
     const iconEl = icon({ name: meta.icon, classes: [ICON_CLASS], context: null, meta: null });
-    const labelEl = label({ classes: [LABEL_CLASS], text: meta.displayName, context: null, meta: null });
+    const labelEl = label(textProps([LABEL_CLASS], meta.displayName));
     const tipIcon = buildTipPop(meta);
     const reset = buildResetButton(meta);
     const toggle = buildToggle(meta);
@@ -83,8 +83,8 @@ export function buildModeCard(meta: ModeMeta): Instance {
     if (tipIcon !== null) headChildren.push(tipIcon);
     headChildren.push(reset);
 
-    const head = div({ classes: [HEAD_CLASS], context: null, meta: null }, headChildren);
-    const card = div({ classes: [CARD_CLASS], context: null, meta: null }, [head, toggle]);
+    const head = div(baseProps([HEAD_CLASS]), headChildren);
+    const card = div(baseProps([CARD_CLASS]), [head, toggle]);
 
     card.trackDispose(
         effect(() => {

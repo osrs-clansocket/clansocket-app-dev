@@ -1,4 +1,5 @@
 import { DB_NAMES, getDb } from "../../core/database.js";
+import { sqlPlaceholders } from "../../core/operations/index.js";
 
 const CHUNK_SIZE = 500;
 
@@ -16,8 +17,7 @@ export function deleteMissing(seenKeys: Set<string>): number {
     if (toDelete.length === 0) return 0;
     let deleted = 0;
     const txn = db.transaction((chunk: string[]) => {
-        const placeholders = chunk.map(() => "?").join(",");
-        const sql = `DELETE FROM clansocket_runewatch_cases WHERE case_key IN (${placeholders})`;
+        const sql = `DELETE FROM clansocket_runewatch_cases WHERE case_key IN (${sqlPlaceholders(chunk.length)})`;
         const result = db.prepare(sql).run(...chunk);
         deleted += Number(result.changes);
     });

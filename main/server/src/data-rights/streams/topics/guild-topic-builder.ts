@@ -1,4 +1,5 @@
-import { defineTopic, type ProjectionTopic } from "../projection.js";
+import { defineTopic } from "../subscriber-projection.js";
+import type { ProjectionTopic } from "../projection-types.js";
 import { guildScopeKey } from "../writes-stream.js";
 
 export interface GuildTopicOpts<T> {

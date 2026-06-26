@@ -1,5 +1,7 @@
 import { PermissionsBitField, type Guild } from "discord.js";
+import { orThrow } from "../../../shared/nullable.js";
 import { registerPublisher } from "../../publisher-registry.js";
+import { OP_KINDS, ENTITY_TYPES } from "../../publish-vocab.js";
 import { runPublishOp } from "../../runners/op-runner.js";
 
 const SUBJECT_NAME = "name";
@@ -53,12 +55,14 @@ const APPLIERS: Record<string, (guild: Guild, data: any) => Promise<unknown>> = 
 };
 
 export async function applySettingsUpdate(guild: Guild, data: UpdateState): Promise<void> {
-    const applier = APPLIERS[data.subject];
-    if (!applier) throw new Error(`unsupported guild-settings subject: ${(data as { subject: string }).subject}`);
+    const applier = orThrow(
+        APPLIERS[data.subject],
+        `unsupported guild-settings subject: ${(data as { subject: string }).subject}`,
+    );
     await applier(guild, data);
 }
 
-registerPublisher("update", "discord_guild_settings", {
-    handler: (c, r) => runPublishOp(c, r, "update", (g, d) => applySettingsUpdate(g, d as UpdateState)),
+registerPublisher(OP_KINDS.UPDATE, ENTITY_TYPES.GUILD_SETTINGS, {
+    handler: (c, r) => runPublishOp(c, r, OP_KINDS.UPDATE, (g, d) => applySettingsUpdate(g, d as UpdateState)),
     requiredBotPermission: PermissionsBitField.Flags.ManageGuild,
 });

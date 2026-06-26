@@ -1,4 +1,4 @@
-import type { DiscordBase } from "./discord-payload-shapes.js";
+import type { DiscordBase } from "../audit-common-types.js";
 
 export interface GuildSetName extends DiscordBase {
     beforeName: string;

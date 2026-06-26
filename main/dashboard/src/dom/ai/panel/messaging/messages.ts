@@ -1,4 +1,15 @@
-import { applyEffects, code, details, div, onceEffect, pre, summary, type Instance } from "../../../factory";
+import {
+    applyEffects,
+    code,
+    details,
+    div,
+    onceEffect,
+    pre,
+    summary,
+    type Instance,
+    baseProps,
+    textProps,
+} from "../../../factory";
 import { getMessagesHost } from "./messages-host";
 import { renderMarkdown, highlightCode, stripCodeFences } from "../../../../ai/markdown";
 import { shouldAutoExpand } from "../layout/bar-height.js";
@@ -23,7 +34,7 @@ type MessageType = "user" | "ai" | "error" | "status";
 const MSG_AI: MessageType = "ai";
 
 function buildRawCode(raw: string): Instance {
-    const node = code({ classes: [SYNTAX_LANGUAGE_JSON_CLASS], context: null, meta: null });
+    const node = code(baseProps([SYNTAX_LANGUAGE_JSON_CLASS]));
     try {
         const pretty = JSON.stringify(JSON.parse(stripCodeFences(raw)), null, 2);
         node.setHTML(highlightCode(pretty, "json"));
@@ -42,8 +53,8 @@ function scrollIntoView(msg: Instance, det: HTMLDetailsElement): void {
 }
 
 function addRawDetails(msg: Instance, raw: string): void {
-    const det = details({ classes: [AI_BAR_RAW_CLASS], context: "expand the raw AI response", meta: ["disclosure"] }, [
-        summary({ classes: [AI_BAR_RAW_SUMMARY_CLASS], text: "Raw response", context: null, meta: null }),
+    const det = details(baseProps([AI_BAR_RAW_CLASS], "expand the raw AI response", ["disclosure"]), [
+        summary(textProps([AI_BAR_RAW_SUMMARY_CLASS], "Raw response")),
         pre(
             {
                 classes: [SYNTAX_LANGUAGE_JSON_CLASS, AI_BAR_RAW_PRE_CLASS, PRISM_BLOCK_CLASS],
@@ -89,9 +100,7 @@ function classifyProse(root: HTMLElement): void {
 }
 
 function addAiMessage(msg: Instance, text: string, raw?: string, deepLink?: string): void {
-    const content = div({ classes: [AI_BAR_MSG_CONTENT_CLASS], context: null, meta: null }).setHTML(
-        renderMarkdown(text, deepLink ?? null),
-    );
+    const content = div(baseProps([AI_BAR_MSG_CONTENT_CLASS])).setHTML(renderMarkdown(text, deepLink ?? null));
     classifyProse(content.el);
     msg.addChild(content);
     if (raw && raw !== text) addRawDetails(msg, raw);

@@ -6,7 +6,8 @@ import { perMinuteLimiter } from "../../shared/http/rate-limit.js";
 import { ingestAuditBatch, revertAuditEntry, type ClientAuditEntry } from "../../database/index.js";
 import { requireSiteAccount } from "../../auth/site-middleware.js";
 import { withManager } from "./manager-context.js";
-import { MAX_BATCH_ENTRIES, validateClientEntry } from "./validation.js";
+import { MAX_BATCH_ENTRIES } from "./validator-constants.js";
+import { validateClientEntry } from "./validator-manage.js";
 import { mountedRouter } from "./_mount-registry.js";
 
 const router = mountedRouter();

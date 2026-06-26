@@ -1,7 +1,7 @@
 import { statSync } from "node:fs";
 import logger from "@clansocket/logger";
 import { getClanDb, getPluginPresence } from "../database/index.js";
-import { findIconPrefix, findIconPath, ICON_PREFIX_CUSTOMIZED, readTransformSidecar } from "./icon/filesystem.js";
+import { findIconPrefix, findIconPath, ICON_PREFIX_CUSTOMIZED, readTransformSidecar } from "./icon/index.js";
 
 export interface ClanRow {
     id: string;
@@ -56,7 +56,7 @@ export interface ManagedClanView {
 }
 
 export function iconVersionFor(clanId: string, iconKind: string | null): number {
-    const hasIconFile = iconKind === "image" || iconKind === "voxlab";
+    const hasIconFile = iconKind === "image";
     const found = hasIconFile ? findIconPath(clanId) : null;
     if (found === null) return 0;
     try {

@@ -1,5 +1,5 @@
 import { DB_NAMES } from "../../core/database.js";
-import { selectOne } from "../../core/operations.js";
+import { selectOne } from "../../core/operations/index.js";
 import { selectRows } from "../../../shared/loaders/db-rows.js";
 import { CONSENT_COLUMNS, type ConsentKind, type ConsentRequestRow } from "./types.js";
 
@@ -7,33 +7,25 @@ function buildKindClause(kind: ConsentKind | undefined): { sql: string; args: un
     return kind ? { sql: " AND kind = ?", args: [kind] } : { sql: "", args: [] };
 }
 
-export function pendingByHash(accountHash: string, kind?: ConsentKind): ConsentRequestRow[] {
+function pendingClause(whereExpr: string, value: string, kind?: ConsentKind): ConsentRequestRow[] {
     const k = buildKindClause(kind);
     return selectRows<ConsentRequestRow>(
         DB_NAMES.APP,
         `SELECT ${CONSENT_COLUMNS}
          FROM clansocket_consent_requests
-         WHERE target_account_hash = ?${k.sql} AND status = 'pending' AND expires_at > ?
+         WHERE ${whereExpr}${k.sql} AND status = 'pending' AND expires_at > ?
          ORDER BY created_at ASC`,
-        accountHash,
+        value,
         ...k.args,
         Date.now(),
     );
 }
 
-export function pendingByRsn(rsn: string, kind?: ConsentKind): ConsentRequestRow[] {
-    const k = buildKindClause(kind);
-    return selectRows<ConsentRequestRow>(
-        DB_NAMES.APP,
-        `SELECT ${CONSENT_COLUMNS}
-         FROM clansocket_consent_requests
-         WHERE LOWER(target_rsn) = LOWER(?)${k.sql} AND status = 'pending' AND expires_at > ?
-         ORDER BY created_at ASC`,
-        rsn,
-        ...k.args,
-        Date.now(),
-    );
-}
+export const pendingByHash = (accountHash: string, kind?: ConsentKind): ConsentRequestRow[] =>
+    pendingClause("target_account_hash = ?", accountHash, kind);
+
+export const pendingByRsn = (rsn: string, kind?: ConsentKind): ConsentRequestRow[] =>
+    pendingClause("LOWER(target_rsn) = LOWER(?)", rsn, kind);
 
 export function pendingByAccount(siteAccountId: string, kind?: ConsentKind): ConsentRequestRow[] {
     const k = buildKindClause(kind);
@@ -65,4 +57,11 @@ export function consentById(id: number): ConsentRequestRow | null {
         `SELECT ${CONSENT_COLUMNS} FROM clansocket_consent_requests WHERE id = ?`,
         id,
     );
+}
+
+export function consentRequestedBy(
+    record: ConsentRequestRow | null,
+    siteAccountId: string,
+): record is ConsentRequestRow {
+    return record !== null && record.requesting_site_account_id === siteAccountId;
 }

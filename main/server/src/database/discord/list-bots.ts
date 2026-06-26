@@ -26,19 +26,24 @@ async function resolveByoToken(r: BotIdentityRow): Promise<string | null> {
     return payload.bot_token;
 }
 
+const TOKEN_BY_OWNER_KIND: Record<string, (r: BotIdentityRow) => Promise<string | null>> = {
+    [OWNER_KIND_CLANSOCKET]: async (r) => {
+        const envToken = process.env.DISCORD_TOKEN;
+        if (envToken) return envToken;
+        logger.warn(`[discord] skipping bot ${r.bot_id}: clansocket-default has NULL token + DISCORD_TOKEN unset`);
+        return null;
+    },
+    [OWNER_KIND_BYO]: resolveByoToken,
+};
+
 async function resolveIdentityToken(r: BotIdentityRow, masterKey: Buffer | null): Promise<string | null> {
     if (r.encrypted_token_b64 && r.token_iv_b64) {
         if (masterKey) return decryptToken(r.encrypted_token_b64, r.token_iv_b64, masterKey);
         logger.warn(`[discord] skipping bot ${r.bot_id}: encrypted token but no DISCORD_TOKEN_ENC_KEY set`);
         return null;
     }
-    if (r.owner_kind === OWNER_KIND_CLANSOCKET) {
-        const envToken = process.env.DISCORD_TOKEN;
-        if (envToken) return envToken;
-        logger.warn(`[discord] skipping bot ${r.bot_id}: clansocket-default has NULL token + DISCORD_TOKEN unset`);
-        return null;
-    }
-    if (r.owner_kind === OWNER_KIND_BYO) return resolveByoToken(r);
+    const resolver = TOKEN_BY_OWNER_KIND[r.owner_kind];
+    if (resolver) return resolver(r);
     logger.warn(`[discord] skipping bot ${r.bot_id}: no token source`);
     return null;
 }

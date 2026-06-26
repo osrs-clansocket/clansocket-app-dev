@@ -1,9 +1,13 @@
 import logger from "@clansocket/logger";
 import { getPlayerFreshness } from "../../database/wom/freshness/get-freshness.js";
 import { hashByRsn } from "../../database/wom/saturate/resolve-account-hash.js";
-import { parseIsoMs } from "../../shared/time.js";
+import { parseIsoMs } from "../../shared/time/index.js";
 import { isNonBlank } from "../../shared/validators/type-guards.js";
 import { safeEnqueueWom } from "./safe-enqueue.js";
+import { SNAPSHOT_COUNTERS, type SnapshotOutcome } from "./snapshot-outcome.js";
+import type { SnapshotPlanResult } from "./snapshot-plan-types.js";
+
+export type { SnapshotPlanResult } from "./snapshot-plan-types.js";
 
 const REQUEST_KIND_PLAYER_SNAPSHOT = "player-snapshot";
 
@@ -23,12 +27,6 @@ interface GroupDetailsLike {
     memberships?: GroupDetailsMembership[];
 }
 
-export interface SnapshotPlanResult {
-    membersConsidered: number;
-    snapshotsEnqueued: number;
-    snapshotsSkippedFresh: number;
-}
-
 interface PlanSnapshotArgs {
     clanId: string;
     womGroupId: number;
@@ -36,8 +34,6 @@ interface PlanSnapshotArgs {
     womChangedAtMs: number;
     now: number;
 }
-
-type SnapshotOutcome = "enqueued" | "skipped_fresh" | "failed";
 
 function planSnapshotMember(args: PlanSnapshotArgs): SnapshotOutcome {
     const { clanId, womGroupId, rsn, womChangedAtMs, now } = args;
@@ -71,8 +67,8 @@ export function planSnapshots(clanId: string, womGroupId: number, response: unkn
         result.membersConsidered += 1;
         const womChangedAtMs = parseIsoMs(player!.lastChangedAt);
         const outcome = planSnapshotMember({ clanId, womGroupId, rsn, womChangedAtMs, now });
-        if (outcome === "enqueued") result.snapshotsEnqueued += 1;
-        else if (outcome === "skipped_fresh") result.snapshotsSkippedFresh += 1;
+        const counter = SNAPSHOT_COUNTERS[outcome];
+        if (counter) result[counter] += 1;
     }
     logger.info(
         `[wom-snapshot-planner] clan=${clanId} considered=${result.membersConsidered} enqueued=${result.snapshotsEnqueued} skipped_fresh=${result.snapshotsSkippedFresh}`,

@@ -1,3 +1,4 @@
+import { OVERWRITE_KIND } from "../core/constants.js";
 export interface ChannelRow {
     channel_id: string;
     guild_id: string;
@@ -144,4 +145,5 @@ interface MemberOverwriteRow {
     deny: string;
 }
 
+export type OverwriteKind = (typeof OVERWRITE_KIND)[keyof typeof OVERWRITE_KIND];
 export type ChannelOverwriteRow = ({ kind: "role" } & RoleOverwriteRow) | ({ kind: "member" } & MemberOverwriteRow);

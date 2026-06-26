@@ -3,7 +3,7 @@ import { EVENT_COMBAT_ACHIEVEMENTS_SNAPSHOT } from "../../event-types.js";
 import { logPluginEvent } from "../../logger/index.js";
 import { checkTelemetryGate, handleTelemetryReject } from "../../session/telemetry-gate.js";
 import type { PluginClientMessage } from "../../types/index.js";
-import type { DispatchContext } from "../dispatch.js";
+import type { DispatchContext } from "../dispatch-types.js";
 
 const latestCatalogHashes = new Map<string, string>();
 

@@ -1,5 +1,5 @@
 import { DB_NAMES } from "../../core/database.js";
-import { execDb } from "../../core/operations.js";
+import { execDb } from "../../core/operations/index.js";
 import type { PluginIdentityRecord } from "../../plugin/state/identity/types.js";
 
 const UPSERT_RSN_HISTORY_SQL = `INSERT INTO clansocket_account_rsns

@@ -1,4 +1,4 @@
-import { div, section } from "../../../factory";
+import { div, section, baseProps } from "../../../factory";
 import type { PageState } from "../../../../state/data-rights/page-state/types.js";
 import {
     DR_DETAIL_HOST_CLASS,
@@ -19,17 +19,9 @@ export interface DataRightsHosts {
 }
 
 export function buildHosts(opts: RenderOpts, view: PageState["view"]): DataRightsHosts {
-    const treeHost = div({
-        classes: [GLASS_PANE_CLASS, GLASS_PANE_DIVIDED_CLASS, DR_TREE_HOST_CLASS],
-        context: null,
-        meta: null,
-    });
-    const listHost = div({
-        classes: [GLASS_PANE_CLASS, GLASS_PANE_DIVIDED_CLASS, DR_LIST_HOST_CLASS],
-        context: null,
-        meta: null,
-    });
-    const detailHost = div({ classes: [GLASS_PANE_CLASS, DR_DETAIL_HOST_CLASS], context: null, meta: null });
+    const treeHost = div(baseProps([GLASS_PANE_CLASS, GLASS_PANE_DIVIDED_CLASS, DR_TREE_HOST_CLASS]));
+    const listHost = div(baseProps([GLASS_PANE_CLASS, GLASS_PANE_DIVIDED_CLASS, DR_LIST_HOST_CLASS]));
+    const detailHost = div(baseProps([GLASS_PANE_CLASS, DR_DETAIL_HOST_CLASS]));
     const rootClasses = opts.embedded === true ? [DR_ROOT_CLASS, DR_EMBEDDED_CLASS] : [DR_ROOT_CLASS];
     const root = section({ classes: rootClasses, data: { view }, context: null, meta: null }, [
         treeHost,

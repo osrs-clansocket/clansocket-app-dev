@@ -1,12 +1,35 @@
 {
     "$schema": "https://unpkg.com/knip@6/schema.json",
     "workspaces": {
+        ".": {
+            "entry": ["scripts/**/*.{mjs,cjs,js}", "shared/config/*.{js,cjs}"]
+        },
+        "main/server": {
+            "entry": [
+                "src/index.ts",
+                "src/dev.ts",
+                "src/database/migrations/**/*.ts",
+                "src/auth/passkey/handlers/**/*.ts",
+                "src/auth/site-routes/**/*.ts",
+                "src/clans/manage-routes/**/*.ts",
+                "src/clans/routes/**/*.ts",
+                "src/data-rights/routes/**/*.ts",
+                "src/discord/routes/**/*.ts",
+                "src/runewatch/routes/**/*.ts",
+                "src/site/routes/**/*.ts",
+                "src/wom/routes/**/*.ts"
+            ]
+        },
+        "main/dashboard": {
+            "entry": ["src/main.ts", "src/dom/**/routes/*-route.ts", "src/charts/**/*.ts"]
+        },
         "main/discord": {
             "entry": [
-                "src/plugins/commands/**/*.ts",
-                "src/plugins/messages/**/*.ts",
-                "src/plugins/slash/**/*.ts",
-                "src/plugins/interactions/**/*.ts"
+                "src/index.ts",
+                "src/plugins/**/*.ts",
+                "src/handlers/gateway/listeners/**/*.ts",
+                "src/outbound/senders/**/*.ts",
+                "src/publish-queue/handlers/**/*.ts"
             ]
         }
     },
@@ -16,7 +39,8 @@
         "**/auto-gen/**",
         "**/.lint-reports/**",
         "**/.cache/**",
-        "**/varez-clan-vocab/**"
+        "**/varez-clan-vocab/**",
+        "public/**"
     ],
     "ignoreDependencies": [
         "knip",
@@ -24,6 +48,30 @@
         "@types/express",
         "@types/multer",
         "@types/prismjs",
-        "@types/ws"
+        "@types/ws",
+        "dependency-cruiser",
+        "nodemon",
+        "eslint-plugin-jsonc",
+        "eslint-plugin-unused-imports",
+        "globals",
+        "jsonc-eslint-parser",
+        "stylelint-config-standard",
+        "stylelint-csstree-validator",
+        "stylelint-declaration-block-no-ignored-properties",
+        "stylelint-declaration-strict-value",
+        "stylelint-high-performance-animation",
+        "stylelint-order",
+        "stylelint-selector-bem-pattern",
+        "electron-builder"
+    ],
+    "ignoreBinaries": [
+        "electron",
+        "electron-builder",
+        "python",
+        "mkcert",
+        "openssl",
+        "tar",
+        "taskkill",
+        "netstat"
     ]
 }

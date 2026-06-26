@@ -1,6 +1,8 @@
 import { PermissionsBitField, type Client, type Guild, type GuildMember } from "discord.js";
+import { orThrow } from "../../../shared/nullable.js";
 import { validateBotPermission } from "../../../validators/bot-permission.js";
 import { registerPublisher } from "../../publisher-registry.js";
+import { OP_KINDS, ENTITY_TYPES } from "../../publish-vocab.js";
 import { runPublishOp } from "../../runners/op-runner.js";
 
 const SUBJECT_NICKNAME = "nickname";
@@ -53,7 +55,7 @@ async function applyMemberMutation(args: MemberMutationArgs): Promise<void> {
         guildId: args.guild.id,
         requiredPermission: args.perm,
     });
-    if (!ok) throw new Error(`bot_permission_denied: ${String(args.perm)}`);
+    orThrow(ok, `bot_permission_denied: ${String(args.perm)}`);
     const member = await args.guild.members.fetch(args.targetUserId);
     await args.mutate(member);
 }
@@ -84,6 +86,6 @@ export async function applyMemberUpdate(client: Client, guild: Guild, data: Upda
     await applyMemberMutation({ client, guild, perm, targetUserId, mutate });
 }
 
-registerPublisher("update", "discord_member", {
-    handler: (c, r) => runPublishOp(c, r, "update", (g, d) => applyMemberUpdate(c, g, d as UpdateState)),
+registerPublisher(OP_KINDS.UPDATE, ENTITY_TYPES.MEMBER, {
+    handler: (c, r) => runPublishOp(c, r, OP_KINDS.UPDATE, (g, d) => applyMemberUpdate(c, g, d as UpdateState)),
 });

@@ -1,4 +1,5 @@
 import { apiRequest } from "../fetchers/api-fetcher.js";
+import { HTTP_METHOD_POST } from "../core/constants.js";
 import { postOk } from "../shared/transitions/transition-cas.js";
 
 const STATE_IN_FLIGHT = "in_flight";
@@ -10,7 +11,10 @@ export async function transitionInFlight(queueId: string): Promise<boolean> {
 }
 
 export async function transitionApplied(queueId: string, responseMessageId: string | null): Promise<void> {
-    await apiRequest("POST", `/api/discord/outbound/${queueId}/state`, { state: STATE_APPLIED, responseMessageId });
+    await apiRequest(HTTP_METHOD_POST, `/api/discord/outbound/${queueId}/state`, {
+        state: STATE_APPLIED,
+        responseMessageId,
+    });
 }
 
 export async function transitionFailed(
@@ -19,7 +23,7 @@ export async function transitionFailed(
     attemptNo: number,
     errorBodyHash: string | null,
 ): Promise<void> {
-    await apiRequest("POST", `/api/discord/outbound/${queueId}/state`, {
+    await apiRequest(HTTP_METHOD_POST, `/api/discord/outbound/${queueId}/state`, {
         state: STATE_FAILED,
         errorCode,
         attemptNo,

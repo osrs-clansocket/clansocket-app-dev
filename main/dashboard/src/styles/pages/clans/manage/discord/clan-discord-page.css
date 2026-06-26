@@ -239,11 +239,6 @@
     border-inline-end: var(--border-dim);
 }
 
-.clans-manage__discord-rail-item--placeholder {
-    font-style: italic;
-    opacity: var(--opacity-medium);
-}
-
 .clans-manage__discord-pane-center {
     display: flex;
     flex-direction: column;

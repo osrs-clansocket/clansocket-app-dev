@@ -1,5 +1,5 @@
 import "../../../../../styles/pages/clans/manage/clan-config-page.css";
-import { div, effect, paragraph, signal, type Disposable } from "../../../../factory";
+import { div, effect, paragraph, signal, type Disposable, baseProps, textProps } from "../../../../factory";
 import type { PluginConfigState } from "../../../../../state/clans/plugin-config/client.js";
 import { pluginConfigStore } from "../../../../../state/clans/plugin-config/plugin-config-store.js";
 import {
@@ -11,7 +11,6 @@ import {
     type Values,
 } from "../../../../../state/clans/plugin-config/index-types.js";
 import { buildSection } from "./index-section.js";
-import { defineManageTab } from "../registry";
 
 const ROOT_CLASS = "clans-manage__config";
 const LOADING_CLASS = "clans-manage__config-loading";
@@ -34,10 +33,8 @@ function bindScopeEffect(
     });
 }
 
-export function buildConfigTab(slug: string): HTMLElement {
-    const host = div({ classes: [ROOT_CLASS], context: null, meta: null }, [
-        paragraph({ classes: [LOADING_CLASS], text: LOADING_TEXT, context: null, meta: null }),
-    ]);
+export function build(slug: string): HTMLElement {
+    const host = div(baseProps([ROOT_CLASS]), [paragraph(textProps([LOADING_CLASS], LOADING_TEXT))]);
     const store = pluginConfigStore(slug);
     const state = signal<PluginConfigState | null>(null);
     const scope = signal<Scope>(GLOBAL_SCOPE);
@@ -53,5 +50,3 @@ export function buildConfigTab(slug: string): HTMLElement {
     });
     return host.el;
 }
-
-defineManageTab({ key: "plugin-config", build: (slug) => buildConfigTab(slug), order: 20 });

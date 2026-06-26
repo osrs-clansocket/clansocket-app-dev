@@ -2,6 +2,7 @@ import { PermissionsBitField, type Client, type Guild } from "discord.js";
 import type { PendingPublishRow } from "../../../loaders/publish-queue-loader.js";
 import { ensureBotPermission } from "../../../validators/bot-permission.js";
 import { registerPublisher } from "../../publisher-registry.js";
+import { OP_KINDS, ENTITY_TYPES } from "../../publish-vocab.js";
 import { runPublishOp } from "../../runners/op-runner.js";
 
 const SUBJECT_KICK = "kick";
@@ -57,4 +58,4 @@ export function deleteMemberHandler(
     });
 }
 
-registerPublisher("delete", "discord_member", { handler: deleteMemberHandler });
+registerPublisher(OP_KINDS.DELETE, ENTITY_TYPES.MEMBER, { handler: deleteMemberHandler });

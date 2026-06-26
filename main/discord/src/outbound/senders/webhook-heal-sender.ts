@@ -1,4 +1,5 @@
 import logger from "@clansocket/logger";
+import { orThrow } from "../../shared/nullable.js";
 import type { Client, Webhook } from "discord.js";
 import type { PendingOutboundRow } from "../../loaders/outbound-loader.js";
 import { extractWebhookRow } from "../../state-sync/webhooks/extract.js";
@@ -34,8 +35,10 @@ async function prepareHealedChannel(
     client: Client,
     payload: WebhookHealPayload,
 ): Promise<{ channel: any; newWebhook: Webhook }> {
-    const channelRaw = await client.channels.fetch(payload.channelId);
-    if (!channelRaw) throw new Error(`invalid channel for heal: not found (channelId=${payload.channelId})`);
+    const channelRaw = orThrow(
+        await client.channels.fetch(payload.channelId),
+        `invalid channel for heal: not found (channelId=${payload.channelId})`,
+    );
     const channel = channelRaw as any;
     assertWebhookCapable(channel, `invalid channel for heal: not webhook-capable (channelId=${payload.channelId})`);
     const createOpts: { name: string; avatar?: string } = { name: payload.name };

@@ -21,7 +21,14 @@ export interface PlayerSnapshotSaturation {
 
 function buildStatRows(accountHash: string, snapshot: MappedPlayerSnapshot, changedAtMs: number): WomStatRow[] {
     return snapshot.skills.map((row) =>
-        womStatRow(accountHash, snapshot.rsn, row.skill, row.level, row.experience, changedAtMs),
+        womStatRow({
+            accountHash,
+            rsn: snapshot.rsn,
+            skill: row.skill,
+            level: row.level,
+            experience: row.experience,
+            lastChangedAtMs: changedAtMs,
+        }),
     );
 }
 

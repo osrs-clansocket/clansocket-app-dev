@@ -1,12 +1,8 @@
-import type { AuditCommonPayload, BeforeAfter } from "../payload-types.js";
+import type { AuditCommonPayload, BeforeAfter, DiscordBase } from "../audit-common-types.js";
 
+export type { DiscordBase } from "../audit-common-types.js";
 export type * from "./discord-guild-shapes.js";
 export type * from "./discord-hook-shapes.js";
-
-export interface DiscordBase extends AuditCommonPayload {
-    guildId: string;
-    targetName: string;
-}
 
 export interface DiscordChannelState {
     name: string;

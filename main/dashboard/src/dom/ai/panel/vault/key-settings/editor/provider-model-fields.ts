@@ -4,6 +4,7 @@ import type { Instance } from "../../../../../factory/core/index.js";
 import { CUSTOM_PROVIDER, FORM_ROW_CLASS, FORM_ROW_FILL_CLASS } from "../constants.js";
 import { makeModelRebuild } from "./fields-model.js";
 import { buildCustomInput, buildProviderShell } from "./fields-provider.js";
+import { baseProps } from "../../../../../factory/index.js";
 
 export interface ProviderConfigSlice {
     apiKey: string;
@@ -38,10 +39,7 @@ function makeProviderResult(args: {
     allProviders: string[];
 }): ProviderModelFields {
     const { providerSelect, customInput, modelHost, providerHidden, valueGetterRef, rebuildRef, allProviders } = args;
-    const providerWrap = div({ classes: [FORM_ROW_CLASS, FORM_ROW_FILL_CLASS], context: null, meta: null }, [
-        providerSelect,
-        customInput,
-    ]);
+    const providerWrap = div(baseProps([FORM_ROW_CLASS, FORM_ROW_FILL_CLASS]), [providerSelect, customInput]);
     return {
         providerWrap,
         modelHost,
@@ -74,7 +72,7 @@ export function providerFields(args: ProviderModelArgs): ProviderModelFields {
     const valueGetterRef = { fn: (() => "") as () => string };
     const rebuildRef = { fn: () => undefined as void };
     const customInput = buildCustomInput({ usingCustom, editingProvider, providerHidden, rebuildRef });
-    const modelHost = div({ classes: [FORM_ROW_CLASS], context: null, meta: null });
+    const modelHost = div(baseProps([FORM_ROW_CLASS]));
     rebuildRef.fn = makeModelRebuild({ modelHost, providerHidden, customInput, existingConfig, valueGetterRef });
     wireCustomToggle(providerHidden, customInput, rebuildRef);
     return makeProviderResult({

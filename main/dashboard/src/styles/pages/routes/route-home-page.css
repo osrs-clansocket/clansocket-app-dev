@@ -23,17 +23,16 @@
     border-image: linear-gradient(90deg, transparent, var(--base-gold-500), transparent) 1;
 }
 .route-home__hero-logo {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
+    flex: 0 0 auto;
+    inline-size: clamp(10.4rem, 23.4vi, 18.2rem);
+    aspect-ratio: 1 / 1;
 }
 .route-home__hero {
     position: relative;
-    z-index: 1;
-    display: grid;
+    display: flex;
+    flex-direction: row;
     align-items: center;
     gap: var(--sp-6);
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
     inline-size: 100%;
     max-inline-size: var(--max-width);
     margin-inline: auto;
@@ -45,7 +44,6 @@
     align-items: flex-start;
     gap: var(--sp-3);
     pointer-events: none;
-    grid-column-start: 2;
 }
 .route-home__hero-title {
     margin: 0;

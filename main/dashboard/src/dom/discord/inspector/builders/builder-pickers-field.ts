@@ -1,4 +1,4 @@
-import { div, wireChange, type Instance } from "../../../factory";
+import { div, wireChange, type Instance, baseProps } from "../../../factory";
 import { buildGlassSelect, type SelectOption } from "../../../forms/glass/inputs/select/index.js";
 import { DISCORD_INSPECTOR_SECTION_CLASS } from "../../../../shared/constants/clan-manage-discord/route-constants.js";
 import { buildLabelRow } from "./section-builder-readonly.js";
@@ -30,8 +30,5 @@ export function pickerField(args: PickerFieldArgs): Instance {
             args.onSave(val.length === 0 ? null : val);
         });
     }
-    return div({ classes: [DISCORD_INSPECTOR_SECTION_CLASS], context: null, meta: null }, [
-        buildLabelRow(args.title, null),
-        select,
-    ]);
+    return div(baseProps([DISCORD_INSPECTOR_SECTION_CLASS]), [buildLabelRow(args.title, null), select]);
 }

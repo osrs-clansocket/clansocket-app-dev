@@ -1,6 +1,7 @@
-import { BTN_VARIANT_OUTLINE, button, div, type Instance } from "../../../../factory";
+import { BTN_VARIANT_OUTLINE, button, div, type Instance, baseProps } from "../../../../factory";
 import { inlineConfirm, INLINE_CONFIRM_HOST_CLASS } from "../../../../factory/layout-ops/inline/inline-confirm.js";
 import { revokeWom, syncWomNow, updateWomNow } from "../../../../../state/wom/clients/wom-client.js";
+import type { WomStatus } from "../../../../../state/wom/clients/wom-client.js";
 import {
     ACTION_HOST_CLASS,
     ACTIONS_CLASS,
@@ -18,12 +19,19 @@ import {
     UPDATE_NOW_BTN,
     UPDATE_RUNNING,
 } from "./index-constants.js";
+import { wireUpdateBtn } from "./index-update-btn.js";
 
 export interface ActionsConfig {
     slug: string;
     refresh: () => void;
     onRelink: () => void;
     setFeedback: (msg: string) => void;
+    statusSignal: () => WomStatus;
+}
+
+export interface ActionsHandle {
+    instance: Instance;
+    dispose: () => void;
 }
 
 async function runUpdateAction(cfg: ActionsConfig): Promise<void> {
@@ -71,7 +79,7 @@ async function runUnlinkAction(args: { cfg: ActionsConfig; unlinkHost: Instance 
 }
 
 function actionBtn(text: string, context: string, meta: ("action" | "destructive")[], onClick: () => void): Instance {
-    return button({ classes: [], variant: BTN_VARIANT_OUTLINE, compact: true, text, context, meta, onClick });
+    return button({ classes: [], variant: BTN_VARIANT_OUTLINE,  text, context, meta, onClick });
 }
 
 function buildRefreshButtons(cfg: ActionsConfig): { updateBtn: Instance; syncBtn: Instance } {
@@ -115,12 +123,12 @@ function buildActionRow(
     return { ...buildRefreshButtons(cfg), ...buildLinkButtons(cfg, unlinkHostRef) };
 }
 
-export function buildActionsRow(cfg: ActionsConfig): Instance {
+export function buildActionsRow(cfg: ActionsConfig): ActionsHandle {
     const unlinkHostRef: { v: Instance | null } = { v: null };
     const { updateBtn, syncBtn, relinkBtn, unlinkBtn } = buildActionRow(cfg, unlinkHostRef);
-    const unlinkHost = div({ classes: [INLINE_CONFIRM_HOST_CLASS, ACTION_HOST_CLASS], context: null, meta: null }, [
-        unlinkBtn,
-    ]);
+    const unlinkHost = div(baseProps([INLINE_CONFIRM_HOST_CLASS, ACTION_HOST_CLASS]), [unlinkBtn]);
     unlinkHostRef.v = unlinkHost;
-    return div({ classes: [ACTIONS_CLASS], context: null, meta: null }, [updateBtn, syncBtn, relinkBtn, unlinkHost]);
+    const instance = div(baseProps([ACTIONS_CLASS]), [updateBtn, syncBtn, relinkBtn, unlinkHost]);
+    const dispose = wireUpdateBtn(updateBtn as Instance<HTMLButtonElement>, cfg.statusSignal);
+    return { instance, dispose };
 }

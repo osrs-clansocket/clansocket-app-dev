@@ -1,4 +1,14 @@
-import { div, heading, paragraph, span, type Instance, type LiveChange, type LiveStore } from "../../factory";
+import {
+    div,
+    heading,
+    paragraph,
+    span,
+    type Instance,
+    type LiveChange,
+    type LiveStore,
+    baseProps,
+    textProps,
+} from "../../factory";
 import { isPositionActive, type PositionRow } from "../../../state/clans/stores/positions-store.js";
 import type { ClanMapApi } from "../../clans/clan-map/index.js";
 import {
@@ -26,7 +36,7 @@ function placeRows(host: Instance, refs: readonly RowRefs[]): void {
 }
 
 function buildAwaitingMsg(): Instance {
-    return paragraph({ classes: [CLAN_MAP_EMPTY_CLASS], text: "Awaiting positions…", context: null, meta: null });
+    return paragraph(textProps([CLAN_MAP_EMPTY_CLASS], "Awaiting positions…"));
 }
 
 function buildSection(title: string): {
@@ -36,10 +46,10 @@ function buildSection(title: string): {
     labelList: Instance;
 } {
     const titleInst = heading("h2", { classes: [CLAN_MAP_SIDE_TITLE_CLASS], text: title, context: null, meta: null });
-    const countSpan = span({ classes: [CLAN_MAP_SIDE_COUNT_CLASS], context: null, meta: null });
-    const header = div({ classes: [CLAN_MAP_SIDE_HEADER_CLASS], context: null, meta: null }, [countSpan, titleInst]);
-    const labelList = div({ classes: [CLAN_MAP_LABEL_LIST_CLASS], context: null, meta: null });
-    const section = div({ classes: [CLAN_MAP_SIDE_SECTION_CLASS], context: null, meta: null }, [header, labelList]);
+    const countSpan = span(baseProps([CLAN_MAP_SIDE_COUNT_CLASS]));
+    const header = div(baseProps([CLAN_MAP_SIDE_HEADER_CLASS]), [countSpan, titleInst]);
+    const labelList = div(baseProps([CLAN_MAP_LABEL_LIST_CLASS]));
+    const section = div(baseProps([CLAN_MAP_SIDE_SECTION_CLASS]), [header, labelList]);
     return { section, countSpan, titleInst, labelList };
 }
 
@@ -100,7 +110,7 @@ export function buildSidePanel(liveStore: LiveStore<PositionRow>, api: ClanMapAp
     const ctx: SidePanelCtx = {
         active: buildSection("Live Clannies"),
         lastKnown: buildSection("Last Known"),
-        empty$: div({ classes: [CLAN_MAP_SIDE_EMPTY_CLASS], context: null, meta: null }, [buildAwaitingMsg()]),
+        empty$: div(baseProps([CLAN_MAP_SIDE_EMPTY_CLASS]), [buildAwaitingMsg()]),
         rowPool: new Map<string, RowRefs>(),
         handlers: {
             onFocus: api.focusOnHash,
@@ -112,9 +122,5 @@ export function buildSidePanel(liveStore: LiveStore<PositionRow>, api: ClanMapAp
         liveStore,
     };
     liveStore.onChange((change) => applyPanelChange(ctx, change));
-    return div({ classes: [CLAN_MAP_SIDE_CLASS], context: null, meta: null }, [
-        ctx.active.section,
-        ctx.lastKnown.section,
-        ctx.empty$,
-    ]);
+    return div(baseProps([CLAN_MAP_SIDE_CLASS]), [ctx.active.section, ctx.lastKnown.section, ctx.empty$]);
 }

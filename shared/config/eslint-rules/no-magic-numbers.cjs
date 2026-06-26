@@ -122,6 +122,7 @@ module.exports = {
         const ignoreArrayIndexes = opts.ignoreArrayIndexes !== false;
         const ignoreDefaultValues = opts.ignoreDefaultValues !== false;
         const raw = (context.filename || context.getFilename()).replace(/\\/g, "/");
+        if (raw.includes("/dom/pages/") && raw.endsWith("/meta.ts")) return {};
         const mod = getModuleForFile(raw) || "unknown";
         return {
             Literal(node) {

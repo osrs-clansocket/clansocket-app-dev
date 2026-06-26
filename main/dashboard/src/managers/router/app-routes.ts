@@ -5,7 +5,6 @@ export const AppRoutes = {
     CLAN: CLANS_PATH,
     CLAN_MANAGE: CLANS_PATH,
     CLAN_LIVE: CLANS_PATH,
-    CLAN_VOXLAB: CLANS_PATH,
     ACCOUNT: "/account",
     DATA_RIGHTS: "/data-rights",
     LOGIN_DEVICE: "/login-device",

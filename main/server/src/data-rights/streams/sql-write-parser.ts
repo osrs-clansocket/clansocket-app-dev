@@ -1,58 +1,9 @@
-import type { DbWriteKind } from "./writes-stream.js";
+import { readWord, skipOrAlternative, skipWs } from "./scanner-sql.js";
+import { expectKeyword } from "./validator-sql-keyword.js";
+import { readTableName } from "./reader-sql-table.js";
+import type { WriteSig } from "./sql-write-types.js";
 
-const WS_CHARS = new Set([" ", "\t", "\n", "\r"]);
-const IDENT_TERMINATORS = new Set([" ", "\t", "\n", "\r", "(", ",", ";", ".", "\0"]);
-
-function skipWs(s: string, i: number): number {
-    while (i < s.length && WS_CHARS.has(s[i])) i++;
-    return i;
-}
-
-function readWord(s: string, i: number): { word: string; next: number } {
-    const start = i;
-    while (i < s.length && !IDENT_TERMINATORS.has(s[i])) i++;
-    return { word: s.slice(start, i), next: i };
-}
-
-function unquoteIdent(raw: string): string {
-    if (raw.length < 2) return raw;
-    const first = raw[0];
-    const last = raw[raw.length - 1];
-    if ((first === '"' && last === '"') || (first === "`" && last === "`")) {
-        return raw.slice(1, -1);
-    }
-    if (first === "[" && last === "]") return raw.slice(1, -1);
-    return raw;
-}
-
-export interface WriteSig {
-    kind: DbWriteKind;
-    table: string;
-}
-
-function expectKeyword(sql: string, start: number, keyword: string): number | null {
-    const w = readWord(sql, start);
-    return w.word.toUpperCase() === keyword ? w.next : null;
-}
-
-function skipOrAction(sql: string, start: number): number {
-    const i = skipWs(sql, start);
-    const orEnd = expectKeyword(sql, i, "OR");
-    if (orEnd === null) return start;
-    const action = readWord(sql, skipWs(sql, orEnd));
-    return skipWs(sql, action.next);
-}
-
-function readTableName(sql: string, i: number): string | null {
-    const t = readWord(sql, i);
-    if (t.word.length === 0) return null;
-    return unquoteIdent(t.word);
-}
-
-function skipOrAlternative(sql: string, start: number): number {
-    const after = skipOrAction(sql, start);
-    return after === start ? skipWs(sql, start) : after;
-}
+export type { WriteSig } from "./sql-write-types.js";
 
 function parseInsert(sql: string, start: number, kw: string): WriteSig | null {
     const intoEnd = expectKeyword(sql, skipOrAlternative(sql, start), "INTO");

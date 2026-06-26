@@ -1,5 +1,5 @@
 import { DB_NAMES } from "../../core/db-constants.js";
-import { selectColumn } from "../../core/operations.js";
+import { selectColumn } from "../../core/operations/index.js";
 
 export function resolveClanId(guildId: string): string | null {
     return selectColumn<string>(

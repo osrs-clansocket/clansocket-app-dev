@@ -1,5 +1,7 @@
 import { PermissionsBitField, type Guild } from "discord.js";
+import { orThrow } from "../../../shared/nullable.js";
 import { registerPublisher } from "../../publisher-registry.js";
+import { OP_KINDS, ENTITY_TYPES } from "../../publish-vocab.js";
 import { runPublishOp } from "../../runners/op-runner.js";
 
 interface UpdateWebhookState {
@@ -10,8 +12,7 @@ interface UpdateWebhookState {
 
 export async function applyWebhookUpdate(guild: Guild, webhookId: string, data: UpdateWebhookState): Promise<void> {
     const all = await guild.fetchWebhooks();
-    const webhook = all.get(webhookId);
-    if (!webhook) throw new Error(`webhook ${webhookId} not found`);
+    const webhook = orThrow(all.get(webhookId), `webhook ${webhookId} not found`);
     await webhook.edit({
         name: data.name ?? undefined,
         channel: data.channelId,
@@ -19,8 +20,10 @@ export async function applyWebhookUpdate(guild: Guild, webhookId: string, data: 
     });
 }
 
-registerPublisher("update", "discord_webhook", {
+registerPublisher(OP_KINDS.UPDATE, ENTITY_TYPES.WEBHOOK, {
     handler: (c, r) =>
-        runPublishOp(c, r, "update", (g, d) => applyWebhookUpdate(g, r.target_id_or_temp, d as UpdateWebhookState)),
+        runPublishOp(c, r, OP_KINDS.UPDATE, (g, d) =>
+            applyWebhookUpdate(g, r.target_id_or_temp, d as UpdateWebhookState),
+        ),
     requiredBotPermission: PermissionsBitField.Flags.ManageWebhooks,
 });

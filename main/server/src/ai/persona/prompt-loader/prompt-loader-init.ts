@@ -1,7 +1,9 @@
 import logger from "@clansocket/logger";
+import { isValidPromptFile } from "./prompt-registry-store.js";
 import { existsSync } from "fs";
 import { join } from "path";
-import { MEMORY_DIR, readJson } from "./file-reader.js";
+import { MEMORY_DIR } from "./prompt-paths.js";
+import { readJson } from "./reader-json-file.js";
 import type { PromptFile } from "./types.js";
 import { deletePromptFile, setPromptFile } from "./prompt-registry-store.js";
 import { reloadPrompts } from "./reload-prompts.js";
@@ -26,7 +28,7 @@ export function reloadFile(id: string): void {
     }
     try {
         const file = readJson<PromptFile>(p);
-        if (file.id && file.type && file.content) setPromptFile(file.id, file);
+        if (isValidPromptFile(file)) setPromptFile(file.id, file);
     } catch (err) {
         logger.warn(`[prompt-loader] reload skipped ${p}: ${(err as Error).message}`);
     }

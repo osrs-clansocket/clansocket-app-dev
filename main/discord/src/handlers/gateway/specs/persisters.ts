@@ -1,4 +1,5 @@
 import { extractChannelOverwrites } from "../../../state-sync/channel-overwrites/extract.js";
+import { STATE_KINDS } from "../../../core/constants.js";
 import { replaceOverwrites } from "../../../state-sync/channel-overwrites/post-replace.js";
 import { extractChannelRow } from "../../../state-sync/channels/extract.js";
 import { postServerFeatures } from "../../../state-sync/features/post-features.js";
@@ -20,7 +21,7 @@ export function deleteOf(kind: string) {
 
 export async function persistChannelCreate(gid: string, c: any): Promise<void> {
     const row = extractChannelRow(c);
-    if (row) await postStateUpsert("channels", gid, row.channel_id, row);
+    if (row) await postStateUpsert(STATE_KINDS.CHANNELS, gid, row.channel_id, row);
 }
 
 export async function persistChannelUpdate(gid: string, c: any): Promise<void> {

@@ -3,7 +3,7 @@ import logger from "@clansocket/logger";
 import { DB_NAMES, getClanDb, clanPluginDb, pluginModes } from "../../core/database.js";
 import { selectColumns } from "../../../shared/loaders/db-rows.js";
 import { CLAN_SATURATED, PLUGIN_SATURATED } from "../../plugin/saturated-tables.js";
-import { sweepClansocketHash } from "./sweep-clansocket.js";
+import { sweepClansocketHash } from "./sweeper-clansocket.js";
 
 interface SaturatedDef {
     table: string;

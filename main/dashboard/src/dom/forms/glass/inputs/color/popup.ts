@@ -1,16 +1,17 @@
-import { div, label, wireInput, type Instance } from "../../../../factory/index.js";
-import { hexToHsl, hexToRgb, normalizeHex } from "./math.js";
+import { div, label, wireInput, type Instance, baseProps } from "../../../../factory/index.js";
+import { hexToRgb, normalizeHex } from "./math.js";
+import { hexToHsl } from "./hsl.js";
 import type { PickerSliders, PickerState } from "./color-picker-types.js";
 import { broadcastPickerHex } from "./color-picker-broadcast.js";
 import { makePickerSliders } from "./color-picker-sliders.js";
 import { buildHexInput, buildPickerColumns } from "./color-picker-columns.js";
 
-const PICKER_LABEL = "voxlab__picker-label";
-const PICKER_POPUP = "voxlab__picker-popup";
-const PICKER_POPUP_WIDE = "voxlab__picker-popup--wide";
-const PICKER_PREVIEW = "voxlab__picker-popup-preview";
-const PICKER_COLUMNS = "voxlab__picker-popup-columns";
-const PICKER_HEX_ROW = "voxlab__picker-popup-hex";
+const PICKER_LABEL = "picker__label";
+const PICKER_POPUP = "picker__popup";
+const PICKER_POPUP_WIDE = "picker__popup--wide";
+const PICKER_PREVIEW = "picker__popup-preview";
+const PICKER_COLUMNS = "picker__popup-columns";
+const PICKER_HEX_ROW = "picker__popup-hex";
 
 export function buildPickerPopup(initial: string, onChange: (hex: string) => void): Instance<HTMLDivElement> {
     const preview = div({ classes: [PICKER_PREVIEW], style: `background: ${initial}`, context: null, meta: null });
@@ -22,18 +23,15 @@ export function buildPickerPopup(initial: string, onChange: (hex: string) => voi
     };
     slidersRef.v = makePickerSliders(st, broadcast);
     const { hslCol, rgbCol } = buildPickerColumns(slidersRef.v);
-    const hexRow = div({ classes: [PICKER_HEX_ROW], context: null, meta: null }, [
-        label({ classes: [PICKER_LABEL], context: null, meta: null }, ["Hex"]),
-        hexInput,
-    ]);
+    const hexRow = div(baseProps([PICKER_HEX_ROW]), [label(baseProps([PICKER_LABEL]), ["Hex"]), hexInput]);
     wireInput(hexInput.el, () => {
         if (st.broadcasting) return;
         const hex = normalizeHex(hexInput.el.value);
         if (hex) broadcast(hex);
     });
-    return div({ classes: [PICKER_POPUP, PICKER_POPUP_WIDE], context: null, meta: null }, [
+    return div(baseProps([PICKER_POPUP, PICKER_POPUP_WIDE]), [
         preview,
-        div({ classes: [PICKER_COLUMNS], context: null, meta: null }, [hslCol, rgbCol]),
+        div(baseProps([PICKER_COLUMNS]), [hslCol, rgbCol]),
         hexRow,
     ]) as Instance<HTMLDivElement>;
 }

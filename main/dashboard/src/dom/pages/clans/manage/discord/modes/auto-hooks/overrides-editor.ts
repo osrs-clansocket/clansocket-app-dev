@@ -1,4 +1,4 @@
-import { div, span, wireInput, type Instance } from "../../../../../../factory";
+import { div, span, wireInput, type Instance, baseProps, textProps } from "../../../../../../factory";
 import { glassInput } from "../../../../../../forms/glass/inputs/glass-input.js";
 import {
     AUTO_HOOKS_CARD_LABEL_CLASS,
@@ -24,8 +24,8 @@ export interface OverridesCallbacks {
 
 function buildRow(label: string, control: Instance): Instance {
     control.el.classList.add(AUTO_HOOKS_CARD_VALUE_CLASS);
-    return div({ classes: [AUTO_HOOKS_CARD_ROW_CLASS], context: null, meta: null }, [
-        span({ classes: [AUTO_HOOKS_CARD_LABEL_CLASS], text: label, context: null, meta: null }),
+    return div(baseProps([AUTO_HOOKS_CARD_ROW_CLASS]), [
+        span(textProps([AUTO_HOOKS_CARD_LABEL_CLASS], label)),
         control,
     ]);
 }
@@ -57,8 +57,8 @@ export function buildOverridesEditor(initial: OverridesState, cb: OverridesCallb
     });
     wireInput(avatarInp.el, () => cb.onAvatarUrlChange(nullify(avatarInp.el.value)));
 
-    return div({ classes: [AUTO_HOOKS_OVERRIDES_CLASS], context: null, meta: null }, [
-        span({ classes: [AUTO_HOOKS_CARD_LABEL_CLASS], text: OVERRIDES_HEADER_LABEL, context: null, meta: null }),
+    return div(baseProps([AUTO_HOOKS_OVERRIDES_CLASS]), [
+        span(textProps([AUTO_HOOKS_CARD_LABEL_CLASS], OVERRIDES_HEADER_LABEL)),
         buildRow(WEBHOOK_USERNAME_OVERRIDE_LABEL, usernameInp),
         buildRow(WEBHOOK_AVATAR_OVERRIDE_LABEL, avatarInp),
     ]);

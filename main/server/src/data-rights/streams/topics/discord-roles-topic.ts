@@ -1,6 +1,6 @@
 import { SQL_TABLES } from "../../../database/core/sql-columns.js";
 import { listRolesGuild } from "../../../database/discord/state/roles/list-roles.js";
-import type { ProjectionTopic } from "../projection.js";
+import type { ProjectionTopic } from "../projection-types.js";
 import { guildTopic, singleKeyOf } from "./guild-topic-builder.js";
 
 export function discordRolesTopic(clanId: string, guildId: string): ProjectionTopic {

@@ -9,9 +9,12 @@ import { computeBackoff } from "../../../shared/outbound/backoff.js";
 import { runWomWrite } from "../db-runners.js";
 
 const MAX_ATTEMPTS = 5;
+const MAX_ATTEMPTS_5XX = 10;
 const BACKOFF_BASE_MS = 1000;
 const BACKOFF_MULTIPLIER = 2;
 const BACKOFF_MAX_MS = 60000;
+const HTTP_SERVER_ERROR_MIN = 500;
+const HTTP_SERVER_ERROR_MAX = 600;
 
 export function markWomFlight(clanId: string, queueId: string): boolean {
     const result = runWomWrite(
@@ -54,7 +57,9 @@ export function markDeadLetter(clanId: string, queueId: string, errorCode: numbe
 }
 
 export function markWomFailed(clanId: string, queueId: string, errorCode: number, attemptNo: number): void {
-    if (attemptNo >= MAX_ATTEMPTS) {
+    const is5xx = errorCode >= HTTP_SERVER_ERROR_MIN && errorCode < HTTP_SERVER_ERROR_MAX;
+    const maxAttempts = is5xx ? MAX_ATTEMPTS_5XX : MAX_ATTEMPTS;
+    if (attemptNo >= maxAttempts) {
         markDeadLetter(clanId, queueId, errorCode);
         return;
     }

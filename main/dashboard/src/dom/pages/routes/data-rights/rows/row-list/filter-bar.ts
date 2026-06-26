@@ -1,4 +1,13 @@
-import { BTN_VARIANT_OUTLINE, button, div, span, wireKey, type Instance } from "../../../../../factory/index.js";
+import {
+    BTN_VARIANT_OUTLINE,
+    button,
+    div,
+    span,
+    wireKey,
+    type Instance,
+    baseProps,
+    textProps,
+} from "../../../../../factory/index.js";
 import { glassDate } from "../../../../../forms/glass/inputs/date/index.js";
 import { glassInput } from "../../../../../forms/glass/inputs/glass-input.js";
 import { dateInputValue } from "../../../../../../state/data-rights/page-state/formatters/date-input-formatter.js";
@@ -94,14 +103,7 @@ function buildFilterButtons(args: { refs: FilterRefs; handlers: RowListHandlers;
 }
 
 function assembleFilterChildren(refs: FilterRefs, apply: Instance, clear: Instance): Instance[] {
-    return [
-        span({ classes: [DR_LABEL_CLASS], text: "Range", context: null, meta: null }),
-        refs.fromInp,
-        refs.toInp,
-        refs.rsnInp,
-        apply,
-        clear,
-    ];
+    return [span(textProps([DR_LABEL_CLASS], "Range")), refs.fromInp, refs.toInp, refs.rsnInp, apply, clear];
 }
 
 export function buildFilterBar(state: RowListState, handlers: RowListHandlers): Instance {
@@ -121,5 +123,5 @@ export function buildFilterBar(state: RowListState, handlers: RowListHandlers): 
     if (state.info?.canBulkDelete && state.from !== null && state.to !== null) {
         children.push(buildBulkRow(state, handlers));
     }
-    return div({ classes: [DR_FILTER_BAR_CLASS], context: null, meta: null }, children);
+    return div(baseProps([DR_FILTER_BAR_CLASS]), children);
 }

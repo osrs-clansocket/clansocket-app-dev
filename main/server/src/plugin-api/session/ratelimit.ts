@@ -1,4 +1,4 @@
-import { MS_PER_MINUTE } from "../../shared/time.js";
+import { MS_PER_MINUTE } from "../../shared/time/index.js";
 import { PLUGIN_IP_UPGRADES_PER_MIN } from "../constants.js";
 import { clearIpWindows, getIpWindow, setIpWindow, sweepIpWindows } from "./ip-window-registry.js";
 

@@ -7,6 +7,8 @@ import {
     rsnTag,
     span,
     type Instance,
+    baseProps,
+    textProps,
 } from "../../../../factory/index.js";
 import { identityClient, type VerifiedRsn } from "../../../../../state/identity/identity-client/index.js";
 import { timeStore } from "../../../../../state/stores/time-store.js";
@@ -44,33 +46,28 @@ export function buildDisplacedBanner(verifiedRsns: readonly VerifiedRsn[]): Inst
             meta: null,
         },
         [
-            span({
-                classes: [ACCOUNT_ROW_PRIMARY_CLASS],
-                context: null,
-                meta: null,
-                text: derived(() => {
-                    const left = Number.isFinite(earliestDeadline)
-                        ? formatTimeLeft(earliestDeadline, timeStore.now$())
-                        : "30 days";
-                    return `Your RSN was reassigned. Log into RuneLite with the ClanSocket plugin enabled to link your current RSN, or this account gets removed in ${left}.`;
-                }),
-            }),
+            span(
+                textProps(
+                    [ACCOUNT_ROW_PRIMARY_CLASS],
+                    derived(() => {
+                        const left = Number.isFinite(earliestDeadline)
+                            ? formatTimeLeft(earliestDeadline, timeStore.now$())
+                            : "30 days";
+                        return `Your RSN was reassigned. Log into RuneLite with the ClanSocket plugin enabled to link your current RSN, or this account gets removed in ${left}.`;
+                    }),
+                ),
+            ),
         ],
     );
 }
 
 function buildVerifiedMeta(r: VerifiedRsn): Instance {
     if (r.displaced) {
-        return span({ classes: [ACCOUNT_ROW_META_CLASS], text: "Displaced", context: null, meta: null });
+        return span(textProps([ACCOUNT_ROW_META_CLASS], "Displaced"));
     }
-    return span({ classes: [ACCOUNT_ROW_META_CLASS], context: null, meta: null }, [
-        span({ classes: [ACCOUNT_ROW_META_PREFIX_CLASS], text: "Since ", context: null, meta: null }),
-        span({
-            classes: [ACCOUNT_ROW_META_DATE_CLASS],
-            text: formatVerifiedDate(r.verifiedAt),
-            context: null,
-            meta: null,
-        }),
+    return span(baseProps([ACCOUNT_ROW_META_CLASS]), [
+        span(textProps([ACCOUNT_ROW_META_PREFIX_CLASS], "Since ")),
+        span(textProps([ACCOUNT_ROW_META_DATE_CLASS], formatVerifiedDate(r.verifiedAt))),
     ]);
 }
 
@@ -98,7 +95,7 @@ async function performRemoveVerified(
 }
 
 export function buildVerifiedRow(r: VerifiedRsn, refresh: () => void, status: Instance): Instance {
-    const removeHost = div({ classes: [INLINE_CONFIRM_HOST_CLASS], context: null, meta: null });
+    const removeHost = div(baseProps([INLINE_CONFIRM_HOST_CLASS]));
     const removeBtn = button({
         classes: [ACCOUNT_TOKEN_REVOKE_CLASS],
         text: "Remove",
@@ -107,10 +104,8 @@ export function buildVerifiedRow(r: VerifiedRsn, refresh: () => void, status: In
         onClick: () => void performRemoveVerified(r, removeHost, refresh, status),
     });
     removeHost.addChild(removeBtn);
-    return div({ classes: [ACCOUNT_DEVICE_ROW_CLASS], context: null, meta: null }, [
-        span({ classes: [ACCOUNT_ROW_PRIMARY_CLASS], context: null, meta: null }, [
-            rsnTag({ rsn: r.rsn, rank: r.rank, context: null, meta: null }),
-        ]),
+    return div(baseProps([ACCOUNT_DEVICE_ROW_CLASS]), [
+        span(baseProps([ACCOUNT_ROW_PRIMARY_CLASS]), [rsnTag({ rsn: r.rsn, rank: r.rank, context: null, meta: null })]),
         buildVerifiedMeta(r),
         removeHost,
     ]);

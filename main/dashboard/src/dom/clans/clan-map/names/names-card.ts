@@ -16,6 +16,7 @@ import {
     MAP_NAME_CARD_REGION_CLASS,
     MAP_NAME_CARD_VITALS_CLASS,
 } from "../../../../shared/constants/clan/clan-map-constants.js";
+import { baseProps } from "../../../factory/index.js";
 
 export const BLIP_COLOR = "#ff5252";
 
@@ -71,10 +72,7 @@ function buildVitalsRow(): { row: Instance; hpInst: Instance; prayerInst: Instan
         context: null,
         meta: null,
     });
-    const row = div({ classes: [MAP_NAME_CARD_VITALS_CLASS], context: null, meta: null }, [
-        hpPair.instance,
-        prayerPair.instance,
-    ]);
+    const row = div(baseProps([MAP_NAME_CARD_VITALS_CLASS]), [hpPair.instance, prayerPair.instance]);
     return { row, hpInst: hpPair.labelInst, prayerInst: prayerPair.labelInst };
 }
 
@@ -85,7 +83,7 @@ interface CombatBlock {
 }
 
 function buildCombatBlock(): CombatBlock {
-    const combatDmgInst = span({ classes: [MAP_NAME_CARD_ENTRY_DMG_CLASS], context: null, meta: null });
+    const combatDmgInst = span(baseProps([MAP_NAME_CARD_ENTRY_DMG_CLASS]));
     combatDmgInst.el.style.color = BLIP_COLOR;
     const combatPair = iconLabel({
         name: ATTACK_ICON_NAME,
@@ -97,7 +95,7 @@ function buildCombatBlock(): CombatBlock {
         context: null,
         meta: null,
     });
-    const combatInst = div({ classes: [MAP_NAME_CARD_COMBAT_CLASS], context: null, meta: null }, [combatPair.instance]);
+    const combatInst = div(baseProps([MAP_NAME_CARD_COMBAT_CLASS]), [combatPair.instance]);
     return { combatPair, combatDmgInst, combatInst };
 }
 
@@ -111,21 +109,21 @@ interface CardParts {
 }
 
 function buildCardParts(rsn: string): CardParts {
-    const rail = div({ classes: [MAP_NAME_CARD_RAIL_CLASS], context: null, meta: null });
+    const rail = div(baseProps([MAP_NAME_CARD_RAIL_CLASS]));
     rail.el.style.background = BLIP_COLOR;
     return {
         rail,
         nameInst: rsnTag({ rsn, size: "sm", classes: [MAP_NAME_CARD_NAME_CLASS], context: null, meta: null }),
-        regionSpan: span({ classes: [MAP_NAME_CARD_REGION_CLASS], context: null, meta: null }),
+        regionSpan: span(baseProps([MAP_NAME_CARD_REGION_CLASS])),
         vitals: buildVitalsRow(),
-        prayersInst: div({ classes: [MAP_NAME_CARD_PRAYERS_CLASS], context: null, meta: null }),
+        prayersInst: div(baseProps([MAP_NAME_CARD_PRAYERS_CLASS])),
         combat: buildCombatBlock(),
     };
 }
 
 export function buildCard(rsn: string): CardRefs {
     const p = buildCardParts(rsn);
-    const body = div({ classes: [MAP_NAME_CARD_BODY_CLASS], context: null, meta: null }, [
+    const body = div(baseProps([MAP_NAME_CARD_BODY_CLASS]), [
         p.nameInst,
         p.vitals.row,
         p.prayersInst,
@@ -133,7 +131,7 @@ export function buildCard(rsn: string): CardRefs {
         p.regionSpan,
     ]);
     return {
-        instance: div({ classes: [MAP_NAME_CARD_CLASS], context: null, meta: null }, [p.rail, body]),
+        instance: div(baseProps([MAP_NAME_CARD_CLASS]), [p.rail, body]),
         rail: p.rail,
         prayersInst: p.prayersInst,
         regionInst: p.regionSpan,

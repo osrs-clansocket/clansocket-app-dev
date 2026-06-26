@@ -107,7 +107,7 @@ console.log(`Static icons synced: ${paths.length} path(s) -> ${path.relative(pro
 console.log(`Icon colors synced: ${Object.keys(colors).length} color(s) -> ${path.relative(process.cwd(), colorsOut)}`);
 console.log(`Icon color CSS synced: ${Object.keys(colors).length} rule(s) -> ${path.relative(process.cwd(), cssOut)}`);
 
-const osrsRegistry = {};
+const osrsRegistry = [];
 for (const folderName of OSRS_PICKER_FOLDERS) {
     const folderDir = path.resolve(osrsRoot, folderName);
     if (!fs.existsSync(folderDir)) continue;
@@ -118,11 +118,12 @@ for (const folderName of OSRS_PICKER_FOLDERS) {
         const ext = path.extname(entry.name).toLowerCase();
         if (!IMAGE_EXTS.has(ext)) continue;
         const base = entry.name.slice(0, entry.name.length - ext.length);
-        osrsRegistry[`${folderKey}_${base}`] = 0;
+        osrsRegistry.push(`${folderKey}_${base}`);
     }
 }
-const sortedOsrs = {};
-for (const k of Object.keys(osrsRegistry).sort()) sortedOsrs[k] = osrsRegistry[k];
+osrsRegistry.sort();
 fs.mkdirSync(path.dirname(osrsRegistryOut), { recursive: true });
-fs.writeFileSync(osrsRegistryOut, JSON.stringify(sortedOsrs) + "\n");
-console.log(`OSRS picker icons synced: ${Object.keys(sortedOsrs).length} icon(s) -> ${path.relative(process.cwd(), osrsRegistryOut)}`);
+fs.writeFileSync(osrsRegistryOut, JSON.stringify(osrsRegistry) + "\n");
+console.log(`OSRS picker icons synced: ${osrsRegistry.length} icon(s) -> ${path.relative(process.cwd(), osrsRegistryOut)}`);
+
+process.exit(0);

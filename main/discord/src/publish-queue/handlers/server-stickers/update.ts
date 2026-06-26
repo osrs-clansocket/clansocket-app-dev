@@ -1,5 +1,7 @@
 import { PermissionsBitField, type Guild } from "discord.js";
+import { orThrow } from "../../../shared/nullable.js";
 import { registerPublisher } from "../../publisher-registry.js";
+import { OP_KINDS, ENTITY_TYPES } from "../../publish-vocab.js";
 import { runPublishOp } from "../../runners/op-runner.js";
 
 interface UpdateServerSticker {
@@ -9,8 +11,7 @@ interface UpdateServerSticker {
 }
 
 export async function applyStickerUpdate(guild: Guild, stickerId: string, data: UpdateServerSticker): Promise<void> {
-    const sticker = await guild.stickers.fetch(stickerId);
-    if (!sticker) throw new Error(`server sticker ${stickerId} not found`);
+    const sticker = orThrow(await guild.stickers.fetch(stickerId), `server sticker ${stickerId} not found`);
     await sticker.edit({
         name: data.name,
         description: data.description ?? undefined,
@@ -18,8 +19,10 @@ export async function applyStickerUpdate(guild: Guild, stickerId: string, data: 
     });
 }
 
-registerPublisher("update", "discord_server_sticker", {
+registerPublisher(OP_KINDS.UPDATE, ENTITY_TYPES.SERVER_STICKER, {
     handler: (c, r) =>
-        runPublishOp(c, r, "update", (g, d) => applyStickerUpdate(g, r.target_id_or_temp, d as UpdateServerSticker)),
+        runPublishOp(c, r, OP_KINDS.UPDATE, (g, d) =>
+            applyStickerUpdate(g, r.target_id_or_temp, d as UpdateServerSticker),
+        ),
     requiredBotPermission: PermissionsBitField.Flags.ManageGuildExpressions,
 });

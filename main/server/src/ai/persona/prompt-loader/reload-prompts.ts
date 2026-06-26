@@ -1,5 +1,5 @@
 import { existsSync } from "fs";
-import { MEMORY_DIR, PROMPTS_DIR } from "./file-reader.js";
+import { MEMORY_DIR, PROMPTS_DIR } from "./prompt-paths.js";
 import { scanDir } from "./scan-dir.js";
 
 export function reloadPrompts(): void {

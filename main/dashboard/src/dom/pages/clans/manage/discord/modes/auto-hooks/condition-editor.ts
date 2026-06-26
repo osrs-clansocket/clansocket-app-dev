@@ -1,4 +1,4 @@
-import { div, span, type Instance } from "../../../../../../factory";
+import { div, span, type Instance, baseProps, textProps } from "../../../../../../factory";
 import type { SelectOption } from "../../../../../../forms/glass/inputs/select/index.js";
 import { fieldsForTrigger } from "../../../../../../../shared/constants/clan-manage-discord/condition-field-list.js";
 import type { ConditionEditorCallbacks, ConditionRow } from "./condition-editor-value.js";
@@ -17,7 +17,7 @@ function buildFieldOptions(triggerType: string): SelectOption[] {
 
 export function buildConditionEditor(initial: readonly ConditionRow[], cb: ConditionEditorCallbacks): Instance {
     const state: EditorState = { rows: [...initial] };
-    const host = div({ classes: [AUTO_HOOKS_EMBED_EDITOR_CLASS], context: null, meta: null });
+    const host = div(baseProps([AUTO_HOOKS_EMBED_EDITOR_CLASS]));
 
     function rerender(): void {
         const triggerType = cb.getTriggerType();
@@ -26,7 +26,7 @@ export function buildConditionEditor(initial: readonly ConditionRow[], cb: Condi
             buildRow(makeRowCtx({ state, cb, rerender, row, idx, triggerType, fields })),
         );
         host.setChildren(
-            span({ classes: [AUTO_HOOKS_CARD_LABEL_CLASS], text: "Conditions", context: null, meta: null }),
+            span(textProps([AUTO_HOOKS_CARD_LABEL_CLASS], "Conditions")),
             ...rowEls,
             buildAddBtn({ triggerType, fields, state, cb, rerender }),
         );

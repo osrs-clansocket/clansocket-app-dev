@@ -1,4 +1,4 @@
-import type { AuditCommonPayload } from "../payload-types.js";
+import type { AuditCommonPayload } from "../audit-common-types.js";
 
 export interface BotLinkerReassigned extends AuditCommonPayload {
     previous_linker: string;

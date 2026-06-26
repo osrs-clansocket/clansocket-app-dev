@@ -7,9 +7,16 @@ interface ActorIdentity {
     component: string | null;
 }
 
+const buildIdentity = (
+    actor: string | null,
+    actorKind: ActorIdentity["actorKind"],
+    component: string | null,
+): ActorIdentity => ({ actor, actorKind, component });
+
 function actorIdentity(actor: Actor): ActorIdentity {
-    if (actor.kind === "user") return { actor: actor.user_id, actorKind: "user", component: null };
-    return { actor: null, actorKind: "system", component: actor.component };
+    return actor.kind === "user"
+        ? buildIdentity(actor.user_id, "user", null)
+        : buildIdentity(null, "system", actor.component);
 }
 
 export function assertActor(actor: Actor): void {

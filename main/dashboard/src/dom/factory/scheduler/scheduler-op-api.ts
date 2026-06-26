@@ -1,6 +1,6 @@
 import { pushIdle } from "./scheduler-idle.js";
 import { queues } from "./scheduler-queues.js";
-import { ensureScheduled } from "./scheduler-loop.js";
+import { ensureScheduled } from "./scheduler-ensure.js";
 
 export type OpLane = "animation" | "deferred" | "idle";
 

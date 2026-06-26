@@ -1,4 +1,4 @@
-import { div, onceEffect } from "../../factory";
+import { div, onceEffect, baseProps } from "../../factory";
 import { renderMarkdown } from "../../../ai/markdown";
 import { getMessagesHost } from "../panel/messaging/messages-host";
 import {
@@ -41,9 +41,7 @@ function markWelcomeSeen(): void {
 }
 
 function renderWelcome(containerEl: HTMLElement): void {
-    const content = div({ classes: [AI_BAR_MSG_CONTENT_CLASS], context: null, meta: null }).setHTML(
-        renderMarkdown(WELCOME_CONTENT),
-    );
+    const content = div(baseProps([AI_BAR_MSG_CONTENT_CLASS])).setHTML(renderMarkdown(WELCOME_CONTENT));
     const msg = div(
         {
             classes: [AI_BAR_MSG_CLASS, AI_BAR_MSG_AI_CLASS, AI_BAR_MSG_WELCOME_CLASS],

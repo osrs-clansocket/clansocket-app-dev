@@ -1,5 +1,5 @@
 import "../../../../../../../styles/pages/clans/manage/discord/clan-discord-page.css";
-import { div, paragraph, treeView, type Instance, type ReorderEvent } from "../../../../../../factory";
+import { div, paragraph, treeView, type Instance, type ReorderEvent, baseProps } from "../../../../../../factory";
 import { identityStore } from "../../../../../../../state/identity/stores/identity-store.js";
 import type { DiscordChannel, DiscordServer } from "../../../../../../../state/discord/client.js";
 import { buildCreateToolbar } from "./create-dropdown/create-dropdown.js";
@@ -19,7 +19,7 @@ import {
     subscribeChannelsWebhooks,
     type ChannelsModeState,
 } from "./mode-subscribe.js";
-import { defineDiscordMode } from "../../registry";
+import type { ModeContext } from "../../registry";
 
 function buildToolbar(
     guildId: string,
@@ -27,9 +27,7 @@ function buildToolbar(
     features: readonly string[],
 ): Instance {
     void identityStore.refresh();
-    return div({ classes: [TOOLBAR_CLASS], context: null, meta: null }, [
-        buildCreateToolbar({ guildId, getChannels, features }),
-    ]);
+    return div(baseProps([TOOLBAR_CLASS]), [buildCreateToolbar({ guildId, getChannels, features })]);
 }
 
 interface RerenderArgs {
@@ -89,7 +87,7 @@ interface ChannelsWiring {
 }
 
 function buildChannelsWiring(guildId: string): ChannelsWiring {
-    const treeHost = div({ classes: [], context: null, meta: null });
+    const treeHost = div(baseProps([]));
     const empty = paragraph({ classes: [EMPTY_CLASS], text: EMPTY_TEXT, hidden: "", context: null, meta: null });
     const state = emptyChannelsState();
     const reorderRef: { fn: (e: ReorderEvent) => void } = { fn: () => undefined };
@@ -112,7 +110,7 @@ export function buildChannelsMode(server: DiscordServer): Instance {
     const guildId = server.guild_id;
     const features = parseFeatures(server.features);
     const w = buildChannelsWiring(guildId);
-    const modeHost = div({ classes: [MODE_HOST_CLASS], context: null, meta: null }, [
+    const modeHost = div(baseProps([MODE_HOST_CLASS]), [
         buildToolbar(guildId, () => w.state.latest, features),
         w.treeHost,
         w.empty,
@@ -126,4 +124,4 @@ export function buildChannelsMode(server: DiscordServer): Instance {
     return modeHost;
 }
 
-defineDiscordMode({ key: "channels", label: "Channels", order: 10, build: (ctx) => buildChannelsMode(ctx.server) });
+export const build = (ctx: ModeContext): Instance => buildChannelsMode(ctx.server);

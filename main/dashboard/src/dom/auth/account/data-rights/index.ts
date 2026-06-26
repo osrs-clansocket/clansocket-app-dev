@@ -6,6 +6,8 @@ import {
     INLINE_CONFIRM_HOST_CLASS,
     paragraph,
     type Instance,
+    baseProps,
+    textProps,
 } from "../../../factory";
 import { dataRightsClient } from "../../../../state/data-rights/data-rights-client/index.js";
 import { userStatsStore } from "../../../../state/data-rights/stores/user-stats-store.js";
@@ -23,7 +25,7 @@ defineAccountPanel({ key: "data-rights", order: 70, build: () => dataRightsPanel
 function buildExportBtn(status: Instance): Instance<HTMLButtonElement> {
     const exportBtn: Instance<HTMLButtonElement> = button({
         variant: BTN_VARIANT_OUTLINE,
-        compact: true,
+        
         text: "Export zip",
         context: "export all your data as a downloadable zip",
         meta: ["action", "data"],
@@ -43,7 +45,7 @@ function buildLeaveBtn(args: { status: Instance; leaveHost: Instance }): Instanc
     const { status, leaveHost } = args;
     const leaveBtn: Instance<HTMLButtonElement> = button({
         variant: BTN_VARIANT_OUTLINE,
-        compact: true,
+        
         classes: [ACCOUNT_REMOVE_BTN_CLASS],
         text: "Remove all data",
         context: "permanently delete all your data and leave the site",
@@ -56,7 +58,7 @@ function buildLeaveBtn(args: { status: Instance; leaveHost: Instance }): Instanc
 function buildBrowseBtn(): Instance {
     return button({
         variant: BTN_VARIANT_OUTLINE,
-        compact: true,
+        
         text: "Browse my data",
         context: "browse your stored data table by table",
         meta: ["nav", "data"],
@@ -80,20 +82,17 @@ function wireStatsRefresh(root: Instance, stats: ReturnType<typeof buildStatsGri
 }
 
 export function dataRightsPanel(): Instance {
-    const status = paragraph({ classes: [FORM_HINT], text: "", context: null, meta: null });
+    const status = paragraph(textProps([FORM_HINT], ""));
     const stats = buildStatsGrid();
     const exportBtn = buildExportBtn(status);
-    const leaveHost = div({ classes: [INLINE_CONFIRM_HOST_CLASS], context: null, meta: null });
+    const leaveHost = div(baseProps([INLINE_CONFIRM_HOST_CLASS]));
     const leaveBtn = buildLeaveBtn({ status, leaveHost });
     leaveHost.addChild(leaveBtn);
     const browseBtn = buildBrowseBtn();
     const root = accountPanel({
         title: "Data rights",
         body: [stats.el, status],
-        footer: [
-            div({ classes: [FORM_FORM_ROW, FORM_FORM_ROW_FILL], context: null, meta: null }, [browseBtn, exportBtn]),
-            leaveHost,
-        ],
+        footer: [div(baseProps([FORM_FORM_ROW, FORM_FORM_ROW_FILL]), [browseBtn, exportBtn]), leaveHost],
     });
     wireStatsRefresh(root, stats);
     return root;

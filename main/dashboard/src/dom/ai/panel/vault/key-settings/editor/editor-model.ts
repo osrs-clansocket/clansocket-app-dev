@@ -12,6 +12,7 @@ import {
 } from "../constants.js";
 import { buildPriorityField, buildTokensField } from "./numeric-fields.js";
 import { providerFields } from "./provider-model-fields.js";
+import { baseProps } from "../../../../../factory/index.js";
 
 export interface EditorViewArgs {
     bodyHost: HTMLElement;
@@ -49,7 +50,7 @@ function buildKeyInput(existingConfig: { apiKey: string } | null): Instance<HTML
 }
 
 function buildEditorError(): { errorEl: Instance; showError: (msg: string) => void } {
-    const errorEl = paragraph({ classes: [ERROR_CLASS], context: null, meta: null });
+    const errorEl = paragraph(baseProps([ERROR_CLASS]));
     errorEl.el.hidden = true;
     const showError = (msg: string): void => {
         errorEl.setText(msg);

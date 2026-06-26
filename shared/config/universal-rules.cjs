@@ -82,6 +82,8 @@ const noUntrackedEncryption = require("./eslint-rules/no-untracked-encryption.cj
 const noUntrackedPseudoRandom = require("./eslint-rules/no-untracked-pseudo-random.cjs");
 const preferImmediateReturn = require("./eslint-rules/prefer-immediate-return.cjs");
 const noReexportOutsideIndex = require("./eslint-rules/no-reexport-outside-index.cjs");
+const noSelfAliasExport = require("./eslint-rules/no-self-alias-export.cjs");
+const noRawIconClass = require("./eslint-rules/no-raw-icon-class.cjs");
 
 const rules = {
     "no-duplication": noDuplication,
@@ -145,6 +147,8 @@ const rules = {
     "no-untracked-pseudo-random": noUntrackedPseudoRandom,
     "prefer-immediate-return": preferImmediateReturn,
     "no-reexport-outside-index": noReexportOutsideIndex,
+    "no-self-alias-export": noSelfAliasExport,
+    "no-raw-icon-class": noRawIconClass,
 };
 
 // Severities — rules without options just "error"; rules with options use array form.
@@ -165,7 +169,7 @@ const severities = {
     "lvi/max-lines-per-function": ["error", { max: 25, skipBlankLines: true, skipComments: true }],
     "lvi/no-empty": "error",
     "lvi/no-magic-numbers": ["error", { ignore: [-1, 0, 1, 2, 1024, 60_000, 300_000, 1_800_000], ignoreArrayIndexes: true, ignoreDefaultValues: true }],
-    "lvi/no-warning-comments": ["error", { terms: ["todo", "fixme", "hack", "workaround", "stopship", "xxx"] }],
+    "lvi/no-warning-comments": ["error", { terms: ["todo", "fixme", "hack", "workaround", "stopship", "xxx", "deprecated", "legacy", "kept for", "for compat", "for backward", "previously", "formerly", "originally", "temporary", "shim", "stub for", "old impl"] }],
     "lvi/no-leak-shape": "error",
     "lvi/no-env-fallback": "error",
     "lvi/max-name-words": "error",
@@ -210,6 +214,8 @@ const severities = {
     "lvi/no-untracked-pseudo-random": "error",
     "lvi/prefer-immediate-return": "error",
     "lvi/no-reexport-outside-index": "error",
+    "lvi/no-self-alias-export": "error",
+    "lvi/no-raw-icon-class": "error",
 };
 
 module.exports = { rules, severities };

@@ -1,4 +1,4 @@
-import { div, flashInvalid, input, textarea, type Instance } from "../../../../factory";
+import { div, flashInvalid, input, textarea, type Instance, baseProps } from "../../../../factory";
 import { profileStore, type SessionEntry } from "../../../../../ai/profile-store";
 import {
     INLINE_INPUT_CLASS,
@@ -72,13 +72,7 @@ function buildOptionalInputs(initial: Partial<SessionEntry> | null): {
 function buildSessionInputs(initial: Partial<SessionEntry> | null): SessionInputs & { el: HTMLElement } {
     const { theyEl, iEl } = buildSessionTextareas(initial);
     const { learnedEl, fixEl, failureEl } = buildOptionalInputs(initial);
-    const grid = div({ classes: [SESSION_EDIT_GRID_CLASS], context: null, meta: null }, [
-        theyEl,
-        iEl,
-        learnedEl,
-        fixEl,
-        failureEl,
-    ]);
+    const grid = div(baseProps([SESSION_EDIT_GRID_CLASS]), [theyEl, iEl, learnedEl, fixEl, failureEl]);
     return { they: theyEl.el, i: iEl.el, learned: learnedEl.el, fix: fixEl.el, failure: failureEl.el, el: grid.el };
 }
 
@@ -127,10 +121,7 @@ export function editableRow(host: Instance, initial: SessionEntry | null, rerend
         { classes: [ROW_CLASS, ROW_EDITING_CLASS, LIST_ROW_CLASS, SURFACE_ROW_CLASS], context: null, meta: null },
         [
             inputs.el,
-            div({ classes: [ROW_ACTIONS_CLASS], context: null, meta: null }, [
-                iconBtn("check-lg", "save", save),
-                iconBtn("x-lg", "cancel", cancel),
-            ]),
+            div(baseProps([ROW_ACTIONS_CLASS]), [iconBtn("check-lg", "save", save), iconBtn("x-lg", "cancel", cancel)]),
         ],
     );
     host.addChild(row);

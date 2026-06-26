@@ -1,4 +1,12 @@
-import { BTN_VARIANT_OUTLINE, button, div, span, type Instance } from "../../../../../factory/index.js";
+import {
+    BTN_VARIANT_OUTLINE,
+    button,
+    div,
+    span,
+    type Instance,
+    baseProps,
+    textProps,
+} from "../../../../../factory/index.js";
 import type { RowListHandlers, RowListState } from "./types.js";
 import {
     DR_PANE_HEADER_CLASS,
@@ -22,22 +30,19 @@ function backBtn(onBack: () => void): Instance {
 }
 
 function countLabel(state: RowListState): Instance {
-    return span({
-        classes: [DR_ROW_META_CLASS],
-        text: `${state.rows.length}${state.hasMore ? "+" : ""} of ${state.info!.total}`,
-        context: null,
-        meta: null,
-    });
+    return span(
+        textProps([DR_ROW_META_CLASS], `${state.rows.length}${state.hasMore ? "+" : ""} of ${state.info!.total}`),
+    );
 }
 
 export function buildHeader(state: RowListState, handlers: RowListHandlers): HeaderRefs {
     const children: Instance[] = [];
     if (handlers.onBack) children.push(backBtn(handlers.onBack));
-    children.push(span({ classes: [DR_PANE_TITLE_CLASS], text: state.table, context: null, meta: null }));
+    children.push(span(textProps([DR_PANE_TITLE_CLASS], state.table)));
     const countSpan = state.info ? countLabel(state) : null;
     if (countSpan) children.push(countSpan);
     return {
-        instance: div({ classes: [DR_PANE_HEADER_CLASS], context: null, meta: null }, children),
+        instance: div(baseProps([DR_PANE_HEADER_CLASS]), children),
         countSpan,
     };
 }

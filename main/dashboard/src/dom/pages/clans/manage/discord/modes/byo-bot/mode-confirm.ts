@@ -6,6 +6,8 @@ import {
     slidePanel,
     type Instance,
     type SlidePanelInstance,
+    baseProps,
+    textProps,
 } from "../../../../../../factory";
 import { DISCORD_PLACEHOLDER_HINT_CLASS } from "../../../../../../../shared/constants/clan-manage-discord/route-constants.js";
 import { CANCEL_BTN } from "../../../../../../../shared/constants/clan-manage-discord/byo-bot-text.js";
@@ -63,10 +65,8 @@ function buildConfirmTrigger(opts: ConfirmOpts): Instance {
 }
 
 export function confirmPanel(opts: ConfirmOpts): SlidePanelInstance {
-    const panelHost = div({ classes: [], context: null, meta: null }, [
-        paragraph({ classes: [DISCORD_PLACEHOLDER_HINT_CLASS], text: opts.message, context: null, meta: null }),
-    ]);
-    const footerHost = div({ classes: [FOOTER_HOST_CLASS], context: null, meta: null });
+    const panelHost = div(baseProps([]), [paragraph(textProps([DISCORD_PLACEHOLDER_HINT_CLASS], opts.message))]);
+    const footerHost = div(baseProps([FOOTER_HOST_CLASS]));
     footerHost.el.hidden = true;
     const panelRef: { inst: SlidePanelInstance | null } = { inst: null };
     const renderFooter = (): void => {

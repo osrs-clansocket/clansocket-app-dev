@@ -1,4 +1,4 @@
-import { button, div, span, type Instance } from "../../../../factory";
+import { button, div, span, type Instance, baseProps, textProps } from "../../../../factory";
 import { KIND_FILTERS, RANGE_FILTERS } from "../../../../../state/clans/audit/filter-defs.js";
 import { AUDIT_FILTERS_CLASS } from "../../../../../shared/constants/clan/audit-route-constants.js";
 import {
@@ -34,10 +34,7 @@ function buildFilterChip({ state, f, activeKeyField, dataKey, onChange }: Filter
 }
 
 function chipGroup(label: string, chips: Instance[]): Instance {
-    return div({ classes: [TOOLBAR_GROUP_CLASS], context: null, meta: null }, [
-        span({ classes: [TOOLBAR_LABEL_CLASS], text: label, context: null, meta: null }),
-        ...chips,
-    ]);
+    return div(baseProps([TOOLBAR_GROUP_CLASS]), [span(textProps([TOOLBAR_LABEL_CLASS], label)), ...chips]);
 }
 
 export function buildFilterBar(
@@ -52,7 +49,7 @@ export function buildFilterBar(
     const rangeChips = RANGE_FILTERS.map((f) =>
         buildFilterChip({ state, f, activeKeyField: "activeRange", dataKey: "filter-range", onChange: onRangeChange }),
     );
-    return div({ classes: [TOOLBAR_CLASS, AUDIT_FILTERS_CLASS], context: null, meta: null }, [
+    return div(baseProps([TOOLBAR_CLASS, AUDIT_FILTERS_CLASS]), [
         chipGroup("Kind", kindChips),
         chipGroup("Since", rangeChips),
         integrityHost,

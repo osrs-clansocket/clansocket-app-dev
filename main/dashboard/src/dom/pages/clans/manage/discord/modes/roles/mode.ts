@@ -1,10 +1,18 @@
 import "../../../../../../../styles/pages/clans/manage/discord/clan-discord-page.css";
-import { button, div, paragraph, treeView, BTN_VARIANT_BARE, type Instance } from "../../../../../../factory";
+import {
+    button,
+    div,
+    paragraph,
+    treeView,
+    BTN_VARIANT_BARE,
+    type Instance,
+    baseProps,
+} from "../../../../../../factory";
 import { createRolesFeed } from "../../../../../../../state/discord/roles/roles-feed.js";
 import { createDiscordRole, type DiscordRole } from "../../../../../../../state/discord/client.js";
 import { identityStore } from "../../../../../../../state/identity/stores/identity-store.js";
 import { buildRoleNodes } from "./mode-nodes.js";
-import { defineDiscordMode } from "../../registry";
+import type { ModeContext } from "../../registry";
 
 const EMPTY_TEXT = "No roles in this guild yet.";
 const EMPTY_CLASS = "clans-manage__discord-roles-empty";
@@ -33,7 +41,7 @@ function buildToolbar(guildId: string): Instance {
         meta: ["action"],
         onClick: () => void createRole(guildId),
     });
-    return div({ classes: [TOOLBAR_CLASS], context: null, meta: null }, [createBtn]);
+    return div(baseProps([TOOLBAR_CLASS]), [createBtn]);
 }
 
 function applyRoleDeltas(
@@ -85,10 +93,8 @@ function makeRolesRerender(
     };
 }
 
-defineDiscordMode({ key: "roles", label: "Roles", order: 30, build: (ctx) => buildRolesMode(ctx.server.guild_id) });
-
 export function buildRolesMode(guildId: string): Instance {
-    const treeHost = div({ classes: [], context: null, meta: null });
+    const treeHost = div(baseProps([]));
     const empty = paragraph({ classes: [EMPTY_CLASS], text: EMPTY_TEXT, hidden: "", context: null, meta: null });
     let latest: readonly DiscordRole[] = [];
     const rerender = makeRolesRerender(treeHost, empty, guildId, () => latest);
@@ -100,11 +106,9 @@ export function buildRolesMode(guildId: string): Instance {
         },
         rerender,
     );
-    const modeHost = div({ classes: [MODE_HOST_CLASS], context: null, meta: null }, [
-        buildToolbar(guildId),
-        treeHost,
-        empty,
-    ]);
+    const modeHost = div(baseProps([MODE_HOST_CLASS]), [buildToolbar(guildId), treeHost, empty]);
     modeHost.trackDispose({ dispose: () => unsubscribe() });
     return modeHost;
 }
+
+export const build = (ctx: ModeContext): Instance => buildRolesMode(ctx.server.guild_id);

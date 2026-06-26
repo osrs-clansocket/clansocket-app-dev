@@ -1,4 +1,4 @@
-import { button, span, type Instance } from "../../../../factory/index.js";
+import { button, span, type Instance, textProps } from "../../../../factory/index.js";
 import { DATA_KEY_DATE, GD_DAY, GD_DAY_MUTED, GD_DAY_SELECTED, GD_DAY_TODAY, GD_DOW } from "./classes.js";
 import { isoDate } from "./iso.js";
 import { DAYS_PER_WEEK, DOW_LABELS, WEEKS_SHOWN } from "./date-month-utils.js";
@@ -29,7 +29,7 @@ function buildDayBtn(ctx: DayCtx): Instance {
 }
 
 export function buildDayCells(start: Date, month: number, today: string, selectedIso: string): Instance[] {
-    const cells: Instance[] = DOW_LABELS.map((l) => span({ classes: [GD_DOW], text: l, context: null, meta: null }));
+    const cells: Instance[] = DOW_LABELS.map((l) => span(textProps([GD_DOW], l)));
     const cursor = new Date(start);
     for (let i = 0; i < WEEKS_SHOWN * DAYS_PER_WEEK; i++) {
         cells.push(

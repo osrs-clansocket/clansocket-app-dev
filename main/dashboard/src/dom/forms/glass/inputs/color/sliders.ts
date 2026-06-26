@@ -1,9 +1,9 @@
-import { div, input, label, span, type Instance } from "../../../../factory/index.js";
+import { div, input, label, span, type Instance, baseProps, textProps } from "../../../../factory/index.js";
 
-const PICKER_LABEL = "voxlab__picker-label";
-const PICKER_ROW = "voxlab__picker-popup-row";
-const PICKER_VALUE = "voxlab__picker-popup-value";
-const PICKER_SLIDER = "voxlab__control-slider";
+const PICKER_LABEL = "picker__label";
+const PICKER_ROW = "picker__popup-row";
+const PICKER_VALUE = "picker__popup-value";
+const PICKER_SLIDER = "picker__control-slider";
 
 export interface SliderHandle {
     input: Instance<HTMLInputElement>;
@@ -46,18 +46,13 @@ function buildSliderInput(a: SliderInputArgs): Instance<HTMLInputElement> {
 
 export function makeSlider(min: number, max: number, value: number, onInput: (v: number) => void): SliderHandle {
     const rounded = Math.round(value);
-    const valueEl = span({
-        classes: [PICKER_VALUE],
-        text: String(rounded),
-        context: null,
-        meta: null,
-    }) as Instance<HTMLSpanElement>;
+    const valueEl = span(textProps([PICKER_VALUE], String(rounded))) as Instance<HTMLSpanElement>;
     return { input: buildSliderInput({ min, max, rounded, valueEl, onInput }), valueEl };
 }
 
 export function sliderRow(labelText: string, handle: SliderHandle): Instance<HTMLDivElement> {
-    return div({ classes: [PICKER_ROW], context: null, meta: null }, [
-        label({ classes: [PICKER_LABEL], context: null, meta: null }, [labelText]),
+    return div(baseProps([PICKER_ROW]), [
+        label(baseProps([PICKER_LABEL]), [labelText]),
         handle.input,
         handle.valueEl,
     ]) as Instance<HTMLDivElement>;

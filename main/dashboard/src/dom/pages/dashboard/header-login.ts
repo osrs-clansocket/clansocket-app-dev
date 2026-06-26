@@ -1,11 +1,10 @@
-import { button, div } from "../../factory";
+import { button, div, icon, baseProps } from "../../factory";
 import {
     DASH_LOGIN_CLASS,
     DASH_LOGIN_GROUP_CLASS,
     DASH_LOGIN_POPOVER_CLASS,
     ICONBTN_CLASS,
 } from "../../../shared/constants/dashboard-shell-constants.js";
-import { bsSpan } from "./header-bs-span.js";
 import { LOGIN_OPTIONS, buildLoginOption } from "./header-login-options.js";
 
 export { buildLogoutBtn } from "./header-logout-btn.js";
@@ -21,7 +20,7 @@ export function buildLoginGroup(): HTMLElement {
             context: "open the sign-in provider menu",
             meta: ["action", "account"],
         },
-        [bsSpan("bi-box-arrow-in-right")],
+        [icon({ provider: "bi", name: "box-arrow-in-right", ariaHidden: true, context: null, meta: null }).el],
     );
     const popover = div(
         {
@@ -33,5 +32,5 @@ export function buildLoginGroup(): HTMLElement {
         },
         LOGIN_OPTIONS.map(buildLoginOption),
     );
-    return div({ classes: [DASH_LOGIN_GROUP_CLASS], context: null, meta: null }, [loginBtn.el, popover.el]).el;
+    return div(baseProps([DASH_LOGIN_GROUP_CLASS]), [loginBtn.el, popover.el]).el;
 }

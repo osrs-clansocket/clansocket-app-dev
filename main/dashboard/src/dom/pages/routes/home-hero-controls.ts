@@ -1,4 +1,4 @@
-import { anchor, button, div, effect, input, type Instance } from "../../factory";
+import { button, div, effect, input, type Instance, baseProps } from "../../factory";
 import { siteOwnerStore } from "../../../state/identity/stores/site-owner-store.js";
 import {
     ROUTE_HOME_CONTROLS_CLASS,
@@ -10,7 +10,6 @@ import {
     BTN_COMPACT_CLASS,
     BTN_OUTLINE_CLASS,
     UPLOAD_ACCEPT,
-    URL_VOXLAB,
 } from "../../../shared/constants/home/render-home-data.js";
 import { handleLogoUpload } from "../../../state/home/render-home-upload.js";
 
@@ -20,7 +19,7 @@ function buildUploadParts(): { btn: Instance; fileInput: Instance<HTMLInputEleme
         type: "file",
         accept: UPLOAD_ACCEPT,
         ariaLabel: "Upload site logo",
-        context: "pick an image or voxlab envelope to upload as the site logo",
+        context: "pick an image to upload as the site logo",
         meta: ["input"],
         onChange: async () => {
             const file = fileInput.el.files?.[0];
@@ -31,32 +30,17 @@ function buildUploadParts(): { btn: Instance; fileInput: Instance<HTMLInputEleme
         classes: [BTN_CLASS, BTN_OUTLINE_CLASS, BTN_COMPACT_CLASS],
         text: "Upload logo",
         type: "button",
-        context: "upload an image or voxlab envelope as the site logo",
+        context: "upload an image as the site logo",
         meta: ["action"],
         onClick: () => fileInput.el.click(),
     });
     return { btn, fileInput };
 }
 
-function buildEditButton(): Instance {
-    return anchor({
-        href: URL_VOXLAB,
-        data: { route: "" },
-        classes: [BTN_CLASS, BTN_OUTLINE_CLASS, BTN_COMPACT_CLASS],
-        text: "Edit in voxlab",
-        context: "open the voxlab editor to tweak the site logo",
-        meta: ["nav"],
-    });
-}
-
 export function buildHeroControls(): Instance {
     const { btn: uploadBtn, fileInput } = buildUploadParts();
-    const inner = div({ classes: [ROUTE_HOME_CONTROLS_INNER_CLASS], context: null, meta: null }, [
-        buildEditButton(),
-        uploadBtn,
-        fileInput,
-    ]);
-    const controls = div({ classes: [ROUTE_HOME_CONTROLS_CLASS], context: null, meta: null }, [inner]);
+    const inner = div(baseProps([ROUTE_HOME_CONTROLS_INNER_CLASS]), [uploadBtn, fileInput]);
+    const controls = div(baseProps([ROUTE_HOME_CONTROLS_CLASS]), [inner]);
     controls.el.hidden = true;
     controls.trackDispose(
         effect(() => {

@@ -1,13 +1,8 @@
 import { svg as svgEl } from "../../../../../../factory/content-ops/graphics/svg.js";
 import type { Instance } from "../../../../../../factory";
 import { OVERLAY_CLASS, WIRE_CLASS } from "./mode-constants.js";
-import { svgLine } from "../../../../../../../state/discord/permissions/mode-drag.js";
-
-export interface OverlayApi {
-    apply: (sourceEl: HTMLElement, targets: HTMLElement[]) => void;
-    clear: () => void;
-    redrawIfActive: () => void;
-}
+import type { OverlayApi } from "./mode-constants.js";
+import { svgLine } from "./mode-drag-state.js";
 
 type SvgInstance = ReturnType<typeof svgEl>;
 

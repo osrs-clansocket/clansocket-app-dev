@@ -1,7 +1,6 @@
-import { button, div, input, span, type Instance } from "../../factory";
+import { button, div, icon, input, type Instance, baseProps } from "../../factory";
 import { effect } from "../../factory";
 import { persistedSignal } from "../../../state/persistence";
-import { BS_ICON_CLASS, BS_ICON_ZOOM_IN_CLASS } from "../../../shared/constants/bootstrap-icon-constants.js";
 import {
     DASH_ZOOM_CLASS,
     DASH_ZOOM_SLIDER_CLASS,
@@ -29,7 +28,7 @@ effect(() => {
 });
 
 function shell(className: string, children: readonly Instance[]): Instance {
-    return div({ classes: [className], context: null, meta: null }, children);
+    return div(baseProps([className]), children);
 }
 
 function buildSlider(): Instance<HTMLInputElement> {
@@ -59,7 +58,7 @@ function buildToggle(): Instance<HTMLButtonElement> {
             context: "open the UI scale slider",
             meta: ["action"],
         },
-        [span({ classes: [BS_ICON_CLASS, BS_ICON_ZOOM_IN_CLASS], ariaHidden: "true", context: null, meta: null })],
+        [icon({ provider: "bi", name: "zoom-in", ariaHidden: true, context: null, meta: null })],
     );
 }
 

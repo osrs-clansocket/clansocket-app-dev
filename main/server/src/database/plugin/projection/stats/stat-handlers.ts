@@ -4,6 +4,8 @@ import { insertStatChange } from "./stat-changes.js";
 import { normalizeSkill, readPriorStat, upsertStat } from "./stat-state.js";
 import type { SkillEntry } from "./stat-types.js";
 
+const statRow = (skill: string, level: number, boosted: number, xp: number) => ({ skill, level, boosted, xp });
+
 export function handleStats(ctx: HandlerCtx): void {
     const { conn, payload, now, id } = ctx;
     const skills: SkillEntry[] = Array.isArray(payload.skills) ? payload.skills : [];
@@ -14,7 +16,7 @@ export function handleStats(ctx: HandlerCtx): void {
             const level = asNumber(entry.level, 0);
             const boosted = asNumber(entry.boosted, level);
             const xp = asNumber(entry.xp, 0);
-            upsertStat(conn, id, { skill, level, boosted, xp }, now);
+            upsertStat(conn, id, statRow(skill, level, boosted, xp), now);
         }
     })();
 }
@@ -32,7 +34,7 @@ export function handleLevelUp(ctx: HandlerCtx): void {
     const xpAfter = xpBefore + xpGained;
     conn.transaction(() => {
         insertStatChange(conn, id, { envelope, where }, { skill, levelBefore, levelAfter, xpBefore, xpAfter });
-        upsertStat(conn, id, { skill, level: levelAfter, boosted: levelAfter, xp: xpAfter }, now);
+        upsertStat(conn, id, statRow(skill, levelAfter, levelAfter, xpAfter), now);
     })();
 }
 
@@ -44,5 +46,5 @@ export function handleXpGained(ctx: HandlerCtx): void {
     const prior = readPriorStat(conn, id.accountHash, skill);
     if (prior !== null && prior.xp === xpAfter) return;
     const level = prior?.level ?? 0;
-    upsertStat(conn, id, { skill, level, boosted: level, xp: xpAfter }, now);
+    upsertStat(conn, id, statRow(skill, level, level, xpAfter), now);
 }

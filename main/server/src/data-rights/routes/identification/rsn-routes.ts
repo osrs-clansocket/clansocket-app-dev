@@ -1,4 +1,5 @@
 import { HTTP_BAD_REQUEST, HTTP_CONFLICT, HTTP_NOT_FOUND } from "../../../shared/http/http-status.js";
+import { consentRequestedBy } from "../../../database/site/consent/query.js";
 import { parseDecimal } from "../../../shared/parsers/decimal-parser.js";
 import { type Request, type Response } from "express";
 import { requireSiteAccount } from "../../../auth/site-middleware.js";
@@ -27,7 +28,7 @@ function handleCancelRequest(req: Request, res: Response): void {
         return;
     }
     const req0 = consentById(id);
-    if (!req0 || req0.requesting_site_account_id !== siteAccountId) {
+    if (!consentRequestedBy(req0, siteAccountId)) {
         res.status(HTTP_NOT_FOUND).json({ error: "not_found" });
         return;
     }

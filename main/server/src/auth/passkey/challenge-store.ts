@@ -1,6 +1,6 @@
 import type { AuthenticationResponseJSON, RegistrationResponseJSON } from "@simplewebauthn/server";
 import { DB_NAMES, getDb } from "../../database/index.js";
-import { MS_PER_MINUTE } from "../../shared/time.js";
+import { MS_PER_MINUTE } from "../../shared/time/index.js";
 import { sweepExpiredRows } from "./sweep-expired.js";
 
 type WithClientData = AuthenticationResponseJSON | RegistrationResponseJSON;

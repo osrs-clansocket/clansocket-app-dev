@@ -39,16 +39,6 @@ const PROVIDERS = [
         publicDir: "phosphor",
     },
     {
-        prefix: "lu",
-        baseClass: "lucide",
-        cssUrl: `${CDN}/lucide-static@latest/font/lucide.css`,
-        fonts: { "lucide.woff2": `${CDN}/lucide-static@latest/font/lucide.woff2` },
-        selectorPrefix: ".icon-",
-        fontFamily: "lucide",
-        webFontDir: "/fonts/lucide/",
-        publicDir: "lucide",
-    },
-    {
         prefix: "mdi",
         baseClass: "mdi",
         cssUrl: `${CDN}/@mdi/font@latest/css/materialdesignicons.min.css`,
@@ -57,30 +47,6 @@ const PROVIDERS = [
         fontFamily: "Material Design Icons",
         webFontDir: "/fonts/mdi/",
         publicDir: "mdi",
-    },
-    {
-        prefix: "gi",
-        baseClass: "gi",
-        cssUrl: `${CDN}/@rolodromo/gameicons-webfont@latest/css/rpgen-gameicons.css`,
-        fonts: { "rpgen-gameicons.woff2": `${CDN}/@rolodromo/gameicons-webfont@latest/fonts/rpgen-gameicons.woff2` },
-        selectorPrefix: ".gi-",
-        fontFamily: "rpgen-gameicons",
-        webFontDir: "/fonts/game-icons/",
-        publicDir: "game-icons",
-    },
-    {
-        prefix: "ra",
-        baseClass: "ra",
-        cssUrl: `${CDN}/rpg-awesome@latest/css/rpg-awesome.css`,
-        fonts: {
-            "rpgawesome-webfont.woff": `${CDN}/rpg-awesome@latest/fonts/rpgawesome-webfont.woff`,
-            "rpgawesome-webfont.ttf": `${CDN}/rpg-awesome@latest/fonts/rpgawesome-webfont.ttf`,
-        },
-        selectorPrefix: ".ra-",
-        fontFamily: "RPGAwesome",
-        webFontDir: "/fonts/rpg-awesome/",
-        publicDir: "rpg-awesome",
-        skipNames: ["lg", "2x", "3x", "4x", "5x", "fw", "ul", "li", "border", "pull-left", "pull-right", "spin", "rotate-90", "rotate-180", "rotate-270", "flip-horizontal", "flip-vertical", "inverse", "stack", "stack-1x", "stack-2x"],
     },
 ];
 
@@ -196,7 +162,7 @@ async function processProvider(provider) {
     }
     const raw = readFileSync(cachedCss, "utf8");
     const glyphs = extractGlyphs(raw, provider.selectorPrefix, provider.skipNames);
-    writeFileSync(resolve(JSON_DIR, `${provider.prefix}.json`), JSON.stringify(glyphs, null, 0));
+    writeFileSync(resolve(JSON_DIR, `${provider.prefix}.json`), JSON.stringify(Object.keys(glyphs).sort()));
     writeFileSync(resolve(STYLES_DIR, `${provider.prefix}.css`), vendorCss(provider, glyphs));
     return Object.keys(glyphs).length;
 }

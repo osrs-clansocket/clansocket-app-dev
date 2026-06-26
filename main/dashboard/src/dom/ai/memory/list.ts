@@ -1,4 +1,4 @@
-import { div } from "../../factory";
+import { div, baseProps } from "../../factory";
 import type { MemoryFile } from "../../../ai/memory-client";
 import { clearItems, clearListRefs, type MemoryListState } from "./list-state.js";
 import { renderFiles, renderLoading } from "./list-renders.js";
@@ -17,7 +17,7 @@ function destroyMemoryList(s: MemoryListState): void {
 
 export function createMemoryList(): MemoryListHandle {
     const state: MemoryListState = {
-        container: div({ classes: [], context: null, meta: null }),
+        container: div(baseProps([])),
         itemState: new Map(),
         emptyRef: { v: null },
         loaderRef: { v: null },

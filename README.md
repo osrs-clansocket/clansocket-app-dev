@@ -171,9 +171,8 @@ clansocket-app/
 │   │   └── src/                main.ts + app + bootstrap + ai + charts + icons +
 │   │       ├── dom/factory/    DOM primitives: {layout,content,data,live,seo}-ops + core
 │   │       ├── dom/            feature surfaces (auth, clans, discord, data-rights, pages, ...)
-│   │       ├── managers/       router + deep-link + events + header-nav + voxlab managers
+│   │       ├── managers/       router + deep-link + events + header-nav managers
 │   │       ├── state/          per-feature stores (state/<feature>/stores/<feature>-store.ts)
-│   │       ├── voxlab/         in-browser 3D asset pipeline (pure modules)
 │   │       └── styles/         tokens-first plain CSS, mirrored 1:1 with dom/pages/
 │   ├── devlay/                 reserved workspace (declared in package.json; no source files)
 │   ├── electron/               desktop wrapper (main.js + preload.cjs + constants + prod-config)
@@ -247,10 +246,6 @@ A Vite + TypeScript SPA with no framework. Routing is split between `managers/ro
 ### WoM (Wise Old Man) Integration
 
 Wise Old Man is the open-source OSRS hiscores tracker. ClanSocket links a clan's WoM group as a typed vault credential (`entry_key = "wom"`), then backfills per-player telemetry from WoM into the same per-clan `plugin_*` tables the plugin writes — covering mobile-only members the plugin cannot observe. The plugin always wins for plugin-fed fields; WoM fills gaps and tracks name changes. Provenance is tracked per writable column via `<col>_source` and `<col>_updated_at`, with MAX-wins semantics on metric values. A server-side outbound queue enforces per-tenant rate windows. Entry points: `wom/`, `database/wom/`, `state/wom/`.
-
-### Voxlab (in-browser 3D asset pipeline)
-
-A dashboard-side Three.js editor that authors clan visual identity (animated 3D badges, banners, model icons). It performs raster-to-mesh and vector-to-mesh conversion, PBR map auto-derivation, timeline keyframe authoring, and PNG/APNG/GIF export, then publishes to a clan via a server route. Pure pipelines live under `main/dashboard/src/voxlab/`; stateful managers and services live under `main/dashboard/src/managers/voxlab/`. Published assets render anywhere a clan reference appears via the `clan-model-icon` factory primitive.
 
 ### Electron Desktop Wrapper
 

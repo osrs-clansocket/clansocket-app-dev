@@ -1,4 +1,4 @@
-import { createInstance, paragraph, type Instance } from "../../../factory/index.js";
+import { createInstance, paragraph, type Instance, textProps } from "../../../factory/index.js";
 import type { PasskeyDevice } from "../../../../state/passkey/client/index.js";
 import { ACCOUNT_EMPTY_CLASS } from "../../../../shared/constants/account-constants.js";
 
@@ -52,8 +52,7 @@ export function createDevicesRenderer(host: Instance, buildRow: (d: PasskeyDevic
     const renderEmpty = (): void => {
         for (const inst of rowPool.values()) inst.destroy();
         rowPool.clear();
-        if (emptyRef.inst === null)
-            emptyRef.inst = paragraph({ classes: [ACCOUNT_EMPTY_CLASS], text: "None.", context: null, meta: null });
+        if (emptyRef.inst === null) emptyRef.inst = paragraph(textProps([ACCOUNT_EMPTY_CLASS], "None."));
         placeChildrenInto(host, [emptyRef.inst]);
     };
     const render = (devices: PasskeyDevice[]): void => {

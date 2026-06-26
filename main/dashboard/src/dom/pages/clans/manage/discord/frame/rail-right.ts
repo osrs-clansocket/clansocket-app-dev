@@ -1,5 +1,5 @@
 import "../../../../../../styles/pages/clans/manage/discord/clan-discord-page.css";
-import { div, effect, type Instance } from "../../../../../factory";
+import { div, effect, type Instance, baseProps } from "../../../../../factory";
 import { GLASS_PANE_CLASS } from "../../../../../../shared/constants/glass-constants.js";
 import { DISCORD_RAIL_RIGHT_CLASS } from "../../../../../../shared/constants/clan-manage-discord/route-constants.js";
 import { CLAN_MANAGE_DISCORD_RAIL_RIGHT_HOST_CLASS } from "../../../../../../shared/constants/clan/manage-constants.js";
@@ -9,10 +9,8 @@ import { selectedDiscordItem } from "../../../../../../state/discord/selected-it
 import { ensureSlot, resolveSlotKey } from "./rail-right-slot.js";
 
 export function buildRailRight(): Instance {
-    const sectionsHost = div({ classes: [CLAN_MANAGE_DISCORD_RAIL_RIGHT_HOST_CLASS], context: null, meta: null });
-    const wrapper = div({ classes: [GLASS_PANE_CLASS, DISCORD_RAIL_RIGHT_CLASS], context: null, meta: null }, [
-        sectionsHost,
-    ]);
+    const sectionsHost = div(baseProps([CLAN_MANAGE_DISCORD_RAIL_RIGHT_HOST_CLASS]));
+    const wrapper = div(baseProps([GLASS_PANE_CLASS, DISCORD_RAIL_RIGHT_CLASS]), [sectionsHost]);
     const pool = new Map<string, Instance>();
     let lastKey = "";
     wrapper.trackDispose(

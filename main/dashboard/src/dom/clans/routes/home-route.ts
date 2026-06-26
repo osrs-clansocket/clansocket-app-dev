@@ -9,6 +9,6 @@ defineRoute({
         description:
             "Verified clan identity, live RuneLite telemetry, discord-server management, Wise Old Man backfill, and an AI operator for clan leaders.",
     },
-    nav: { key: "home", title: "Home", icon: "bi-house", order: 10 },
+    nav: { key: "home", title: "Home", icon: "house", order: 10 },
     render: async () => (await import("../../pages/routes/render-home.js")).renderHome(),
 });

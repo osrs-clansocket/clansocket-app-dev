@@ -8,6 +8,8 @@ import {
     type Instance,
     type LiveSource,
     type LiveViewHandle,
+    baseProps,
+    textProps,
 } from "../../../../factory";
 import { rsnTag } from "../../../../factory/data-ops/identity/rsn-tag.js";
 import { effect, type ReadSignal } from "../../../../factory/reactive/index.js";
@@ -36,7 +38,7 @@ const memberRefs = new WeakMap<Instance, MemberTileRefs>();
 function mountMemberRow(row: Record<string, unknown>): Instance {
     const m = row as unknown as WomGroupMembership;
     const role = m.role;
-    const roleText = span({ classes: [MEMBER_ROLE_CLASS], text: role ?? NONE_VALUE, context: null, meta: null });
+    const roleText = span(textProps([MEMBER_ROLE_CLASS], role ?? NONE_VALUE));
     const rsnTagInst = rsnTag({
         rsn: m.player.displayName,
         rank: role,
@@ -45,13 +47,8 @@ function mountMemberRow(row: Record<string, unknown>): Instance {
         context: null,
         meta: null,
     });
-    const metaText = span({
-        classes: [MEMBER_META_CLASS],
-        text: isoToDate(m.player.updatedAt),
-        context: null,
-        meta: null,
-    });
-    const tile = div({ classes: [MEMBER_ROW_CLASS], context: null, meta: null }, [roleText, rsnTagInst, metaText]);
+    const metaText = span(textProps([MEMBER_META_CLASS], isoToDate(m.player.updatedAt)));
+    const tile = div(baseProps([MEMBER_ROW_CLASS]), [roleText, rsnTagInst, metaText]);
     memberRefs.set(tile, { roleText, metaText });
     return tile;
 }
@@ -107,9 +104,9 @@ export interface MembersHandle {
 
 export function membersPanel(slug: string, detailsSignal: ReadSignal<WomGroupDetails | null>): MembersHandle {
     const headingEl = heading("h3", { classes: [SECTION_TITLE_CLASS], text: "Members", context: null, meta: null });
-    const loadingEl = paragraph({ classes: [HINT_CLASS], text: DETAILS_LOADING_TEXT, context: null, meta: null });
-    const grid = div({ classes: [MEMBERS_TABLE_CLASS], context: null, meta: null });
-    const section = div({ classes: [SECTION_CLASS], context: null, meta: null }, [headingEl, loadingEl, grid]);
+    const loadingEl = paragraph(textProps([HINT_CLASS], DETAILS_LOADING_TEXT));
+    const grid = div(baseProps([MEMBERS_TABLE_CLASS]));
+    const section = div(baseProps([SECTION_CLASS]), [headingEl, loadingEl, grid]);
     const view = buildLiveView(slug, detailsSignal, grid);
     const loadingDisp = effect(() => {
         loadingEl.el.hidden = detailsSignal() !== null;

@@ -1,4 +1,5 @@
 import type { JSONSchema } from "./manifest-types.js";
+import { OVERWRITE_KIND } from "../core/constants.js";
 import { objectSchema } from "./schema-builders.js";
 
 const CHANNEL_STATE_SCHEMA: JSONSchema = objectSchema(
@@ -62,7 +63,7 @@ export const SET_PERMISSIONS_INPUT: JSONSchema = objectSchema(
         userId: { type: "string" },
         channelId: { type: "string" },
         channelName: { type: "string" },
-        overwriteKind: { enum: ["role", "member"] },
+        overwriteKind: { enum: [OVERWRITE_KIND.ROLE, OVERWRITE_KIND.MEMBER] },
         overwriteTargetId: { type: "string" },
         overwriteTargetName: { type: "string" },
         allow: { type: "string" },

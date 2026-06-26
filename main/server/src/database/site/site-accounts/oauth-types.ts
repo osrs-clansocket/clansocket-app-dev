@@ -17,12 +17,3 @@ export interface OAuthLink {
     displayName?: string | null;
     avatarUrl?: string | null;
 }
-
-export function buildOAuthLink(
-    provider: OAuthProvider,
-    providerUserId: string,
-    displayName: string | null,
-    avatarUrl: string | null,
-): OAuthLink {
-    return { provider, providerUserId, displayName, avatarUrl };
-}

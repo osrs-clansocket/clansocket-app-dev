@@ -1,4 +1,4 @@
-import { div, type Instance } from "../../../../factory";
+import { div, type Instance, baseProps } from "../../../../factory";
 
 const CARD_CLASS = "ai-bar__auth-card";
 const QUIP_CLASS = "ai-bar__auth-quip";
@@ -13,13 +13,13 @@ export function buildCardElements(
     quipEl: Instance;
     moodEl: Instance;
 } {
-    const quipEl = div({ classes: [QUIP_CLASS], context: null, meta: null });
-    const moodEl = div({ classes: [MOOD_CLASS], context: null, meta: null });
+    const quipEl = div(baseProps([QUIP_CLASS]));
+    const moodEl = div(baseProps([MOOD_CLASS]));
     const children: Instance[] = [quipEl, moodEl];
     if (actions && actions.length > 0) {
-        children.push(div({ classes: [BTNS_CLASS], context: null, meta: null }, [...actions]));
+        children.push(div(baseProps([BTNS_CLASS]), [...actions]));
     }
     const cardClasses = extraClasses && extraClasses.length > 0 ? [CARD_CLASS, ...extraClasses] : [CARD_CLASS];
-    const card = div({ classes: cardClasses, context: null, meta: null }, children);
+    const card = div(baseProps(cardClasses), children);
     return { card, quipEl, moodEl };
 }

@@ -1,8 +1,8 @@
 import { getClanDb } from "../../../core/database.js";
 import type { ClanRosterDiff } from "./types.js";
 
-export type { RosterDiffEvent } from "./diffs-build.js";
-export { diffRosters } from "./diffs-build.js";
+export type { RosterDiffEvent } from "./builder-diff.js";
+export { diffRosters } from "./builder-diff.js";
 
 export function listFingerprintDiffs(clanId: string, toFingerprint: string): ClanRosterDiff[] {
     const db = getClanDb(clanId);

@@ -1,6 +1,5 @@
 import type { DiscordChannelOverwrite } from "../../../../../../../state/discord/client.js";
 import type { Instance } from "../../../../../../factory";
-import type { createWireOverlay } from "./mode-overlay.js";
 
 export const HOST_CLASS = "clans-manage__permission-rows";
 export const HOVERED_CLASS = "clans-manage__permission-rows--hovered";
@@ -67,11 +66,17 @@ export interface ChannelChip {
     state: ChipState;
 }
 
+export interface OverlayApi {
+    apply: (sourceEl: HTMLElement, targets: HTMLElement[]) => void;
+    clear: () => void;
+    redrawIfActive: () => void;
+}
+
 export interface PermissionsCtx {
     guildId: string;
     rowsHost: Instance;
     rowsList: Instance;
-    overlay: ReturnType<typeof createWireOverlay>;
+    overlay: OverlayApi;
     latestRef: { v: readonly DiscordChannelOverwrite[] };
     getLatest: () => readonly DiscordChannelOverwrite[];
     clearHover: () => void;

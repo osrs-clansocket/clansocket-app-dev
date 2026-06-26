@@ -1,4 +1,13 @@
-import { BTN_VARIANT_BARE, button, div, icon, span, type Instance } from "../../../../../../factory";
+import {
+    BTN_VARIANT_BARE,
+    button,
+    div,
+    icon,
+    span,
+    type Instance,
+    baseProps,
+    textProps,
+} from "../../../../../../factory";
 import { formatPermissionName } from "../../../../../../discord/inspector/util/permission-cycle.js";
 import {
     ADD_ICON_NAME,
@@ -31,13 +40,13 @@ interface PermSlotArgs {
 function buildRoleSlot(a: PermSlotArgs): Instance {
     const roleLevel = roleLevelChips(a.ctx, a.bit);
     if (a.guildOnly) {
-        return div({ classes: [ROW_SLOT_CLASS], context: null, meta: null }, [
+        return div(baseProps([ROW_SLOT_CLASS]), [
             ...roleLevel.map((c) => lockedChipEl(c, a.flagName)),
-            span({ classes: [NA_TEXT_CLASS], text: "guild-level — role base perms only", context: null, meta: null }),
+            span(textProps([NA_TEXT_CLASS], "guild-level — role base perms only")),
         ]);
     }
     const targets = targetChipsFor(a.ctx.latestRef.v, a.bit);
-    return div({ classes: [ROW_SLOT_CLASS], context: null, meta: null }, [
+    return div(baseProps([ROW_SLOT_CLASS]), [
         ...roleLevel.map((c) => lockedChipEl(c, a.flagName)),
         ...targets.map((t) => targetChipEl(a.ctx, t, a.bit, a.flagName)),
         a.addBtnEl("Add role"),
@@ -45,20 +54,17 @@ function buildRoleSlot(a: PermSlotArgs): Instance {
 }
 
 function buildChannelSlot(a: PermSlotArgs): Instance {
-    if (a.guildOnly)
-        return div({ classes: [ROW_SLOT_CLASS], context: null, meta: null }, [
-            span({ classes: [NA_TEXT_CLASS], text: "n/a", context: null, meta: null }),
-        ]);
+    if (a.guildOnly) return div(baseProps([ROW_SLOT_CLASS]), [span(textProps([NA_TEXT_CLASS], "n/a"))]);
     const channels = channelChipsFor(a.ctx.guildId, a.ctx.latestRef.v, a.bit);
-    return div({ classes: [ROW_SLOT_CLASS], context: null, meta: null }, [
+    return div(baseProps([ROW_SLOT_CLASS]), [
         ...channels.map((c) => channelChipEl(a.ctx, c, a.bit, a.flagName)),
         a.addBtnEl("Add channel"),
     ]);
 }
 
 function buildRowLine(permLabel: string, roleSlot: Instance, channelSlot: Instance): Instance {
-    return div({ classes: [ROW_CLASS], context: null, meta: null }, [
-        span({ classes: [ROW_NAME_CLASS], text: permLabel, context: null, meta: null }),
+    return div(baseProps([ROW_CLASS]), [
+        span(textProps([ROW_NAME_CLASS], permLabel)),
         icon({ name: ARROW_ICON_NAME, classes: [ROW_ARROW_CLASS], context: null, meta: null }),
         roleSlot,
         icon({ name: ARROW_ICON_NAME, classes: [ROW_ARROW_CLASS], context: null, meta: null }),
@@ -110,8 +116,8 @@ function makeSlideToggle(a: SlideToggleArgs): { close: () => void; toggle: () =>
 
 export function permissionRow(ctx: PermissionsCtx, bit: number, flagName: string): Instance {
     const permLabel = formatPermissionName(flagName);
-    const slideContent = div({ classes: [], context: null, meta: null });
-    const slidePanelEl = div({ classes: [SLIDE_PANEL_CLASS], context: null, meta: null }, [slideContent]);
+    const slideContent = div(baseProps([]));
+    const slidePanelEl = div(baseProps([SLIDE_PANEL_CLASS]), [slideContent]);
     const openRef = { v: false };
     const { toggle } = makeSlideToggle({ ctx, bit, slidePanelEl, slideContent, openRef });
     const guildOnly = isGuildOnly(bit);
@@ -123,5 +129,5 @@ export function permissionRow(ctx: PermissionsCtx, bit: number, flagName: string
         setupDropTarget(ctx, channelSlot, "channels", bit);
     }
     const rowLine = buildRowLine(permLabel, roleSlot, channelSlot);
-    return div({ classes: [ROW_BLOCK_CLASS], context: null, meta: null }, [rowLine, slidePanelEl]);
+    return div(baseProps([ROW_BLOCK_CLASS]), [rowLine, slidePanelEl]);
 }

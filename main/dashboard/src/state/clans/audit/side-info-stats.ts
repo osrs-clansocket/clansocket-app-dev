@@ -1,5 +1,5 @@
 import type { ClanAuditEntry } from "../clans-client/index.js";
-import { tallySemantic } from "./format.js";
+import { tallySemantic } from "./semantic-tally.js";
 
 export interface AggregateStats {
     total: number;

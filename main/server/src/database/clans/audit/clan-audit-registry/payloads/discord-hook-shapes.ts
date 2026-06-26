@@ -1,4 +1,4 @@
-import type { AuditCommonPayload } from "../payload-types.js";
+import type { AuditCommonPayload } from "../audit-common-types.js";
 
 export type { BotLinkerReassigned } from "./bot-linker-shapes.js";
 

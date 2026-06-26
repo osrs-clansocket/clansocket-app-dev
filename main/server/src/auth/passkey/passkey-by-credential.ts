@@ -1,5 +1,5 @@
 import { DB_NAMES, getDb } from "../../database/index.js";
-import type { PasskeyRow } from "./passkey-store.js";
+import type { PasskeyRow } from "./passkey-types.js";
 
 export function passkeyByCredential(credentialId: string): PasskeyRow | null {
     const db = getDb(DB_NAMES.APP);

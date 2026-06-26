@@ -10,7 +10,8 @@ import { HTTP_INTERNAL_ERROR } from "../../shared/http/http-status.js";
 import { bindStreamLifecycle, openEventStream, writeSseFrame } from "../../shared/http/sse-stream.js";
 import { requireSiteAccount } from "../../auth/site-middleware.js";
 import { withManager } from "./manager-context.js";
-import { parseIntParam, readActorParam, readKindPrefix } from "./validation.js";
+import { parseIntParam } from "./parser-int-param.js";
+import { readActorParam, readKindPrefix } from "./reader-bounded-string.js";
 import { mountedRouter } from "./_mount-registry.js";
 
 const router = mountedRouter();

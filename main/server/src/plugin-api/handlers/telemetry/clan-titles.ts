@@ -1,9 +1,10 @@
 import { recordSnapshot } from "../../../database/index.js";
+import { sessionReady } from "../../session/socket-state.js";
 import { EVENT_CLAN_TITLES_SNAPSHOT } from "../../event-types.js";
 import { logPluginError, logPluginEvent } from "../../logger/index.js";
 import { isTelemetryAllowed, rejectUnauthed } from "../../session/telemetry-gate.js";
 import type { PluginClientMessage } from "../../types/index.js";
-import type { DispatchContext } from "../dispatch.js";
+import type { DispatchContext } from "../dispatch-types.js";
 
 type ClanTitlesMsg = Extract<PluginClientMessage, { type: "clan_titles_snapshot" }>;
 
@@ -32,7 +33,7 @@ function persistTitles(ctx: DispatchContext, msg: ClanTitlesMsg): void {
 
 export function handleTitlesSnapshot(ctx: DispatchContext, msg: ClanTitlesMsg): void {
     const { ws, state } = ctx;
-    if (!state.authed || !state.sockClanId || !state.sessionAccount || !state.sessionRsn) {
+    if (!sessionReady(state) || !state.sessionRsn) {
         rejectUnauthed(ws, state);
         return;
     }

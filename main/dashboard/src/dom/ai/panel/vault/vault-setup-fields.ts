@@ -7,6 +7,7 @@ import {
     FORM_INPUT as INPUT_CLASS,
     VAULT_USERNAME,
 } from "../../../forms/form-classes.js";
+import { baseProps, textProps } from "../../../factory/index.js";
 
 const PASSWORD_TYPE = "password";
 
@@ -55,13 +56,13 @@ export function buildSetupInputs(): VaultSetupInputs {
 }
 
 export function buildSetupChrome(): { helpEl: Instance; errorEl: Instance; showError: (m: string) => void } {
-    const helpEl = paragraph({
-        classes: [HINT_CLASS],
-        context: null,
-        meta: null,
-        text: `Your AI provider keys are stored only in this browser, encrypted with a passphrase. Minimum ${MIN_PASSPHRASE_LENGTH} characters. If you lose this passphrase the vault is unrecoverable.`,
-    });
-    const errorEl = paragraph({ classes: [ERROR_CLASS], context: null, meta: null });
+    const helpEl = paragraph(
+        textProps(
+            [HINT_CLASS],
+            `Your AI provider keys are stored only in this browser, encrypted with a passphrase. Minimum ${MIN_PASSPHRASE_LENGTH} characters. If you lose this passphrase the vault is unrecoverable.`,
+        ),
+    );
+    const errorEl = paragraph(baseProps([ERROR_CLASS]));
     errorEl.el.hidden = true;
     const showError = (message: string): void => {
         errorEl.setText(message);
@@ -73,7 +74,7 @@ export function buildSetupChrome(): { helpEl: Instance; errorEl: Instance; showE
 export function buildCreateBtn(): Instance<HTMLButtonElement> {
     return button({
         variant: BTN_VARIANT_OUTLINE,
-        compact: true,
+        
         type: "submit",
         text: "Create vault",
         context: "create the encrypted key vault",

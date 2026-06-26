@@ -22,15 +22,15 @@ export function priorPointsAccount(conn: Database.Database, accountHash: string)
 }
 
 export function specFromCatalog(taskId: number, catalog: CatalogRow): AchievementSpec {
-    return achievementSpec(
+    return achievementSpec({
         taskId,
-        catalog.task_name,
-        catalog.boss_id,
-        catalog.boss_name,
-        catalog.tier,
-        catalog.task_type,
-        catalog.points,
-    );
+        taskName: catalog.task_name,
+        bossId: catalog.boss_id,
+        bossName: catalog.boss_name,
+        tier: catalog.tier,
+        taskType: catalog.task_type,
+        points: catalog.points,
+    });
 }
 
 const ACHIEVEMENT_UPSERT_SQL = `INSERT INTO plugin_combat_achievements

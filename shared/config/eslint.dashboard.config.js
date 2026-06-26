@@ -42,7 +42,6 @@ const routeCssImport = require("./eslint-rules/route-css-import.cjs");
 const routeRequiresSeo = require("./eslint-rules/route-requires-seo.cjs");
 const noBareEffect = require("./eslint-rules/no-bare-effect.cjs");
 const noTempWrapperInstance = require("./eslint-rules/no-temp-wrapper-instance.cjs");
-const noEagerHeavyImport = require("./eslint-rules/no-eager-heavy-import.cjs");
 // no-untracked-observer + manager-needs-barrel live in universal-rules.cjs
 // — generic AST shape, no dashboard-specific substrate invariant.
 
@@ -77,7 +76,6 @@ const dashboardSpecificRules = {
   "route-requires-seo": routeRequiresSeo,
   "no-bare-effect": noBareEffect,
   "no-temp-wrapper-instance": noTempWrapperInstance,
-  "no-eager-heavy-import": noEagerHeavyImport,
 };
 
 const dashboardSpecificSeverities = {
@@ -111,7 +109,6 @@ const dashboardSpecificSeverities = {
   "lvi/route-requires-seo": "error",
   "lvi/no-bare-effect": "error",
   "lvi/no-temp-wrapper-instance": "error",
-  "lvi/no-eager-heavy-import": "error",
 };
 
 export default tseslint.config(

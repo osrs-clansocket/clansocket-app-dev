@@ -1,12 +1,6 @@
 import { marked, type Tokens } from "marked";
 import { markedHighlight } from "marked-highlight";
-import { Prism } from "./prism-setup";
-import "prismjs/components/prism-javascript";
-import "prismjs/components/prism-typescript";
-import "prismjs/components/prism-json";
-import "prismjs/components/prism-bash";
-import "prismjs/components/prism-sql";
-import "prismjs/components/prism-markdown";
+import { prismOrNull } from "./prism-setup";
 import { isDataKey, missingRef, tryClone, visitPagePlaceholder } from "../dom/factory/data-ops";
 import { tagBraces } from "./markdown-braces.js";
 
@@ -26,6 +20,8 @@ marked.use(
     markedHighlight({
         langPrefix: "language-",
         highlight(code, lang) {
+            const Prism = prismOrNull();
+            if (!Prism) return code;
             const language = lang && Prism.languages[lang] ? lang : "plain";
             const grammar = Prism.languages[language];
             return grammar ? tagBraces(Prism.highlight(code, grammar, language)) : code;

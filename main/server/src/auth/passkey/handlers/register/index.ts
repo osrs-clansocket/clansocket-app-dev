@@ -15,6 +15,14 @@ import { mountedRouter } from "../_mount-registry.js";
 
 const router = mountedRouter();
 
+function orBadRequest<T extends object>(res: Response, x: T | { error: string }): T | null {
+    if ("error" in x) {
+        sendError(res, HTTP_BAD_REQUEST, x.error);
+        return null;
+    }
+    return x as T;
+}
+
 const registerRateLimit = perMinuteLimiter({
     max: 20,
     message: { error: "rate_limit", message: "Rate limit hit — wait before retrying." },
@@ -24,11 +32,9 @@ router.post(
     "/register/options",
     registerRateLimit,
     handleAsync(async (req: Request, res: Response) => {
-        const resolved = resolveContext(req.body as RegisterBody);
-        if ("error" in resolved) {
-            sendError(res, HTTP_BAD_REQUEST, resolved.error);
-            return;
-        }
+        const resolvedRaw = resolveContext(req.body as RegisterBody);
+        const resolved = orBadRequest(res, resolvedRaw);
+        if (!resolved) return;
         const userId = resolved.siteAccountId ?? randomUUID();
         const baseName = resolved.displayName ?? "ClanSocket user";
         const userName = `${baseName} - ${rpName()}`;
@@ -65,11 +71,9 @@ function gateRegisterVerify(
         sendError(res, HTTP_FORBIDDEN, "challenge_invalid");
         return null;
     }
-    const target = resolveTarget(ctx);
-    if ("error" in target) {
-        sendError(res, HTTP_BAD_REQUEST, target.error);
-        return null;
-    }
+    const targetRaw = resolveTarget(ctx);
+    const target = orBadRequest(res, targetRaw) as VerifyGate["target"] | null;
+    if (!target) return null;
     return { ctx, target, body: reqBody as { response: RegistrationResponseJSON; deviceName?: string } };
 }
 

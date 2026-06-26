@@ -1,4 +1,4 @@
-import { anchor, button, div, input, paragraph, type Instance } from "../../../factory/index.js";
+import { anchor, button, div, input, paragraph, type Instance, baseProps, textProps } from "../../../factory/index.js";
 import { FORM_HINT as HINT_CLASS, FORM_INPUT as INPUT_CLASS } from "../../form-classes.js";
 import { GLASS_CONFIRM_HINT_TEXT_CLASS } from "../../../../shared/constants/glass-constants.js";
 
@@ -41,8 +41,8 @@ interface HintLinkOpts {
 }
 
 function buildHintLink({ prefix, linkText, href, onClick, extraClasses = [] }: HintLinkOpts): Instance {
-    return div({ classes: [HINT_CLASS, ...extraClasses], context: null, meta: null }, [
-        paragraph({ classes: [GLASS_CONFIRM_HINT_TEXT_CLASS], text: prefix, context: null, meta: null }),
+    return div(baseProps([HINT_CLASS, ...extraClasses]), [
+        paragraph(textProps([GLASS_CONFIRM_HINT_TEXT_CLASS], prefix)),
         paragraph({ context: null, meta: null }, [
             anchor({ href, onClick, text: linkText, context: linkText, meta: ["nav", "account"] }),
         ]),

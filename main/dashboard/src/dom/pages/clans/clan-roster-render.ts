@@ -1,4 +1,4 @@
-import { div, heading, onceEffect, paragraph, span, type Instance } from "../../factory";
+import { div, heading, onceEffect, paragraph, span, type Instance, baseProps, textProps } from "../../factory";
 import type { ManagedClan, ClanRosterMember } from "../../../state/clans/clans-client/index.js";
 import type { ClanRankLadder } from "../../../state/icons/rank-sort.js";
 import { persistSort, persistView, type RosterSort, type RosterView } from "../../../state/clans/roster/prefs.js";
@@ -30,9 +30,7 @@ export interface LoadedState {
 function makeRenderRoster(s: LoadedState): () => void {
     return (): void => {
         if (s.members.length === 0) {
-            s.host.setChildren(
-                paragraph({ classes: [CLAN_ROSTER_EMPTY_CLASS], text: "Awaiting roster..", context: null, meta: null }),
-            );
+            s.host.setChildren(paragraph(textProps([CLAN_ROSTER_EMPTY_CLASS], "Awaiting roster..")));
             return;
         }
         const sorted = applySort(s.members, s.sortRef.v, s.ladder);
@@ -62,15 +60,15 @@ function buildRosterControls(args: {
     if (isManager) children.push(buildManageBtn(clan.slug));
     children.push(buildSortToggle(sortRef.v, onSortChange));
     children.push(buildViewToggle(viewRef.v, onViewChange));
-    return div({ classes: [CLAN_ROSTER_CONTROLS_CLASS], context: null, meta: null }, children);
+    return div(baseProps([CLAN_ROSTER_CONTROLS_CLASS]), children);
 }
 
 function buildClanToolbar(args: { memberCount: number; controls: Instance }): Instance {
     const { memberCount, controls } = args;
-    return div({ classes: [CLAN_ROSTER_TOOLBAR_CLASS], context: null, meta: null }, [
-        div({ classes: [CLAN_ROSTER_TITLE_GROUP_CLASS], context: null, meta: null }, [
+    return div(baseProps([CLAN_ROSTER_TOOLBAR_CLASS]), [
+        div(baseProps([CLAN_ROSTER_TITLE_GROUP_CLASS]), [
             heading("h2", { classes: [CLAN_SECTION_TITLE_CLASS], text: "Roster", context: null, meta: null }),
-            span({ classes: [CLAN_ROSTER_COUNT_CLASS], text: String(memberCount), context: null, meta: null }),
+            span(textProps([CLAN_ROSTER_COUNT_CLASS], String(memberCount))),
         ]),
         controls,
     ]);
@@ -84,7 +82,7 @@ function buildClanHeader(clan: ManagedClan): Instance[] {
             context: null,
             meta: null,
         }),
-        span({ classes: [CLAN_STATUS_CLASS], text: clan.status, context: null, meta: null }),
+        span(textProps([CLAN_STATUS_CLASS], clan.status)),
     ];
 }
 

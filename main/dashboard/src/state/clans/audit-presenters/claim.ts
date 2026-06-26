@@ -12,7 +12,7 @@ export const CLAIM_PRESENTERS: Record<string, Presenter> = {
         return {
             title: "Clan claimed",
             detail: nameSlugDetail(name, slug),
-            icon: "bi-shield-check",
+            icon: { provider: "bi", name: "shield-check" },
             semantic: "write",
             hasExpansion: false,
         };
@@ -22,7 +22,7 @@ export const CLAIM_PRESENTERS: Record<string, Presenter> = {
         return {
             title: "Ownership transferred",
             detail: newOwner ? `to ${shortId(newOwner)}` : "",
-            icon: "bi-arrow-left-right",
+            icon: { provider: "bi", name: "arrow-left-right" },
             semantic: "write",
             hasExpansion: true,
         };
@@ -33,7 +33,7 @@ export const CLAIM_PRESENTERS: Record<string, Presenter> = {
         return {
             title: "Claim consent requested",
             detail: name ? `${rsn ?? "?"} → ${name}` : `RSN: ${rsn ?? "?"}`,
-            icon: "bi-envelope-paper",
+            icon: { provider: "bi", name: "envelope-paper" },
             semantic: "write",
             hasExpansion: false,
         };
@@ -43,7 +43,7 @@ export const CLAIM_PRESENTERS: Record<string, Presenter> = {
         return {
             title: "Claim consent confirmed",
             detail: rsn ? `RSN: ${rsn}` : "",
-            icon: "bi-shield-check",
+            icon: { provider: "bi", name: "shield-check" },
             semantic: "write",
             hasExpansion: false,
         };
@@ -53,7 +53,7 @@ export const CLAIM_PRESENTERS: Record<string, Presenter> = {
         return {
             title: "Claim consent rejected",
             detail: rsn ? `RSN: ${rsn}` : "",
-            icon: "bi-shield-x",
+            icon: { provider: "bi", name: "shield-x" },
             semantic: "destructive",
             hasExpansion: false,
         };

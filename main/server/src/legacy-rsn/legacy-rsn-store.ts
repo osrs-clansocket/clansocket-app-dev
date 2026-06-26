@@ -8,19 +8,9 @@ interface ActiveClanRow {
     display_name: string;
 }
 
-export interface MemberClan {
-    id: string;
-    slug: string;
-    displayName: string;
-}
+import type { MemberClan, LegacyRsnMatch } from "./legacy-rsn-types.js";
 
-export interface LegacyRsnMatch {
-    clanId: string;
-    clanSlug: string;
-    clanDisplayName: string;
-    legacyRsn: string;
-    matchCount: number;
-}
+export type { MemberClan, LegacyRsnMatch } from "./legacy-rsn-types.js";
 
 export function memberClans(siteAccountId: string): MemberClan[] {
     const rows = getDb(DB_NAMES.APP)

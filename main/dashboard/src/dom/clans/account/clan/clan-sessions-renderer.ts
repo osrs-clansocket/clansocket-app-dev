@@ -1,4 +1,4 @@
-import { div, heading, rsnTag, span, type Instance } from "../../../factory";
+import { div, heading, rsnTag, span, type Instance, baseProps, textProps } from "../../../factory";
 import type { LiveSession } from "../../../../state/identity/profile/profile-client.js";
 import { LIST_ROW_CLASS, META_CLASS, PRIMARY_CLASS, ROW_CLASS, SURFACE_ROW_CLASS } from "../shared/row-classes";
 import {
@@ -20,11 +20,9 @@ function matchedReasonText(reason: LiveSession["autoVerifyReason"], rank: string
 function sessionRow(s: LiveSession): Instance {
     const matched = matchedReasonText(s.autoVerifyReason, s.inGameClanRank);
     const rank = s.inGameClanRank ?? null;
-    return div({ classes: [ROW_CLASS, LIST_ROW_CLASS, SURFACE_ROW_CLASS], context: null, meta: null }, [
-        span({ classes: [PRIMARY_CLASS], context: null, meta: null }, [
-            rsnTag({ rank, rsn: s.rsn, context: null, meta: null }),
-        ]),
-        span({ classes: [META_CLASS], text: `${rank ?? "unknown"} · ${matched}`, context: null, meta: null }),
+    return div(baseProps([ROW_CLASS, LIST_ROW_CLASS, SURFACE_ROW_CLASS]), [
+        span(baseProps([PRIMARY_CLASS]), [rsnTag({ rank, rsn: s.rsn, context: null, meta: null })]),
+        span(textProps([META_CLASS], `${rank ?? "unknown"} · ${matched}`)),
     ]);
 }
 
@@ -51,7 +49,7 @@ function syncSessionRows(rowPool: Map<string, Instance>, sessionsList: Instance,
 
 export function createSessionsRenderer(panel: Instance): SessionsRenderer {
     const rowPool = new Map<string, Instance>();
-    const sessionsList = div({ classes: [ACCOUNT_LIST_CLASS], context: null, meta: null });
+    const sessionsList = div(baseProps([ACCOUNT_LIST_CLASS]));
     panel.setChildren(
         heading("h4", {
             classes: [ACCOUNT_CLAN_DETAILS_SUBTITLE_CLASS],

@@ -83,3 +83,4 @@ ecosystem.config.cjs
 /clansocket.wiki
 /public/provide
 /.lint-reports
+/public/svg

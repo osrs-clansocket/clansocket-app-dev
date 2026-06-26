@@ -9,7 +9,7 @@ import {
     RSN_MAX_LEN,
 } from "../../database/index.js";
 import { clanBySlug } from "../../database/clans/clan-store.js";
-import { requireAccount } from "./oauth-session.js";
+import { requireAccount } from "./requirer-oauth-account.js";
 import peopleSessionsRouter from "./people-sessions.js";
 import { mountedRouter } from "./_mount-registry.js";
 import { tryAutoGrant } from "./auto-grant.js";

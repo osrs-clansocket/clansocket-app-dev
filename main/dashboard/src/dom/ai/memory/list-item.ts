@@ -1,4 +1,4 @@
-import { BTN_VARIANT_BARE, button, span, type Instance } from "../../factory";
+import { BTN_VARIANT_BARE, button, span, type Instance, textProps } from "../../factory";
 import type { MemoryFile } from "../../../ai/memory-client";
 import {
     AI_MEMORY_LIST_ID_CLASS,
@@ -12,12 +12,10 @@ export function buildListItem(file: MemoryFile): Instance<HTMLButtonElement> {
             classes: [AI_MEMORY_LIST_ITEM_CLASS],
             variant: BTN_VARIANT_BARE,
             data: { id: file.id },
+            ariaLabel: `Open memory file ${file.id}`,
             context: "open this memory file",
             meta: ["action"],
         },
-        [
-            span({ classes: [AI_MEMORY_LIST_ID_CLASS], text: file.id, context: null, meta: null }),
-            span({ classes: [AI_MEMORY_LIST_TYPE_CLASS], text: file.type, context: null, meta: null }),
-        ],
+        [span(textProps([AI_MEMORY_LIST_ID_CLASS], file.id)), span(textProps([AI_MEMORY_LIST_TYPE_CLASS], file.type))],
     );
 }

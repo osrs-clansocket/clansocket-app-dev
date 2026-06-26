@@ -1,4 +1,14 @@
-import { BTN_VARIANT_PRIMARY, button, div, input, paragraph, signal, type Instance } from "../../../../factory";
+import {
+    BTN_VARIANT_PRIMARY,
+    button,
+    div,
+    input,
+    paragraph,
+    signal,
+    type Instance,
+    baseProps,
+    textProps,
+} from "../../../../factory";
 import { label as labelEl } from "../../../../factory/content-ops/form/input-label.js";
 import { FORM_INPUT } from "../../../../forms/form-classes.js";
 import { linkWom } from "../../../../../state/wom/clients/wom-client.js";
@@ -93,7 +103,7 @@ async function runLinkSubmit(args: {
 }
 
 function linkFormField(label: string, control: Instance): Instance {
-    return div({ classes: [FORM_FIELD_CLASS], context: null, meta: null }, [
+    return div(baseProps([FORM_FIELD_CLASS]), [
         labelEl({ classes: [FORM_LABEL_CLASS], text: label, htmlFor: "", context: null, meta: null }),
         control,
     ]);
@@ -102,15 +112,15 @@ function linkFormField(label: string, control: Instance): Instance {
 function buildLinkForm(slug: string, onLinked: () => void): Instance {
     const inputs = buildLinkInputs();
     const statusSig = signal("");
-    const statusLine = paragraph({ classes: [STATUS_LINE_CLASS], text: statusSig, context: null, meta: null });
-    return div({ classes: [FORM_CLASS], context: null, meta: null }, [
+    const statusLine = paragraph(textProps([STATUS_LINE_CLASS], statusSig));
+    return div(baseProps([FORM_CLASS]), [
         linkFormField("Group ID", inputs.groupIdInput),
         linkFormField("Verification code", inputs.codeInput),
         linkFormField("API key (optional)", inputs.keyInput),
         button({
             classes: [SUBMIT_BTN_CLASS],
             variant: BTN_VARIANT_PRIMARY,
-            compact: true,
+            
             text: SUBMIT_LINK_BTN,
             context: "submit the WoM credentials to link the clan's WoM group",
             meta: ["submit"],
@@ -121,9 +131,9 @@ function buildLinkForm(slug: string, onLinked: () => void): Instance {
 }
 
 export function notLinkedView(slug: string, onLinked: () => void): Instance {
-    return div({ classes: [ROOT_CLASS], context: null, meta: null }, [
+    return div(baseProps([ROOT_CLASS]), [
         brandHead(),
-        paragraph({ classes: [HINT_CLASS], text: NOT_LINKED_LEDE, context: null, meta: null }),
+        paragraph(textProps([HINT_CLASS], NOT_LINKED_LEDE)),
         buildLinkForm(slug, onLinked),
     ]);
 }

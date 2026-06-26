@@ -1,4 +1,5 @@
-import { clanCol, pluginCol, type Resolver } from "./distinct-resolvers.js";
+import { clanCol, pluginCol } from "./col-curries.js";
+import type { Resolver } from "./distinct-resolvers.js";
 
 const members = clanCol("clan_members");
 const accounts = clanCol("clan_accounts");

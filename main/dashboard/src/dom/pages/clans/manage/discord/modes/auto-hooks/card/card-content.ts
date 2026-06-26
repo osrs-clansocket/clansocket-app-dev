@@ -1,4 +1,4 @@
-import { BTN_VARIANT_CHIP, button, div, wireInput, type Instance } from "../../../../../../../factory";
+import { BTN_VARIANT_CHIP, button, div, wireInput, type Instance, baseProps } from "../../../../../../../factory";
 import { glassTextarea } from "../../../../../../../forms/glass/inputs/glass-textarea.js";
 import { buildEmojiPicker } from "../emoji-picker.js";
 import { tokensForTrigger } from "../../../../../../../../shared/constants/clan-manage-discord/token-list.js";
@@ -28,7 +28,7 @@ export function buildTokenChips(getTrigger: () => string, ta: HTMLTextAreaElemen
         inst.setAttr("title", `${t.token} → e.g. ${t.sampleValue}`);
         return inst;
     });
-    return div({ classes: [AUTO_HOOKS_TOKEN_CHIPS_CLASS], context: null, meta: null }, chips);
+    return div(baseProps([AUTO_HOOKS_TOKEN_CHIPS_CLASS]), chips);
 }
 
 export interface ContentSectionParts {
@@ -57,6 +57,6 @@ export function buildContentSection(args: {
     });
     return {
         formatTextarea,
-        contentSection: div({ classes: [], context: null, meta: null }, [formatTextarea, chips, emojiPicker]),
+        contentSection: div(baseProps([]), [formatTextarea, chips, emojiPicker]),
     };
 }

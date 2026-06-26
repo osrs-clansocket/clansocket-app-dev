@@ -1,5 +1,5 @@
 import "../../../../../../styles/pages/clans/manage/discord/clan-discord-page.css";
-import { div, paragraph, type Instance } from "../../../../../factory";
+import { div, paragraph, type Instance, baseProps, textProps } from "../../../../../factory";
 import { GLASS_PANE_CLASS } from "../../../../../../shared/constants/glass-constants.js";
 import { inspectorOverride$ } from "../../../../../../state/discord/inspector-override.js";
 import { clearPreviewState } from "../modes/auto-hooks/preview/preview-state.js";
@@ -16,18 +16,11 @@ export interface PaneCenterHandle {
 }
 
 function buildPlaceholder(): Instance {
-    return paragraph({
-        classes: [DISCORD_PANE_PLACEHOLDER_CLASS],
-        text: PLACEHOLDER_TEXT,
-        context: null,
-        meta: null,
-    });
+    return paragraph(textProps([DISCORD_PANE_PLACEHOLDER_CLASS], PLACEHOLDER_TEXT));
 }
 
 export function buildPaneCenter(): PaneCenterHandle {
-    const pane = div({ classes: [GLASS_PANE_CLASS, DISCORD_PANE_CENTER_CLASS], context: null, meta: null }, [
-        buildPlaceholder(),
-    ]);
+    const pane = div(baseProps([GLASS_PANE_CLASS, DISCORD_PANE_CENTER_CLASS]), [buildPlaceholder()]);
     let currentMode: Instance | null = null;
     return {
         pane,

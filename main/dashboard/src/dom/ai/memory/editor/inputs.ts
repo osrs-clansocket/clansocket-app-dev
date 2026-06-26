@@ -1,4 +1,4 @@
-import { div, input, label, textarea, type Child, type Instance } from "../../../factory";
+import { div, input, label, textarea, type Child, type Instance, baseProps, textProps } from "../../../factory";
 import { MAX_PRIORITY, MODE_EDIT, type Mode } from "./constants.js";
 import {
     AI_MEMORY_FIELD_CLASS,
@@ -8,10 +8,7 @@ import {
 } from "../../../../shared/constants/ai-memory-constants.js";
 
 export function fieldRow(labelText: string, control: Child): Instance {
-    return div({ classes: [AI_MEMORY_FIELD_CLASS], context: null, meta: null }, [
-        label({ classes: [AI_MEMORY_LABEL_CLASS], text: labelText, context: null, meta: null }),
-        control,
-    ]);
+    return div(baseProps([AI_MEMORY_FIELD_CLASS]), [label(textProps([AI_MEMORY_LABEL_CLASS], labelText)), control]);
 }
 
 export function buildIdInput(value: string, mode: Mode): Instance<HTMLInputElement> {

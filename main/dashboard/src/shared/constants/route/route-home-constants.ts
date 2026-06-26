@@ -46,7 +46,3 @@ export const ROUTE_HOME_CAPABILITY_TILE_CLASS = "route-home__capability";
 export const ROUTE_HOME_CAPABILITY_ICON_CLASS = "route-home__capability-icon";
 export const ROUTE_HOME_CAPABILITY_TITLE_CLASS = "route-home__capability-title";
 export const ROUTE_HOME_CAPABILITY_DESC_CLASS = "route-home__capability-desc";
-
-export const TI_BASE_CLASS = "ti";
-export const TI_BRAND_DISCORD_CLASS = "ti-brand-discord";
-export const TI_COFFEE_CLASS = "ti-coffee";

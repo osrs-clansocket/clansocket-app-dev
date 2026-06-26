@@ -9,7 +9,7 @@ import { ClanAuditActions, DB_NAMES, getDb, recordClanAudit } from "../../../dat
 import { ensureClanDir } from "../../../database/core/database.js";
 import { requireSiteAccount } from "../../../auth/site-middleware.js";
 import { loadOwnedClan } from "../../load-owned-clan.js";
-import { removeExistingIcons } from "../../icon/filesystem.js";
+import { removeExistingIcons } from "../../icon/index.js";
 import { ICON_MIME_EXT, handleUpload } from "../../icon/upload-middleware.js";
 import { normalizeUploadedIcon } from "../../icon/normalize.js";
 import { mountedRouter } from "../_mount-registry.js";

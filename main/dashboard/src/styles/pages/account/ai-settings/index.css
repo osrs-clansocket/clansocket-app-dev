@@ -10,7 +10,7 @@
 @import "./memory/index.css";
 @import "./tab-page.css";
 @import "./reset-page.css";
-@import "./tabs/persona-page.css";
-@import "./tabs/operation-page.css";
-@import "./tabs/preferences-page.css";
+@import "./persona/persona-page.css";
+@import "./operation/operation-page.css";
+@import "./preferences/preferences-page.css";
 @import "./modes/index.css";

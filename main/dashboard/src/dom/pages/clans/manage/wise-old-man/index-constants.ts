@@ -1,4 +1,4 @@
-import { div, heading, image, span, type Instance } from "../../../../factory";
+import { div, heading, image, span, type Instance, baseProps, textProps } from "../../../../factory";
 
 export const ROOT_CLASS = "clans-manage__wise-old-man";
 export const HEAD_CLASS = "clans-manage__wise-old-man-head";
@@ -58,6 +58,9 @@ export const SYNC_GATED_PREFIX = "Already synced. Next sync available ";
 export const SYNC_UNAVAILABLE = "Sync failed.";
 export const UPDATE_RUNNING = "Asked WoM to refresh all members from Jagex hiscores. May take several minutes.";
 export const UPDATE_FAILED = "Update request failed.";
+export const UPDATE_QUEUED_BTN = "Update queued";
+export const UPDATE_IN_FLIGHT_BTN = "Updating WoM…";
+export const UPDATE_OUTAGE_BTN = "WoM down — retrying";
 export const UNLINK_DONE = "Unlinked.";
 export const UNLINK_CANCEL_CTX = "cancel unlinking the WoM group";
 export const UNLINK_CONFIRM_CTX = "confirm unlinking the WoM group (revokes credentials)";
@@ -88,7 +91,7 @@ export function formatEta(targetMs: number, nowMs: number = Date.now()): string 
 }
 
 export function brandHead(): Instance {
-    return div({ classes: [HEAD_CLASS], context: null, meta: null }, [
+    return div(baseProps([HEAD_CLASS]), [
         image({ src: BRAND_ICON_SRC, alt: BRAND_TITLE, classes: [BRAND_ICON_CLASS], context: null, meta: null }),
         heading("h2", { classes: [TITLE_CLASS], text: BRAND_TITLE, context: null, meta: null }),
     ]);
@@ -100,10 +103,7 @@ export interface ChipRefs {
 }
 
 export function makeChip(label: string): ChipRefs {
-    const valueSpan = span({ classes: [META_VALUE_CLASS], text: "", context: null, meta: null });
-    const instance = div({ classes: [META_CHIP_CLASS], context: null, meta: null }, [
-        span({ classes: [META_LABEL_CLASS], text: label, context: null, meta: null }),
-        valueSpan,
-    ]);
+    const valueSpan = span(textProps([META_VALUE_CLASS], ""));
+    const instance = div(baseProps([META_CHIP_CLASS]), [span(textProps([META_LABEL_CLASS], label)), valueSpan]);
     return { instance, valueSpan };
 }

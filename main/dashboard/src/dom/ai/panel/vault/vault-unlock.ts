@@ -10,6 +10,7 @@ import {
     FORM_HINT as HINT_CLASS,
 } from "../../../forms/form-classes.js";
 import { buildUnlockInputs } from "./vault-unlock-inputs.js";
+import { baseProps, textProps } from "../../../factory/index.js";
 
 export interface VaultUnlockHandle {
     el: HTMLElement;
@@ -35,13 +36,8 @@ interface UnlockChrome {
 }
 
 function buildUnlockChrome(): UnlockChrome {
-    const helpEl = paragraph({
-        classes: [HINT_CLASS],
-        text: "Encrypted store for ur AI provider keys.",
-        context: null,
-        meta: null,
-    });
-    const errorEl = paragraph({ classes: [ERROR_CLASS], context: null, meta: null });
+    const helpEl = paragraph(textProps([HINT_CLASS], "Encrypted store for ur AI provider keys."));
+    const errorEl = paragraph(baseProps([ERROR_CLASS]));
     errorEl.el.hidden = true;
     const showError = (message: string): void => {
         errorEl.setText(message);
@@ -52,17 +48,17 @@ function buildUnlockChrome(): UnlockChrome {
 
 function buildInputRow(args: { passInput: Instance; submitBtn: Instance; opts: VaultUnlockOpts }): Instance {
     const { passInput, submitBtn, opts } = args;
-    if (!opts.onCancel) return div({ classes: [FORM_ROW_CLASS], context: null, meta: null }, [passInput, submitBtn]);
+    if (!opts.onCancel) return div(baseProps([FORM_ROW_CLASS]), [passInput, submitBtn]);
     const cancelBtn = button({
         variant: BTN_VARIANT_OUTLINE,
-        compact: true,
+        
         type: "button",
         text: "Cancel",
         context: "cancel unlocking the vault",
         meta: ["action"],
         onClick: () => opts.onCancel?.(),
     });
-    return div({ classes: [FORM_ROW_CLASS], context: null, meta: null }, [passInput, submitBtn, cancelBtn]);
+    return div(baseProps([FORM_ROW_CLASS]), [passInput, submitBtn, cancelBtn]);
 }
 
 function makeUnlockSubmit(args: {

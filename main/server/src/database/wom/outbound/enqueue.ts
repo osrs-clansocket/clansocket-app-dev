@@ -1,10 +1,19 @@
 import { STATUS_PENDING } from "../../../shared/constants/outbound-status.js";
 import { sha256Hex } from "../../../shared/hash.js";
 import { randomUUID } from "node:crypto";
-import { runWomWrite } from "../db-runners.js";
+import { clanWomRow, runWomWrite } from "../db-runners.js";
 
 const INITIAL_ATTEMPTS = 0;
 const DEFAULT_REQUEST_METHOD = "GET";
+const SQLITE_CONSTRAINT_UNIQUE_CODE = "SQLITE_CONSTRAINT_UNIQUE";
+
+const SELECT_ACTIVE_BY_DEDUP_SQL = `SELECT queue_id FROM clan_wom_outbound_events
+    WHERE dedup_hash = ? AND status IN ('pending', 'in_flight') LIMIT 1`;
+
+export interface EnqueueOutcome {
+    queueId: string;
+    alreadyQueued: boolean;
+}
 
 export type WomRequestMethod = "GET" | "POST" | "PUT" | "DELETE";
 
@@ -71,4 +80,18 @@ export function enqueueWomRequest(input: WomRequestInput): string {
         now,
     );
     return queueId;
+}
+
+export function ensureWomEnqueued(input: WomRequestInput): EnqueueOutcome {
+    try {
+        const queueId = enqueueWomRequest(input);
+        return { queueId, alreadyQueued: false };
+    } catch (err) {
+        const code = (err as { code?: string } | null)?.code;
+        if (code !== SQLITE_CONSTRAINT_UNIQUE_CODE) throw err;
+        const n = normalizeRequest(input);
+        const existing = clanWomRow<{ queue_id: string }>(input.clanId, SELECT_ACTIVE_BY_DEDUP_SQL, n.dedupHash);
+        if (!existing) throw err;
+        return { queueId: existing.queue_id, alreadyQueued: true };
+    }
 }

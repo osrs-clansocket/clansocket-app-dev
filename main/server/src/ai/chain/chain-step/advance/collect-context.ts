@@ -1,4 +1,4 @@
-import type { ContinuationArgs } from "./continuation-step.js";
+import type { ContinuationArgs } from "./advance-types.js";
 import { resolveStatusLabels } from "./continuation.js";
 import { loadReadContext } from "./load-reads.js";
 import { runChainQueries } from "./run-queries.js";

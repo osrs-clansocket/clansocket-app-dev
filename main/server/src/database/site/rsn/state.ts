@@ -1,7 +1,7 @@
 import { DB_NAMES, getDb } from "../../core/database.js";
-import { selectOne } from "../../core/operations.js";
+import { selectOne } from "../../core/operations/index.js";
 import { selectRows } from "../../../shared/loaders/db-rows.js";
-import { FIVE_MINUTES_MS, MS_PER_DAY, MS_PER_HOUR } from "../../../shared/time.js";
+import { FIVE_MINUTES_MS, MS_PER_DAY, MS_PER_HOUR } from "../../../shared/time/index.js";
 
 export const RSN_DISPLACED_CLEANUP_DAYS = 30;
 export const RSN_VERIFY_TTL_MS = MS_PER_HOUR;
@@ -38,7 +38,7 @@ export function placeholderFromHash(accountHash: string): string {
     return accountHash.slice(0, RSN_DISPLACED_PLACEHOLDER_LEN);
 }
 
-function latestAccountRsnBy(whereCol: string, value: string): AccountRsnRow | null {
+function rsnRowBy(whereCol: string, value: string): AccountRsnRow | null {
     return selectOne<AccountRsnRow>(
         DB_NAMES.APP,
         `SELECT ${ACCOUNT_RSN_COLUMNS}
@@ -51,11 +51,11 @@ function latestAccountRsnBy(whereCol: string, value: string): AccountRsnRow | nu
 }
 
 export function findRsnHolder(rsn: string): AccountRsnRow | null {
-    return latestAccountRsnBy("rsn", rsn);
+    return rsnRowBy("rsn", rsn);
 }
 
 export function getAccountRsn(accountHash: string): AccountRsnRow | null {
-    return latestAccountRsnBy("account_hash", accountHash);
+    return rsnRowBy("account_hash", accountHash);
 }
 
 export function rsnsByAccount(siteAccountId: string): SiteRsnRow[] {

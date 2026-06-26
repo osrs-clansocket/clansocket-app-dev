@@ -1,4 +1,5 @@
 import { OverwriteType, type GuildBasedChannel } from "discord.js";
+import { OVERWRITE_KIND } from "../../core/constants.js";
 import type { ChannelOverwriteRow } from "../types.js";
 
 interface OverwriteBitfields {
@@ -8,7 +9,7 @@ interface OverwriteBitfields {
 
 function buildRoleRow(channel: GuildBasedChannel, overwriteId: string, bits: OverwriteBitfields): ChannelOverwriteRow {
     return {
-        kind: "role",
+        kind: OVERWRITE_KIND.ROLE,
         channel_id: channel.id,
         channel_name: channel.name ?? null,
         role_id: overwriteId,
@@ -25,7 +26,7 @@ function buildMemberRow(
     bits: OverwriteBitfields,
 ): ChannelOverwriteRow {
     return {
-        kind: "member",
+        kind: OVERWRITE_KIND.MEMBER,
         channel_id: channel.id,
         channel_name: channel.name ?? null,
         user_id: overwriteId,

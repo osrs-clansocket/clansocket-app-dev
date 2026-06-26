@@ -1,5 +1,4 @@
 import "./styles/index.css";
-import "./app/routes.js";
 import { migrateLegacyKeys } from "./state/persistence";
 
 migrateLegacyKeys();
@@ -15,7 +14,7 @@ import { createInstance } from "./dom/factory";
 import { handleAnchorClick } from "./bootstrap/anchor-scroll.js";
 import { installErrorBoundary } from "./bootstrap/error-boundary.js";
 import { wireLoginButton, wireLogoutButton } from "./bootstrap/header-auth.js";
-import { registerServiceWorker, schedulePreload } from "./bootstrap/preload.js";
+import { registerServiceWorker } from "./bootstrap/preload.js";
 
 const SCROLL_TOP_THRESHOLD = 10;
 
@@ -24,7 +23,6 @@ function mountHeader(shell: HTMLElement, isAuthed: boolean): void {
     if (!headerEl) return;
     const staticPages: NavPage[] = navPages(isAuthed);
     mountHeaderNav({ headerEl, staticPages, isAuthed });
-    if (isAuthed) schedulePreload();
     wireLogoutButton(headerEl, isAuthed);
     wireLoginButton(headerEl, isAuthed);
 }
@@ -54,6 +52,7 @@ async function initApp(): Promise<void> {
     if (host === null) return;
     const { shell, routeRoot } = assembleShell();
     createInstance(host).addChild(shell);
+    await import("./app/routes.js");
     const session = await identityClient.session().catch(() => null);
     const isAuthed = session !== null;
     authState.set(isAuthed);

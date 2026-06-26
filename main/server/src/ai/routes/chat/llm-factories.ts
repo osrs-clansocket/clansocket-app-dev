@@ -8,10 +8,6 @@ import { createCohere } from "@ai-sdk/cohere";
 import { createPerplexity } from "@ai-sdk/perplexity";
 import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 
-function openAiCompatible(name: string, baseURL: string): (apiKey: string, model: string) => LanguageModel {
-    return (apiKey, model) => createOpenAICompatible({ apiKey, name, baseURL }).chatModel(model);
-}
-
 const PROVIDER_FACTORIES: Record<string, (apiKey: string, model: string) => LanguageModel> = {
     anthropic: (apiKey, model) => createAnthropic({ apiKey })(model),
     openai: (apiKey, model) => createOpenAI({ apiKey })(model),
@@ -20,9 +16,14 @@ const PROVIDER_FACTORIES: Record<string, (apiKey: string, model: string) => Lang
     groq: (apiKey, model) => createGroq({ apiKey })(model),
     cohere: (apiKey, model) => createCohere({ apiKey })(model),
     perplexity: (apiKey, model) => createPerplexity({ apiKey })(model),
-    openrouter: openAiCompatible("openrouter", "https://openrouter.ai/api/v1"),
-    ai21: openAiCompatible("ai21", "https://api.ai21.com/studio/v1"),
 };
+
+for (const [name, baseURL] of [
+    ["openrouter", "https://openrouter.ai/api/v1"],
+    ["ai21", "https://api.ai21.com/studio/v1"],
+] as const) {
+    PROVIDER_FACTORIES[name] = (apiKey, model) => createOpenAICompatible({ apiKey, name, baseURL }).chatModel(model);
+}
 
 export function buildLanguageModel(provider: string, apiKey: string, model: string): LanguageModel {
     const factory = PROVIDER_FACTORIES[provider];

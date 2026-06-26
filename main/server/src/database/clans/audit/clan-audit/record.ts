@@ -1,19 +1,14 @@
 import logger from "@clansocket/logger";
 import { clanAuditDb } from "../../../core/database.js";
 import { auditContext } from "../../../../shared/audit-context.js";
-import { lookupAction, validatePayload, type AnyAuditAction, type PayloadFor } from "../clan-audit-registry/index.js";
+import { lookupAction, validatePayload, type AnyAuditAction } from "../clan-audit-registry/index.js";
 import { hashRow } from "./chain.js";
-import { type ActorKind, broadcastById } from "./list/index.js";
+import { broadcastById } from "./list/index.js";
 import { resolveAuditFields, type AuditFields, type EnrichedAudit, type InsertArgs } from "./audit-fields.js";
 
-export interface RecordAuditArgs<A extends AnyAuditAction = AnyAuditAction> {
-    actor: string | null;
-    actorKind?: ActorKind;
-    action: A;
-    targetId?: string | null;
-    guildId?: string | null;
-    payload: PayloadFor<A>;
-}
+import type { RecordAuditArgs } from "./record-types.js";
+
+export type { RecordAuditArgs } from "./record-types.js";
 
 function enrichPayload<A extends AnyAuditAction>(entry: RecordAuditArgs<A>, now: number): EnrichedAudit {
     const ctx = auditContext.getStore();

@@ -16,6 +16,7 @@ import {
     ACCOUNT_VAULT_ROW_HEAD_END_CLASS,
     ACCOUNT_VAULT_ROW_KEY_CLASS,
 } from "../../../../../shared/constants/account-constants.js";
+import { baseProps, textProps } from "../../../../factory/index.js";
 
 export interface ListRowOpts {
     provider: string;
@@ -99,19 +100,14 @@ export async function buildListRow({ provider, idx, total, setSub, rerender }: L
     const downBtn = buildMoveBtn({ provider, rerender, direction: "down", disabled: idx === total - 1 });
     const editBtn = buildEditBtn({ provider, setSub, rerender });
     const removeBtn = buildRemoveBtn(provider, rerender);
-    return div({ classes: [ACCOUNT_VAULT_ROW_CLASS], context: null, meta: null }, [
-        div({ classes: [ACCOUNT_VAULT_ROW_HEAD_CLASS], context: null, meta: null }, [
+    return div(baseProps([ACCOUNT_VAULT_ROW_CLASS]), [
+        div(baseProps([ACCOUNT_VAULT_ROW_HEAD_CLASS]), [
             upBtn,
             downBtn,
-            span({
-                classes: [ROW_PRIMARY_CLASS],
-                text: `${idx + 1}. ${providerLabel(provider)}`,
-                context: null,
-                meta: null,
-            }),
+            span(textProps([ROW_PRIMARY_CLASS], `${idx + 1}. ${providerLabel(provider)}`)),
         ]),
-        div({ classes: [ACCOUNT_VAULT_ROW_HEAD_END_CLASS], context: null, meta: null }, [editBtn]),
-        span({ classes: [ACCOUNT_VAULT_ROW_KEY_CLASS], text: keyPreview, context: null, meta: null }),
-        div({ classes: [ACCOUNT_VAULT_ROW_FOOT_END_CLASS], context: null, meta: null }, [removeBtn]),
+        div(baseProps([ACCOUNT_VAULT_ROW_HEAD_END_CLASS]), [editBtn]),
+        span(textProps([ACCOUNT_VAULT_ROW_KEY_CLASS], keyPreview)),
+        div(baseProps([ACCOUNT_VAULT_ROW_FOOT_END_CLASS]), [removeBtn]),
     ]).el;
 }

@@ -1,5 +1,5 @@
 import "../../../../../styles/pages/clans/manage/discord/clan-discord-page.css";
-import { div, effect, paragraph, signal, type Instance } from "../../../../factory";
+import { div, effect, paragraph, signal, type Instance, baseProps, textProps } from "../../../../factory";
 import { serversStoreFor } from "../../../../../state/discord/servers-store.js";
 import { clearSelected } from "../../../../../state/discord/selected-item.js";
 import { inspectorOverride$ } from "../../../../../state/discord/inspector-override.js";
@@ -22,12 +22,7 @@ const LOADING_TEXT = "Loading discord…";
 const DEFAULT_MODE_KEY = "channels";
 
 function buildLoading(): Instance {
-    return paragraph({
-        classes: [DISCORD_LOADING_CLASS],
-        text: LOADING_TEXT,
-        context: null,
-        meta: null,
-    });
+    return paragraph(textProps([DISCORD_LOADING_CLASS], LOADING_TEXT));
 }
 
 function resolveServer(servers: readonly DiscordServer[], guildId: string): DiscordServer {
@@ -60,7 +55,7 @@ function buildFrame(slug: string, servers: readonly DiscordServer[], subTab: str
         onSelect: makeSelectHandler(selectedGuildId, renderModeFor),
     });
     paneCenter.setMode(modeContent({ slug, servers, server: initialServer }, subTab));
-    return div({ classes: [DISCORD_FRAME_CLASS], context: null, meta: null }, [
+    return div(baseProps([DISCORD_FRAME_CLASS]), [
         header,
         buildRailLeft({ slug, activeKey: subTab }),
         paneCenter.pane,
@@ -81,10 +76,10 @@ function renderForState(slug: string, host: Instance, servers: readonly DiscordS
     host.setChildren(buildFrame(slug, servers, subTab));
 }
 
-function buildDiscordTab(slug: string, subTab?: string | null): HTMLElement {
+export function build(slug: string, subTab?: string | null): HTMLElement {
     inspectorOverride$.set(null);
     clearPreviewState();
-    const host = div({ classes: [DISCORD_ROOT_CLASS], context: null, meta: null }, [buildLoading()]);
+    const host = div(baseProps([DISCORD_ROOT_CLASS]), [buildLoading()]);
     const store = serversStoreFor(slug);
     void store.ensure();
     const mode = subTab ?? DEFAULT_MODE_KEY;
@@ -95,9 +90,3 @@ function buildDiscordTab(slug: string, subTab?: string | null): HTMLElement {
     );
     return host.el;
 }
-
-import { defineManageTab } from "../registry";
-
-defineManageTab({ key: "discord", build: buildDiscordTab, order: 30 });
-
-export { buildDiscordTab };

@@ -1,4 +1,4 @@
-import { div, type Instance } from "../../../factory";
+import { div, type Instance, baseProps } from "../../../factory";
 import { getMessagesHost } from "../../panel/messaging/messages-host";
 import { SEND_KIND_ACTION_FEEDBACK, type SendOptions } from "../../../../ai/client";
 import { collectDomState } from "../../../../ai/dom-state";
@@ -13,7 +13,7 @@ export { handleSlashCommand } from "./slash-command-handler.js";
 export { awaitSlashSettle } from "./slash-settle-awaiter.js";
 
 export function showThinking(els: SendElements): Instance {
-    const inst = div({ classes: [AI_BAR_MSG_CLASS, AI_BAR_MSG_THINKING_CLASS], context: null, meta: null });
+    const inst = div(baseProps([AI_BAR_MSG_CLASS, AI_BAR_MSG_THINKING_CLASS]));
     getMessagesHost(els.messagesEl).addChild(inst);
     setThinkingEl(inst.el);
     updateThinking(randomIdlePhrase());

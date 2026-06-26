@@ -1,4 +1,5 @@
 import type { Client } from "discord.js";
+import { FALLBACK_UNKNOWN } from "../core/constants.js";
 import { BaseQueueRunner, loadAndDrain } from "../base/base-queue-runner.js";
 import { loadPendingOutbound, type PendingOutboundRow } from "../loaders/outbound-loader.js";
 import { failAndWarn } from "../shared/transitions/fail-and-warn.js";
@@ -36,7 +37,7 @@ class OutboundRunner extends BaseQueueRunner<PendingOutboundRow, Sender, string 
     protected markFailed(row: PendingOutboundRow, err: unknown): Promise<void> {
         const e = err as { code?: number; message?: string };
         const code = typeof e.code === "number" ? e.code : HTTP_INTERNAL;
-        const msg = `Outbound dispatch failed for ${row.queue_id}: ${e.message ?? "unknown"}`;
+        const msg = `Outbound dispatch failed for ${row.queue_id}: ${e.message ?? FALLBACK_UNKNOWN}`;
         return failAndWarn(() => transitionFailed(row.queue_id, code, row.attempts + 1, null), msg);
     }
 

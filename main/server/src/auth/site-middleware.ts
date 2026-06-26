@@ -5,7 +5,7 @@ import { verifySiteSession } from "./site-session";
 import { accountById } from "../database/site/site-accounts/index.js";
 import { listAccountManagers } from "../database/clans/access/clan-manager-store.js";
 import { COOKIE_SITE_SESSION } from "./oauth-providers.js";
-import { readCookie } from "./site-routes/oauth-session.js";
+import { readCookie } from "./site-routes/reader-oauth-cookie.js";
 
 declare module "express-serve-static-core" {
     interface Request {

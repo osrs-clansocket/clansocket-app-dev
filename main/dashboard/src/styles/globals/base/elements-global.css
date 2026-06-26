@@ -1,11 +1,4 @@
 @font-face {
-    font-family: bootstrap-icons;
-    font-display: swap;
-    src:
-        url("/fonts/bootstrap_icons.woff2") format("woff2"),
-        url("/fonts/bootstrap-icons.woff") format("woff");
-}
-@font-face {
     font-family: runescape-bold;
     font-display: swap;
     src: url("/fonts/runescape_bold.woff2") format("woff2");
@@ -39,13 +32,12 @@
     src: url("/fonts/jetbrains_mono.woff2") format("woff2");
 }
 :where(body) {
-    background-image:
-        var(--gradient-ambient-steel), var(--gradient-accent-bloom), url("/resources/clan/background.webp");
+    background-image: var(--gradient-ambient-steel), var(--gradient-accent-bloom);
     background-position: center;
-    background-size: auto, auto, cover;
+    background-size: auto;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    background-blend-mode: screen, screen, normal;
+    background-blend-mode: screen;
 }
 h1,
 h2,

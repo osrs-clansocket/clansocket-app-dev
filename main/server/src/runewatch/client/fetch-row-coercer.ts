@@ -11,7 +11,7 @@ export interface RunewatchUpstreamRow {
     hash: string;
 }
 
-function coerceRow(raw: Record<string, unknown>): RunewatchUpstreamRow {
+function coerceUpstreamRow(raw: Record<string, unknown>): RunewatchUpstreamRow {
     const str = (v: unknown): string => (typeof v === "string" ? v : "");
     const evidence = (v: unknown): number | string => (typeof v === "number" || typeof v === "string" ? v : "");
     return {
@@ -34,7 +34,7 @@ export function projectRows(parsed: unknown[]): RunewatchUpstreamRow[] {
         typeof raw.source === "string" &&
         raw.source.length > 0;
     for (const item of parsed) {
-        if (isPlainObject(item) && isValid(item)) rows.push(coerceRow(item));
+        if (isPlainObject(item) && isValid(item)) rows.push(coerceUpstreamRow(item));
         else invalidCount += 1;
     }
     if (invalidCount > 0) logger.warn(`runewatch fetch skipped ${invalidCount} malformed rows`);

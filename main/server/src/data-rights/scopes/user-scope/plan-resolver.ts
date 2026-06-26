@@ -1,5 +1,6 @@
 import { hashesForAccount } from "../../../database/site/site-accounts/index.js";
 import { SQL_COLUMNS } from "../../../database/core/sql-columns.js";
+import { sqlPlaceholders } from "../../../database/core/operations/index.js";
 import { quoteIdent } from "../../access/db-introspect.js";
 import { APP_TABLES_BY_ACCOUNT_HASH, APP_TABLES_BY_SITE_ACCOUNT } from "../manifest/index.js";
 import type { TablePlan } from "./scope.js";
@@ -62,8 +63,7 @@ export function appUnionPlan(siteAccountId: string, table: string): TablePlan | 
     const parts: string[] = [];
     const args: unknown[] = [];
     if (hashes.length > 0) {
-        const ph = hashes.map(() => "?").join(", ");
-        parts.push(`${quoteIdent(hashHit.column)} IN (${ph})`);
+        parts.push(`${quoteIdent(hashHit.column)} IN (${sqlPlaceholders(hashes.length)})`);
         args.push(...hashes);
     }
     parts.push(`${quoteIdent(sidHit.column)} = ?`);

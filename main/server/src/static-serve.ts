@@ -12,26 +12,6 @@ const MIME_BY_EXT: Record<string, string> = {
     ".svg": "image/svg+xml",
 };
 
-function brotliMiddleware(dist: string): express.RequestHandler {
-    return (req, res, next) => {
-        const accept = req.headers["accept-encoding"] ?? "";
-        if (!accept.includes("br")) {
-            next();
-            return;
-        }
-        const filePath = path.join(dist, req.path);
-        if (!fs.existsSync(filePath + ".br")) {
-            next();
-            return;
-        }
-        req.url += ".br";
-        res.setHeader("Content-Encoding", "br");
-        const mime = MIME_BY_EXT[path.extname(filePath)];
-        if (mime) res.setHeader(HEADER_CONTENT_TYPE, mime);
-        next();
-    };
-}
-
 export function attachStaticServe(app: express.Express, dist: string, dashboardUrl: string): void {
     if (process.env.NODE_ENV !== "production") {
         app.use((_req, res) => {
@@ -42,7 +22,17 @@ export function attachStaticServe(app: express.Express, dist: string, dashboardU
         });
         return;
     }
-    app.use(brotliMiddleware(dist));
+    app.use((req, res, next) => {
+        const accept = req.headers["accept-encoding"] ?? "";
+        const filePath = path.join(dist, req.path);
+        if (accept.includes("br") && fs.existsSync(filePath + ".br")) {
+            req.url += ".br";
+            res.setHeader("Content-Encoding", "br");
+            const mime = MIME_BY_EXT[path.extname(filePath)];
+            if (mime) res.setHeader(HEADER_CONTENT_TYPE, mime);
+        }
+        next();
+    });
     app.use(express.static(dist, { maxAge: "1y", immutable: true, index: false }));
     app.get("/{*splat}", (_req, res) => res.sendFile(path.join(dist, "index.html")));
 }

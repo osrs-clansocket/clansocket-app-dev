@@ -1,4 +1,4 @@
-import { div, form, label, paragraph, span, type Instance } from "../../../../factory";
+import { div, form, label, paragraph, span, type Instance, baseProps, textProps } from "../../../../factory";
 import { FORM_CLAIM_FORM, FORM_FIELD, FORM_FIELD_LABEL, FORM_FORM_ROW } from "../../../../forms/form-classes.js";
 import { ACCOUNT_INSTRUCTIONS_CLASS } from "../../../../../shared/constants/account-constants.js";
 
@@ -12,13 +12,10 @@ function buildClaimBody(args: {
     cancelBtn: Instance;
 }): Instance[] {
     return [
-        paragraph({ classes: [ACCOUNT_INSTRUCTIONS_CLASS], text: INSTRUCTIONS_TEXT, context: null, meta: null }),
-        label({ classes: [FORM_FIELD], context: null, meta: null }, [
-            span({ classes: [FORM_FIELD_LABEL], text: "Your RSN", context: null, meta: null }),
-            args.rsnInput,
-        ]),
+        paragraph(textProps([ACCOUNT_INSTRUCTIONS_CLASS], INSTRUCTIONS_TEXT)),
+        label(baseProps([FORM_FIELD]), [span(textProps([FORM_FIELD_LABEL], "Your RSN")), args.rsnInput]),
         args.errorEl,
-        div({ classes: [FORM_FORM_ROW], context: null, meta: null }, [args.submitBtn, args.cancelBtn]),
+        div(baseProps([FORM_FORM_ROW]), [args.submitBtn, args.cancelBtn]),
     ];
 }
 

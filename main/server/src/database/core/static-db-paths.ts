@@ -1,6 +1,6 @@
 import { resolve } from "path";
 import { STATIC_DB_NAMES } from "./db-constants.js";
-import { DATA_DIR } from "./db-paths.js";
+import { DATA_DIR } from "./db-paths-base.js";
 
 const STATIC_DB_SUBDIRS: Record<string, string> = {
     [STATIC_DB_NAMES.WORLD_MAP]: "map",

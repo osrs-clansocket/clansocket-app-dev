@@ -1,5 +1,15 @@
 import "../../../../../styles/pages/clans/manage/identity/clan-seo-page.css";
-import { BTN_VARIANT_PRIMARY, button, div, effect, heading, paragraph, type Instance } from "../../../../factory";
+import {
+    BTN_VARIANT_PRIMARY,
+    button,
+    div,
+    effect,
+    heading,
+    paragraph,
+    type Instance,
+    baseProps,
+    textProps,
+} from "../../../../factory";
 import { clansClient } from "../../../../../state/clans/clans-client/index.js";
 import { clanSeoStore, refreshActive, setActiveSlug } from "../../../../../state/clans/discovery/clan-seo-store.js";
 import {
@@ -55,7 +65,7 @@ async function saveChanges(slug: string, state: PanelState): Promise<void> {
 function buildSaveButton(slug: string, state: PanelState): Instance {
     const btn = button({
         variant: BTN_VARIANT_PRIMARY,
-        compact: true,
+        
         text: "Save",
         context: "save clan discoverability changes",
         meta: ["submit"],
@@ -72,26 +82,16 @@ function buildSaveButton(slug: string, state: PanelState): Instance {
 }
 
 function buildStatus(state: PanelState): Instance {
-    return paragraph({
-        classes: [ACCOUNT_EMPTY_CLASS],
-        text: state.status,
-        context: null,
-        meta: null,
-    });
+    return paragraph(textProps([ACCOUNT_EMPTY_CLASS], state.status));
 }
 
 export function buildSeoPanel(slug: string): Instance {
     const state = newPanelState();
     setActiveSlug(slug);
     clanSeoStore.ensure();
-    const host = div({ classes: [ACCOUNT_CLAN_BRANDING_SECTION_CLASS], context: null, meta: null }, [
+    const host = div(baseProps([ACCOUNT_CLAN_BRANDING_SECTION_CLASS]), [
         heading("h3", { classes: [ACCOUNT_PANEL_TITLE_CLASS], text: SECTION_TITLE, context: null, meta: null }),
-        paragraph({
-            classes: [ACCOUNT_INSTRUCTIONS_CLASS],
-            text: SECTION_INSTRUCTIONS,
-            context: null,
-            meta: null,
-        }),
+        paragraph(textProps([ACCOUNT_INSTRUCTIONS_CLASS], SECTION_INSTRUCTIONS)),
         buildToggleRow(state),
         buildField("Title", buildTextInput(state, "title", "Defaults to the clan name", "Title")),
         buildField("Description", buildDescriptionInput(state)),

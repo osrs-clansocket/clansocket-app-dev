@@ -1,4 +1,4 @@
-import { div, paragraph, type Instance } from "../../../factory";
+import { div, paragraph, type Instance, baseProps, textProps } from "../../../factory";
 import type { ManagedClan } from "../../../../state/clans/clans-client/index.js";
 import { buildClanRow, closeDetailsOn, MEMBER_ROLE, openDetailsOn } from "./clan-row-build.js";
 import { ACCOUNT_CLAN_LIST_CLASS, ACCOUNT_EMPTY_CLASS } from "../../../../shared/constants/account-constants.js";
@@ -53,8 +53,8 @@ function toggleClanRow(
 }
 
 export function buildClanList(items: ManagedClan[]): { list: Instance; empty: Instance } {
-    const list = div({ classes: [ACCOUNT_CLAN_LIST_CLASS], context: null, meta: null });
-    const empty = paragraph({ classes: [ACCOUNT_EMPTY_CLASS], text: "No clans.", context: null, meta: null });
+    const list = div(baseProps([ACCOUNT_CLAN_LIST_CLASS]));
+    const empty = paragraph(textProps([ACCOUNT_EMPTY_CLASS], "No clans."));
     if (items.length === 0) {
         empty.el.hidden = false;
         return { list, empty };

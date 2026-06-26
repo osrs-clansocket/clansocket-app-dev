@@ -1,5 +1,6 @@
 import { PermissionsBitField, type Guild } from "discord.js";
 import { registerPublisher } from "../../publisher-registry.js";
+import { OP_KINDS, ENTITY_TYPES } from "../../publish-vocab.js";
 import { runPublishOp } from "../../runners/op-runner.js";
 import { toDiscordRole } from "./update.js";
 
@@ -18,7 +19,7 @@ export async function applyRoleCreate(guild: Guild, data: RoleCreateState): Prom
 
 export type { RoleCreateState };
 
-registerPublisher("create", "discord_role", {
-    handler: (c, r) => runPublishOp(c, r, "create", (g, d) => applyRoleCreate(g, d as RoleCreateState)),
+registerPublisher(OP_KINDS.CREATE, ENTITY_TYPES.ROLE, {
+    handler: (c, r) => runPublishOp(c, r, OP_KINDS.CREATE, (g, d) => applyRoleCreate(g, d as RoleCreateState)),
     requiredBotPermission: PermissionsBitField.Flags.ManageRoles,
 });

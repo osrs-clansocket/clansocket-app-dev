@@ -1,4 +1,4 @@
-import { div, span, wireInput, type Instance } from "../../../../../../factory";
+import { div, span, wireInput, type Instance, baseProps, textProps } from "../../../../../../factory";
 import { glassInput } from "../../../../../../forms/glass/inputs/glass-input.js";
 import { buildGlassColor } from "../../../../../../forms/glass/inputs/color/index.js";
 import {
@@ -6,7 +6,7 @@ import {
     AUTO_HOOKS_CARD_ROW_CLASS,
     AUTO_HOOKS_CARD_VALUE_CLASS,
 } from "../../../../../../../shared/constants/clan-manage-discord/auto-hook-constants.js";
-import type { EmbedEditorCallbacks, EmbedState } from "./embed-editor.js";
+import type { EmbedEditorCallbacks, EmbedState } from "./embed-editor-types.js";
 
 const DEFAULT_EMBED_COLOR = "#5865F2";
 
@@ -65,8 +65,8 @@ const SECONDARY_FIELDS: ReadonlyArray<EmbedSecondarySpec> = [
 
 function rowOf(label: string, control: Instance): Instance {
     control.el.classList.add(AUTO_HOOKS_CARD_VALUE_CLASS);
-    return div({ classes: [AUTO_HOOKS_CARD_ROW_CLASS], context: null, meta: null }, [
-        span({ classes: [AUTO_HOOKS_CARD_LABEL_CLASS], text: label, context: null, meta: null }),
+    return div(baseProps([AUTO_HOOKS_CARD_ROW_CLASS]), [
+        span(textProps([AUTO_HOOKS_CARD_LABEL_CLASS], label)),
         control,
     ]);
 }

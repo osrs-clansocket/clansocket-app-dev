@@ -1,7 +1,7 @@
 import "../../../styles/pages/clans/manage/index.css";
 import "../../../styles/pages/clans/clan-manage-page.css";
 import "../../../styles/pages/routes/route-clan-manage-page.css";
-import { BTN_VARIANT_OUTLINE, button, div, paragraph, type Instance } from "../../factory";
+import { BTN_VARIANT_OUTLINE, button, div, paragraph, type Instance, baseProps, textProps } from "../../factory";
 import { manageSlug, manageSubTab, manageTab, router } from "../../../managers/router";
 import { clansStore } from "../../../state/clans/stores/clans-store.js";
 import { preloadRunewatchStore } from "../../../state/clans/runewatch/runewatch-store.js";
@@ -17,8 +17,8 @@ import {
 import { ROUTE_CLAN_MANAGE_CLASS } from "../../../shared/constants/route/route-constants.js";
 
 function buildMissing(): Instance {
-    return div({ classes: [ROUTE_CLAN_MANAGE_CLASS], context: null, meta: null }, [
-        paragraph({ classes: [CLAN_MANAGE_MISSING_CLASS], text: "Clan not found.", context: null, meta: null }),
+    return div(baseProps([ROUTE_CLAN_MANAGE_CLASS]), [
+        paragraph(textProps([CLAN_MANAGE_MISSING_CLASS], "Clan not found.")),
     ]);
 }
 
@@ -69,15 +69,13 @@ async function renderClanManage(path: string): Promise<Instance> {
     const activeTab = resolveTabKey(manageTab(path));
     const activeSubTab = manageSubTab(path);
 
+    const tabContent = await buildTab(activeTab, slug, activeSubTab);
     const tabBody = div(
         { classes: [CLAN_MANAGE_BODY_CLASS], data: { "active-tab": activeTab }, context: null, meta: null },
-        [buildTab(activeTab, slug, activeSubTab)],
+        [tabContent],
     );
 
-    return div({ classes: [ROUTE_CLAN_MANAGE_CLASS], context: null, meta: null }, [
-        buildTabNav(slug, activeTab),
-        tabBody,
-    ]);
+    return div(baseProps([ROUTE_CLAN_MANAGE_CLASS]), [buildTabNav(slug, activeTab), tabBody]);
 }
 
 export { renderClanManage };

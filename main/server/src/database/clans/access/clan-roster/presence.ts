@@ -1,4 +1,5 @@
 import { clanPluginDb, pluginModes } from "../../../core/database.js";
+import { sqlPlaceholders } from "../../../core/operations/index.js";
 import type { PluginPresence } from "./types.js";
 import { resolveHashes, type RosterMemberLite } from "./resolve-hashes.js";
 
@@ -8,15 +9,14 @@ interface MarkModeArgs {
     result: Record<string, PluginPresence>;
     hashByLowerName: Record<string, string>;
     allHashes: readonly string[];
-    placeholders: string;
 }
 
 function markModeLive(args: MarkModeArgs): void {
-    const { clanId, mode, result, hashByLowerName, allHashes, placeholders } = args;
+    const { clanId, mode, result, hashByLowerName, allHashes } = args;
     const liveRows = clanPluginDb(clanId, mode)
         .prepare(
             `SELECT DISTINCT account_hash FROM plugin_sessions
-             WHERE disconnected_at IS NULL AND account_hash IN (${placeholders})`,
+             WHERE disconnected_at IS NULL AND account_hash IN (${sqlPlaceholders(allHashes.length)})`,
         )
         .all(...allHashes) as { account_hash: string }[];
     if (liveRows.length === 0) return;
@@ -36,9 +36,8 @@ function markLive(
     const hashValues = Object.values(hashByLowerName);
     if (hashValues.length === 0) return;
     const allHashes = [...new Set(hashValues)];
-    const placeholders = allHashes.map(() => "?").join(",");
     for (const mode of pluginModes(clanId)) {
-        markModeLive({ clanId, mode, result, hashByLowerName, allHashes, placeholders });
+        markModeLive({ clanId, mode, result, hashByLowerName, allHashes });
     }
 }
 

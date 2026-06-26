@@ -1,30 +1,21 @@
-import { div, type Instance } from "../../../../../factory/index.js";
+import { div, type Instance, baseProps } from "../../../../../factory/index.js";
 import {
     TWEAKER_ACTIONS_CLASS,
     TWEAKER_ACTIONS_PAIR_CLASS,
     TWEAKER_CANVAS_STACK_CLASS,
 } from "../../../../../../shared/constants/branding-tweaker-constants.js";
 
-export function buildTweakerStack(canvasInst: Instance, voxlabHost: Instance, hiddenSource: Instance): Instance {
-    const canvasStack = div({ classes: [TWEAKER_CANVAS_STACK_CLASS], context: null, meta: null }, [
-        canvasInst,
-        voxlabHost,
-        hiddenSource,
-    ]);
+export function buildTweakerStack(canvasInst: Instance, hiddenSource: Instance): Instance {
+    const canvasStack = div(baseProps([TWEAKER_CANVAS_STACK_CLASS]), [canvasInst, hiddenSource]);
     canvasStack.el.style.overflow = "hidden";
     canvasStack.el.style.position = "relative";
     return canvasStack;
 }
 
-export function buildTweakerRow(args: {
-    uploadBtn: Instance;
-    revertBtn: Instance;
-    removeHost: Instance;
-    voxlabBtn: Instance;
-}): Instance {
-    const { uploadBtn, revertBtn, removeHost, voxlabBtn } = args;
-    return div({ classes: [TWEAKER_ACTIONS_CLASS], context: null, meta: null }, [
-        div({ classes: [TWEAKER_ACTIONS_PAIR_CLASS], context: null, meta: null }, [revertBtn, removeHost]),
-        div({ classes: [TWEAKER_ACTIONS_PAIR_CLASS], context: null, meta: null }, [voxlabBtn, uploadBtn]),
+export function buildTweakerRow(args: { uploadBtn: Instance; revertBtn: Instance; removeHost: Instance }): Instance {
+    const { uploadBtn, revertBtn, removeHost } = args;
+    return div(baseProps([TWEAKER_ACTIONS_CLASS]), [
+        div(baseProps([TWEAKER_ACTIONS_PAIR_CLASS]), [revertBtn, removeHost]),
+        div(baseProps([TWEAKER_ACTIONS_PAIR_CLASS]), [uploadBtn]),
     ]);
 }

@@ -43,11 +43,11 @@ interface ButtonProps extends BaseProps {
 function buttonClasses(
     variant: ButtonVariant | undefined,
     extra: readonly string[] | undefined,
-    compact: boolean = false,
+    compact: boolean | undefined,
 ): readonly string[] {
     const base = VARIANT_CLASSES[variant ?? BTN_VARIANT_DEFAULT];
     const withExtra = extra && extra.length > 0 ? [...base, ...extra] : [...base];
-    if (compact === true) withExtra.push(BTN_COMPACT);
+    if (compact !== false) withExtra.push(BTN_COMPACT);
     return withExtra;
 }
 

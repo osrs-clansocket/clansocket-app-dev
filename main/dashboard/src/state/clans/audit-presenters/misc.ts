@@ -13,7 +13,7 @@ const readPresenter: Presenter = (entry) => {
     return {
         title: `Read ${noun}`,
         detail: "",
-        icon: "bi-eye",
+        icon: { provider: "bi", name: "eye" },
         semantic: "read",
         hasExpansion: false,
     };
@@ -28,7 +28,7 @@ export const MISC_PRESENTERS: Record<string, Presenter> = {
         return {
             title: "Roster changed",
             detail: diffs === 0 ? `${members} members, no diffs` : `${members} members, ${diffs} diffs`,
-            icon: "bi-people-fill",
+            icon: { provider: "bi", name: "people-fill" },
             semantic: "write",
             hasExpansion: diffs > 0,
         };
@@ -36,7 +36,7 @@ export const MISC_PRESENTERS: Record<string, Presenter> = {
     "server:branding.updated": () => ({
         title: "Branding updated",
         detail: "Click to view diff",
-        icon: "bi-palette-fill",
+        icon: { provider: "bi", name: "palette-fill" },
         semantic: "write",
         hasExpansion: true,
     }),
@@ -48,7 +48,7 @@ export const MISC_PRESENTERS: Record<string, Presenter> = {
         return {
             title: "Whitelist added",
             detail: label ? `${head} · "${label}"` : head,
-            icon: "bi-list-check",
+            icon: { provider: "bi", name: "list-check" },
             semantic: "write",
             hasExpansion: false,
         };
@@ -56,7 +56,7 @@ export const MISC_PRESENTERS: Record<string, Presenter> = {
     "server:whitelist.removed": (entry) => ({
         title: "Whitelist removed",
         detail: shortId(entry.targetId),
-        icon: "bi-list-ul",
+        icon: { provider: "bi", name: "list-ul" },
         semantic: "destructive",
         hasExpansion: false,
     }),

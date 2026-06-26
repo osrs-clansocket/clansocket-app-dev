@@ -1,5 +1,5 @@
 import { promptLoader } from "../../persona/prompt-loader/index.js";
-import { inRange } from "../../../shared/parsers/ascii-bounds.js";
+import { inRange } from "../../../shared/parsers/ascii-codes.js";
 import type { ChainEvent } from "./types.js";
 
 export function resolvePinItems(ids: string[], siteAccountId: string): { id: string; content: string }[] {

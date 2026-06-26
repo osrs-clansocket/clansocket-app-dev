@@ -29,6 +29,12 @@ import { mountedRouter } from "./_mount-registry.js";
 
 const router = mountedRouter();
 
+const failBody = (reason: string, message: string): { ok: false; reason: string; message: string } => ({
+    ok: false,
+    reason,
+    message,
+});
+
 function collectLiveSessions(boundHashes: readonly string[]): PluginLiveSession[] {
     const out: PluginLiveSession[] = [];
     for (const hash of boundHashes) {
@@ -38,11 +44,7 @@ function collectLiveSessions(boundHashes: readonly string[]): PluginLiveSession[
 }
 
 function noLivePlugin(res: Response): void {
-    res.status(HTTP_FORBIDDEN).json({
-        ok: false,
-        reason: CLAIM_REASON_NO_LIVE_PLUGIN,
-        message: CLAIM_MESSAGE_NO_LIVE_PLUGIN,
-    });
+    res.status(HTTP_FORBIDDEN).json(failBody(CLAIM_REASON_NO_LIVE_PLUGIN, CLAIM_MESSAGE_NO_LIVE_PLUGIN));
 }
 
 interface TransferGateArgs {
@@ -68,18 +70,12 @@ function gateTransfer(a: TransferGateArgs): { clan: ClanRow; boundHashes: string
 function transferFailure(res: Response, clanMatch: { inGameClanRank?: string | null } | null): void {
     if (clanMatch) {
         const rank = clanMatch.inGameClanRank ?? "unknown";
-        res.status(HTTP_FORBIDDEN).json({
-            ok: false,
-            reason: CLAIM_REASON_NOT_ACTUAL_OWNER,
-            message: `${CLAIM_MESSAGE_NOT_ACTUAL_OWNER_PREFIX}${rank}.`,
-        });
+        res.status(HTTP_FORBIDDEN).json(
+            failBody(CLAIM_REASON_NOT_ACTUAL_OWNER, `${CLAIM_MESSAGE_NOT_ACTUAL_OWNER_PREFIX}${rank}.`),
+        );
         return;
     }
-    res.status(HTTP_FORBIDDEN).json({
-        ok: false,
-        reason: CLAIM_REASON_WRONG_RSN_OR_CLAN,
-        message: CLAIM_MESSAGE_WRONG_RSN_OR_CLAN,
-    });
+    res.status(HTTP_FORBIDDEN).json(failBody(CLAIM_REASON_WRONG_RSN_OR_CLAN, CLAIM_MESSAGE_WRONG_RSN_OR_CLAN));
 }
 
 router.post(

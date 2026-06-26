@@ -1,6 +1,6 @@
 import logger from "@clansocket/logger";
 import { DB_NAMES, getDb, displacedToPurge } from "../../../database/index.js";
-import { MS_PER_DAY } from "../../../shared/time.js";
+import { MS_PER_DAY } from "../../../shared/time/index.js";
 import { purgeClanData } from "../purge-clan.js";
 import { ownedClans, purgeUserData } from "../purge-user/index.js";
 import { evaluateClan } from "./evaluate.js";

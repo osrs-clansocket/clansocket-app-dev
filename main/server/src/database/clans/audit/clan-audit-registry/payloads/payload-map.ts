@@ -86,4 +86,3 @@ export type PayloadMap = {
 
 export type AnyAuditAction = keyof PayloadMap;
 export type PayloadFor<A extends AnyAuditAction> = PayloadMap[A];
-export type { PayloadMap as AuditActionPayloadMap };

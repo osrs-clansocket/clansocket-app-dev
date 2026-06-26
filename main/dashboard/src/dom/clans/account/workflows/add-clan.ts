@@ -1,4 +1,4 @@
-import { BTN_VARIANT_PRIMARY, button, div, effect, signal, type Instance } from "../../../factory";
+import { BTN_VARIANT_PRIMARY, button, div, effect, signal, type Instance, baseProps } from "../../../factory";
 import { consentsStore } from "../../../../state/identity/stores/consents-store.js";
 import type { ConsentRecord } from "../../../../state/identity/consent/consent-client.js";
 import { identityClient } from "../../../../state/identity/identity-client/index.js";
@@ -71,7 +71,7 @@ function bindGate(
 function buildOpenBtn(onShow: () => void): Instance<HTMLButtonElement> {
     const openBtn: Instance<HTMLButtonElement> = button({
         variant: BTN_VARIANT_PRIMARY,
-        compact: true,
+        
         text: "Claim a clan",
         context: "open the claim-a-clan form",
         meta: ["action", "clan"],
@@ -111,7 +111,7 @@ export function buildAddClan(onClaimed: () => void): Instance {
     const openBtn = buildOpenBtn(() => claimFormRef.f!.show());
     const claimForm = buildClaimForm(makeClaimHandlers(ctx, openBtn, claimFormRef));
     claimFormRef.f = claimForm;
-    const container = div({ classes: [ACCOUNT_ADD_CLAN_CLASS], context: null, meta: null }, [
+    const container = div(baseProps([ACCOUNT_ADD_CLAN_CLASS]), [
         buildClaimBanner(ctx.activeClaim),
         openBtn,
         claimForm.el,

@@ -1,4 +1,4 @@
-import { button, div, icon, input, popover, span, type Instance } from "../../../../factory/index.js";
+import { button, div, icon, input, popover, span, type Instance, textProps } from "../../../../factory/index.js";
 import { GD_LABEL, GD_OPEN, GD_POPUP, GD_ROOT, GD_TRIGGER, buildPopupContents, isoDate, parseIso } from "./build.js";
 import { GLASS_DATE_ICON_CLASS } from "../../../../../shared/constants/glass-constants.js";
 import { wirePopupClicks } from "./popup-clicks.js";
@@ -37,12 +37,7 @@ function buildHidden(name: string, initialValue: string): Instance<HTMLInputElem
 }
 
 function buildDateLabel(initialValue: string, placeholder: string): Instance {
-    return span({
-        classes: [GD_LABEL],
-        text: initialValue.length > 0 ? initialValue : placeholder,
-        context: null,
-        meta: null,
-    });
+    return span(textProps([GD_LABEL], initialValue.length > 0 ? initialValue : placeholder));
 }
 
 export function glassDate(props: GlassDateProps = {}): Instance {

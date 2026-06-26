@@ -11,7 +11,6 @@ export interface TweakerKit {
     statusEl: Instance;
     bodyEl: Instance;
     canvasInst: CanvasInst;
-    voxlabHost: Instance;
     controls: Instance;
     sliders: ReturnType<typeof createSliderSpecs>;
     render: () => void;

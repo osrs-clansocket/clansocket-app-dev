@@ -1,4 +1,4 @@
-import { div, paragraph, type Instance } from "../../../../factory";
+import { div, paragraph, type Instance, baseProps, textProps } from "../../../../factory";
 import type { SessionEntry } from "../../../../../ai/profile-store";
 import { EMPTY_CLASS, SESSION_LOG_CLASS, getEditing, setEditing } from "../state.js";
 import { renderSectionHeader } from "../shared.js";
@@ -11,7 +11,7 @@ export function renderSession(host: Instance, entries: SessionEntry[], rerender:
         rerender();
     });
 
-    const list = div({ classes: [SESSION_LOG_CLASS], context: null, meta: null });
+    const list = div(baseProps([SESSION_LOG_CLASS]));
     const editing = getEditing();
 
     if (editing?.kind === "new-session") {
@@ -19,7 +19,7 @@ export function renderSession(host: Instance, entries: SessionEntry[], rerender:
     }
 
     if (entries.length === 0 && editing?.kind !== "new-session") {
-        host.addChild(paragraph({ classes: [EMPTY_CLASS], text: "No session entries yet", context: null, meta: null }));
+        host.addChild(paragraph(textProps([EMPTY_CLASS], "No session entries yet")));
         return;
     }
 

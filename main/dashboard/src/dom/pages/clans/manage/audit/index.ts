@@ -1,4 +1,4 @@
-import { createLiveStore, div, liveView, paragraph, type Instance } from "../../../../factory";
+import { createLiveStore, div, liveView, paragraph, type Instance, baseProps } from "../../../../factory";
 import { events } from "../../../../../managers/events";
 import type { PresentedEntry } from "../../../../../state/clans/audit-presenters/index.js";
 import { buildFilterBar } from "./filters.js";
@@ -18,9 +18,9 @@ import {
 const TOPIC = "clan-audit";
 
 function buildTabRefs(slug: string): AuditTabRefs {
-    const host = div({ classes: [AUDIT_HOST_CLASS], context: null, meta: null });
-    const statsHost = div({ classes: [AUDIT_STATS_HOST_CLASS], context: null, meta: null });
-    const list = div({ classes: [AUDIT_LIST_CLASS], context: null, meta: null });
+    const host = div(baseProps([AUDIT_HOST_CLASS]));
+    const statsHost = div(baseProps([AUDIT_STATS_HOST_CLASS]));
+    const list = div(baseProps([AUDIT_LIST_CLASS]));
     const empty = paragraph({
         classes: [AUDIT_EMPTY_CLASS],
         text: "No audit entries yet.",
@@ -107,7 +107,7 @@ function makeFilterHandlers(
     return { onKindChange, onRangeChange };
 }
 
-function buildAuditTab(slug: string): HTMLElement {
+export function build(slug: string): HTMLElement {
     const refs = buildTabRefs(slug);
     const ops = makeTabOps(refs);
     const filterBarRef: { v: Instance } = { v: null as unknown as Instance };
@@ -122,9 +122,4 @@ function buildAuditTab(slug: string): HTMLElement {
     return refs.host.el;
 }
 
-import { defineManageTab } from "../registry";
-
-defineManageTab({ key: "audit", build: (slug) => buildAuditTab(slug), order: 999 });
-
-export { buildAuditTab };
 export type { PresentedEntry };

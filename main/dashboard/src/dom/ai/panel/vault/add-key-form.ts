@@ -1,4 +1,13 @@
-import { BTN_VARIANT_PRIMARY, button, div, form, paragraph, type Instance } from "../../../factory";
+import {
+    BTN_VARIANT_PRIMARY,
+    button,
+    div,
+    form,
+    paragraph,
+    type Instance,
+    baseProps,
+    textProps,
+} from "../../../factory";
 import { describeError, submitKeyForm, type AddKeyOpts } from "./key-form-submit.js";
 import { buildKeyFields, buildKeyInputs } from "./key-form-fields.js";
 export { MAX_OUTPUT_TOKENS_CEILING, MAX_OUTPUT_TOKENS_DEFAULT, MAX_OUTPUT_TOKENS_FLOOR } from "./key-form-submit.js";
@@ -19,14 +28,14 @@ function buildKeyButtons(opts: AddKeyOpts): { submitBtn: Instance; cancelBtn: In
     return {
         submitBtn: button({
             variant: BTN_VARIANT_PRIMARY,
-            compact: true,
+            
             type: "submit",
             text: "Save key",
             context: "save the API key to your vault",
             meta: ["submit"],
         }),
         cancelBtn: button({
-            compact: true,
+            
             type: "button",
             text: "Cancel",
             context: "cancel adding a key",
@@ -37,16 +46,16 @@ function buildKeyButtons(opts: AddKeyOpts): { submitBtn: Instance; cancelBtn: In
 }
 
 function buildHelpEl(): Instance {
-    return paragraph({
-        classes: [HINT_CLASS],
-        text: "Pick a provider (openai, anthropic, etc) and paste your API key. Stored encrypted in your vault.",
-        context: null,
-        meta: null,
-    });
+    return paragraph(
+        textProps(
+            [HINT_CLASS],
+            "Pick a provider (openai, anthropic, etc) and paste your API key. Stored encrypted in your vault.",
+        ),
+    );
 }
 
 function buildErrorEl(): { errorEl: Instance; showError: (m: string) => void } {
-    const errorEl = paragraph({ classes: [ERROR_CLASS], context: null, meta: null });
+    const errorEl = paragraph(baseProps([ERROR_CLASS]));
     errorEl.el.hidden = true;
     const showError = (message: string): void => {
         errorEl.setText(message);
@@ -72,7 +81,7 @@ function buildFormChildren(c: FormChildren): Instance[] {
         c.keyField,
         c.maxTokensField,
         c.errorEl,
-        div({ classes: [FORM_ROW_CLASS], context: null, meta: null }, [c.submitBtn, c.cancelBtn]),
+        div(baseProps([FORM_ROW_CLASS]), [c.submitBtn, c.cancelBtn]),
     ];
 }
 

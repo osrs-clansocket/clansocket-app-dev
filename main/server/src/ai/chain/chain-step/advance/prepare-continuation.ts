@@ -1,5 +1,5 @@
 import type { AiMessage } from "../../../types.js";
-import type { ContinuationArgs } from "./continuation-step.js";
+import type { ContinuationArgs } from "./advance-types.js";
 import { buildChainMessage } from "./continuation.js";
 import { buildNextMessages, recordChainStep } from "./continuation-effects.js";
 import { collectContext } from "./collect-context.js";

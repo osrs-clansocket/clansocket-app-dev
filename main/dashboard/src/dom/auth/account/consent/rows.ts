@@ -7,6 +7,8 @@ import {
     inlineConfirm,
     span,
     type Instance,
+    baseProps,
+    textProps,
 } from "../../../factory";
 import type { ConsentRecord } from "../../../../state/identity/consent/consent-client.js";
 import { timeStore } from "../../../../state/stores/time-store";
@@ -58,13 +60,13 @@ function bindExpiryRefresh(row: Instance, r: ConsentRecord, refresh: () => void)
 }
 
 export function buildPendingRow(r: ConsentRecord, refresh: () => void, status: Instance): Instance {
-    const meta = span({
-        classes: [ACCOUNT_ROW_META_CLASS],
-        context: null,
-        meta: null,
-        text: derived(() => formatRemaining(r.expiresAt, timeStore.now$())),
-    });
-    const cancelHost = div({ classes: [INLINE_CONFIRM_HOST_CLASS], context: null, meta: null });
+    const meta = span(
+        textProps(
+            [ACCOUNT_ROW_META_CLASS],
+            derived(() => formatRemaining(r.expiresAt, timeStore.now$())),
+        ),
+    );
+    const cancelHost = div(baseProps([INLINE_CONFIRM_HOST_CLASS]));
     cancelHost.addChild(
         button({
             classes: [ACCOUNT_TOKEN_REVOKE_CLASS, ACCOUNT_TOKEN_REVOKE_NEUTRAL_CLASS],
@@ -74,8 +76,8 @@ export function buildPendingRow(r: ConsentRecord, refresh: () => void, status: I
             onClick: () => runCancelFlow(r, cancelHost, status, refresh),
         }),
     );
-    const row = div({ classes: [ACCOUNT_DEVICE_ROW_CLASS], context: null, meta: null }, [
-        span({ classes: [ACCOUNT_ROW_PRIMARY_CLASS], text: primaryText(r), context: null, meta: null }),
+    const row = div(baseProps([ACCOUNT_DEVICE_ROW_CLASS]), [
+        span(textProps([ACCOUNT_ROW_PRIMARY_CLASS], primaryText(r))),
         meta,
         cancelHost,
     ]);
@@ -85,13 +87,8 @@ export function buildPendingRow(r: ConsentRecord, refresh: () => void, status: I
 
 export function buildResolvedRow(r: ConsentRecord): Instance {
     const ts = r.resolvedAt ?? r.createdAt;
-    return div({ classes: [ACCOUNT_DEVICE_ROW_CLASS], context: null, meta: null }, [
-        span({ classes: [ACCOUNT_ROW_PRIMARY_CLASS], text: primaryText(r), context: null, meta: null }),
-        span({
-            classes: [ACCOUNT_ROW_META_CLASS],
-            text: `${STATUS_LABELS[r.status]} · ${formatRelativeAge(ts)}`,
-            context: null,
-            meta: null,
-        }),
+    return div(baseProps([ACCOUNT_DEVICE_ROW_CLASS]), [
+        span(textProps([ACCOUNT_ROW_PRIMARY_CLASS], primaryText(r))),
+        span(textProps([ACCOUNT_ROW_META_CLASS], `${STATUS_LABELS[r.status]} · ${formatRelativeAge(ts)}`)),
     ]);
 }

@@ -1,4 +1,4 @@
-import { MS_PER_HOUR, MS_PER_MINUTE, MS_PER_SECOND } from "../../shared/time.js";
+import { MS_PER_HOUR, MS_PER_MINUTE, MS_PER_SECOND } from "../../shared/time/index.js";
 
 export function formatDuration(ms: number): string {
     if (ms < MS_PER_SECOND) return `${ms}ms`;

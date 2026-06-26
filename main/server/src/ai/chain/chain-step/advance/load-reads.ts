@@ -1,6 +1,6 @@
 import { pinnedContext } from "../../../memory/pinned-context.js";
 import { promptLoader } from "../../../persona/prompt-loader/index.js";
-import { formatMetaFacet, metaFacetPrefix } from "../../../persona/prompt/format-state.js";
+import { formatMetaFacet, metaFacetPrefix } from "../../../persona/prompt/formatters/format-state.js";
 import { autoPinEvent } from "../chain-utils.js";
 import type { ChainEvent } from "../types.js";
 

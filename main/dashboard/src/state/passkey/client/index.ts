@@ -1,13 +1,3 @@
-import {
-    attachPasskey,
-    createLinkCode,
-    generateBackupCodes,
-    backupMeta,
-    listDevices,
-    revokeDevice,
-} from "./device-mgmt.js";
-import { recoverCode, redeemRegisterCode, signinWithDevice, signupWithDevice } from "./register-flow.js";
-
 export {
     LINK_CODE_DIGITS,
     PASSKEY_ERR,
@@ -16,16 +6,4 @@ export {
     type PasskeyError,
     type SignupResult,
 } from "./types.js";
-
-export const passkeyClient = {
-    signupWithDevice,
-    redeemRegisterCode,
-    recoverCode,
-    signinWithDevice,
-    createLinkCode,
-    generateBackupCodes,
-    backupMeta,
-    listDevices,
-    revokeDevice,
-    attachPasskey,
-};
+export { passkeyClient } from "./passkey-client.js";

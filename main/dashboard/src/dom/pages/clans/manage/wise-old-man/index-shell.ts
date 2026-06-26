@@ -1,4 +1,4 @@
-import { div, paragraph, type Instance } from "../../../../factory";
+import { div, paragraph, type Instance, baseProps, textProps } from "../../../../factory";
 import { effect, type ReadSignal } from "../../../../factory/reactive/index.js";
 import type { WomGroupDetails, WomLinkedStatus, WomStatus } from "../../../../../state/wom/clients/wom-client.js";
 import { brandHead, FEEDBACK_CLASS, FUSED_CLASS, HINT_CLASS, ROOT_CLASS } from "./index-constants.js";
@@ -25,10 +25,16 @@ export interface LinkedShellConfig {
 }
 
 function pushMutatorRow(fusedChildren: Instance[], disposers: Array<() => void>, cfg: LinkedShellConfig): void {
-    fusedChildren.push(
-        buildActionsRow({ slug: cfg.slug, refresh: cfg.refresh, onRelink: cfg.onRelink, setFeedback: cfg.setFeedback }),
-    );
-    const feedbackEl = paragraph({ classes: [FEEDBACK_CLASS], text: "", context: null, meta: null });
+    const actions = buildActionsRow({
+        slug: cfg.slug,
+        refresh: cfg.refresh,
+        onRelink: cfg.onRelink,
+        setFeedback: cfg.setFeedback,
+        statusSignal: cfg.statusSignal,
+    });
+    fusedChildren.push(actions.instance);
+    disposers.push(actions.dispose);
+    const feedbackEl = paragraph(textProps([FEEDBACK_CLASS], ""));
     feedbackEl.el.hidden = true;
     fusedChildren.push(feedbackEl);
     const feedbackDisp = effect(() => {
@@ -45,19 +51,15 @@ function buildLinkedSections(
     fusedChildren: Instance[],
     statusInst: Instance,
 ): Instance[] {
-    const sections: Instance[] = [
-        brandHead(),
-        div({ classes: [FUSED_CLASS], context: null, meta: null }, fusedChildren),
-        statusInst,
-    ];
+    const sections: Instance[] = [brandHead(), div(baseProps([FUSED_CLASS]), fusedChildren), statusInst];
     if (!canMutate) {
         sections.push(
-            paragraph({
-                classes: [HINT_CLASS],
-                text: `Linked by ${cfg.status.linker_site_account_id}. Only they (or the clan owner) can re-link or revoke.`,
-                context: null,
-                meta: null,
-            }),
+            paragraph(
+                textProps(
+                    [HINT_CLASS],
+                    `Linked by ${cfg.status.linker_site_account_id}. Only they (or the clan owner) can re-link or revoke.`,
+                ),
+            ),
         );
     }
     return sections;
@@ -74,7 +76,7 @@ export function buildLinkedShell(cfg: LinkedShellConfig): LinkedShellHandle {
     fusedChildren.push(membersHandle.instance);
     const sections = buildLinkedSections(cfg, canMutate, fusedChildren, statusHandle.instance);
     return {
-        instance: div({ classes: [ROOT_CLASS], context: null, meta: null }, sections),
+        instance: div(baseProps([ROOT_CLASS]), sections),
         dispose: () => {
             for (const d of disposers) d();
         },

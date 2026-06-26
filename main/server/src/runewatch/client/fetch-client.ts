@@ -12,14 +12,17 @@ export type RunewatchFetchResult =
     | { ok: true; rows: RunewatchUpstreamRow[] }
     | { ok: false; reason: "http_error" | "parse_error" | "shape_error"; detail: string };
 
+type FetchFailReason = "http_error" | "parse_error" | "shape_error";
 type ParseOutcome = { ok: true; parsed: unknown } | { ok: false; reason: "parse_error"; detail: string };
+
+const fetchFail = <R extends FetchFailReason>(reason: R, detail: string) => ({ ok: false as const, reason, detail });
 
 async function readJsonBody(res: Response): Promise<ParseOutcome> {
     const body = await res.text();
     try {
         return { ok: true, parsed: JSON.parse(body) };
     } catch (err) {
-        return { ok: false, reason: "parse_error", detail: String(err) };
+        return fetchFail("parse_error", String(err));
     }
 }
 
@@ -29,14 +32,12 @@ export async function fetchRunewatchMixedlist(): Promise<RunewatchFetchResult> {
             headers: { "User-Agent": USER_AGENT, Accept: "application/json" },
             signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
         });
-        if (!res.ok) return { ok: false, reason: "http_error", detail: `HTTP ${res.status}` };
+        if (!res.ok) return fetchFail("http_error", `HTTP ${res.status}`);
         const parsedResult = await readJsonBody(res);
         if (!parsedResult.ok) return parsedResult;
-        if (!Array.isArray(parsedResult.parsed)) {
-            return { ok: false, reason: "shape_error", detail: "root is not an array" };
-        }
+        if (!Array.isArray(parsedResult.parsed)) return fetchFail("shape_error", "root is not an array");
         return { ok: true, rows: projectRows(parsedResult.parsed) };
     } catch (err) {
-        return { ok: false, reason: "http_error", detail: String(err) };
+        return fetchFail("http_error", String(err));
     }
 }

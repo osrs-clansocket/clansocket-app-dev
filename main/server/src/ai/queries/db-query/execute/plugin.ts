@@ -18,12 +18,14 @@ interface GateOutcome {
     posture: ReturnType<typeof resolveClanPosture> | null;
 }
 
+const gateOutcome = (
+    error: QueryResult | null,
+    db: GateOutcome["db"] = null,
+    posture: GateOutcome["posture"] = null,
+): GateOutcome => ({ error, db, posture });
+
 function gateError(resolved: string, sql: string, error: string, clanSlug?: string): GateOutcome {
-    return {
-        error: queryResult({ sql, error, db: resolved, rows: [], clan: clanSlug }),
-        db: null,
-        posture: null,
-    };
+    return gateOutcome(queryResult({ sql, error, db: resolved, rows: [], clan: clanSlug }));
 }
 
 function resolveGateClan(g: GateArgs): { clan: NonNullable<ReturnType<typeof clanBySlug>> } | GateOutcome {
@@ -53,7 +55,7 @@ function gatePluginQuery(g: GateArgs): GateOutcome {
     if (!pluginModes(clan.id).includes(mode)) {
         return gateError(resolved, sql, `clan '${clanSlug}' has no '${mode}' plugin db`, clanSlug);
     }
-    return { error: null, db: clanPluginDb(clan.id, mode), posture };
+    return gateOutcome(null, clanPluginDb(clan.id, mode), posture);
 }
 
 export function executePluginQuery(

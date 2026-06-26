@@ -1,5 +1,5 @@
 import "../../../../../../../styles/pages/clans/manage/discord/clan-discord-page.css";
-import { div, effect, panel, paragraph, type Instance } from "../../../../../../factory";
+import { div, effect, panel, paragraph, type Instance, baseProps, textProps } from "../../../../../../factory";
 import { storeFor } from "../../../../../../../state/discord-byo-bot/stores/byo-bot-store.js";
 import { serversStoreFor } from "../../../../../../../state/discord/servers-store.js";
 import { identityStore } from "../../../../../../../state/identity/stores/identity-store.js";
@@ -11,7 +11,7 @@ import {
     makeTrackHandlers,
     type ModeCtx,
 } from "../../../../../../../state/discord/byo-bot/mode-wiring.js";
-import { defineDiscordMode } from "../../registry";
+import type { ModeContext } from "../../registry";
 
 function buildCtx(slug: string, server: DiscordServer, content: Instance): ModeCtx {
     return {
@@ -26,9 +26,7 @@ function buildCtx(slug: string, server: DiscordServer, content: Instance): ModeC
 }
 
 export function buildMode(slug: string, server: DiscordServer): Instance {
-    const content = div({ classes: [], context: null, meta: null }, [
-        paragraph({ classes: [DISCORD_PLACEHOLDER_HINT_CLASS], text: LOADING_TEXT, context: null, meta: null }),
-    ]);
+    const content = div(baseProps([]), [paragraph(textProps([DISCORD_PLACEHOLDER_HINT_CLASS], LOADING_TEXT))]);
     const ctx = buildCtx(slug, server, content);
     const track = makeTrackHandlers(ctx);
     ctx.rebuild = makeRebuildFn(ctx, track);
@@ -46,4 +44,4 @@ export function buildMode(slug: string, server: DiscordServer): Instance {
     return root;
 }
 
-defineDiscordMode({ key: "byo-bot", label: "BYO Bot", order: 90, build: (ctx) => buildMode(ctx.slug, ctx.server) });
+export const build = (ctx: ModeContext): Instance => buildMode(ctx.slug, ctx.server);

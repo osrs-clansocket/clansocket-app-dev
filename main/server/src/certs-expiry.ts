@@ -1,7 +1,7 @@
 import logger from "@clansocket/logger";
 import { stat } from "fs/promises";
 import { execSync } from "child_process";
-import { MS_PER_DAY } from "./shared/time.js";
+import { MS_PER_DAY } from "./shared/time/index.js";
 
 const NOT_AFTER_KEY = "notAfter=";
 const CERT_MAX_AGE_DAYS = 300;
@@ -9,9 +9,9 @@ const CERT_MAX_AGE_DAYS = 300;
 export function opensslCertExpired(certPath: string): boolean {
     const result = execSync(`openssl x509 -enddate -noout -in "${certPath}"`, { encoding: "utf-8" });
     const keyIdx = result.indexOf(NOT_AFTER_KEY);
-    if (keyIdx === -1) return false;
-    let endIdx = result.indexOf("\n", keyIdx);
-    if (endIdx === -1) endIdx = result.length;
+    if (keyIdx < 0) return false;
+    const lineBreak = result.indexOf("\n", keyIdx);
+    const endIdx = lineBreak >= 0 ? lineBreak : result.length;
     const dateStr = result.slice(keyIdx + NOT_AFTER_KEY.length, endIdx).trim();
     return new Date(dateStr).getTime() < Date.now();
 }

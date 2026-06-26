@@ -1,5 +1,6 @@
-import type { FieldConstraint } from "../../schema.js";
-import { META_SCHEMA, STYLE_SCHEMA } from "../../schema.js";
+import type { FieldConstraint } from "../../schema/types-schema.js";
+import { META_SCHEMA } from "../../schema/meta-schema.js";
+import { STYLE_SCHEMA } from "../../schema/style-schema.js";
 
 function formatSchema(schema: Record<string, FieldConstraint>): string {
     const lines: string[] = [];

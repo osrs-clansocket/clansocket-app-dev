@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
-import { subscribeProjection, type ProjectionTopic } from "../../../data-rights/streams/projection.js";
+import { subscribeProjection } from "../../../data-rights/streams/subscriber-projection.js";
+import type { ProjectionTopic } from "../../../data-rights/streams/projection-types.js";
 import { isClanManager } from "../../../database/clans/access/clan-manager-store.js";
 import { serverByGuild } from "../../../database/discord/resolve-server.js";
 import { HTTP_FORBIDDEN, HTTP_NOT_FOUND } from "../../../shared/http/http-status.js";

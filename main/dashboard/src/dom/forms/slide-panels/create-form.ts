@@ -10,6 +10,7 @@ import {
     wireSubmit,
     type Instance,
     type SlidePanelInstance,
+    baseProps,
 } from "../../factory";
 import { form as formEl } from "../../factory/content-ops/form/form-textarea.js";
 import { FORM_CLAIM_FORM, FORM_ERROR } from "../form-classes.js";
@@ -97,10 +98,7 @@ function renderForm(state: CreateFormState): void {
         meta: null,
     });
     const { cancelBtn, submitBtn } = buildFormButtons(state);
-    const formNode = formEl({ classes: [FORM_CLAIM_FORM], context: null, meta: null }, [
-        ...state.opts.buildFields(),
-        errorEl,
-    ]);
+    const formNode = formEl(baseProps([FORM_CLAIM_FORM]), [...state.opts.buildFields(), errorEl]);
     wireFormSubmit(state, { formNode, submitBtn, errorSig, errorEl });
     state.panelHost.setChildren(formNode);
     state.footerHost.setChildren(submitBtn, cancelBtn);
@@ -123,8 +121,8 @@ function makePanelHandlers(state: CreateFormState): { onOpen: () => void; onClos
 }
 
 export function buildCreateForm(opts: CreateFormOptions): SlidePanelInstance {
-    const panelHost = div({ classes: [], context: null, meta: null });
-    const footerHost = div({ classes: [FOOTER_HOST_CLASS], context: null, meta: null });
+    const panelHost = div(baseProps([]));
+    const footerHost = div(baseProps([FOOTER_HOST_CLASS]));
     footerHost.el.hidden = true;
     const panelInstRef: { v: SlidePanelInstance | null } = { v: null };
     const state: CreateFormState = { panelHost, footerHost, panelInstRef, opts };

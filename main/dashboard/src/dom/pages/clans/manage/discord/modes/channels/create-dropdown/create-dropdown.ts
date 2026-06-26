@@ -9,7 +9,8 @@ import {
     TRIGGER_LABEL,
     type ToolbarOpts,
 } from "./create-dropdown-constants.js";
-import { buildChannelSection, buildField, buildWebhookSection, emptyFormRefs } from "./create-dropdown-fields.js";
+import { buildChannelSection, buildField, emptyFormRefs } from "./create-dropdown-fields.js";
+import { buildWebhookSection } from "./create-dropdown-webhook.js";
 import {
     applyKindVisibility,
     handleSubmit,

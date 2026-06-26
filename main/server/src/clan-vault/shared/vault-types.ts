@@ -19,7 +19,7 @@ export function vaultAuditActions(
     deleteAction: ClanAuditAction,
     verify: ClanAuditAction,
 ): VaultAuditActions {
-    return { read, write, delete: deleteAction, verify };
+    return { read, write, verify, delete: deleteAction };
 }
 
 export interface EntryMetadata {

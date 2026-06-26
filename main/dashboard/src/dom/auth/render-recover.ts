@@ -1,4 +1,15 @@
-import { BTN_VARIANT_PRIMARY, button, div, heading, input, label, paragraph, type Instance } from "../factory";
+import {
+    BTN_VARIANT_PRIMARY,
+    button,
+    div,
+    heading,
+    input,
+    label,
+    paragraph,
+    type Instance,
+    baseProps,
+    textProps,
+} from "../factory";
 import { isPasskeyError, passkeyClient } from "../../state/passkey/client";
 import { identityClient } from "../../state/identity/identity-client/index.js";
 import { setStatus } from "./status-line.js";
@@ -61,22 +72,22 @@ async function runRecover(
 }
 
 function buildRecoverForm(): Instance {
-    const status = paragraph({ classes: [ACCOUNT_EMPTY_CLASS], text: "", context: null, meta: null });
+    const status = paragraph(textProps([ACCOUNT_EMPTY_CLASS], ""));
     status.el.hidden = true;
     const codeInput = buildCodeInput();
     const deviceInput = buildDeviceInput();
     const submit: Instance<HTMLButtonElement> = button({
         variant: BTN_VARIANT_PRIMARY,
-        compact: true,
+        
         text: "Recover account",
         context: "recover your account using the backup code",
         meta: ["action", "account"],
         onClick: () => runRecover(codeInput, deviceInput, submit, status),
     });
-    return div({ classes: [ACCOUNT_CARD_CLASS], context: null, meta: null }, [
-        label({ classes: [FORM_FIELD_LABEL], text: "Backup code", context: null, meta: null }),
+    return div(baseProps([ACCOUNT_CARD_CLASS]), [
+        label(textProps([FORM_FIELD_LABEL], "Backup code")),
         codeInput,
-        label({ classes: [FORM_FIELD_LABEL], text: "Device name (optional)", context: null, meta: null }),
+        label(textProps([FORM_FIELD_LABEL], "Device name (optional)")),
         deviceInput,
         submit,
         status,
@@ -89,14 +100,14 @@ async function renderRecover(): Promise<Instance> {
         window.location.assign("/account");
         return div({ context: null, meta: null });
     }
-    return div({ classes: [ROUTE_ROOT_CLASS, ROUTE_ACCOUNT_CLASS], context: null, meta: null }, [
+    return div(baseProps([ROUTE_ROOT_CLASS, ROUTE_ACCOUNT_CLASS]), [
         heading("h2", { classes: [ACCOUNT_SECTION_TITLE_CLASS], text: "Recover account", context: null, meta: null }),
-        paragraph({
-            classes: [ACCOUNT_SECTION_HINT_CLASS],
-            text: "Paste a backup code from the .txt file u downloaded when u signed up. A fresh passkey will be registered for this device + attached to ur account.",
-            context: null,
-            meta: null,
-        }),
+        paragraph(
+            textProps(
+                [ACCOUNT_SECTION_HINT_CLASS],
+                "Paste a backup code from the .txt file u downloaded when u signed up. A fresh passkey will be registered for this device + attached to ur account.",
+            ),
+        ),
         buildRecoverForm(),
     ]);
 }

@@ -3,11 +3,11 @@ import logger from "@clansocket/logger";
 import { type Request, type Response } from "express";
 import multer from "multer";
 import { HTTP_BAD_REQUEST, HTTP_FORBIDDEN, HTTP_NOT_FOUND } from "../../shared/http/http-status.js";
-import { applyVersionedCache, setRevalidateCache } from "../../shared/http/cache-headers.js";
+import { setRevalidateCache } from "../../shared/http/cache-headers.js";
+import { applyVersionedCache } from "../../shared/http/cache-versioning.js";
 import { requireSiteAccount } from "../../auth/site-middleware.js";
 import { isSiteOwner } from "../site-owner.js";
 import { logoThumbnailPath, writeThumbnail } from "../site-asset-storage.js";
-import { clearSiteEnvelope } from "../site-logo-derivation.js";
 import { FIVE_MB_BYTES } from "../../shared/byte-units.js";
 import { mountedRouter } from "./_mount-registry.js";
 
@@ -47,7 +47,6 @@ const router = mountedRouter();
         }
         try {
             writeThumbnail(file.buffer);
-            clearSiteEnvelope();
         } catch (err) {
             logger.warn?.(`[site] logo write failed err=${String(err)}`);
             res.status(HTTP_BAD_REQUEST).json({ error: "write_failed" });

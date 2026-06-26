@@ -10,10 +10,6 @@ export function renderContext(rsn: string, clanName: string | null, botId: strin
     return { rsn, clanName, botId };
 }
 
-export function rolloverTokens(rsn: string, completed: number, total: number, clanName: string | null): TokenSource {
-    return { rsn, completed, total, clanName: clanName ?? "" };
-}
-
 export interface RenderedBody {
     username: string;
     content: string;

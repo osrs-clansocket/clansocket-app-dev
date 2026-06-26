@@ -1,5 +1,5 @@
-import { formatClientProfile } from "../format-profile.js";
-import type { ProfileContext } from "../types.js";
+import { formatClientProfile } from "../formatters/format-profile.js";
+import type { ProfileContext } from "../assembly/types.js";
 
 export function profileSection(profile: ProfileContext | null | undefined, historyWindow: number): string | null {
     if (!profile) return null;

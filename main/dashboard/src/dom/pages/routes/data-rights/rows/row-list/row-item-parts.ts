@@ -9,6 +9,8 @@ import {
     snapshot,
     span,
     type Instance,
+    baseProps,
+    textProps,
 } from "../../../../../factory/index.js";
 import { rowSummary } from "../../../../../../state/data-rights/summary.js";
 import { resolveColumnAsset } from "../../../../../../state/data-rights/assets/asset-resolver.js";
@@ -36,7 +38,7 @@ function confirmRowDelete(host: Instance, table: string): Promise<boolean> {
 }
 
 export function liveDeleteButton(key: string, table: string, onDelete: (key: string) => void): Instance {
-    const host = div({ classes: [INLINE_CONFIRM_HOST_CLASS], context: null, meta: null });
+    const host = div(baseProps([INLINE_CONFIRM_HOST_CLASS]));
     const btn = button(
         {
             classes: [DR_ROW_DELETE_CLASS],
@@ -105,13 +107,9 @@ export function buildSummaryParts(
         meta: null,
     });
     if (initialAsset === null) assetInst.toggleClass(DR_ROW_ASSET_EMPTY_CLASS, true);
-    const primary = span({ classes: [DR_ROW_PRIMARY_CLASS], text: snapshot(sum.primary), context: null, meta: null });
-    const secondary = sum.secondary
-        ? span({ classes: [DR_ROW_SECONDARY_CLASS], text: snapshot(sum.secondary), context: null, meta: null })
-        : null;
-    const meta = sum.meta
-        ? span({ classes: [DR_ROW_META_CLASS], text: snapshot(sum.meta), context: null, meta: null })
-        : null;
+    const primary = span(textProps([DR_ROW_PRIMARY_CLASS], snapshot(sum.primary)));
+    const secondary = sum.secondary ? span(textProps([DR_ROW_SECONDARY_CLASS], snapshot(sum.secondary))) : null;
+    const meta = sum.meta ? span(textProps([DR_ROW_META_CLASS], snapshot(sum.meta))) : null;
     return { primary, secondary, meta, assetInst };
 }
 

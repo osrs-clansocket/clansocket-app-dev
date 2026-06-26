@@ -4,6 +4,8 @@ export { panel } from "./structural/panel.js";
 export type { PanelProps, PanelVariant } from "./structural/panel.js";
 export { grid, autoGrid, chartGrid, listGrid } from "./structural/grid.js";
 export { scrollContainer } from "./structural/scroll.js";
+export { virtualGrid } from "./structural/virtual-grid.js";
+export type { VirtualGridInstance } from "./structural/virtual-grid.js";
 export { modal } from "./overlay/modal.js";
 export type { ModalProps, ModalInstance } from "./overlay/modal.js";
 export { popover } from "./overlay/popover.js";

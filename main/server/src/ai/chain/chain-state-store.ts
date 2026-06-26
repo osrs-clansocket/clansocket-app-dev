@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import type { AiMessage } from "../types.js";
 import type { ChainMode } from "../persona/prompt/index.js";
-import { MS_PER_MINUTE } from "../../shared/time.js";
+import { MS_PER_MINUTE } from "../../shared/time/index.js";
 import { chainGraph } from "./chain/index.js";
 import { incomingQueue } from "../lifecycle/incoming-queue.js";
 

@@ -2,7 +2,8 @@
 --
 -- Lives in: clans/<clan_id>/discord_guild_<guild_id>.db
 -- Doctrine: external-state mirror; exempt from W/W/W/W canon.
--- Bot writes on ClientReady (bulk replace via guild.stickers.cache) and on GuildStickerCreate/Update/Delete gateway events.
+-- Bot writes on ClientReady (bulk replace via guild.stickers.cache) and on
+-- GuildStickerCreate/Update/Delete gateway events.
 -- Dashboard reads from this table via SSE projection — NEVER from discord REST.
 -- DG-1: updated_at + AFTER UPDATE trigger.
 -- sticker_id PK with bare `name` per EXEMPT_BASE_TABLE_PAIRS pattern.

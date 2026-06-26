@@ -3,7 +3,7 @@ import { type Response } from "express";
 import { HTTP_BAD_REQUEST, HTTP_INTERNAL_ERROR, HTTP_TOO_MANY_REQUESTS } from "../../shared/http/http-status.js";
 import { seoById, type ClanSeoPatch, type ClanSeoRow } from "../../database/index.js";
 import { requireSiteAccount } from "../../auth/site-middleware.js";
-import { MS_PER_SECOND } from "../../shared/time.js";
+import { MS_PER_SECOND } from "../../shared/time/index.js";
 import { withManager } from "./manager-context.js";
 import { mountedRouter } from "./_mount-registry.js";
 import { applySeoPatch, buildPatch, flipCooldown, projectManagerSeo } from "./seo-patcher.js";

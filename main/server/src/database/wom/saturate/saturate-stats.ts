@@ -9,15 +9,8 @@ export interface WomStatRow {
     lastChangedAtMs: number;
 }
 
-export function womStatRow(
-    accountHash: string,
-    rsn: string,
-    skill: string,
-    level: number,
-    experience: number,
-    lastChangedAtMs: number,
-): WomStatRow {
-    return { accountHash, rsn, skill, level, experience, lastChangedAtMs };
+export function womStatRow(row: WomStatRow): WomStatRow {
+    return row;
 }
 
 const WOM_TO_PLUGIN_SKILL_ALIAS: Record<string, string> = {

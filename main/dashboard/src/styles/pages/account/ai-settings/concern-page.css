@@ -9,10 +9,14 @@
     align-items: center;
     gap: var(--sp-2);
     padding: var(--sp-2) var(--sp-1);
+    border: 0;
+    background: none;
     color: var(--base-cream-100);
+    font: inherit;
+    text-align: start;
     transition: background var(--dur-fast) var(--ease-out);
     cursor: pointer;
-    all: unset;
+    appearance: none;
 }
 
 .account-ai-settings__concern-head:hover {

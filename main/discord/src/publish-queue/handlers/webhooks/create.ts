@@ -1,6 +1,7 @@
 import { PermissionsBitField, type Guild } from "discord.js";
 import { assertWebhookCapable } from "../../../state-sync/webhooks/webhook-capable-guard.js";
 import { registerPublisher } from "../../publisher-registry.js";
+import { OP_KINDS, ENTITY_TYPES } from "../../publish-vocab.js";
 import { runPublishOp } from "../../runners/op-runner.js";
 
 interface CreateWebhookState {
@@ -21,7 +22,7 @@ export async function applyWebhookCreate(guild: Guild, data: CreateWebhookState)
 
 export type { CreateWebhookState };
 
-registerPublisher("create", "discord_webhook", {
-    handler: (c, r) => runPublishOp(c, r, "create", (g, d) => applyWebhookCreate(g, d as CreateWebhookState)),
+registerPublisher(OP_KINDS.CREATE, ENTITY_TYPES.WEBHOOK, {
+    handler: (c, r) => runPublishOp(c, r, OP_KINDS.CREATE, (g, d) => applyWebhookCreate(g, d as CreateWebhookState)),
     requiredBotPermission: PermissionsBitField.Flags.ManageWebhooks,
 });

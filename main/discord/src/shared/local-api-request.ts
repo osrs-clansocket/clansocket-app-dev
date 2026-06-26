@@ -1,4 +1,5 @@
 import http from "node:http";
+import { orThrow } from "./nullable.js";
 import https from "node:https";
 import config from "../core/config.js";
 
@@ -6,9 +7,7 @@ const BEHIND_PROXY = process.env.BEHIND_PROXY === "1";
 const SCHEME = BEHIND_PROXY ? "http" : "https";
 
 export function requireApiToken(): string {
-    const token = process.env.API_TOKEN;
-    if (!token) throw new Error("API_TOKEN not set");
-    return token;
+    return orThrow(process.env.API_TOKEN, "API_TOKEN not set");
 }
 
 export function localApiUrl(path: string): URL {

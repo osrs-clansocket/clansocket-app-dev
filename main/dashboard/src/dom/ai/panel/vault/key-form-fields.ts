@@ -1,4 +1,4 @@
-import { input, label, span, type Instance } from "../../../factory";
+import { input, label, span, type Instance, baseProps, textProps } from "../../../factory";
 import {
     MAX_OUTPUT_TOKENS_CEILING,
     MAX_OUTPUT_TOKENS_DEFAULT,
@@ -53,21 +53,21 @@ export function buildKeyFields(inputs: AddKeyInputs): {
     keyField: Instance;
     maxTokensField: Instance;
 } {
-    const providerField = label({ classes: [FIELD_CLASS], context: null, meta: null }, [
-        span({ classes: [FIELD_LABEL_CLASS], text: "Provider", context: null, meta: null }),
+    const providerField = label(baseProps([FIELD_CLASS]), [
+        span(textProps([FIELD_LABEL_CLASS], "Provider")),
         inputs.providerInput,
     ]);
-    const keyField = label({ classes: [FIELD_CLASS], context: null, meta: null }, [
-        span({ classes: [FIELD_LABEL_CLASS], text: "API key", context: null, meta: null }),
+    const keyField = label(baseProps([FIELD_CLASS]), [
+        span(textProps([FIELD_LABEL_CLASS], "API key")),
         inputs.keyInput,
     ]);
-    const maxTokensField = label({ classes: [FIELD_CLASS], context: null, meta: null }, [
-        span({
-            classes: [FIELD_LABEL_CLASS],
-            text: `Max output tokens (${MAX_OUTPUT_TOKENS_FLOOR}–${MAX_OUTPUT_TOKENS_CEILING})`,
-            context: null,
-            meta: null,
-        }),
+    const maxTokensField = label(baseProps([FIELD_CLASS]), [
+        span(
+            textProps(
+                [FIELD_LABEL_CLASS],
+                `Max output tokens (${MAX_OUTPUT_TOKENS_FLOOR}–${MAX_OUTPUT_TOKENS_CEILING})`,
+            ),
+        ),
         inputs.maxTokensInput,
     ]);
     return { providerField, keyField, maxTokensField };

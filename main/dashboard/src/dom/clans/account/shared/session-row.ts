@@ -1,6 +1,6 @@
 import "../../../../styles/pages/account/row-page.css";
 import "../../../../styles/pages/account/session-page.css";
-import { div, rsnTag, span, type Instance } from "../../../factory";
+import { div, rsnTag, span, type Instance, baseProps, textProps } from "../../../factory";
 import type { LiveSession, PluginLoginState } from "../../../../state/identity/profile/profile-client.js";
 import { fmtUptime, pingClass } from "./format";
 import { LIST_ROW_CLASS, META_CLASS, PRIMARY_CLASS, ROW_CLASS, SURFACE_ROW_CLASS } from "./row-classes";
@@ -25,29 +25,24 @@ const LOGIN_STATE_LABELS: Record<PluginLoginState, string> = {
 };
 
 export function buildRow(primary: string, meta: string): Instance {
-    return div({ classes: [ROW_CLASS, LIST_ROW_CLASS, SURFACE_ROW_CLASS], context: null, meta: null }, [
-        span({ classes: [PRIMARY_CLASS], text: primary, context: null, meta: null }),
-        span({ classes: [META_CLASS], text: meta, context: null, meta: null }),
+    return div(baseProps([ROW_CLASS, LIST_ROW_CLASS, SURFACE_ROW_CLASS]), [
+        span(textProps([PRIMARY_CLASS], primary)),
+        span(textProps([META_CLASS], meta)),
     ]);
 }
 
-function buildPingSpan(pingMs: number | null | undefined): Instance {
+function buildPing(pingMs: number | null | undefined): Instance {
     const text = typeof pingMs === "number" && Number.isFinite(pingMs) ? `${pingMs} ms` : "— ms";
     return span({ text, classes: pingClass(pingMs).split(" "), context: null, meta: null });
 }
 
-function buildWorldPill(s: LiveSession): Instance | null {
+function buildWorld(s: LiveSession): Instance | null {
     if (s.loginState === "LOGGED_IN" && typeof s.world === "number" && s.world > 0) {
-        return span({ classes: [ACCOUNT_SESSION_WORLD_CLASS], text: `W${s.world}`, context: null, meta: null });
+        return span(textProps([ACCOUNT_SESSION_WORLD_CLASS], `W${s.world}`));
     }
     const label = LOGIN_STATE_LABELS[s.loginState] ?? "Unknown";
     if (label.length === 0) return null;
-    return span({
-        classes: [ACCOUNT_SESSION_WORLD_CLASS, ACCOUNT_SESSION_WORLD_OFFLINE_CLASS],
-        text: label,
-        context: null,
-        meta: null,
-    });
+    return span(textProps([ACCOUNT_SESSION_WORLD_CLASS, ACCOUNT_SESSION_WORLD_OFFLINE_CLASS], label));
 }
 
 function buildGameLabel(inGameClanName: string, rank: string | null, status: LiveSession["inGameClanStatus"]): string {
@@ -64,17 +59,10 @@ function buildPrimaryChildren(
     managerLabel: string,
 ): Instance[] {
     const primaryChildren: Instance[] = [];
-    const pill = buildWorldPill(s);
+    const pill = buildWorld(s);
     if (pill) primaryChildren.push(pill);
     primaryChildren.push(rsnTag({ rank, rsn: s.rsn, context: null, meta: null }));
-    primaryChildren.push(
-        span({
-            classes: [ACCOUNT_SESSION_RSN_CLASS],
-            text: ` — ${inGameLabel}${managerLabel}`,
-            context: null,
-            meta: null,
-        }),
-    );
+    primaryChildren.push(span(textProps([ACCOUNT_SESSION_RSN_CLASS], ` — ${inGameLabel}${managerLabel}`)));
     return primaryChildren;
 }
 
@@ -85,12 +73,12 @@ export function buildSessionRow(s: LiveSession): Instance {
     const inGameLabel = buildGameLabel(inGameClanName, rank, s.inGameClanStatus);
     const managerLabel = s.managerVerified && managerClanName.length > 0 ? ` • managing ${managerClanName}` : "";
     const primaryChildren = buildPrimaryChildren(s, rank, inGameLabel, managerLabel);
-    return div({ classes: [ROW_CLASS, LIST_ROW_CLASS, SURFACE_ROW_CLASS], context: null, meta: null }, [
+    return div(baseProps([ROW_CLASS, LIST_ROW_CLASS, SURFACE_ROW_CLASS]), [
         div(
             { classes: [PRIMARY_CLASS, ACCOUNT_SESSION_ROW_PRIMARY_CLASS], context: null, meta: null },
             primaryChildren,
         ),
-        span({ classes: [META_CLASS], text: `Connected ${fmtUptime(s.connectedAt)}`, context: null, meta: null }),
-        buildPingSpan(s.pingMs),
+        span(textProps([META_CLASS], `Connected ${fmtUptime(s.connectedAt)}`)),
+        buildPing(s.pingMs),
     ]);
 }

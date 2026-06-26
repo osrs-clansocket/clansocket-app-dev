@@ -1,4 +1,5 @@
 import http from "node:http";
+import { FALLBACK_UNKNOWN } from "../core/constants.js";
 import logger from "@clansocket/logger";
 import { authedRequestOpts, localApiUrl, requireApiToken, selectLib } from "./local-api-request.js";
 
@@ -68,7 +69,7 @@ class SseSubscription {
     private describeError(err: Error & { code?: string }): string {
         if (err.message) return err.message;
         if (err.code) return err.code;
-        return err.name || "unknown";
+        return err.name || FALLBACK_UNKNOWN;
     }
 
     private open(): void {

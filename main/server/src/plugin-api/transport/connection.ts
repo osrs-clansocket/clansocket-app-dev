@@ -39,7 +39,7 @@ export function onConnection(rawWs: WebSocket, req: IncomingMessage): void {
     ws.on("error", (err) => logPluginError(sessionId, err.message));
 }
 
-export function onHeartbeat(): void {
+export function onConnectionHeartbeat(): void {
     eachClient((ws) => {
         const state = ws.pluginState;
         if (!state) return;

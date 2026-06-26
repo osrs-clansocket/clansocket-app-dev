@@ -1,6 +1,6 @@
 import { DB_NAMES } from "../database/index.js";
 import { selectRows } from "../shared/loaders/db-rows.js";
-import type { NotificationRow } from "./notification-store.js";
+import type { NotificationRow } from "./notification-row-types.js";
 
 export function listUndismissed(siteAccountId: string): NotificationRow[] {
     return selectRows<NotificationRow>(

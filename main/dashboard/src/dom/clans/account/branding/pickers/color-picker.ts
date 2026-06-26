@@ -1,4 +1,4 @@
-import { button, div, input, span, type Instance } from "../../../../factory/index.js";
+import { button, div, input, span, type Instance, baseProps, textProps } from "../../../../factory/index.js";
 import { normalizeHex } from "../../shared/format.js";
 import { CUSTOM_SWATCH_CAP, loadCustomSwatches, saveCustomSwatches } from "../../shared/swatch-storage.js";
 import type { BrandingController } from "../branding-controller/index.js";
@@ -108,12 +108,12 @@ function seedColors(state: PickerState): void {
 }
 
 export function buildColorPicker(ctrl: BrandingController): Instance {
-    const colorPreview = span({ classes: [ACCOUNT_BRANDING_COLOR_PREVIEW_CLASS], context: null, meta: null });
+    const colorPreview = span(baseProps([ACCOUNT_BRANDING_COLOR_PREVIEW_CLASS]));
     colorPreview.el.style.background = ctrl.color;
     const stateRef: { ref: PickerState | null } = { ref: null };
     const hexInput = buildHexInput(stateRef);
     hexInput.el.value = ctrl.color;
-    const swatchGrid = div({ classes: [ACCOUNT_BRANDING_SWATCHES_CLASS], context: null, meta: null });
+    const swatchGrid = div(baseProps([ACCOUNT_BRANDING_SWATCHES_CLASS]));
     const state: PickerState = {
         ctrl,
         colorPreview,
@@ -126,9 +126,9 @@ export function buildColorPicker(ctrl: BrandingController): Instance {
     stateRef.ref = state;
     seedColors(state);
     wireDragScroll(swatchGrid);
-    return div({ classes: [ACCOUNT_BRANDING_COLOR_BLOCK_CLASS], context: null, meta: null }, [
-        span({ classes: [FORM_FIELD_LABEL], text: "Color", context: null, meta: null }),
+    return div(baseProps([ACCOUNT_BRANDING_COLOR_BLOCK_CLASS]), [
+        span(textProps([FORM_FIELD_LABEL], "Color")),
         swatchGrid,
-        div({ classes: [ACCOUNT_BRANDING_HEX_ROW_CLASS], context: null, meta: null }, [colorPreview, hexInput]),
+        div(baseProps([ACCOUNT_BRANDING_HEX_ROW_CLASS]), [colorPreview, hexInput]),
     ]);
 }

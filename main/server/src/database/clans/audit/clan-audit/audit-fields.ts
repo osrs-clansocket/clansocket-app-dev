@@ -2,7 +2,7 @@ import type Database from "better-sqlite3";
 import { DB_NAMES, getDb } from "../../../core/database.js";
 import { lookupAction, type AnyAuditAction } from "../clan-audit-registry/index.js";
 import { getLastHash } from "./chain.js";
-import type { RecordAuditArgs } from "./record.js";
+import type { RecordAuditArgs } from "./record-types.js";
 
 export interface EnrichedAudit {
     payload: Record<string, unknown>;

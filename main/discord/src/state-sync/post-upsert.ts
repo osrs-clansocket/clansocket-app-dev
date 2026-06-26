@@ -1,8 +1,10 @@
 import { apiRequest } from "../fetchers/api-fetcher.js";
+import { HTTP_METHOD_POST } from "../core/constants.js";
+import { STATE_KINDS } from "../core/constants.js";
 
 const SINGULARIZE_OVERRIDES: Record<string, string> = {
-    "server-emojis": "emoji",
-    "server-stickers": "sticker",
+    [STATE_KINDS.SERVER_EMOJIS]: "emoji",
+    [STATE_KINDS.SERVER_STICKERS]: "sticker",
 };
 
 function singularize(resource: string): string {
@@ -16,5 +18,5 @@ export function postStateUpsert<T>(
     entity: T,
 ): Promise<{ ok: boolean } | null> {
     const path = `/api/discord/state/${resource}/${encodeURIComponent(guildId)}/${encodeURIComponent(entityId)}`;
-    return apiRequest<{ ok: boolean }>("POST", path, { [singularize(resource)]: entity });
+    return apiRequest<{ ok: boolean }>(HTTP_METHOD_POST, path, { [singularize(resource)]: entity });
 }

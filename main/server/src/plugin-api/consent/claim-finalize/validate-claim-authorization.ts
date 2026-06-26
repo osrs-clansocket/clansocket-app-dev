@@ -1,5 +1,5 @@
 import { logPluginError } from "../../logger/index.js";
-import type { DispatchContext } from "../../handlers/dispatch.js";
+import type { DispatchContext } from "../../handlers/dispatch-types.js";
 import { CLAIM_ELIGIBLE_RANKS_SET } from "../eligible-ranks.js";
 
 export function validateClaimAuthorization(ctx: DispatchContext, clanId: string, requestId: number): boolean {

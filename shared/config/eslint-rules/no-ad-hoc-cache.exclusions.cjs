@@ -8,9 +8,4 @@
 // prevent ad-hoc cache patterns from sneaking in, so this list should
 // stay short.
 
-module.exports = [
-    {
-        file: "main/dashboard/src/managers/voxlab/texture-paint-manager.ts",
-        reason: "partRangeCache is a 3-entry enum-bounded Map keyed on MeshPart ('front' | 'back' | 'sides'). Formalizing as BoundedCache adds overhead without benefit — the type system already bounds it.",
-    },
-];
+module.exports = [];

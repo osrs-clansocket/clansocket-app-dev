@@ -5,7 +5,7 @@ import {
     PLUGIN_USER_TABLES,
 } from "../../scopes/manifest/index.js";
 import { statChildJoined, statOne } from "./stat-ops.js";
-import type { StatsAcc } from "./per-clan-stats.js";
+import type { StatsAcc } from "./stats-acc-types.js";
 import { acc } from "./utils.js";
 
 function collectChildStat(s: StatsAcc, pluginDb: ReturnType<typeof clanPluginDb>, key: string, hash: string): void {

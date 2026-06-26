@@ -4,7 +4,7 @@ import { createConsentRequest } from "../../../database/index.js";
 import { type ClanRow, clanById } from "../../../database/clans/clan-store.js";
 import { accountById } from "../../../database/site/site-accounts/index.js";
 import { broadcastIdentityUpdate } from "../../../data-rights/streams/identity-stream.js";
-import { requireAccount } from "../oauth-session.js";
+import { requireAccount } from "../requirer-oauth-account.js";
 import { mountedRouter } from "../_mount-registry.js";
 import { resolveLiveSession, validateGateClaim } from "./create-claim-resolvers.js";
 import { auditClaimRequested } from "./audit-claim-requested.js";

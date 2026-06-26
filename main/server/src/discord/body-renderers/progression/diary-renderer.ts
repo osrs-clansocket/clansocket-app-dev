@@ -1,6 +1,7 @@
 import { lookupCategoryEmoji } from "../../../shared/discord/category-emoji-lookup.js";
 import { registerRenderer } from "../renderer-store.js";
-import { renderResult, rolloverTokens, type Renderer } from "../renderer-types.js";
+import { renderResult, type Renderer } from "../renderer-types.js";
+import { rolloverTokens } from "../shaper-rollover-tokens.js";
 import { assembleCategoryUsername } from "../username-assembly.js";
 
 interface DiariesPayload {

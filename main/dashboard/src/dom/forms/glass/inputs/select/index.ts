@@ -1,4 +1,12 @@
-import { div, slidePanel, span, type Instance, type SlidePanelInstance } from "../../../../factory/index.js";
+import {
+    div,
+    slidePanel,
+    span,
+    type Instance,
+    type SlidePanelInstance,
+    baseProps,
+    textProps,
+} from "../../../../factory/index.js";
 import {
     applyFilter,
     buildHiddenInput,
@@ -42,20 +50,15 @@ function composeSlide(trigger: Instance, panel: Instance, onCloseExtra: () => vo
 }
 
 function buildGlassSelect(name: string, options: ReadonlyArray<SelectOption>, current: string): Instance {
-    const labelInst = span({
-        classes: [CLASS_LABEL],
-        text: options.find((o) => o.value === current)?.label ?? current,
-        context: null,
-        meta: null,
-    });
+    const labelInst = span(textProps([CLASS_LABEL], options.find((o) => o.value === current)?.label ?? current));
     const trigger = buildSelectTrigger(labelInst);
     const hidden = buildHiddenInput(name, current);
     const optionInsts = options.map((o) => buildOption(o, current));
     const grid = div({ classes: [CLASS_GRID], role: "listbox", context: null, meta: null }, optionInsts);
     const innerChildren: Instance[] =
         options.length >= SEARCH_THRESHOLD ? [buildSearchInput(optionInsts), grid] : [grid];
-    const inner = div({ classes: [CLASS_PANEL_INNER], context: null, meta: null }, innerChildren);
-    const panel = div({ classes: [], context: null, meta: null }, [inner]);
+    const inner = div(baseProps([CLASS_PANEL_INNER]), innerChildren);
+    const panel = div(baseProps([]), [inner]);
     const slide = composeSlide(trigger, panel, () => applyFilter("", optionInsts));
     wireSelectClicks(optionInsts, hidden, labelInst, () => slide.close());
     slide.addChild(hidden);

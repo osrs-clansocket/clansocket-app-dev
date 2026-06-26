@@ -1,4 +1,4 @@
-import { div, type Instance } from "../../factory";
+import { div, type Instance, baseProps } from "../../factory";
 import { addChainEvent } from "../chain-events";
 import { addMessage } from "./messaging/messages";
 import { getMessagesHost } from "./messaging/messages-host";
@@ -38,7 +38,7 @@ function replayHistoryItem(target: HTMLElement, item: DisplayItem): void {
 }
 
 function buildRow(item: DisplayItem): Instance {
-    const row = div({ classes: [ROW_CLASS], context: null, meta: null });
+    const row = div(baseProps([ROW_CLASS]));
     replayHistoryItem(row.el, item);
     return row;
 }

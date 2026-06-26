@@ -39,7 +39,7 @@ import {
 import { logPluginEvent } from "../../logger/index.js";
 import { checkTelemetryGate, handleTelemetryReject } from "../../session/telemetry-gate.js";
 import type { PluginClientMessage } from "../../types/index.js";
-import type { BatchContext, DispatchContext } from "../dispatch.js";
+import type { BatchContext, DispatchContext } from "../dispatch-types.js";
 
 export const STANDARD_TELEMETRY_EVENTS: readonly string[] = [
     EVENT_XP_GAINED,

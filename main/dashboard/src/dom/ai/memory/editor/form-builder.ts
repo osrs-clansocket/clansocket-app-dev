@@ -1,4 +1,4 @@
-import { button, div, form, type Child, type Instance } from "../../../factory";
+import { button, div, form, type Child, type Instance, baseProps } from "../../../factory";
 import type { MemoryFile } from "../../../../ai/memory-client";
 import { buildGlassCheck } from "../../../forms/glass/inputs/glass-check.js";
 import { buildGlassSelect } from "../../../forms/glass/inputs/select/index.js";
@@ -52,7 +52,7 @@ function buildActions(mode: Mode): Instance {
     const children: Child[] = [cancelBtn];
     if (mode === MODE_EDIT) children.push(deleteBtn());
     children.push(saveBtn);
-    return div({ classes: [AI_MEMORY_ACTIONS_CLASS], context: null, meta: null }, children);
+    return div(baseProps([AI_MEMORY_ACTIONS_CLASS]), children);
 }
 
 export function buildEditorForm(file: MemoryFile, mode: Mode): Instance<HTMLFormElement> {

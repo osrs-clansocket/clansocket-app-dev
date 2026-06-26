@@ -1,6 +1,6 @@
 import type Database from "better-sqlite3";
 import logger from "@clansocket/logger";
-import { wasWritten } from "../../../database/core/operations.js";
+import { wasWritten } from "../../../database/core/operations/index.js";
 import { clanPluginDb, pluginModes } from "../../../database/index.js";
 import { PLUGIN_USER_TABLES } from "../../scopes/manifest/index.js";
 import type { PurgeUserResult } from "./types.js";

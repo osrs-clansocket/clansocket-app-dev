@@ -1,4 +1,4 @@
-import { anchor, div, type Instance } from "../../../../../factory";
+import { anchor, div, type Instance, baseProps } from "../../../../../factory";
 import {
     BTN_CLASS,
     BTN_COMPACT_CLASS,
@@ -10,7 +10,7 @@ const CTA_LABEL = "Install via Discord OAuth";
 const CTA_CONTEXT = "discord bot OAuth install flow trigger";
 
 export function buildHeroCta(slug: string): Instance {
-    return div({ classes: [DISCORD_EMPTY_CTA_WRAP_CLASS], context: null, meta: null }, [
+    return div(baseProps([DISCORD_EMPTY_CTA_WRAP_CLASS]), [
         anchor({
             href: `/api/auth/site/discord-bot-install/start?slug=${encodeURIComponent(slug)}`,
             text: CTA_LABEL,

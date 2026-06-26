@@ -12,9 +12,11 @@
         "**/*.tsx",
         "**/*.js",
         "**/*.mjs",
-        "**/*.cjs"
+        "**/*.cjs",
+        "**/schemas/plugin/**",
+        "**/README.md"
     ],
-    "format": ["css", "sql", "json", "markdown"],
+    "format": ["sql", "json", "markdown"],
     "output": ".lint-reports/jscpd-report",
     "absolute": false,
     "gitignore": true,

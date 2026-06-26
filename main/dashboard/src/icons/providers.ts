@@ -1,7 +1,6 @@
 import "./families";
 import { AsyncMemoCache } from "../state/caches/async-memo-cache.js";
 import { memoize } from "../state/caches/memoize.js";
-import { SUBSET_GLYPHS } from "../styles/auto-gen/icons-subset/manifest.js";
 import { iconFamily, iconFamilyDefs, type IconFamilyConfig } from "./registry";
 
 export interface ProviderConfig extends IconFamilyConfig {
@@ -47,18 +46,6 @@ export const resolveIcon = memoize(resolveIconImpl, {
     keyOf: (value) => value,
 });
 
-const iconClassesImpl = (provider: string, name: string): readonly string[] => {
-    const f = iconFamily(provider) ?? iconFamily(DEFAULT_PREFIX)!;
-    if (f.config.kind !== "font") return [];
-    return [f.config.baseClass, `${f.prefix}-${name}`];
-};
-
-export const buildIconClasses = memoize(iconClassesImpl, {
-    tag: "icons",
-    maxEntries: 512,
-    keyOf: (provider, name) => `${provider}-${name}`,
-});
-
 export function buildIconSrc(provider: string, name: string): string | null {
     const f = iconFamily(provider);
     if (!f || f.config.kind !== "raster" || !f.config.resolveSrc) return null;
@@ -74,7 +61,7 @@ export async function loadIcons(): Promise<readonly IconEntry[]> {
     const families = iconFamilyDefs();
     const pending: Promise<readonly string[]>[] = [];
     for (const f of families) {
-        pending.push(glyphCache.getOrLoad(f.prefix, async () => Object.keys(await f.glyphLoader()).sort()));
+        pending.push(glyphCache.getOrLoad(f.prefix, async () => f.glyphLoader()));
     }
     const lists = await Promise.all(pending);
     const out: IconEntry[] = [];
@@ -83,18 +70,4 @@ export async function loadIcons(): Promise<readonly IconEntry[]> {
         for (const name of lists[i]!) out.push({ provider: prefix, name });
     }
     return out;
-}
-
-export function preloadIcons(): void {}
-
-const cssLoadedFamilies = new Set<string>();
-
-export function ensureFamilyCss(provider: string, iconName?: string): void {
-    if (iconName !== undefined && SUBSET_GLYPHS.has(`${provider}-${iconName}`)) return;
-    if (cssLoadedFamilies.has(provider)) return;
-    cssLoadedFamilies.add(provider);
-    const family = iconFamily(provider);
-    if (family !== undefined && family.cssLoader !== undefined) {
-        void family.cssLoader().catch(() => cssLoadedFamilies.delete(provider));
-    }
 }

@@ -8,6 +8,8 @@ import {
     signal,
     span,
     type Instance,
+    baseProps,
+    textProps,
 } from "../../../../../../factory";
 import { reconcile } from "../../../../../../factory/live-ops/reconcile.js";
 import {
@@ -25,7 +27,7 @@ import {
     ACCORDION_OPEN_CLASS,
     CHEVRON_ICON_NAME,
 } from "./mode-constants.js";
-import { buildSwatch } from "../../../../../../../state/discord/permissions/mode-drag.js";
+import { buildSwatch } from "./mode-drag-swatch.js";
 
 function swatchHeader(title: string, getLabel: () => string, accordion: Instance): Instance {
     let isOpen = false;
@@ -43,13 +45,13 @@ function swatchHeader(title: string, getLabel: () => string, accordion: Instance
         },
         [
             icon({ name: CHEVRON_ICON_NAME, classes: [ACCORDION_CHEVRON_CLASS], context: null, meta: null }),
-            span({ classes: [ACCORDION_LABEL_CLASS], text: derived(getLabel), context: null, meta: null }),
+            span(textProps([ACCORDION_LABEL_CLASS], derived(getLabel))),
         ],
     );
 }
 
 function buildSwatchShell(getLabel: () => string, body: Instance, title: string): Instance {
-    const accordion = div({ classes: [ACCORDION_CLASS], context: null, meta: null });
+    const accordion = div(baseProps([ACCORDION_CLASS]));
     accordion.setChildren(swatchHeader(title, getLabel, accordion), body);
     return accordion;
 }
@@ -68,9 +70,9 @@ interface SwatchPanelState {
 
 function freshSwatchState(): SwatchPanelState {
     return {
-        channelsBody: div({ classes: [ACCORDION_BODY_CLASS], context: null, meta: null }),
-        rolesBody: div({ classes: [ACCORDION_BODY_CLASS], context: null, meta: null }),
-        membersBody: div({ classes: [ACCORDION_BODY_CLASS], context: null, meta: null }),
+        channelsBody: div(baseProps([ACCORDION_BODY_CLASS])),
+        rolesBody: div(baseProps([ACCORDION_BODY_CLASS])),
+        membersBody: div(baseProps([ACCORDION_BODY_CLASS])),
         channelsLabel: signal<string>("Channels (0)"),
         rolesLabel: signal<string>("Roles (0)"),
         membersLabel: signal<string>("Members (0)"),

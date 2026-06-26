@@ -1,5 +1,4 @@
 import type Database from "better-sqlite3";
-import type { ChangeEmitter } from "../change-inserter.js";
 import { buildChangeEmitter } from "../change-inserter.js";
 import type { EventEnvelopeCols } from "../envelope.js";
 import type { PlayerIdentity, SpatialColumns } from "../projection-utils.js";
@@ -7,12 +6,9 @@ import type { ContainerCause, ContainerItem } from "./container-types.js";
 import { isLiveChange } from "./container-formatter.js";
 import { CONTAINER_CONFIGS } from "./container-configs.js";
 
-export interface ContainerChangeCtx {
-    emitter: ChangeEmitter;
-    id: PlayerIdentity;
-    envelope: EventEnvelopeCols;
-    where: SpatialColumns;
-}
+import type { ContainerChangeCtx } from "./container-changes-types.js";
+
+export type { ContainerChangeCtx } from "./container-changes-types.js";
 
 export interface DispatchDeltaArgs {
     conn: Database.Database;

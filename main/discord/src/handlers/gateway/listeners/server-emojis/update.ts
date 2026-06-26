@@ -1,4 +1,5 @@
 import { Events } from "discord.js";
+import { STATE_KINDS } from "../../../../core/constants.js";
 import { extractEmojiRow } from "../../../../state-sync/server-emojis/extract.js";
 import { registerListener } from "../../listener-registry.js";
 import { pEmoji } from "../../specs/payloads.js";
@@ -10,5 +11,5 @@ registerListener({
     triggerId: "discord:server-emojis.updated",
     selectEntity: passNew,
     buildPayload: pEmoji,
-    persist: upsertOf("server-emojis", extractEmojiRow),
+    persist: upsertOf(STATE_KINDS.SERVER_EMOJIS, extractEmojiRow),
 });

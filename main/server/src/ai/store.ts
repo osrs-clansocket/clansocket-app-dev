@@ -1,5 +1,5 @@
 import { DB_NAMES } from "../database/core/database.js";
-import { execDb, selectOne } from "../database/core/operations.js";
+import { execDb, selectOne } from "../database/core/operations/index.js";
 
 const TABLE = "varez_state";
 

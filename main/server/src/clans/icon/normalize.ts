@@ -22,9 +22,10 @@ export async function normalizeUploadedIcon(buffer: Buffer, ext: string): Promis
         fit: "inside",
         withoutEnlargement: true,
     });
-    if (ext === ".webp") {
-        return pipeline.webp({ quality: ICON_WEBP_QUALITY, alphaQuality: ICON_WEBP_ALPHA_QUALITY }).toBuffer();
-    }
-    if (ext === ".jpg") return pipeline.jpeg({ quality: ICON_JPEG_QUALITY }).toBuffer();
-    return pipeline.png({ compressionLevel: ICON_PNG_COMPRESSION_LEVEL }).toBuffer();
+    const ENCODERS: Record<string, (p: sharp.Sharp) => sharp.Sharp> = {
+        ".webp": (p) => p.webp({ quality: ICON_WEBP_QUALITY, alphaQuality: ICON_WEBP_ALPHA_QUALITY }),
+        ".jpg": (p) => p.jpeg({ quality: ICON_JPEG_QUALITY }),
+    };
+    const encode = ENCODERS[ext] ?? ((p) => p.png({ compressionLevel: ICON_PNG_COMPRESSION_LEVEL }));
+    return encode(pipeline).toBuffer();
 }

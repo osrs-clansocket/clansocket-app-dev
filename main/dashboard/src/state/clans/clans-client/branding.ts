@@ -1,7 +1,6 @@
 import { identityClient } from "../../identity/identity-client/index.js";
 import { jsonOrFallback } from "../../fetch-result.js";
 import { sameOriginFetch } from "../../../shared/fetchers/same-origin-fetcher.js";
-import type { PublishPayload } from "../../../managers/voxlab/app/voxlab-editor.js";
 import {
     mapCustomizeError,
     mapUploadError,
@@ -52,37 +51,6 @@ export async function customizeClanBranding(slug: string, transform: IconTransfo
     }
     const body = await readErrorBody<{ error?: string; sourceExt?: string; detail?: string }>(res);
     return (body && mapCustomizeError(body)) ?? { ok: false, reason: "failed" };
-}
-
-function serializeVoxlabEnvelope(payload: PublishPayload): string {
-    return JSON.stringify({
-        payloadVersion: payload.payloadVersion,
-        mesh: {
-            positions: Array.from(payload.mesh.positions),
-            indices: Array.from(payload.mesh.indices),
-            normals: Array.from(payload.mesh.normals),
-            colors: Array.from(payload.mesh.colors),
-            metadata: payload.mesh.metadata,
-        },
-        snapshot: payload.snapshot,
-        timeline: payload.timeline,
-        sourceAlbedoImage: payload.sourceAlbedoImage,
-    });
-}
-
-export async function publishVoxlab(
-    slug: string,
-    payload: PublishPayload,
-    endpointOverride?: string,
-): Promise<BrandingUpdate | null> {
-    const fd = new FormData();
-    // eslint-disable-next-line lvi/no-raw-dom
-    fd.append("envelope", serializeVoxlabEnvelope(payload));
-    // eslint-disable-next-line lvi/no-raw-dom
-    fd.append("thumbnail", payload.thumbnailPng, "thumbnail.png");
-    const url = endpointOverride ?? `/api/clans/${encodeURIComponent(slug)}/branding/voxlab-publish`;
-    const res = await identityClient.authedFetch(url, { method: "POST", body: fd });
-    return jsonOrFallback<BrandingUpdate | null>(res, null);
 }
 
 export async function clearBranding(slug: string): Promise<{ ok: boolean; imageVersion: number }> {

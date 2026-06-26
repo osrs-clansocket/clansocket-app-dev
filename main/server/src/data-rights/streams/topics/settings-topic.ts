@@ -1,6 +1,6 @@
 import { SQL_TABLES } from "../../../database/core/sql-columns.js";
 import { getGuildSettings } from "../../../database/discord/state/guild-settings/get-guild-settings.js";
-import type { ProjectionTopic } from "../projection.js";
+import type { ProjectionTopic } from "../projection-types.js";
 import { guildTopic, singleKeyOf } from "./guild-topic-builder.js";
 
 export function guildSettingsTopic(clanId: string, guildId: string): ProjectionTopic {

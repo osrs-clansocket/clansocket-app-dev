@@ -6,6 +6,7 @@ import {
     inlineConfirm,
     snapshot,
     type Instance,
+    baseProps,
 } from "../../../../factory";
 import { clansClient, type ClanAuditEntry } from "../../../../../state/clans/clans-client/index.js";
 import { buildDiff, buildDiffList, buildRawPayload } from "./expansion-diff.js";
@@ -61,7 +62,7 @@ async function attemptRevert(args: RevertArgs): Promise<void> {
 }
 
 function buildRevertSection(entry: ClanAuditEntry, slug: string, onReverted: () => void): Instance {
-    const host = div({ classes: [INLINE_CONFIRM_HOST_CLASS], context: null, meta: null });
+    const host = div(baseProps([INLINE_CONFIRM_HOST_CLASS]));
     const btn = button({
         variant: BTN_VARIANT_OUTLINE,
         classes: [AUDIT_REVERT_BTN_CLASS],
@@ -76,7 +77,7 @@ function buildRevertSection(entry: ClanAuditEntry, slug: string, onReverted: () 
         },
     });
     host.addChild(btn);
-    return div({ classes: [AUDIT_REVERT_CLASS], context: null, meta: null }, [host]);
+    return div(baseProps([AUDIT_REVERT_CLASS]), [host]);
 }
 
 export async function loadRevertExpansion(
@@ -94,5 +95,5 @@ export async function loadRevertExpansion(
         children.push(buildRawPayload(entry));
     }
     if (canRevertEntry(entry)) children.push(buildRevertSection(entry, slug, onReverted));
-    return div({ classes: [AUDIT_EXPANSION_BODY_CLASS], context: null, meta: null }, children);
+    return div(baseProps([AUDIT_EXPANSION_BODY_CLASS]), children);
 }

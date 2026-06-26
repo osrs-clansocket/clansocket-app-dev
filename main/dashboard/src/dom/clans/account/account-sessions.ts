@@ -1,4 +1,4 @@
-import { derived, div, heading, paragraph, section, type Instance } from "../../factory";
+import { derived, div, heading, paragraph, section, type Instance, baseProps, textProps } from "../../factory";
 import { profileStore } from "../../../state/identity/stores/profile-store.js";
 import { type LiveSession } from "../../../state/identity/profile/profile-client.js";
 import { buildSessionRow } from "./shared/session-row";
@@ -26,22 +26,22 @@ function buildSessionsHeading(): Instance {
 }
 
 function buildSessionsHint(): Instance {
-    return paragraph({
-        classes: [ACCOUNT_SECTION_HINT_CLASS],
-        text: derived(() => `${profileStore.sessions$().length} connected`),
-        context: null,
-        meta: null,
-    });
+    return paragraph(
+        textProps(
+            [ACCOUNT_SECTION_HINT_CLASS],
+            derived(() => `${profileStore.sessions$().length} connected`),
+        ),
+    );
 }
 
 export function buildSessionsCard(): SessionsCardKit {
-    const sessionsList = div({ classes: [ACCOUNT_LIST_CLASS], context: null, meta: null });
-    const sessionsEmpty = paragraph({
-        classes: [ACCOUNT_EMPTY_CLASS],
-        text: "No active sessions. Log into OSRS via RuneLite with the ClanSocket plugin enabled.",
-        context: null,
-        meta: null,
-    });
+    const sessionsList = div(baseProps([ACCOUNT_LIST_CLASS]));
+    const sessionsEmpty = paragraph(
+        textProps(
+            [ACCOUNT_EMPTY_CLASS],
+            "No active sessions. Log into OSRS via RuneLite with the ClanSocket plugin enabled.",
+        ),
+    );
     const sessionsCard = section({ classes: [ACCOUNT_CARD_CLASS], hidden: "", context: null, meta: null }, [
         buildSessionsHeading(),
         buildSessionsHint(),

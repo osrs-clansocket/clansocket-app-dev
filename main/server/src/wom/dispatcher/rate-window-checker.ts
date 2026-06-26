@@ -1,6 +1,6 @@
 import logger from "@clansocket/logger";
 import { womRateWindow } from "../../database/wom/rate-window/get.js";
-import { rollWindow } from "../../database/wom/rate-window/update.js";
+import { rollWindow } from "../../database/wom/rate-window/updater-rate.js";
 import { scheduleWake } from "./wake-scheduler.js";
 
 const WINDOW_MS = 60000;

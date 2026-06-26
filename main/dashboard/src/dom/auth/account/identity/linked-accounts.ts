@@ -10,6 +10,8 @@ import {
     span,
     type Instance,
     type Signal,
+    baseProps,
+    textProps,
 } from "../../../factory/index.js";
 import { identityClient, type LinkedProvider } from "../../../../state/identity/identity-client/index.js";
 import { providersStore } from "../../../../state/identity/stores/providers-store.js";
@@ -25,7 +27,7 @@ import {
     ACCOUNT_TOKEN_REVOKE_CLASS,
 } from "../../../../shared/constants/account-constants.js";
 import { SURFACE_ROW_CLASS } from "../../../../shared/constants/card-component-constants.js";
-import { BS_ICON_CLASS } from "../../../../shared/constants/bootstrap-icon-constants.js";
+import { icon } from "../../../factory/index.js";
 
 type ProviderName = "github" | "discord";
 
@@ -35,8 +37,8 @@ const PROVIDER_LABEL: Record<ProviderName, string> = {
 };
 
 const PROVIDER_ICON: Record<ProviderName, string> = {
-    github: "bi-github",
-    discord: "bi-discord",
+    github: "github",
+    discord: "discord",
 };
 
 function linkAction(name: ProviderName): () => void {
@@ -46,7 +48,7 @@ function linkAction(name: ProviderName): () => void {
 function buildLinkButton(name: ProviderName): Instance {
     return button({
         variant: BTN_VARIANT_OUTLINE,
-        compact: true,
+        
         text: "Link",
         context: `link your ${PROVIDER_LABEL[name]} account as a sign-in method`,
         meta: ["action", "account"],
@@ -55,7 +57,7 @@ function buildLinkButton(name: ProviderName): Instance {
 }
 
 function buildUnlinkButton(name: ProviderName, labelText: string, onChange: () => void): Instance {
-    const host = div({ classes: [INLINE_CONFIRM_HOST_CLASS], context: null, meta: null });
+    const host = div(baseProps([INLINE_CONFIRM_HOST_CLASS]));
     const unlinkBtn = button({
         classes: [ACCOUNT_TOKEN_REVOKE_CLASS],
         text: "Unlink",
@@ -82,10 +84,10 @@ function buildProviderRow(name: ProviderName, linked: LinkedProvider | null, onC
     const labelText = PROVIDER_LABEL[name];
     const metaText = linked === null ? "Not linked" : (linked.displayName ?? "(linked)");
     const action = linked === null ? buildLinkButton(name) : buildUnlinkButton(name, labelText, onChange);
-    return div({ classes: [ACCOUNT_ROW_CLASS, ACCOUNT_LIST_ROW_CLASS, SURFACE_ROW_CLASS], context: null, meta: null }, [
-        span({ classes: [BS_ICON_CLASS, PROVIDER_ICON[name]], context: null, meta: null }),
-        span({ classes: [ACCOUNT_ROW_PRIMARY_CLASS], text: labelText, context: null, meta: null }),
-        span({ classes: [ACCOUNT_ROW_META_CLASS], text: metaText, context: null, meta: null }),
+    return div(baseProps([ACCOUNT_ROW_CLASS, ACCOUNT_LIST_ROW_CLASS, SURFACE_ROW_CLASS]), [
+        icon({ provider: "bi", name: PROVIDER_ICON[name], ariaHidden: true, context: null, meta: null }),
+        span(textProps([ACCOUNT_ROW_PRIMARY_CLASS], labelText)),
+        span(textProps([ACCOUNT_ROW_META_CLASS], metaText)),
         action,
     ]);
 }
@@ -102,9 +104,9 @@ function renderList(host: Instance, status$: Signal<string>, providers: LinkedPr
 defineAccountPanel({ key: "linked-accounts", order: 20, build: () => linkedAccountsPanel() });
 
 export function linkedAccountsPanel(): Instance {
-    const host = div({ classes: [ACCOUNT_LIST_CLASS], context: null, meta: null });
+    const host = div(baseProps([ACCOUNT_LIST_CLASS]));
     const status$ = signal("");
-    const status = paragraph({ classes: [FORM_HINT], text: status$, context: null, meta: null });
+    const status = paragraph(textProps([FORM_HINT], status$));
     const root = accountPanel({ title: "Linked accounts", body: [host], footer: [status] });
     root.trackDispose(
         effect(() => renderList(host, status$, providersStore.list$(), () => void providersStore.refresh())),

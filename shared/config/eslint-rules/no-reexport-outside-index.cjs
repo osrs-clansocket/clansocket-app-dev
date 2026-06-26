@@ -68,6 +68,7 @@ function scanBody(body) {
     let hasExport = false;
     let hasOwn = false;
     let firstExport = null;
+    const forwardedReExports = [];
     for (const node of body) {
         if (OWN_DECLARATION.has(node.type)) {
             hasOwn = true;
@@ -80,6 +81,7 @@ function scanBody(body) {
             hasExport = true;
             firstExport = firstExport || node;
             if (node.declaration && OWN_DECLARATION.has(node.declaration.type)) hasOwn = true;
+            else if (node.source) forwardedReExports.push(node);
             continue;
         }
         if (node.type === "ExportDefaultDeclaration") {
@@ -91,9 +93,10 @@ function scanBody(body) {
         if (node.type === "ExportAllDeclaration" || node.type === "TSExportAssignment") {
             hasExport = true;
             firstExport = firstExport || node;
+            forwardedReExports.push(node);
         }
     }
-    return { hasExport, hasOwn, firstExport };
+    return { hasExport, hasOwn, firstExport, forwardedReExports };
 }
 
 function report(context, node, raw) {
@@ -127,12 +130,41 @@ module.exports = {
     },
     create(context) {
         const raw = (context.filename || context.getFilename()).split("\\").join("/");
-        if (baseNameOf(raw) === "index") return {};
+        if (raw.includes("/dom/pages/") && raw.endsWith("/meta.ts")) return {};
+        const isIndex = baseNameOf(raw) === "index";
         return {
             Program(node) {
-                const { hasExport, hasOwn, firstExport } = scanBody(node.body);
+                const { hasExport, hasOwn, firstExport, forwardedReExports } = scanBody(node.body);
+                if (isIndex) {
+                    if (hasOwn && forwardedReExports.length > 0) {
+                        for (const reExport of forwardedReExports) reportMixedIndex(context, reExport, raw);
+                    }
+                    return;
+                }
                 if (hasExport && !hasOwn && firstExport) report(context, firstExport, raw);
             },
         };
     },
 };
+
+function reportMixedIndex(context, node, raw) {
+    const t = trace(node, raw, getModuleForFile(raw));
+    context.report({
+        node,
+        messageId: "report",
+        data: {
+            report: build4DReport({
+                rule: "no-reexport-outside-index",
+                narrative: `${t.file}:${t.line} is an index file that BOTH owns declarations AND forwards re-exports from siblings. An index that owns code is no longer a pure barrel — the forwarded re-export becomes a useless indirection. Pick one: pure barrel (re-exports only) OR module with own code (no forwarded re-exports).`,
+                graph: {
+                    X: `${t.file}:${t.line} — forwarded re-export inside an index file that also has its own declarations`,
+                    Y: `every consumer that imports the forwarded binding hops through this file even though the real source is a sibling; rename tooling, dead-export detection, and onboarding chase a name through a file that doesn't define it`,
+                    Z: `index-file purity — index.* is sanctioned as a barrel ONLY when pure; mixing breaks the barrel contract`,
+                    W: `forwarded re-exports in a non-pure index hide direct sibling imports behind a layer that contributes nothing to the type/value`,
+                },
+                remediation: `Remove the forwarded re-export — have consumers import directly from the sibling source file. If you genuinely need a barrel surface, split into two files: a pure index.ts that only re-exports (and contains no own code), plus a sibling that owns the code.`,
+                trace: t,
+            }),
+        },
+    });
+}

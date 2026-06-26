@@ -5,6 +5,14 @@ export interface WomPublicMetadata {
     groupName: string;
 }
 
+export type WomPendingStatus = "pending" | "in_flight";
+
+export interface WomPendingUpdate {
+    queue_id: string;
+    status: WomPendingStatus;
+    scheduled_at: number;
+}
+
 export interface WomLinkedStatus {
     linked: true;
     linker_site_account_id: string;
@@ -17,6 +25,8 @@ export interface WomLinkedStatus {
     last_backfill_at: number | null;
     last_backfill_status: string | null;
     next_backfill_eligible_at: number | null;
+    pending_update: WomPendingUpdate | null;
+    outage_retry_at: number | null;
 }
 
 export interface WomUnlinkedStatus {

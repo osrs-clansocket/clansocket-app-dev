@@ -1,5 +1,5 @@
 import "../../../../../../styles/pages/clans/manage/discord/clan-discord-page.css";
-import { anchor, button, div, effect, type Instance } from "../../../../../factory";
+import { anchor, button, div, effect, type Instance, baseProps } from "../../../../../factory";
 import { GLASS_PANE_CLASS } from "../../../../../../shared/constants/glass-constants.js";
 import { DISCORD_HEADER_CLASS } from "../../../../../../shared/constants/clan-manage-discord/route-constants.js";
 import {
@@ -52,8 +52,8 @@ export function buildHeader(opts: BuildHeaderOptions): Instance {
         return chip;
     });
 
-    const header = div({ classes: [GLASS_PANE_CLASS, DISCORD_HEADER_CLASS], context: null, meta: null }, [
-        div({ classes: [TOOLBAR_CLASS], context: null, meta: null }, [...serverChips, buildInstallChip(opts.slug)]),
+    const header = div(baseProps([GLASS_PANE_CLASS, DISCORD_HEADER_CLASS]), [
+        div(baseProps([TOOLBAR_CLASS]), [...serverChips, buildInstallChip(opts.slug)]),
     ]);
     header.trackDispose(
         effect(() => {

@@ -64,6 +64,23 @@ function concernSet(name) {
     return out;
 }
 
+// Verb-family cohesion override: if every declaration in the file shares the same first
+// token (verb-stem), the file is single-role regardless of how TF-IDF clusters the suffixes.
+// Example: `validateNumber`/`validateEnum`/`validateField` all share `validate` — that IS
+// the role, even though `validate` is too common (low IDF) to make it into concern sets
+// individually. The shared first-token across ALL decls is the role-cohesion signal.
+function sharesVerbFamily(declarations) {
+    if (declarations.length < 2) return false;
+    let firstToken = null;
+    for (const d of declarations) {
+        const tokens = tokenize(d.name);
+        if (tokens.length === 0) return false;
+        if (firstToken === null) firstToken = tokens[0];
+        else if (tokens[0] !== firstToken) return false;
+    }
+    return true;
+}
+
 function jaccard(a, b) {
     if (a.size === 0 && b.size === 0) return 1;
     if (a.size === 0 || b.size === 0) return 0;
@@ -106,11 +123,11 @@ function collectDeclarations(programBody) {
     for (const node of programBody) {
         const target = node.type === "ExportNamedDeclaration" ? node.declaration : node;
         if (!target) continue;
-        if (target.type === "FunctionDeclaration" && target.id) out.push({ name: target.id.name });
-        else if (target.type === "ClassDeclaration" && target.id) out.push({ name: target.id.name });
-        else if (target.type === "TSInterfaceDeclaration" && target.id) out.push({ name: target.id.name });
-        else if (target.type === "TSTypeAliasDeclaration" && target.id) out.push({ name: target.id.name });
-        else if (target.type === "TSEnumDeclaration" && target.id) out.push({ name: target.id.name });
+        if (target.type === "FunctionDeclaration" && target.id) out.push({ name: target.id.name, isType: false });
+        else if (target.type === "ClassDeclaration" && target.id) out.push({ name: target.id.name, isType: false });
+        else if (target.type === "TSInterfaceDeclaration" && target.id) out.push({ name: target.id.name, isType: true });
+        else if (target.type === "TSTypeAliasDeclaration" && target.id) out.push({ name: target.id.name, isType: true });
+        else if (target.type === "TSEnumDeclaration" && target.id) out.push({ name: target.id.name, isType: false });
         else if (target.type === "VariableDeclaration") {
             for (const d of target.declarations) {
                 if (d.id && d.id.type === "Identifier" && d.init) {
@@ -121,13 +138,18 @@ function collectDeclarations(programBody) {
                         k === "ObjectExpression" ||
                         k === "ClassExpression"
                     ) {
-                        out.push({ name: d.id.name });
+                        out.push({ name: d.id.name, isType: false });
                     }
                 }
             }
         }
     }
     return out;
+}
+
+function isPureTypesFile(declarations) {
+    if (declarations.length === 0) return false;
+    return declarations.every((d) => d.isType);
 }
 
 function isBarrelFile(programBody) {
@@ -140,6 +162,7 @@ function isBarrelFile(programBody) {
     }
     return re > 0 && other === 0;
 }
+
 
 function clusterLabel(group) {
     const tokens = new Set();
@@ -203,6 +226,8 @@ module.exports = {
                 if (isBarrelFile(node.body)) return;
                 const declarations = collectDeclarations(node.body);
                 if (declarations.length < minDeclarations) return;
+                if (isPureTypesFile(declarations)) return;
+                if (sharesVerbFamily(declarations)) return;
                 for (const d of declarations) d.set = concernSet(d.name);
                 const clusters = clusterByJaccard(declarations, pairThreshold);
                 if (clusters.length <= maxConcerns) return;

@@ -1,7 +1,7 @@
 import { seoById, recordClanAudit, updateClanSeo, type ClanSeoPatch, type ClanSeoRow } from "../../database/index.js";
 import { ClanAuditActions } from "../../database/clans/audit/clan-audit-actions.js";
 
-import { MS_PER_MINUTE } from "../../shared/time.js";
+import { MS_PER_MINUTE } from "../../shared/time/index.js";
 
 const MAX_TITLE_LEN = 80;
 const MAX_DESCRIPTION_LEN = 300;

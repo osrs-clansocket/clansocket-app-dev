@@ -1,4 +1,4 @@
-import { anchor, button, div, header, heading, image, nav, span } from "../../factory";
+import { anchor, button, div, header, heading, image, nav, span, baseProps } from "../../factory";
 import { buildZoomControl } from "./zoom-control.js";
 import { buildLoginGroup, buildLogoutBtn } from "./header-login.js";
 import {
@@ -36,48 +36,47 @@ function buildNavSection(): HTMLElement {
     );
     return nav(
         { classes: [DASH_NAV_CLASS], ariaLabel: "Site navigation", role: "navigation", context: null, meta: null },
-        [div({ classes: [DASH_NAV_VIEWPORT_CLASS], context: null, meta: null }, [navRail.el]).el, navIconTemplate.el],
+        [div(baseProps([DASH_NAV_VIEWPORT_CLASS]), [navRail.el]).el, navIconTemplate.el],
+    ).el;
+}
+
+function buildLogoLink(): HTMLElement {
+    return anchor(
+        {
+            href: "/",
+            classes: [DASH_LOGO_LINK_CLASS],
+            ariaLabel: "Home",
+            title: "Home",
+            context: "navigate to the homepage",
+            meta: ["nav"],
+        },
+        [
+            image({
+                src: "/resources/clan/static_logo_48.webp",
+                alt: "ClanSocket logo",
+                classes: [DASH_LOGO_CLASS],
+                width: 24,
+                height: 24,
+                lazy: false,
+                context: null,
+                meta: null,
+            }).el,
+        ],
     ).el;
 }
 
 function buildBrand(): HTMLElement {
-    return div({ classes: [DASH_BRAND_CLASS], context: null, meta: null }, [
-        anchor(
-            {
-                href: "/",
-                classes: [DASH_LOGO_LINK_CLASS],
-                ariaLabel: "Home",
-                title: "Home",
-                context: "navigate to the homepage",
-                meta: ["nav"],
-            },
-            [
-                image({
-                    src: "/favicon.ico",
-                    alt: "ClanSocket logo",
-                    classes: [DASH_LOGO_CLASS],
-                    context: null,
-                    meta: null,
-                }).el,
-            ],
-        ).el,
+    return div(baseProps([DASH_BRAND_CLASS]), [
+        buildLogoLink(),
         heading("h1", { classes: [DASH_TITLE_CLASS], text: "ClanSocket", context: null, meta: null }).el,
         span({ classes: [DASH_SUBTITLE_CLASS], key: "dash-subtitle", text: "", context: null, meta: null }).el,
     ]).el;
 }
 
 function buildControls(): HTMLElement {
-    return div({ classes: [DASH_CONTROLS_CLASS], context: null, meta: null }, [
-        buildZoomControl(),
-        buildLoginGroup(),
-        buildLogoutBtn(),
-    ]).el;
+    return div(baseProps([DASH_CONTROLS_CLASS]), [buildZoomControl(), buildLoginGroup(), buildLogoutBtn()]).el;
 }
 
 export function buildHeader(): HTMLElement {
-    return header({ classes: [DASH_HEADER_CLASS], context: null, meta: null }, [
-        buildBrand(),
-        buildNavSection(),
-        buildControls(),
-    ]).el;
+    return header(baseProps([DASH_HEADER_CLASS]), [buildBrand(), buildNavSection(), buildControls()]).el;
 }

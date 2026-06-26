@@ -9,6 +9,7 @@ import {
     FORM_FORM_ROW as FORM_ROW_CLASS,
     FORM_FORM_ROW_FILL as FORM_ROW_FILL_CLASS,
 } from "../../../forms/form-classes.js";
+import { baseProps } from "../../../factory/index.js";
 
 export interface VaultSetupHandle {
     el: HTMLElement;
@@ -27,12 +28,12 @@ function describeError(err: unknown): string {
 }
 
 function buildButtonRow(opts: VaultSetupOpts, submitBtn: Instance<HTMLButtonElement>): Instance {
-    if (!opts.onCancel) return div({ classes: [FORM_ROW_CLASS], context: null, meta: null }, [submitBtn]);
-    return div({ classes: [FORM_ROW_CLASS, FORM_ROW_FILL_CLASS], context: null, meta: null }, [
+    if (!opts.onCancel) return div(baseProps([FORM_ROW_CLASS]), [submitBtn]);
+    return div(baseProps([FORM_ROW_CLASS, FORM_ROW_FILL_CLASS]), [
         submitBtn,
         button({
             variant: BTN_VARIANT_OUTLINE,
-            compact: true,
+            
             type: "button",
             text: "Cancel",
             context: "cancel vault setup",
@@ -68,10 +69,7 @@ function buildSetupForm(
     handleSubmit: () => Promise<void>,
     showError: (m: string) => void,
 ): Instance {
-    const passRow = div({ classes: [FORM_ROW_CLASS, FORM_ROW_FILL_CLASS], context: null, meta: null }, [
-        inputs.passInput,
-        inputs.confirmInput,
-    ]);
+    const passRow = div(baseProps([FORM_ROW_CLASS, FORM_ROW_FILL_CLASS]), [inputs.passInput, inputs.confirmInput]);
     return form(
         {
             classes: [FORM_CLASS],

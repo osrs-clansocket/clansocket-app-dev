@@ -1,15 +1,15 @@
 import type { Response } from "express";
+import { isResponseClosed } from "./predicate-response-closed.js";
 
-function isResponseClosed(res: Response): boolean {
-    return res.writableEnded || res.destroyed;
+function writeFrame(res: Response, frame: string): boolean {
+    if (isResponseClosed(res)) return false;
+    return res.write(frame);
 }
 
 export function writeSseEvent(res: Response, payload: Record<string, unknown>): boolean {
-    if (isResponseClosed(res)) return false;
-    return res.write(`data: ${JSON.stringify(payload)}\n\n`);
+    return writeFrame(res, `data: ${JSON.stringify(payload)}\n\n`);
 }
 
 export function writeSseComment(res: Response, comment: string): void {
-    if (isResponseClosed(res)) return;
-    res.write(`: ${comment}\n\n`);
+    writeFrame(res, `: ${comment}\n\n`);
 }

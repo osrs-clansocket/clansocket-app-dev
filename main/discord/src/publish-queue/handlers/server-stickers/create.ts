@@ -1,5 +1,6 @@
 import { PermissionsBitField, type Guild } from "discord.js";
 import { registerPublisher } from "../../publisher-registry.js";
+import { OP_KINDS, ENTITY_TYPES } from "../../publish-vocab.js";
 import { runPublishOp } from "../../runners/op-runner.js";
 
 interface CreateServerSticker {
@@ -22,7 +23,7 @@ export async function applyStickerCreate(guild: Guild, data: CreateServerSticker
 
 export type { CreateServerSticker };
 
-registerPublisher("create", "discord_server_sticker", {
-    handler: (c, r) => runPublishOp(c, r, "create", (g, d) => applyStickerCreate(g, d as CreateServerSticker)),
+registerPublisher(OP_KINDS.CREATE, ENTITY_TYPES.SERVER_STICKER, {
+    handler: (c, r) => runPublishOp(c, r, OP_KINDS.CREATE, (g, d) => applyStickerCreate(g, d as CreateServerSticker)),
     requiredBotPermission: PermissionsBitField.Flags.ManageGuildExpressions,
 });

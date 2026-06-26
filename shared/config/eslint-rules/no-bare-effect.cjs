@@ -32,7 +32,6 @@
  * Exempt files:
  *   src/dom/factory/**     — factory internals own their disposer plumbing
  *   src/state/effects/**   — state effects export their own teardown contract
- *   src/state/voxlab/**    — voxlab registries
  */
 const { getModuleForFile } = require("../resolve-paths.cjs");
 const { build4DReport, trace } = require("./report-builder.cjs");
@@ -40,7 +39,6 @@ const { build4DReport, trace } = require("./report-builder.cjs");
 const EXEMPT_PATH_SEGMENTS = [
     "/dom/factory/",
     "/state/effects/",
-    "/state/voxlab/",
 ];
 
 function isExemptPath(normPath) {

@@ -1,7 +1,7 @@
 import path from "path";
 import { fileURLToPath } from "url";
 import dotenv from "dotenv";
-import { LOG_LEVELS, SECONDS_30_MS } from "./constants.js";
+import { LOG_LEVELS, MS_PER_SECOND, SECONDS_30_MS } from "./constants.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -14,7 +14,7 @@ const RADIX_DECIMAL = 10;
 const DEFAULT_API_TIMEOUT = SECONDS_30_MS;
 const DEFAULT_RATE_LIMIT_WINDOW = 60000;
 const DEFAULT_RATE_LIMIT_MAX = 10;
-const DEFAULT_COMMAND_COOLDOWN = 1000;
+const DEFAULT_COMMAND_COOLDOWN = MS_PER_SECOND;
 const DEFAULT_MAX_FILE_SIZE = 10485760;
 const DEFAULT_MAX_FILES = 5;
 
