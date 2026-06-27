@@ -1,4 +1,14 @@
-import { button, div, effect, inlineConfirm, span, textProps, wireClick, type Instance, baseProps } from "../../factory";
+import {
+    button,
+    div,
+    effect,
+    inlineConfirm,
+    span,
+    textProps,
+    wireClick,
+    type Instance,
+    baseProps,
+} from "../../factory";
 import { memoryClient, type MemoryFile, type MemoryResult } from "../../../ai/memory-client";
 import { memoryStore } from "../../../state/stores/memory-store";
 import { createMemoryList, type MemoryListHandle } from "./list";
@@ -105,10 +115,7 @@ function buildMemoryRoot(
             meta: ["action"],
             onClick: onNew,
         },
-        [
-            span(textProps([AI_MEMORY_NEW_GLYPH_CLASS], "+")),
-            span(textProps([AI_MEMORY_NEW_LABEL_CLASS], "ADD MEMORY")),
-        ],
+        [span(textProps([AI_MEMORY_NEW_GLYPH_CLASS], "+")), span(textProps([AI_MEMORY_NEW_LABEL_CLASS], "ADD MEMORY"))],
     );
     const gallery = div(baseProps([AI_MEMORY_GALLERY_CLASS]), [newBtn.el, list.el]);
     const content = div({ classes: [AI_MEMORY_CONTENT_CLASS], data: { content: "" }, context: null, meta: null });

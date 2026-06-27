@@ -23,7 +23,9 @@ import { buildClanTabs } from "./clan-page-buttons.js";
 
 function renderMissingSlug(): Instance {
     return div(baseProps([ROUTE_ROOT_CLASS, CLAN_MAP_ROUTE_CLASS]), [
-        paragraph(textProps([CLAN_MAP_EMPTY_CLASS], "No live positions yet. Have a clan member open the plugin in-game.")),
+        paragraph(
+            textProps([CLAN_MAP_EMPTY_CLASS], "No live positions yet. Have a clan member open the plugin in-game."),
+        ),
     ]);
 }
 
@@ -40,8 +42,7 @@ export async function renderClanMap(path: string): Promise<Instance> {
 
     await Promise.all([clansStore.ready(), memberClansStore.ready()]);
     const isMember =
-        clansStore.managed$().some((c) => c.slug === slug) ||
-        memberClansStore.member$().some((c) => c.slug === slug);
+        clansStore.managed$().some((c) => c.slug === slug) || memberClansStore.member$().some((c) => c.slug === slug);
     const isManager = await clansClient
         .checkManagerStatus(slug)
         .then((s) => s.isManager)
@@ -52,10 +53,7 @@ export async function renderClanMap(path: string): Promise<Instance> {
 
     const children: Instance[] = [buildClanTabs(slug, isMember, isManager, "map"), mapContent];
 
-    const root = div(
-        { classes: [ROUTE_CLAN_CLASS], context: null, meta: null },
-        children,
-    );
+    const root = div({ classes: [ROUTE_CLAN_CLASS], context: null, meta: null }, children);
 
     const offRoute = events.on("route:change", () => {
         store.dispose();

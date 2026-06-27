@@ -1,4 +1,14 @@
-import { BTN_VARIANT_OUTLINE, button, div, effect, paragraph, span, type Instance, baseProps, textProps } from "../../factory";
+import {
+    BTN_VARIANT_OUTLINE,
+    button,
+    div,
+    effect,
+    paragraph,
+    span,
+    type Instance,
+    baseProps,
+    textProps,
+} from "../../factory";
 import { personaStore, SLOT_BY_KEY, type SlotMeta } from "../../../ai/persona-store/index.js";
 import { modesStore } from "../../../ai/modes-store/index.js";
 import { recentEdits$, recordEdit, type EditEntry } from "../../../state/ai-settings/edit-log.js";

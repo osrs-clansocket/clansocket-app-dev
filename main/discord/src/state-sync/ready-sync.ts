@@ -116,7 +116,9 @@ export async function backfillUnboundGuilds(identity: BotIdentity, client: Clien
             await autoBindServer(identity.bot_id, guild.id, guild.name);
             bound += 1;
         } catch (err) {
-            logger.warn(`backfill auto-bind failed bot=${identity.bot_id} guild=${guild.id}: ${(err as Error).message}`);
+            logger.warn(
+                `backfill auto-bind failed bot=${identity.bot_id} guild=${guild.id}: ${(err as Error).message}`,
+            );
         }
     }
     if (bound > 0) {

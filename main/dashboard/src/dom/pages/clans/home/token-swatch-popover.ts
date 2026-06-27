@@ -18,7 +18,11 @@ function isColorProp(prop: string): boolean {
 
 function shortLabel(value: string): string {
     const match = value.match(/var\(--([a-z0-9-]+)\)/i);
-    if (match) return match[1].replace(/^base-/, "").replace(/^sp-/, "sp ").replace(/^fs-/, "fs ");
+    if (match)
+        return match[1]
+            .replace(/^base-/, "")
+            .replace(/^sp-/, "sp ")
+            .replace(/^fs-/, "fs ");
     return value;
 }
 

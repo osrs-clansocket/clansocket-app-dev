@@ -4,6 +4,9 @@ import type { FlowCardConfig, FlowCardPlacement, FlowMeta } from "./flow-card-ty
 
 const STORAGE_KEY = "flow-builder.flows";
 
+const CARD_ID_PATTERN = /^card-(\d+)$/;
+const FLOW_ID_PATTERN = /^flow-(\d+)$/;
+
 let SEQUENCE = 0;
 
 function nextCardId(): string {
@@ -15,6 +18,28 @@ let FLOW_SEQUENCE = 0;
 function nextFlowId(): string {
     FLOW_SEQUENCE += 1;
     return `flow-${FLOW_SEQUENCE}`;
+}
+
+function maxIdSuffix(values: Iterable<string>, pattern: RegExp): number {
+    let max = 0;
+    for (const value of values) {
+        const match = pattern.exec(value);
+        if (!match) continue;
+        const n = Number(match[1]);
+        if (Number.isFinite(n) && n > max) max = n;
+    }
+    return max;
+}
+
+function seedSequences(flows: readonly FlowMeta[]): void {
+    const flowIds: string[] = [];
+    const cardIds: string[] = [];
+    for (const flow of flows) {
+        flowIds.push(flow.id);
+        for (const placement of flow.placements) cardIds.push(placement.config.id);
+    }
+    FLOW_SEQUENCE = maxIdSuffix(flowIds, FLOW_ID_PATTERN);
+    SEQUENCE = maxIdSuffix(cardIds, CARD_ID_PATTERN);
 }
 
 function defaultCardConfig(): FlowCardConfig {
@@ -39,13 +64,44 @@ function defaultFlowMeta(): FlowMeta {
     };
 }
 
+function compactPlacements(placements: readonly FlowCardPlacement[]): readonly FlowCardPlacement[] {
+    if (placements.length === 0) return placements;
+    const sortedRows = [...new Set(placements.map((p) => p.row))].sort((a, b) => a - b);
+    const sortedCols = [...new Set(placements.map((p) => p.col))].sort((a, b) => a - b);
+    const rowMap = new Map(sortedRows.map((r, i) => [r, i] as const));
+    const colMap = new Map(sortedCols.map((c, i) => [c, i] as const));
+    return placements.map((p) => ({ ...p, row: rowMap.get(p.row)!, col: colMap.get(p.col)! }));
+}
+
+function compactFlow(flow: FlowMeta): FlowMeta {
+    return { ...flow, placements: compactPlacements(flow.placements) };
+}
+
 function loadStoredFlows(): readonly FlowMeta[] {
     const stored = readStored<readonly FlowMeta[]>(STORAGE_KEY);
     if (!stored || stored.length === 0) return [defaultFlowMeta()];
-    return stored;
+    return stored.map(compactFlow);
 }
 
-const storedFlows = loadStoredFlows();
+function dedupeFlowIds(flows: readonly FlowMeta[]): readonly FlowMeta[] {
+    const seenFlow = new Set<string>();
+    return flows.map((flow) => {
+        const flowId = seenFlow.has(flow.id) ? nextFlowId() : flow.id;
+        seenFlow.add(flowId);
+        const seenCard = new Set<string>();
+        const placements = flow.placements.map((p) => {
+            const cardId = seenCard.has(p.config.id) ? nextCardId() : p.config.id;
+            seenCard.add(cardId);
+            if (cardId === p.config.id && flowId === flow.id) return p;
+            return { ...p, config: { ...p.config, id: cardId } };
+        });
+        return { ...flow, id: flowId, placements };
+    });
+}
+
+const rawStoredFlows = loadStoredFlows();
+seedSequences(rawStoredFlows);
+const storedFlows = dedupeFlowIds(rawStoredFlows);
 
 export const flowMetaSignal: Signal<FlowMeta> = signal<FlowMeta>(storedFlows[0]!);
 export const flowsListSignal: Signal<readonly FlowMeta[]> = signal<readonly FlowMeta[]>(storedFlows);
@@ -59,7 +115,7 @@ function setMeta(patch: Partial<FlowMeta>): void {
 }
 
 function setPlacements(next: readonly FlowCardPlacement[]): void {
-    setMeta({ placements: next });
+    setMeta({ placements: compactPlacements(next) });
 }
 
 function isOccupied(row: number, col: number): boolean {
@@ -86,18 +142,11 @@ export function addBelow(fromId: string): void {
     setPlacements([...placementsCurrent(), { config: defaultCardConfig(), row, col: from.col }]);
 }
 
-function cascadeCleanup(placements: readonly FlowCardPlacement[]): readonly FlowCardPlacement[] {
-    const colsWithCards = new Set(placements.map((p) => p.col));
-    let lastConnected = -1;
-    for (let c = 0; colsWithCards.has(c); c += 1) lastConnected = c;
-    return placements.filter((p) => p.col <= lastConnected);
-}
-
 export function removeCard(id: string): void {
     const target = placementsCurrent().find((p) => p.config.id === id);
     if (target && target.row === 0 && target.col === 0) return;
     const remaining = placementsCurrent().filter((p) => p.config.id !== id);
-    setPlacements(cascadeCleanup(remaining));
+    setPlacements(remaining);
 }
 
 export function updateCard(id: string, patch: Partial<FlowCardConfig>): void {

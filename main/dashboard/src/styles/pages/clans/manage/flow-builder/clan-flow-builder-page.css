@@ -34,7 +34,6 @@
     color: var(--base-graphite-300);
 }
 
-
 .clans-manage__flow-builder-rail {
     display: flex;
     flex-direction: column;
@@ -72,19 +71,39 @@
     color: var(--base-graphite-300);
 }
 
-
 .clans-manage__flow-builder-grid {
     display: grid;
-    align-items: start;
+    align-content: start;
+    justify-content: start;
     gap: var(--sp-3);
     grid-area: grid;
+    grid-auto-rows: min-content;
+    min-inline-size: 0;
     min-block-size: 0;
     overflow: auto;
     padding: var(--sp-2);
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+}
+
+.clans-manage__flow-builder-grid--grabbing {
+    cursor: grabbing;
 }
 
 .clans-manage__flow-builder-card-slot {
     position: relative;
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
+    block-size: 100%;
+    cursor: auto;
+    user-select: text;
+}
+
+.clans-manage__flow-builder-card-slot > .clans-manage__auto-hooks-card {
+    flex: 1 1 auto;
+    block-size: 100%;
 }
 
 .clans-manage__flow-builder-card-name-row {
@@ -93,6 +112,10 @@
     align-items: center;
     gap: var(--sp-1);
     min-inline-size: 0;
+}
+
+.clans-manage__auto-hooks-card-header > .glass-inline-confirm__host {
+    min-inline-size: var(--sp-4);
 }
 
 .clans-manage__flow-builder-card-name {
@@ -126,19 +149,18 @@
     gap: var(--sp-1);
 }
 
-
 .clans-manage__flow-builder-add-right,
 .clans-manage__flow-builder-add-below {
     position: absolute;
     display: flex;
     justify-content: center;
     align-items: center;
-    inline-size: var(--sp-2);
-    block-size: var(--sp-2);
+    inline-size: var(--sp-3);
+    block-size: var(--sp-3);
     padding: 0;
     border: 0.0625rem solid var(--base-gold-500);
     border-radius: var(--radius-pill);
-    font-size: var(--fs-2xs);
+    font-size: var(--fs-3xs);
     line-height: 1;
     color: var(--base-gold-300);
     background: var(--base-graphite-800);
@@ -147,14 +169,19 @@
 
 .clans-manage__flow-builder-add-right {
     inset-block-start: 50%;
-    inset-inline-end: calc(-1 * var(--sp-2));
+    inset-inline-end: calc(-1 * var(--sp-3));
     transform: translate(50%, -50%);
 }
 
 .clans-manage__flow-builder-add-below {
-    inset-block-end: calc(-1 * var(--sp-2));
+    inset-block-end: calc(-1 * var(--sp-3));
     inset-inline-start: 50%;
     transform: translate(-50%, 50%);
+}
+
+.clans-manage__flow-builder .clans-manage__auto-hooks-card-delete {
+    padding: var(--sp-1);
+    font-size: var(--fs-2xs);
 }
 
 .clans-manage__flow-builder-connector-right,

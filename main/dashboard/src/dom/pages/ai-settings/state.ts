@@ -19,8 +19,18 @@ export interface TabDef {
 
 export const CONCERNS: ConcernDef[] = [
     { key: "profile", label: "User", icon: "person-fill", tagline: "who you are, in my picture of you" },
-    { key: "memory", label: "Memory", icon: "archive-fill", tagline: "what i recall about you, kept across conversations" },
-    { key: "modes", label: "Modes", icon: "toggles", tagline: "capabilities on / off; the levers behind everything else" },
+    {
+        key: "memory",
+        label: "Memory",
+        icon: "archive-fill",
+        tagline: "what i recall about you, kept across conversations",
+    },
+    {
+        key: "modes",
+        label: "Modes",
+        icon: "toggles",
+        tagline: "capabilities on / off; the levers behind everything else",
+    },
     { key: "persona", label: "Persona", icon: "person-vcard-fill", tagline: "identity slots that shape how i sound" },
     { key: "operation", label: "Operation", icon: "shield-shaded", tagline: "policy slots; what i can and cannot do" },
     { key: "preferences", label: "Preferences", icon: "sliders", tagline: "engagement style; how i show up" },

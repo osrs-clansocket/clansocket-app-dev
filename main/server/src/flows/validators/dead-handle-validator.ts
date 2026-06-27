@@ -14,10 +14,14 @@ class DeadHandleValidator extends BaseValidator {
                 const key = `${node.id}:${handle.id}`;
                 if (!wiredHandles.has(key)) {
                     findings.push(
-                        this.finding("warning", `output handle "${handle.id}" on node "${node.id}" has no outgoing edge`, {
-                            node_id: node.id,
-                            handle_id: handle.id,
-                        }),
+                        this.finding(
+                            "warning",
+                            `output handle "${handle.id}" on node "${node.id}" has no outgoing edge`,
+                            {
+                                node_id: node.id,
+                                handle_id: handle.id,
+                            },
+                        ),
                     );
                 }
             }

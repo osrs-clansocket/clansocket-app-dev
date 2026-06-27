@@ -16,25 +16,25 @@ const router = mountedRouter();
         "/:slug/homepage/images/:key",
         requireSiteAccount,
         handleAsync(async (req: Request, res: Response) => {
-        const siteAccountId = req.siteAccountId!;
-        const slug = String(req.params.slug ?? "").toLowerCase();
-        const key = String(req.params.key ?? "");
-        if (!isValidImageKey(key)) {
-            res.status(HTTP_BAD_REQUEST).json({ error: "bad_key" });
-            return;
-        }
-        const owned = loadOwnedClan(slug, siteAccountId);
-        if (!owned) {
-            res.status(HTTP_NOT_FOUND).json({ error: ERROR_CLAN_NOT_FOUND });
-            return;
-        }
-        await removeExistingForKey(owned.id, key);
-        recordClanAudit(owned.id, {
-            actor: siteAccountId,
-            action: ClanAuditActions.HomepageImageDeleted,
-            targetId: owned.id,
-            payload: { imageKey: key },
-        });
+            const siteAccountId = req.siteAccountId!;
+            const slug = String(req.params.slug ?? "").toLowerCase();
+            const key = String(req.params.key ?? "");
+            if (!isValidImageKey(key)) {
+                res.status(HTTP_BAD_REQUEST).json({ error: "bad_key" });
+                return;
+            }
+            const owned = loadOwnedClan(slug, siteAccountId);
+            if (!owned) {
+                res.status(HTTP_NOT_FOUND).json({ error: ERROR_CLAN_NOT_FOUND });
+                return;
+            }
+            await removeExistingForKey(owned.id, key);
+            recordClanAudit(owned.id, {
+                actor: siteAccountId,
+                action: ClanAuditActions.HomepageImageDeleted,
+                targetId: owned.id,
+                payload: { imageKey: key },
+            });
             res.status(HTTP_OK).json({ ok: true });
         }),
     );

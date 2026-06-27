@@ -1,4 +1,10 @@
-import type { ValidatorContext, ValidatorFinding, ValidatorResult, ValidatorSeverity, ValidatorSpec } from "../validator-types.js";
+import type {
+    ValidatorContext,
+    ValidatorFinding,
+    ValidatorResult,
+    ValidatorSeverity,
+    ValidatorSpec,
+} from "../validator-types.js";
 
 export abstract class BaseValidator implements ValidatorSpec {
     public abstract readonly id: string;

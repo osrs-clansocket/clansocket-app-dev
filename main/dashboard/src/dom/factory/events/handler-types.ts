@@ -5,6 +5,7 @@ export type ChangeHandler = (e: Event) => void;
 export type KeyHandler = (e: KeyboardEvent) => void;
 export type FocusHandler = (e: FocusEvent) => void;
 export type PointerHandler = (e: PointerEvent) => void;
+export type WheelHandler = (e: WheelEvent) => void;
 
 export interface HandlerDescriptor<T> {
     handler: T;
@@ -21,3 +22,4 @@ export type ChangeProp = ChangeHandler | HandlerDescriptor<ChangeHandler>;
 export type KeyProp = KeyHandler | HandlerDescriptor<KeyHandler>;
 export type FocusProp = FocusHandler | HandlerDescriptor<FocusHandler>;
 export type PointerProp = PointerHandler | HandlerDescriptor<PointerHandler>;
+export type WheelProp = WheelHandler | HandlerDescriptor<WheelHandler>;

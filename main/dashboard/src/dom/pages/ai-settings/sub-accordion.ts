@@ -48,10 +48,10 @@ export function buildSubAccordion(opts: SubAccordionOpts): Instance {
     const body = div(baseProps([BODY_CLASS]), [opts.body]);
     body.el.id = bodyId;
 
-    const sec = div(
-        { classes: [SECTION_CLASS], data: { "concern-id": opts.id }, context: null, meta: null },
-        [head, body],
-    );
+    const sec = div({ classes: [SECTION_CLASS], data: { "concern-id": opts.id }, context: null, meta: null }, [
+        head,
+        body,
+    ]);
     sec.trackDispose(
         effect(() => {
             sec.toggleClass(SECTION_OPEN_CLASS, open());

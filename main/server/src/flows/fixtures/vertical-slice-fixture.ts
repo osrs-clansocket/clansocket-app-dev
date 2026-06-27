@@ -20,10 +20,7 @@ export function verticalSliceFixture(): FlowDefinition {
         kind: "condition",
         row: 0,
         col: 1,
-        output_handles: [
-            outputHandleShape("yes", "yes"),
-            outputHandleShape("no", "no"),
-        ],
+        output_handles: [outputHandleShape("yes", "yes"), outputHandleShape("no", "no")],
     });
     const actionNode = nodeShape({
         id: "create-channel",

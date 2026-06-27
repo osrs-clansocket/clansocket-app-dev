@@ -127,10 +127,7 @@ export function buildLoaded(
         buildClanToolbar({ memberCount: state.members.length, controls }),
         state.host,
     ]);
-    const children: Instance[] = [
-        buildClanTabs(clan.slug, isMember, isManager, "roster"),
-        inner,
-    ];
+    const children: Instance[] = [buildClanTabs(clan.slug, isMember, isManager, "roster"), inner];
     return div(
         {
             classes: [ROUTE_CLAN_CLASS],

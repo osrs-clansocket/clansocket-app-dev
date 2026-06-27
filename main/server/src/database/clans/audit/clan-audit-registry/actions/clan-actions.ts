@@ -117,8 +117,6 @@ registerAuditAction(
     (p) => isString(p.imageKey) && isString(p.ext) && isNumber(p.byteSize),
 );
 
-registerAuditAction(
-    ClanAuditActions.HomepageImageDeleted,
-    def("server", ClanAuditTargetTypes.Homepage, true),
-    (p) => isString(p.imageKey),
+registerAuditAction(ClanAuditActions.HomepageImageDeleted, def("server", ClanAuditTargetTypes.Homepage, true), (p) =>
+    isString(p.imageKey),
 );

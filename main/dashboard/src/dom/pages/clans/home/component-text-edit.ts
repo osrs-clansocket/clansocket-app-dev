@@ -13,11 +13,7 @@ export function triggerTextEdit(componentId: string): boolean {
     return true;
 }
 
-export function buildTextHostPair(
-    ctx: HomepageContext,
-    c: HomepageComponent,
-    editor: EditorState,
-): Instance[] {
+export function buildTextHostPair(ctx: HomepageContext, c: HomepageComponent, editor: EditorState): Instance[] {
     const display = paragraph(textProps([TEXT_DISPLAY_CLASS], interpolate(c.payload.text ?? "", ctx)));
     let latestText = c.payload.text ?? "";
 

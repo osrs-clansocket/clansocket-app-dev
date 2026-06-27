@@ -2,7 +2,7 @@ export type { Instance, Child, BuildSpec } from "./core";
 export { build, createInstance, joinClasses, baseProps, textProps } from "./core";
 export { wireClick } from "./events/click-wirer.js";
 export { wireSubmit } from "./events/submit-wirer.js";
-export { wireDblClick, wireInput, wireChange, wireKey, wireFocus } from "./events/simple-wirer.js";
+export { wireDblClick, wireInput, wireChange, wireKey, wireFocus, wireWheel } from "./events/simple-wirer.js";
 export {
     wirePointerDown,
     wirePointerUp,
@@ -20,6 +20,7 @@ export type {
     KeyProp,
     FocusProp,
     PointerProp,
+    WheelProp,
     ClickHandler,
     SubmitHandler,
     InputHandler,
@@ -27,6 +28,7 @@ export type {
     KeyHandler,
     FocusHandler,
     PointerHandler,
+    WheelHandler,
 } from "./events/handler-types.js";
 export { applyEffects } from "./effects/effect-applier.js";
 export { addEffectClass, removeEffectClass } from "./effects/class-applier.js";

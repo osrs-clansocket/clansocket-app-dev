@@ -10,10 +10,7 @@ import {
     textProps,
 } from "../../factory";
 import { router } from "../../../managers/router";
-import {
-    CLAN_MANAGE_BTN_CLASS,
-    CLAN_MISSING_CLASS,
-} from "../../../shared/constants/clan/clan-page-constants.js";
+import { CLAN_MANAGE_BTN_CLASS, CLAN_MISSING_CLASS } from "../../../shared/constants/clan/clan-page-constants.js";
 import {
     PAGE_BANNER_ROW_CLASS,
     PAGE_BANNER_TAB_CLASS,
@@ -31,11 +28,7 @@ export function buildMissing(): Instance {
             context: null,
             meta: null,
         },
-        [
-            div(baseProps([ROUTE_ROOT_CLASS]), [
-                paragraph(textProps([CLAN_MISSING_CLASS], "Clan not found.")),
-            ]),
-        ],
+        [div(baseProps([ROUTE_ROOT_CLASS]), [paragraph(textProps([CLAN_MISSING_CLASS], "Clan not found."))])],
     );
 }
 
@@ -88,12 +81,7 @@ function buildClanTab(label: string, target: string, isActive: boolean): Instanc
     });
 }
 
-export function buildClanTabs(
-    slug: string,
-    isMember: boolean,
-    isManager: boolean,
-    active: ClanTabKey,
-): Instance {
+export function buildClanTabs(slug: string, isMember: boolean, isManager: boolean, active: ClanTabKey): Instance {
     const tabs: Instance[] = [
         buildClanTab("Home", `/clans/${slug}`, active === "home"),
         buildClanTab("Roster", `/clans/${slug}/roster`, active === "roster"),

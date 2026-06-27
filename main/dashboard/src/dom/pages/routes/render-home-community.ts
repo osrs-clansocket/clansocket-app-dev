@@ -10,7 +10,11 @@ import {
     ROUTE_HOME_SECTION_CLASS,
     ROUTE_HOME_SECTION_TITLE_CLASS,
 } from "../../../shared/constants/route/route-home-constants.js";
-import { COMMUNITY_BODY, COMMUNITY_DISCLAIMER, URL_DISCORD_INVITE } from "../../../shared/constants/home/render-home-data.js";
+import {
+    COMMUNITY_BODY,
+    COMMUNITY_DISCLAIMER,
+    URL_DISCORD_INVITE,
+} from "../../../shared/constants/home/render-home-data.js";
 import { externalAnchor } from "./home-external-anchor.js";
 
 function buildCommunityCta(): Instance {

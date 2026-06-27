@@ -4,22 +4,24 @@ import { persistedSignal } from "../../../../state/persistence/index.js";
 import { saveHomepageComponents } from "../../../../state/clans/homepage/homepage-client.js";
 import type { HomepageComponent } from "../../../../state/clans/homepage/types.js";
 import { defaultScaffold } from "../../../../state/clans/homepage/homepage-default-scaffold.js";
-import { Z_INDEX_MAX, Z_INDEX_MIN } from "@clansocket/constants/clan-homepage-tokens";
+import { CANVAS_BOUND_MAX, Z_INDEX_MAX, Z_INDEX_MIN } from "@clansocket/constants/clan-homepage-tokens";
 
 const CANVAS_W = 960;
-const CANVAS_H = 600;
+const CANVAS_H = CANVAS_BOUND_MAX;
 const COMPONENT_ID_RADIX = 36;
 const DEFAULT_X = 24;
 const DEFAULT_Y = 24;
 const DUPLICATE_OFFSET = 24;
 const IMAGE_DEFAULT_W = 240;
 const TEXT_DEFAULT_W = 320;
-const CONTAINER_DEFAULT_W = 480;
+const CONTAINER_DEFAULT_W = CANVAS_W;
 const CONTAINER_DEFAULT_H = 240;
 const HEADING_DEFAULT_H = 56;
 const PARAGRAPH_DEFAULT_H = 96;
 const SPACER_DEFAULT_H = 32;
 const HISTORY_CAP = 50;
+const SECTION_GAP = 16;
+const CHILD_INSET = 16;
 
 export interface EditorState extends Disposable {
     readonly slug: string;
@@ -31,6 +33,8 @@ export interface EditorState extends Disposable {
     setEditing(v: boolean): void;
     select(id: string | null): void;
     addComponent(kind: HomepageComponent["componentName"]): void;
+    addBottomSection(): void;
+    addChildComponent(kind: HomepageComponent["componentName"], parentId: string): void;
     deleteSelected(): void;
     duplicateSelected(): void;
     beginDragHistory(): void;
@@ -86,23 +90,44 @@ function defaultsForKind(kind: HomepageComponent["componentName"]): { w: number;
     return { w: TEXT_DEFAULT_W, h: kind === "heading" ? HEADING_DEFAULT_H : PARAGRAPH_DEFAULT_H };
 }
 
-function makeNewComponent(kind: HomepageComponent["componentName"], id: string): HomepageComponent {
-    const { w, h } = defaultsForKind(kind);
-    let payload: HomepageComponent["payload"] = {};
-    if (kind === "heading" || kind === "paragraph") payload = { text: `New ${kind}` };
-    else if (kind === "kpi") payload = { label: "Label", value: "Value" };
+function payloadFor(kind: HomepageComponent["componentName"]): HomepageComponent["payload"] {
+    if (kind === "heading" || kind === "paragraph") return { text: `New ${kind}` };
+    if (kind === "kpi") return { label: "Label", value: "Value" };
+    return {};
+}
+
+interface BuildOpts {
+    id: string;
+    kind: HomepageComponent["componentName"];
+    x: number;
+    y: number;
+    parentId: string | null;
+}
+
+function buildComponent(opts: BuildOpts): HomepageComponent {
+    const { w, h } = defaultsForKind(opts.kind);
     return {
-        componentId: id,
-        componentName: kind,
-        canvasX: DEFAULT_X,
-        canvasY: DEFAULT_Y,
+        componentId: opts.id,
+        componentName: opts.kind,
+        canvasX: clampX(opts.x, w),
+        canvasY: clampY(opts.y, h),
         canvasW: w,
         canvasH: h,
         zIndex: 0,
-        payload,
+        payload: payloadFor(opts.kind),
         tokenOverrides: {},
-        parentId: null,
+        parentId: opts.parentId,
     };
+}
+
+function topBottom(components: ReadonlyArray<HomepageComponent>): number {
+    let bottom = 0;
+    for (const c of components) {
+        if (c.parentId !== null) continue;
+        const b = c.canvasY + c.canvasH;
+        if (b > bottom) bottom = b;
+    }
+    return bottom;
 }
 
 export function createEditorState(slug: string, components$: ReadSignal<HomepageComponent[]>): EditorState {
@@ -161,11 +186,38 @@ export function createEditorState(slug: string, components$: ReadSignal<Homepage
         selectedId$.set(id);
     }
 
+    function appendBuilt(comp: HomepageComponent): void {
+        draft$.set([...draft$(), comp]);
+        selectedId$.set(comp.componentId);
+    }
+
+    function findInDraft(id: string): HomepageComponent | undefined {
+        return draft$().find((c) => c.componentId === id);
+    }
+
     function addComponent(kind: HomepageComponent["componentName"]): void {
         pushHistory();
-        const id = nextId();
-        draft$.set([...draft$(), makeNewComponent(kind, id)]);
-        selectedId$.set(id);
+        appendBuilt(buildComponent({ id: nextId(), x: DEFAULT_X, y: DEFAULT_Y, parentId: null, kind }));
+    }
+
+    function addBottomSection(): void {
+        pushHistory();
+        const y = topBottom(draft$()) + SECTION_GAP;
+        appendBuilt(buildComponent({ id: nextId(), kind: "container", x: 0, parentId: null, y }));
+    }
+
+    function addChildComponent(kind: HomepageComponent["componentName"], parentId: string): void {
+        if (kind === "container") return;
+        const parent = findInDraft(parentId);
+        if (parent === undefined || parent.componentName !== "container") return;
+        pushHistory();
+        appendBuilt(buildComponent({
+            id: nextId(),
+            x: parent.canvasX + CHILD_INSET,
+            y: parent.canvasY + CHILD_INSET,
+            kind,
+            parentId,
+        }));
     }
 
     function deleteSelected(): void {
@@ -198,23 +250,34 @@ export function createEditorState(slug: string, components$: ReadSignal<Homepage
     }
 
     function moveComponent(id: string, dx: number, dy: number): void {
-        draft$.set(replaceById(draft$(), id, (c) => ({
-            ...c,
-            canvasX: clampX(c.canvasX + dx, c.canvasW),
-            canvasY: clampY(c.canvasY + dy, c.canvasH),
-        })));
+        const components = draft$();
+        const target = findInDraft(id);
+        if (target === undefined) return;
+        const movingIds = new Set<string>([id]);
+        if (target.componentName === "container") {
+            for (const c of components) {
+                if (c.parentId === id) movingIds.add(c.componentId);
+            }
+        }
+        draft$.set(
+            components.map((c) => movingIds.has(c.componentId)
+                ? { ...c, canvasX: clampX(c.canvasX + dx, c.canvasW), canvasY: clampY(c.canvasY + dy, c.canvasH) }
+                : c),
+        );
     }
 
     function resizeComponent(id: string, x: number, y: number, w: number, h: number): void {
         const cw = clampW(w);
         const ch = clampH(h);
-        draft$.set(replaceById(draft$(), id, (c) => ({
-            ...c,
-            canvasX: clampX(x, cw),
-            canvasY: clampY(y, ch),
-            canvasW: cw,
-            canvasH: ch,
-        })));
+        draft$.set(
+            replaceById(draft$(), id, (c) => ({
+                ...c,
+                canvasX: clampX(x, cw),
+                canvasY: clampY(y, ch),
+                canvasW: cw,
+                canvasH: ch,
+            })),
+        );
     }
 
     function updateText(id: string, text: string): void {
@@ -229,19 +292,23 @@ export function createEditorState(slug: string, components$: ReadSignal<Homepage
 
     function setTokenOverride(id: string, property: string, value: string): void {
         pushHistory();
-        draft$.set(replaceById(draft$(), id, (c) => ({
-            ...c,
-            tokenOverrides: { ...c.tokenOverrides, [property]: value },
-        })));
+        draft$.set(
+            replaceById(draft$(), id, (c) => ({
+                ...c,
+                tokenOverrides: { ...c.tokenOverrides, [property]: value },
+            })),
+        );
     }
 
     function clearTokenOverride(id: string, property: string): void {
         pushHistory();
-        draft$.set(replaceById(draft$(), id, (c) => {
-            const next = { ...c.tokenOverrides };
-            delete next[property];
-            return { ...c, tokenOverrides: next };
-        }));
+        draft$.set(
+            replaceById(draft$(), id, (c) => {
+                const next = { ...c.tokenOverrides };
+                delete next[property];
+                return { ...c, tokenOverrides: next };
+            }),
+        );
     }
 
     function bringForward(id: string): void {
@@ -256,6 +323,14 @@ export function createEditorState(slug: string, components$: ReadSignal<Homepage
 
     function setParent(id: string, parentId: string | null): void {
         if (parentId === id) return;
+        const target = findInDraft(id);
+        if (target === undefined) return;
+        if (target.componentName === "container" && parentId !== null) return;
+        if (parentId !== null) {
+            const newParent = findInDraft(parentId);
+            if (newParent === undefined || newParent.componentName !== "container") return;
+        }
+        if (target.parentId === parentId) return;
         pushHistory();
         draft$.set(replaceById(draft$(), id, (c) => ({ ...c, parentId })));
     }
@@ -306,6 +381,8 @@ export function createEditorState(slug: string, components$: ReadSignal<Homepage
         setEditing,
         select,
         addComponent,
+        addBottomSection,
+        addChildComponent,
         deleteSelected,
         duplicateSelected,
         beginDragHistory,

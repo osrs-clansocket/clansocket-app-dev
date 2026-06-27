@@ -2,7 +2,9 @@ import { stepDispatcher } from "../dispatchers/step-dispatcher.js";
 import type { ExecContext } from "../context/exec-context.js";
 import type { DryRunTrace, DryRunStep } from "./dry-run-trace.js";
 
-export async function runDryRun(execTemplate: Omit<ExecContext, "status" | "exitReason" | "failureReason">): Promise<DryRunTrace> {
+export async function runDryRun(
+    execTemplate: Omit<ExecContext, "status" | "exitReason" | "failureReason">,
+): Promise<DryRunTrace> {
     const exec: ExecContext = {
         ...execTemplate,
         status: "RUNNING",

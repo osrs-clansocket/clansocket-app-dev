@@ -59,10 +59,7 @@ function persistComponents(clanId: string, components: ValidatedComponent[], act
 }
 
 (() => {
-    router.put(
-        "/:slug/homepage/components",
-        requireSiteAccount,
-        (req: Request, res: Response): void => {
+    router.put("/:slug/homepage/components", requireSiteAccount, (req: Request, res: Response): void => {
         const siteAccountId = req.siteAccountId!;
         const slug = String(req.params.slug ?? "").toLowerCase();
         const owned = loadOwnedClan(slug, siteAccountId);
@@ -84,9 +81,8 @@ function persistComponents(clanId: string, components: ValidatedComponent[], act
             targetId: owned.id,
             payload: { componentCount: components.length, fingerprint, errorCount: errors.length },
         });
-            res.status(HTTP_OK).json({ ok: true, count: components.length, fingerprint });
-        },
-    );
+        res.status(HTTP_OK).json({ ok: true, count: components.length, fingerprint });
+    });
 })();
 
 export default router;

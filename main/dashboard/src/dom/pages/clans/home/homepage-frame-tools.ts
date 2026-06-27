@@ -1,4 +1,5 @@
 import type { Instance } from "../../../factory";
+import type { HomepageComponentKind } from "../../../../state/clans/homepage/types.js";
 import type { EditorState } from "./homepage-editor-state.js";
 import { fitToContent } from "./homepage-resize.js";
 
@@ -8,6 +9,20 @@ export interface PropTool {
     readonly name: string;
     readonly label: string;
 }
+
+export interface ChildKindEntry {
+    readonly id: Exclude<HomepageComponentKind, "container">;
+    readonly name: string;
+    readonly label: string;
+}
+
+export const CHILD_KIND_ENTRIES: ReadonlyArray<ChildKindEntry> = [
+    { id: "heading", name: "type", label: "Heading" },
+    { id: "paragraph", name: "text-paragraph", label: "Paragraph" },
+    { id: "image", name: "image", label: "Image" },
+    { id: "kpi", name: "info-circle", label: "KPI tile" },
+    { id: "spacer", name: "arrows-expand", label: "Spacer" },
+];
 
 export const PROP_TOOLS: ReadonlyArray<PropTool> = [
     { id: "color", property: "--color", name: "palette-fill", label: "Text color" },
@@ -41,9 +56,26 @@ export interface ActionTool {
 }
 
 export const ACTION_TOOLS: ReadonlyArray<ActionTool> = [
-    { id: "fit", name: "arrows-angle-contract", label: "Fit to content", run: ({ host, id, state }) => fitToContent(host, id, state) },
+    {
+        id: "fit",
+        name: "arrows-angle-contract",
+        label: "Fit to content",
+        run: ({ host, id, state }) => fitToContent(host, id, state),
+    },
     { id: "duplicate", name: "copy", label: "Duplicate", run: ({ state }) => state.duplicateSelected() },
     { id: "z-up", name: "chevron-double-up", label: "Bring forward", run: ({ state, id }) => state.bringForward(id) },
-    { id: "z-down", name: "chevron-double-down", label: "Send backward", run: ({ state, id }) => state.sendBackward(id) },
+    {
+        id: "z-down",
+        name: "chevron-double-down",
+        label: "Send backward",
+        run: ({ state, id }) => state.sendBackward(id),
+    },
     { id: "delete", name: "trash", label: "Delete", run: ({ state }) => state.deleteSelected() },
 ];
+
+export const UNPARENT_TOOL: ActionTool = {
+    id: "unparent",
+    name: "box-arrow-up",
+    label: "Remove from section",
+    run: ({ state, id }) => state.setParent(id, null),
+};

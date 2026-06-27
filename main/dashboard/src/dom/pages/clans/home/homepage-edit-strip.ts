@@ -114,8 +114,16 @@ function buildEditingRows(opts: EditStripOpts, feedback$: ReturnType<typeof sign
         buildAddBtn("+ Spacer", () => state.addComponent("spacer")),
         buildAddBtn("+ KPI", () => state.addComponent("kpi")),
         buildVariablesToggle(varsOpen$),
-        buildHistoryBtn("↶ Undo", () => state.undo(), () => state.canUndo$()),
-        buildHistoryBtn("↷ Redo", () => state.redo(), () => state.canRedo$()),
+        buildHistoryBtn(
+            "↶ Undo",
+            () => state.undo(),
+            () => state.canUndo$(),
+        ),
+        buildHistoryBtn(
+            "↷ Redo",
+            () => state.redo(),
+            () => state.canRedo$(),
+        ),
         buildAddBtn("Apply scaffold", () => state.applyScaffold()),
         buildAddBtn("Clear all", () => state.clearAll()),
         button({
@@ -145,10 +153,7 @@ function buildEditingRows(opts: EditStripOpts, feedback$: ReturnType<typeof sign
         }),
         buildStatus(state, feedback$),
     ]);
-    const rows = div(baseProps([ROWS_CLASS]), [
-        mainRow,
-        buildVariablesRow({ state, open$: varsOpen$ }),
-    ]);
+    const rows = div(baseProps([ROWS_CLASS]), [mainRow, buildVariablesRow({ state, open$: varsOpen$ })]);
     return rows;
 }
 

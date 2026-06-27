@@ -20,7 +20,16 @@ import {
     PLUGIN_DB_PREFIX,
     PLUGIN_SCHEMA_KEY,
 } from "./db-constants.js";
-import { auditDbKey, clanDbKey, clanDirPath, flowsDbKey, pluginDbKey, uiDbKey, vaultDbKey, ensureClanDir } from "./db-paths.js";
+import {
+    auditDbKey,
+    clanDbKey,
+    clanDirPath,
+    flowsDbKey,
+    pluginDbKey,
+    uiDbKey,
+    vaultDbKey,
+    ensureClanDir,
+} from "./db-paths.js";
 
 export function getClanDb(clanId: string): Database.Database {
     const key = clanDbKey(clanId);

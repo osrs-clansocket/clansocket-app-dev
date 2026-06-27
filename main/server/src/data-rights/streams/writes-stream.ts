@@ -1,5 +1,12 @@
 import { EventEmitter } from "node:events";
-import { SCOPE_APP, SCOPE_CLAN, SCOPE_CLAN_AUDIT, SCOPE_CLAN_FLOWS, SCOPE_PLUGIN, SCOPE_VAREZ } from "../scopes/user-scope/index.js";
+import {
+    SCOPE_APP,
+    SCOPE_CLAN,
+    SCOPE_CLAN_AUDIT,
+    SCOPE_CLAN_FLOWS,
+    SCOPE_PLUGIN,
+    SCOPE_VAREZ,
+} from "../scopes/user-scope/index.js";
 
 export type DbWriteKind = "insert" | "update" | "delete" | "replace";
 

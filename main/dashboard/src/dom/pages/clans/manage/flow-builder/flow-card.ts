@@ -205,7 +205,7 @@ function buildBody(placement: FlowCardPlacement): Instance {
     const children: Instance[] = [];
     if (isEntry(placement)) children.push(row("Trigger", buildTriggerSelect(config)));
     children.push(conditionEditor);
-    if (!isEntry(placement)) children.push(buildWaitRow(config));
+    children.push(buildWaitRow(config));
     const stack = div(baseProps([STACK_CLASS]), children);
     return div(baseProps([BODY_CLASS]), [stack]);
 }
@@ -221,7 +221,7 @@ function rightAdorner(placement: FlowCardPlacement): Instance {
             meta: ["action"],
             onClick: () => addRight(placement.config.id),
         },
-        ["+"],
+        [icon({ provider: "bi", name: "plus-lg", ariaHidden: true, context: null, meta: null })],
     );
 }
 
@@ -236,7 +236,7 @@ function belowAdorner(placement: FlowCardPlacement): Instance {
             meta: ["action"],
             onClick: () => addBelow(placement.config.id),
         },
-        ["+"],
+        [icon({ provider: "bi", name: "plus-lg", ariaHidden: true, context: null, meta: null })],
     );
 }
 

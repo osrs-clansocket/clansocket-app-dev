@@ -34,7 +34,11 @@ function insertVariable(state: EditorState, key: string): boolean {
     return true;
 }
 
-function buildChip(state: EditorState, entry: { key: string; description: string }, hint$: ReturnType<typeof signal<string>>): Instance {
+function buildChip(
+    state: EditorState,
+    entry: { key: string; description: string },
+    hint$: ReturnType<typeof signal<string>>,
+): Instance {
     return div(
         {
             classes: [CHIP_CLASS],
@@ -47,10 +51,7 @@ function buildChip(state: EditorState, entry: { key: string; description: string
                 hint$.set(ok ? `Inserted {{${entry.key}}}` : "Select a heading or paragraph first");
             },
         },
-        [
-            span(textProps([KEY_CLASS], `{{${entry.key}}}`)),
-            span(textProps([DESC_CLASS], entry.description)),
-        ],
+        [span(textProps([KEY_CLASS], `{{${entry.key}}}`)), span(textProps([DESC_CLASS], entry.description))],
     );
 }
 
@@ -99,11 +100,7 @@ export function buildVariablesRow(opts: VariablesRowOpts): Instance {
     const { state, open$ } = opts;
     const hint$ = signal<string>("");
     const track = buildTrack(state, hint$);
-    const strip = div(baseProps([STRIP_CLASS]), [
-        buildArrow("left", track),
-        track,
-        buildArrow("right", track),
-    ]);
+    const strip = div(baseProps([STRIP_CLASS]), [buildArrow("left", track), track, buildArrow("right", track)]);
     const hint = div(baseProps([HINT_CLASS]));
     hint.trackDispose(
         effect(() => {

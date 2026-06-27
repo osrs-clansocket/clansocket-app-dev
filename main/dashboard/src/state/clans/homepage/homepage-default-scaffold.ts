@@ -63,15 +63,7 @@ function kpi(id: string, slot: number, label: string, value: string): HomepageCo
 
 export function defaultScaffold(): HomepageComponent[] {
     return [
-        seeded(
-            "default-icon",
-            "image",
-            CENTER_X,
-            24,
-            80,
-            80,
-            { imageKey: "__clan_icon__", imageVersion: 0 },
-        ),
+        seeded("default-icon", "image", CENTER_X, 24, 80, 80, { imageKey: "__clan_icon__", imageVersion: 0 }),
         seeded(
             "default-tagline",
             "paragraph",
@@ -85,16 +77,7 @@ export function defaultScaffold(): HomepageComponent[] {
         kpi("default-kpi-members", 0, "Members", "{{clan.memberCount}}"),
         kpi("default-kpi-established", 1, "Established", "{{clan.establishedYear}}"),
         kpi("default-kpi-status", 2, "Status", "{{clan.status}}"),
-        seeded(
-            "default-about-heading",
-            "heading",
-            CENTER_X,
-            240,
-            480,
-            24,
-            { text: "About" },
-            ABOUT_HEADING_OVERRIDES,
-        ),
+        seeded("default-about-heading", "heading", CENTER_X, 240, 480, 24, { text: "About" }, ABOUT_HEADING_OVERRIDES),
         seeded(
             "default-about-body",
             "paragraph",

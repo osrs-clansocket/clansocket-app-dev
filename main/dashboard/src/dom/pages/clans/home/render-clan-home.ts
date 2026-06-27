@@ -26,14 +26,9 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T | void> {
 }
 
 function buildMissing(): Instance {
-    return div(
-        { classes: [ROUTE_CLAN_CLASS], effects: onceEffect("route-enter-right"), context: null, meta: null },
-        [
-            div(baseProps([HOME_ROOT_CLASS]), [
-                span(textProps([MISSING_CLASS], "Clan not found.")),
-            ]),
-        ],
-    );
+    return div({ classes: [ROUTE_CLAN_CLASS], effects: onceEffect("route-enter-right"), context: null, meta: null }, [
+        div(baseProps([HOME_ROOT_CLASS]), [span(textProps([MISSING_CLASS], "Clan not found."))]),
+    ]);
 }
 
 async function resolveClan(slug: string): Promise<{ clan: ManagedClan; isMember: boolean } | null> {

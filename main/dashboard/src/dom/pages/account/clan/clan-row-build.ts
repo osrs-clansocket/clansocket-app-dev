@@ -60,11 +60,7 @@ function buildBarChildren(clan: ManagedClan, isManager: boolean): Instance[] {
     return children;
 }
 
-function makeBarClickHandler(
-    clan: ManagedClan,
-    isManager: boolean,
-    toggle: () => void,
-): (e: MouseEvent) => void {
+function makeBarClickHandler(clan: ManagedClan, isManager: boolean, toggle: () => void): (e: MouseEvent) => void {
     return (e: MouseEvent) => {
         const target = e.target as HTMLElement | null;
         if (target?.closest(`.${ACCOUNT_CLAN_ROW_VIEW_CLASS}`)) {

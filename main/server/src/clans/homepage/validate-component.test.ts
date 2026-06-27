@@ -59,7 +59,9 @@ test("strips HTML tags from payload.text", () => {
 });
 
 test("rejects invalid image key format", () => {
-    const { errors } = validateComponents([base({ componentName: "image", payload: { imageKey: "BAD KEY WITH SPACES" } })]);
+    const { errors } = validateComponents([
+        base({ componentName: "image", payload: { imageKey: "BAD KEY WITH SPACES" } }),
+    ]);
     assert.equal(errors[0].code, "image_key");
 });
 
@@ -74,7 +76,9 @@ test("rejects token value not in allowlist", () => {
 });
 
 test("accepts valid token override", () => {
-    const { components, errors } = validateComponents([base({ tokenOverrides: { "--color": "var(--base-gold-300)" } })]);
+    const { components, errors } = validateComponents([
+        base({ tokenOverrides: { "--color": "var(--base-gold-300)" } }),
+    ]);
     assert.equal(errors.length, 0);
     assert.equal(components[0].tokenOverrides["--color"], "var(--base-gold-300)");
 });

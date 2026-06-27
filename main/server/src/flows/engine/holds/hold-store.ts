@@ -18,7 +18,13 @@ export function setHold(
     flowId: string,
     flowName: string,
     actionId: string,
-    overlay: { hold_status: RuntimeHoldOverlay["hold_status"]; reason: string | null; expires_at: number | null; set_by_account_hash: string | null; set_by_rsn: string | null },
+    overlay: {
+        hold_status: RuntimeHoldOverlay["hold_status"];
+        reason: string | null;
+        expires_at: number | null;
+        set_by_account_hash: string | null;
+        set_by_rsn: string | null;
+    },
     now: number,
 ): void {
     const db = clanFlowsDb(clanId);

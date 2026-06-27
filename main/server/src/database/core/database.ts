@@ -14,7 +14,15 @@ import { DATA_DIR, staticDbKey } from "./db-paths.js";
 export { DB_NAMES, PLUGIN_DB_PREFIX, STATIC_DB_NAMES } from "./db-constants.js";
 export { clanDirPath, clanRelPath, ensureClanDir } from "./db-paths.js";
 
-export { closeClanConnections, clanAuditDb, clanFlowsDb, clanUiDb, getClanDb, clanPluginDb, pluginModes } from "./clans.js";
+export {
+    closeClanConnections,
+    clanAuditDb,
+    clanFlowsDb,
+    clanUiDb,
+    getClanDb,
+    clanPluginDb,
+    pluginModes,
+} from "./clans.js";
 
 export { discordGuildDb } from "../discord/discord.js";
 

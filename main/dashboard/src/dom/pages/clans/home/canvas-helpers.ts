@@ -19,24 +19,33 @@ export function patchComponent(host: Instance, c: HomepageComponent): void {
         "--clan-home-z": String(c.zIndex),
         ...c.tokenOverrides,
     });
+    if (c.parentId === null) host.removeAttr("data-parent-id");
+    else host.setAttr("data-parent-id", c.parentId);
 }
 
 export function computeContentHeight(items: ReadonlyArray<HomepageComponent>): number {
     let max = 0;
     for (const c of items) {
-        if (c.parentId !== null) continue;
         const bottom = c.canvasY + c.canvasH;
         if (bottom > max) max = bottom;
     }
     return max;
 }
 
-export function makeCreate(
-    ctx: HomepageContext,
-    editor: EditorState | null,
-): (c: HomepageComponent) => Instance {
+export function orderForPaint(items: ReadonlyArray<HomepageComponent>): HomepageComponent[] {
+    const containers: HomepageComponent[] = [];
+    const rest: HomepageComponent[] = [];
+    for (const c of items) {
+        if (c.componentName === "container") containers.push(c);
+        else rest.push(c);
+    }
+    return [...containers, ...rest];
+}
+
+export function makeCreate(ctx: HomepageContext, editor: EditorState | null): (c: HomepageComponent) => Instance {
     return (c: HomepageComponent): Instance => {
         const host = buildComponentHost(ctx, c, editor);
+        if (c.parentId !== null) host.setAttr("data-parent-id", c.parentId);
         if (editor !== null) {
             attachComponentEditor(host, c.componentId, editor);
             attachResizeHandles(host, c.componentId, editor);

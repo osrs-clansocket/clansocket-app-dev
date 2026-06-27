@@ -1,9 +1,6 @@
 import { div, image, paragraph, span, type Instance, baseProps, textProps } from "../../../factory";
 import type { HomepageComponent } from "../../../../state/clans/homepage/types.js";
-import {
-    interpolate,
-    type HomepageContext,
-} from "../../../../state/clans/homepage/homepage-variables.js";
+import { interpolate, type HomepageContext } from "../../../../state/clans/homepage/homepage-variables.js";
 import { isDefaultIconKey } from "../../../../state/clans/homepage/homepage-default-scaffold.js";
 import type { EditorState } from "./homepage-editor-state.js";
 import { COMPONENT_IMAGE_CLASS, TEXT_DISPLAY_CLASS } from "./component-classes.js";
@@ -38,10 +35,7 @@ function resolveImageSrc(ctx: HomepageContext, c: HomepageComponent): string {
 function buildKpi(ctx: HomepageContext, c: HomepageComponent): Instance[] {
     const label = interpolate(c.payload.label ?? "", ctx);
     const value = interpolate(c.payload.value ?? "", ctx);
-    return [
-        span(textProps([KPI_LABEL_CLASS], label)),
-        span(textProps([KPI_VALUE_CLASS], value)),
-    ];
+    return [span(textProps([KPI_LABEL_CLASS], label)), span(textProps([KPI_VALUE_CLASS], value))];
 }
 
 export function buildContent(

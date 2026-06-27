@@ -58,8 +58,8 @@
     font-size: var(--sp-6);
 }
 
-.clans-home__bottom-adder-popover {
-    display: none;
+.clans-home__add-child-popover {
+    display: flex;
     flex-direction: column;
     gap: var(--sp-1);
     padding: var(--sp-2);
@@ -70,18 +70,14 @@
     backdrop-filter: blur(var(--blur-md));
 }
 
-.clans-home__bottom-adder-popover.is-open {
-    display: flex;
-}
-
-.clans-home__bottom-adder-row {
+.clans-home__add-child-row {
     display: flex;
     align-items: center;
     gap: var(--sp-2);
     padding-inline-end: var(--sp-2);
 }
 
-.clans-home__bottom-adder-label {
+.clans-home__add-child-label {
     font-size: var(--fs-2xs);
     color: var(--base-cream-100);
 }
@@ -161,9 +157,19 @@
     background: rgb(from var(--base-graphite-900) r g b / 0.15);
 }
 
+.clans-home__component--container.is-drop-target {
+    border-color: var(--base-gold-500);
+    background: rgb(from var(--base-gold-500) r g b / 0.18);
+    box-shadow: var(--shadow-glow);
+}
+
 .clans-home__container-body {
     inline-size: 100%;
     block-size: 100%;
+}
+
+.clans-home__frame-tool.is-hidden {
+    display: none;
 }
 
 .clans-home__component-text {

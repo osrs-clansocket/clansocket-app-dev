@@ -1,10 +1,6 @@
 import { BaseRegistry } from "../../base/base-registry.js";
 import { manifest as discordManifest } from "../../discord/flow-api/manifest.js";
-import type {
-    CapabilityManifest,
-    OperationSpec,
-    TriggerSpec,
-} from "./registry-types.js";
+import type { CapabilityManifest, OperationSpec, TriggerSpec } from "./registry-types.js";
 
 class CapabilityRegistryStore extends BaseRegistry<string, CapabilityManifest> {}
 

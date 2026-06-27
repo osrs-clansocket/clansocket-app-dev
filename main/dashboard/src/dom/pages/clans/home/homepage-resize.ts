@@ -25,7 +25,12 @@ function findComponent(state: EditorState, id: string): HomepageComponent | unde
     return state.draft$().find((c) => c.componentId === id);
 }
 
-function applyResize(dir: Dir, s: ResizeSession, dx: number, dy: number): { x: number; y: number; w: number; h: number } {
+function applyResize(
+    dir: Dir,
+    s: ResizeSession,
+    dx: number,
+    dy: number,
+): { x: number; y: number; w: number; h: number } {
     let x = s.baseX;
     let y = s.baseY;
     let w = s.baseW;

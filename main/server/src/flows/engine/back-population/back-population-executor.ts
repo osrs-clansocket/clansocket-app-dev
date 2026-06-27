@@ -21,10 +21,10 @@ export async function backPopulateOnFirstPublish(
 ): Promise<BackPopulationResult> {
     const db = clanFlowsDb(clanId);
     const row = db
-        .prepare(
-            "SELECT flow_id, flow_name, definition_json, published_version FROM clan_flows WHERE flow_id = ?",
-        )
-        .get(flowId) as { flow_id: string; flow_name: string; definition_json: string; published_version: number | null } | undefined;
+        .prepare("SELECT flow_id, flow_name, definition_json, published_version FROM clan_flows WHERE flow_id = ?")
+        .get(flowId) as
+        | { flow_id: string; flow_name: string; definition_json: string; published_version: number | null }
+        | undefined;
     if (!row || !row.published_version) return { enrolled: 0, skipped: historicalEvents.length };
     const definition = parseFlowDefinition(JSON.parse(row.definition_json));
     if (!definition.backpopulate_on_first_publish) return { enrolled: 0, skipped: historicalEvents.length };

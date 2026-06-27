@@ -28,7 +28,14 @@ router.get("/templates/:id", (req, res) => {
         res.status(404).json({ error: "not found" });
         return;
     }
-    res.json({ template: { id: template.id, name: template.name, description: template.description, definition: template.build() } });
+    res.json({
+        template: {
+            id: template.id,
+            name: template.name,
+            description: template.description,
+            definition: template.build(),
+        },
+    });
 });
 
 router.get("/capabilities", (_req, res) => {
@@ -160,9 +167,7 @@ router.patch("/:clanId/:flowId", (req, res) => {
         const now = 0;
         const db = clanFlowsDb(req.params.clanId);
         const result = db
-            .prepare(
-                "UPDATE clan_flows SET flow_name = ?, definition_json = ?, updated_at = ? WHERE flow_id = ?",
-            )
+            .prepare("UPDATE clan_flows SET flow_name = ?, definition_json = ?, updated_at = ? WHERE flow_id = ?")
             .run(flowName, JSON.stringify(definition), now, req.params.flowId);
         if (result.changes === 0) {
             res.status(404).json({ error: "not found" });
@@ -214,7 +219,9 @@ router.post("/:clanId/:flowId/dry-run", async (req, res) => {
         const db = clanFlowsDb(req.params.clanId);
         const row = db
             .prepare("SELECT flow_id, flow_name, definition_json, published_version FROM clan_flows WHERE flow_id = ?")
-            .get(req.params.flowId) as { flow_id: string; flow_name: string; definition_json: string; published_version: number | null } | undefined;
+            .get(req.params.flowId) as
+            | { flow_id: string; flow_name: string; definition_json: string; published_version: number | null }
+            | undefined;
         if (!row) {
             res.status(404).json({ error: "not found" });
             return;

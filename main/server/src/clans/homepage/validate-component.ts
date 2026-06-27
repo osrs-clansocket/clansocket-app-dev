@@ -10,11 +10,7 @@ import {
     isAllowedComponentKind,
     type ComponentKind,
 } from "@clansocket/constants/clan-homepage-tokens";
-import type {
-    ValidatedComponent,
-    ValidationError,
-    ValidationResult,
-} from "./homepage-validation-types.js";
+import type { ValidatedComponent, ValidationError, ValidationResult } from "./homepage-validation-types.js";
 
 function clamp(n: number, lo: number, hi: number): number {
     return Math.max(lo, Math.min(hi, Math.floor(n)));
@@ -124,12 +120,20 @@ function validateParents(components: ValidatedComponent[], errors: ValidationErr
         if (c.parentId === null) continue;
         const parent = byId.get(c.parentId);
         if (parent === undefined) {
-            errors.push({ componentId: c.componentId, code: "parent_missing", detail: `parent ${c.parentId} not in save` });
+            errors.push({
+                componentId: c.componentId,
+                code: "parent_missing",
+                detail: `parent ${c.parentId} not in save`,
+            });
             c.parentId = null;
             continue;
         }
         if (parent.componentName !== "container") {
-            errors.push({ componentId: c.componentId, code: "parent_not_container", detail: `parent ${c.parentId} is ${parent.componentName}` });
+            errors.push({
+                componentId: c.componentId,
+                code: "parent_not_container",
+                detail: `parent ${c.parentId} is ${parent.componentName}`,
+            });
             c.parentId = null;
             continue;
         }
@@ -137,7 +141,11 @@ function validateParents(components: ValidatedComponent[], errors: ValidationErr
         const seen = new Set<string>([c.componentId]);
         while (cursor !== undefined && cursor.parentId !== null) {
             if (seen.has(cursor.componentId)) {
-                errors.push({ componentId: c.componentId, code: "parent_cycle", detail: `cycle through ${cursor.componentId}` });
+                errors.push({
+                    componentId: c.componentId,
+                    code: "parent_cycle",
+                    detail: `cycle through ${cursor.componentId}`,
+                });
                 c.parentId = null;
                 break;
             }

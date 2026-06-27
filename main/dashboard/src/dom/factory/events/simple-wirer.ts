@@ -1,4 +1,12 @@
-import type { ChangeProp, ClickProp, FocusProp, HandlerDescriptor, InputProp, KeyProp } from "./handler-types.js";
+import type {
+    ChangeProp,
+    ClickProp,
+    FocusProp,
+    HandlerDescriptor,
+    InputProp,
+    KeyProp,
+    WheelProp,
+} from "./handler-types.js";
 import { resolveProp } from "./prop-resolver.js";
 
 function wireSimple<T>(el: HTMLElement, evt: string, prop: T | HandlerDescriptor<T>): void {
@@ -24,4 +32,8 @@ export function wireFocus(el: HTMLElement, evt: "focus" | "blur", prop: FocusPro
 
 export function wireDblClick(el: HTMLElement, prop: ClickProp): void {
     wireSimple(el, "dblclick", prop);
+}
+
+export function wireWheel(el: HTMLElement, prop: WheelProp): void {
+    wireSimple(el, "wheel", prop);
 }
