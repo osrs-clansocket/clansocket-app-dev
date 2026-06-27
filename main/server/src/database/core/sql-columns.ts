@@ -28,6 +28,7 @@ export const SQL_TABLES = {
     CLANSOCKET_WEBAUTHN_CHALLENGES: "clansocket_webauthn_challenges",
     CLAN_ROSTERS: "clan_rosters",
     CLAN_UI_COMPONENTS: "clan_ui_components",
+    CLAN_FLOWS: "clan_flows",
     VAREZ_CHAIN_TURNS: "varez_chain_turns",
     VAREZ_PINS: "varez_pins",
     VAREZ_USER_ACTION_LOG: "varez_user_action_log",

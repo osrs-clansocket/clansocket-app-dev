@@ -9,6 +9,7 @@ const MINUTE_MS = 60_000;
 const HOUR_MS = 3_600_000;
 const DAY_MS = 86_400_000;
 const WEEK_MS = 7 * DAY_MS;
+const QUEUE_DEFER_MS = 5_000;
 
 interface LoopRow {
     flow_id: string;
@@ -37,6 +38,14 @@ function intervalToMs(value: number, unit: string): number {
     }
 }
 
+type OverlapPolicy = "skip" | "queue" | "cancel";
+
+function normalizeOverlapPolicy(raw: string): OverlapPolicy {
+    if (raw === "queue") return "queue";
+    if (raw === "cancel" || raw === "cancel-previous") return "cancel";
+    return "skip";
+}
+
 class LoopTickDispatcher extends BaseDispatcher {
     public readonly kind = "loop-tick-dispatcher";
 
@@ -52,12 +61,16 @@ class LoopTickDispatcher extends BaseDispatcher {
             const claimed = this.claim(clanId, row, now);
             if (!claimed) continue;
             const inflight = this.countInflight(clanId, row.flow_id);
-            const policy = row.on_overlap || "skip";
+            const policy = normalizeOverlapPolicy(row.on_overlap);
             if (inflight > 0 && policy === "skip") {
                 this.advance(clanId, row, now);
                 continue;
             }
-            if (inflight > 0 && policy === "cancel-previous") {
+            if (inflight > 0 && policy === "queue") {
+                this.deferQueued(clanId, row, now);
+                continue;
+            }
+            if (inflight > 0 && policy === "cancel") {
                 this.cancelInflight(clanId, row.flow_id, now);
             }
             await this.fire(clanId, row, now);
@@ -65,6 +78,13 @@ class LoopTickDispatcher extends BaseDispatcher {
             fired.push(row.flow_id);
         }
         return fired;
+    }
+
+    private deferQueued(clanId: string, row: LoopRow, now: number): void {
+        const db = clanFlowsDb(clanId);
+        db.prepare(
+            "UPDATE clan_flow_loops SET next_fire_at = ?, locked_by = NULL, locked_at = NULL WHERE flow_id = ?",
+        ).run(now + QUEUE_DEFER_MS, row.flow_id);
     }
 
     private countInflight(clanId: string, flowId: string): number {

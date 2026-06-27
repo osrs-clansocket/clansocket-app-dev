@@ -17,7 +17,7 @@ export function build(slug: string): HTMLElement {
     void ensureCapabilitiesLoaded();
     const clanId = resolveClanId(slug);
     const header = buildFlowHeader(clanId);
-    const rail = buildFlowListRail();
+    const rail = buildFlowListRail(clanId);
     const grid = buildFlowGrid(clanId);
     const host = div(baseProps([ROOT_CLASS]), [header, rail, grid]);
     return host.el;

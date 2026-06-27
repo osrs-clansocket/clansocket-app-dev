@@ -6,6 +6,7 @@ import {
     baseProps,
     textProps,
     effect,
+    signal,
     inlineConfirm,
     INLINE_CONFIRM_HOST_CLASS,
     BTN_VARIANT_BARE,
@@ -18,12 +19,18 @@ import { addRight, addBelow, removeCard, updateCard, changeCardKind, placementsC
 import {
     capabilitiesSignal,
     flatTriggerOptions,
+    flatOperationOptions,
     operationsByCapability,
     lookupOperation,
     fieldOptionsForScope,
 } from "../../../../../state/flows/capabilities-store.js";
 import { schemaForm } from "./schema-form/index.js";
 import { dryRunTraceSignal, decisionForNode } from "../../../../../state/flows/dry-run-store.js";
+import {
+    getValueOptions as readValueOptions,
+    ensureValueOptions,
+    valueOptionsTick,
+} from "../../../../../state/flows/value-options-store.js";
 import type {
     ActionCardConfig,
     CardKind,
@@ -198,13 +205,37 @@ function kindSwitcher(config: FlowCardConfig, placement: FlowCardPlacement): Ins
     return row("Kind", select);
 }
 
+export const SCHEDULE_TRIGGER_VALUE = "__schedule__";
+export const LOOP_TRIGGER_VALUE = "__loop__";
+export const MANUAL_TRIGGER_VALUE = "__manual__";
+
 function triggerOptions(): readonly SelectOption[] {
     const fromRegistry = flatTriggerOptions();
-    if (fromRegistry.length === 0) return [TRIGGER_PLACEHOLDER];
-    return [
+    const base: SelectOption[] = [
         TRIGGER_PLACEHOLDER,
+        { value: SCHEDULE_TRIGGER_VALUE, label: "Schedule — cron" },
+        { value: LOOP_TRIGGER_VALUE, label: "Loop — recurring interval" },
+        { value: MANUAL_TRIGGER_VALUE, label: "Manual — runs only on demand" },
+    ];
+    if (fromRegistry.length === 0) return base;
+    return [
+        ...base,
         ...fromRegistry.map((opt) => ({ value: opt.value, label: `${opt.group} — ${opt.label}` })),
     ];
+}
+
+function triggerNameFor(value: string): string {
+    if (value === SCHEDULE_TRIGGER_VALUE) return "On schedule";
+    if (value === LOOP_TRIGGER_VALUE) return "On interval";
+    if (value === MANUAL_TRIGGER_VALUE) return "Manual run";
+    if (value.length === 0) return "Trigger";
+    const option = triggerOptions().find((o) => o.value === value);
+    return option?.label ?? value;
+}
+
+function triggerCardWasDefaultNamed(name: string, prevTriggerType: string): boolean {
+    if (name === "Trigger") return true;
+    return triggerNameFor(prevTriggerType) === name;
 }
 
 function buildTriggerSelect(config: TriggerCardConfig): Instance {
@@ -214,18 +245,48 @@ function buildTriggerSelect(config: TriggerCardConfig): Instance {
         const options = triggerOptions();
         const select = buildGlassSelect(`trigger-${config.id}`, options, config.triggerType);
         const hidden = select.el.querySelector<HTMLInputElement>("input[type='hidden']");
-        if (hidden) hidden.addEventListener("change", () => updateCard(config.id, { triggerType: hidden.value }));
+        if (hidden) {
+            hidden.addEventListener("change", () => {
+                const next = hidden.value;
+                const patch: Record<string, unknown> = { triggerType: next };
+                if (triggerCardWasDefaultNamed(config.name, config.triggerType)) {
+                    patch.name = triggerNameFor(next);
+                }
+                updateCard(config.id, patch);
+            });
+        }
         host.setChildren(select);
     });
     return host;
 }
 
+const CAPABILITY_FILTER_ALL = "__all__";
+
+function capabilityFromOpId(opId: string): string {
+    const colonIdx = opId.indexOf(":");
+    return colonIdx > 0 ? opId.slice(0, colonIdx) : CAPABILITY_FILTER_ALL;
+}
+
 function buildOperationSelect(config: ActionCardConfig): Instance {
-    const host = div(baseProps([]));
+    const filterSignal = signal<string>(capabilityFromOpId(config.operationId));
+    const filterHost = div(baseProps([]));
+    const opHost = div(baseProps([]));
     effect(() => {
         const grouped = operationsByCapability();
+        const capabilities = Object.keys(grouped).sort();
+        const filterOptions: SelectOption[] = [{ value: CAPABILITY_FILTER_ALL, label: "All capabilities" }];
+        for (const cap of capabilities) filterOptions.push({ value: cap, label: cap });
+        const filterSelect = buildGlassSelect(`op-filter-${config.id}`, filterOptions, filterSignal());
+        const filterHidden = filterSelect.el.querySelector<HTMLInputElement>("input[type='hidden']");
+        if (filterHidden) filterHidden.addEventListener("change", () => filterSignal.set(filterHidden.value));
+        filterHost.setChildren(filterSelect);
+    });
+    effect(() => {
+        const grouped = operationsByCapability();
+        const active = filterSignal();
         const flat: SelectOption[] = [OPERATION_PLACEHOLDER];
         for (const [capName, ops] of Object.entries(grouped)) {
+            if (active !== CAPABILITY_FILTER_ALL && capName !== active) continue;
             for (const op of ops) {
                 const tierTag = op.safetyTier === "manual" ? " [MANUAL]" : "";
                 flat.push({ value: op.value, label: `${capName} — ${op.label}${tierTag}` });
@@ -234,12 +295,34 @@ function buildOperationSelect(config: ActionCardConfig): Instance {
         const select = buildGlassSelect(`operation-${config.id}`, flat, config.operationId);
         const hidden = select.el.querySelector<HTMLInputElement>("input[type='hidden']");
         if (hidden)
-            hidden.addEventListener("change", () =>
-                updateCard(config.id, { operationId: hidden.value, inputValues: {}, openExits: [] }),
-            );
-        host.setChildren(select);
+            hidden.addEventListener("change", () => {
+                const next = hidden.value;
+                const patch: Record<string, unknown> = {
+                    operationId: next,
+                    inputValues: {},
+                    openExits: [],
+                };
+                if (actionCardWasDefaultNamed(config.name, config.operationId)) {
+                    patch.name = operationCardNameFor(next);
+                }
+                updateCard(config.id, patch);
+            });
+        opHost.setChildren(select);
     });
-    return host;
+    return div(baseProps(["clans-manage__flow-builder-operation-picker"]), [filterHost, opHost]);
+}
+
+function operationCardNameFor(opId: string): string {
+    if (opId.length === 0) return "Action";
+    for (const opt of flatOperationOptions()) {
+        if (opt.value === opId) return opt.label;
+    }
+    return opId;
+}
+
+function actionCardWasDefaultNamed(name: string, prevOpId: string): boolean {
+    if (name === "Action") return true;
+    return operationCardNameFor(prevOpId) === name;
 }
 
 function buildActionInputForm(config: ActionCardConfig, clanId: string): Instance {
@@ -304,12 +387,28 @@ function buildExitsRow(config: ActionCardConfig): Instance {
 function buildConditionRows(
     config: TriggerCardConfig | ConditionCardConfig,
     triggerTypeGetter: () => string,
+    clanId: string,
 ): Instance {
+    const scope = config.kind === "trigger" ? "trigger" : "entity";
     return buildConditionEditor(config.conditions as ConditionRow[], {
         onChange: (next) => updateCard(config.id, { conditions: next }),
         getTriggerType: triggerTypeGetter,
-        getValueOptions: () => [],
-        subscribeValueOptions: () => NEVER_UNSUBSCRIBE,
+        getValueOptions: (triggerType, field) => {
+            const options = readValueOptions(scope, triggerType, field);
+            if (options.length === 0) void ensureValueOptions(scope, triggerType, field, clanId);
+            return options;
+        },
+        subscribeValueOptions: (listener) => {
+            let last = valueOptionsTick();
+            const disposable = effect(() => {
+                const next = valueOptionsTick();
+                if (next !== last) {
+                    last = next;
+                    listener();
+                }
+            });
+            return () => disposable.dispose();
+        },
         subscribeTriggerChange: () => NEVER_UNSUBSCRIBE,
         getFieldOptions: (triggerType) => fieldOptionsForScope(triggerType.length > 0 ? triggerType : null),
     });
@@ -343,11 +442,78 @@ function buildWaitRow(config: DelayCardConfig): Instance {
     return row("Wait for", pair);
 }
 
-function buildTriggerBody(config: TriggerCardConfig, placement: FlowCardPlacement): Instance {
+const SCHEDULE_SCHEMA = {
+    type: "object",
+    additionalProperties: false,
+    properties: {
+        cronExpression: { type: "string", format: "cron-preset", title: "Schedule" },
+        timezone: { type: "string", format: "iana-timezone", title: "Timezone" },
+    },
+};
+
+const LOOP_SCHEMA = {
+    type: "object",
+    additionalProperties: false,
+    properties: {
+        intervalValue: { type: "integer", title: "Every", minimum: 1 },
+        intervalUnit: {
+            type: "string",
+            enum: ["minutes", "hours", "days", "weeks"],
+            enumLabels: ["Minutes", "Hours", "Days", "Weeks"],
+            title: "Unit",
+        },
+        onOverlap: {
+            type: "string",
+            enum: ["skip", "queue", "cancel"],
+            enumLabels: [
+                "Skip if previous still running",
+                "Queue and run after previous",
+                "Cancel previous and start new",
+            ],
+            title: "On overlap",
+        },
+    },
+};
+
+function defaultScheduleConfig(): Record<string, unknown> {
+    return { cronExpression: "0 * * * *", timezone: "UTC" };
+}
+
+function defaultLoopConfig(): Record<string, unknown> {
+    return { intervalValue: 5, intervalUnit: "minutes", onOverlap: "skip" };
+}
+
+function buildScheduleConfigForm(config: TriggerCardConfig): Instance {
+    const current = (config.scheduleConfig as Record<string, unknown> | null) ?? defaultScheduleConfig();
+    return schemaForm({
+        schema: SCHEDULE_SCHEMA,
+        value: current,
+        onChange: (next) => updateCard(config.id, { scheduleConfig: next }),
+        ctx: { fieldName: "schedule", clanId: "", capabilityId: "schedule", operationId: config.id },
+    });
+}
+
+function buildLoopConfigForm(config: TriggerCardConfig): Instance {
+    const current = (config.loopConfig as Record<string, unknown> | null) ?? defaultLoopConfig();
+    return schemaForm({
+        schema: LOOP_SCHEMA,
+        value: current,
+        onChange: (next) => updateCard(config.id, { loopConfig: next }),
+        ctx: { fieldName: "loop", clanId: "", capabilityId: "loop", operationId: config.id },
+    });
+}
+
+function buildTriggerBody(config: TriggerCardConfig, placement: FlowCardPlacement, clanId: string): Instance {
     const children: Instance[] = [];
     children.push(kindSwitcher(config, placement));
     children.push(row("Trigger", buildTriggerSelect(config)));
-    children.push(buildConditionRows(config, () => config.triggerType));
+    if (config.triggerType === SCHEDULE_TRIGGER_VALUE) {
+        children.push(row("Config", buildScheduleConfigForm(config)));
+    } else if (config.triggerType === LOOP_TRIGGER_VALUE) {
+        children.push(row("Config", buildLoopConfigForm(config)));
+    } else if (config.triggerType !== MANUAL_TRIGGER_VALUE) {
+        children.push(buildConditionRows(config, () => config.triggerType, clanId));
+    }
     const stack = div(baseProps([STACK_CLASS]), children);
     return div(baseProps([BODY_CLASS]), [stack]);
 }
@@ -362,10 +528,10 @@ function buildActionBody(config: ActionCardConfig, placement: FlowCardPlacement,
     return div(baseProps([BODY_CLASS]), [stack]);
 }
 
-function buildConditionBody(config: ConditionCardConfig, placement: FlowCardPlacement): Instance {
+function buildConditionBody(config: ConditionCardConfig, placement: FlowCardPlacement, clanId: string): Instance {
     const children: Instance[] = [];
     children.push(kindSwitcher(config, placement));
-    children.push(buildConditionRows(config, () => ""));
+    children.push(buildConditionRows(config, () => "", clanId));
     const stack = div(baseProps([STACK_CLASS]), children);
     return div(baseProps([BODY_CLASS]), [stack]);
 }
@@ -396,9 +562,9 @@ function buildWaitForEventBody(config: WaitForEventCardConfig, placement: FlowCa
 
 function buildBody(placement: FlowCardPlacement, clanId: string): Instance {
     const config = placement.config;
-    if (config.kind === "trigger") return buildTriggerBody(config, placement);
+    if (config.kind === "trigger") return buildTriggerBody(config, placement, clanId);
     if (config.kind === "action") return buildActionBody(config, placement, clanId);
-    if (config.kind === "condition") return buildConditionBody(config, placement);
+    if (config.kind === "condition") return buildConditionBody(config, placement, clanId);
     if (config.kind === "delay") return buildDelayBody(config, placement);
     return buildWaitForEventBody(config, placement);
 }

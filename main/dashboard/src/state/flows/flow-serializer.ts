@@ -129,7 +129,24 @@ function deriveEdges(placements: readonly FlowCardPlacement[]): readonly Seriali
     return edges;
 }
 
+const SCHEDULE_TRIGGER_VALUE = "__schedule__";
+const LOOP_TRIGGER_VALUE = "__loop__";
+const MANUAL_TRIGGER_VALUE = "__manual__";
+
+const LOOP_UNIT_MS: Readonly<Record<string, number>> = {
+    minutes: 60_000,
+    hours: 3_600_000,
+    days: 86_400_000,
+    weeks: 7 * 86_400_000,
+};
+
 function inferTriggerType(meta: FlowMeta): "event" | "manual" | "schedule" | "loop" {
+    const entry = placementAt(meta.placements, 0, 0);
+    if (entry && entry.config.kind === "trigger") {
+        if (entry.config.triggerType === SCHEDULE_TRIGGER_VALUE) return "schedule";
+        if (entry.config.triggerType === LOOP_TRIGGER_VALUE) return "loop";
+        if (entry.config.triggerType === MANUAL_TRIGGER_VALUE) return "manual";
+    }
     if (meta.loop) return "loop";
     if (meta.scheduleAtMs !== null) return "schedule";
     return "event";
@@ -142,12 +159,32 @@ function entryNodeId(placements: readonly FlowCardPlacement[]): string {
 }
 
 function triggerConfigFor(meta: FlowMeta): Readonly<Record<string, unknown>> {
-    if (meta.loop) return { loop_interval_ms: 60_000 };
-    if (meta.scheduleAtMs !== null) return { schedule_cron: "" };
     const entry = placementAt(meta.placements, 0, 0);
     if (entry && entry.config.kind === "trigger") {
-        return { event_source: entry.config.triggerType };
+        const cfg = entry.config;
+        if (cfg.triggerType === SCHEDULE_TRIGGER_VALUE) {
+            const sc = cfg.scheduleConfig;
+            return {
+                cron_expression: sc?.cronExpression ?? "",
+                timezone: sc?.timezone ?? "UTC",
+            };
+        }
+        if (cfg.triggerType === LOOP_TRIGGER_VALUE) {
+            const lc = cfg.loopConfig;
+            const unit = lc?.intervalUnit ?? "minutes";
+            const value = lc?.intervalValue ?? 5;
+            return {
+                interval_value: value,
+                interval_unit: unit,
+                loop_interval_ms: value * (LOOP_UNIT_MS[unit] ?? LOOP_UNIT_MS.minutes!),
+                on_overlap: lc?.onOverlap ?? "skip",
+            };
+        }
+        if (cfg.triggerType === MANUAL_TRIGGER_VALUE) return {};
+        if (cfg.triggerType.length > 0) return { event_source: cfg.triggerType };
     }
+    if (meta.loop) return { loop_interval_ms: 60_000 };
+    if (meta.scheduleAtMs !== null) return { schedule_cron: "" };
     return {};
 }
 

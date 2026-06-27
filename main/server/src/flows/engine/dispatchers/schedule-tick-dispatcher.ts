@@ -3,8 +3,30 @@ import { stepDispatcher } from "./step-dispatcher.js";
 import { parseFlowDefinition } from "../../store/parsers/flow-parser.js";
 import { BaseDispatcher } from "./base/base-dispatcher.js";
 import { registerDispatcher } from "./dispatcher-registry.js";
+import { claimCustomIdempotency } from "../store/idempotency-store.js";
 
 const LOCK_TTL_MS = 60_000;
+const DST_FIRE_KEY_RETENTION_MS = 90 * 60_000;
+
+function localFireKey(flowId: string, fireMs: number, timezone: string | null): string {
+    if (!timezone || timezone.length === 0) {
+        const d = new Date(fireMs);
+        return `cron-fire:${flowId}:${d.getUTCFullYear()}-${d.getUTCMonth() + 1}-${d.getUTCDate()}:${d.getUTCHours()}:${d.getUTCMinutes()}`;
+    }
+    const fmt = new Intl.DateTimeFormat("en-US", {
+        timeZone: timezone,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hourCycle: "h23",
+    });
+    const parts = fmt.formatToParts(new Date(fireMs));
+    const lookup: Record<string, string> = {};
+    for (const p of parts) lookup[p.type] = p.value;
+    return `cron-fire:${flowId}:${lookup.year}-${lookup.month}-${lookup.day}:${lookup.hour}:${lookup.minute}`;
+}
 
 interface ScheduleRow {
     flow_id: string;
@@ -21,7 +43,7 @@ class ScheduleTickDispatcher extends BaseDispatcher {
     public async sweep(
         clanId: string,
         now: number,
-        computeNextFireAt: (cron: string, after: number, timezone: string) => number,
+        computeNextFireAt: (cron: string, after: number, timezone: string | null) => number,
     ): Promise<readonly string[]> {
         const db = clanFlowsDb(clanId);
         const rows = db
@@ -33,10 +55,13 @@ class ScheduleTickDispatcher extends BaseDispatcher {
         for (const row of rows) {
             const claimed = this.claim(clanId, row, now);
             if (!claimed) continue;
-            await this.fire(clanId, row, now);
+            const dstKey = localFireKey(row.flow_id, row.next_fire_at, row.timezone);
+            if (claimCustomIdempotency(clanId, dstKey, DST_FIRE_KEY_RETENTION_MS)) {
+                await this.fire(clanId, row, now);
+                fired.push(row.flow_id);
+            }
             const nextFireAt = computeNextFireAt(row.cron_expression, now, row.timezone);
             this.advance(clanId, row, now, nextFireAt);
-            fired.push(row.flow_id);
         }
         return fired;
     }

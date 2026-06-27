@@ -8,6 +8,7 @@ const INLINE_CONFIRM_HOST_CLASS = "glass-inline-confirm__host";
 const CLASS_PENDING = "glass-inline-confirm";
 const CLASS_ACTIONS = "glass-inline-confirm__actions";
 const CLASS_BTN_DANGER = "glass-inline-confirm__btn--danger";
+const CLASS_BTN_SUCCESS = "glass-inline-confirm__btn--success";
 const DEFAULT_CANCEL_LABEL = "Cancel";
 const DEFAULT_CONFIRM_LABEL = "Confirm";
 const DEFAULT_CANCEL_ICON = "x-lg";
@@ -44,7 +45,7 @@ function buildCancelBtn(opts: InlineConfirmOptions, settle: (v: boolean) => void
 function buildConfirmBtn(opts: InlineConfirmOptions, danger: boolean, settle: (v: boolean) => void): Instance {
     return button(
         {
-            classes: danger ? [CLASS_BTN_DANGER] : [],
+            classes: [danger ? CLASS_BTN_DANGER : CLASS_BTN_SUCCESS],
             variant: BTN_VARIANT_OUTLINE,
 
             ariaLabel: opts.confirmLabel ?? DEFAULT_CONFIRM_LABEL,

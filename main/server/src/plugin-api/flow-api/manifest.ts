@@ -121,6 +121,123 @@ const PLUGIN_PAYLOAD_SCHEMAS: Readonly<Record<string, JSONSchema>> = {
         world: { type: "integer" },
         region_name: { type: "string" },
     }),
+    location: payload({
+        rsn: { type: "string" },
+        x: { type: "integer" },
+        y: { type: "integer" },
+        plane: { type: "integer" },
+        region_id: { type: "integer" },
+        region_name: { type: "string" },
+        area: { type: "string" },
+        world: { type: "integer" },
+    }),
+    vitals: payload({
+        rsn: { type: "string" },
+        hp: { type: "integer" },
+        hp_max: { type: "integer" },
+        prayer: { type: "integer" },
+        prayer_max: { type: "integer" },
+        run_energy: { type: "integer" },
+        special_attack: { type: "integer" },
+    }),
+    prayers: payload({
+        rsn: { type: "string" },
+        active_prayers: { type: "array", items: { type: "string" } },
+    }),
+    status_effect: payload({
+        rsn: { type: "string" },
+        effect_name: { type: "string" },
+        ticks_remaining: { type: "integer" },
+    }),
+    interacting: payload({
+        rsn: { type: "string" },
+        target_kind: { type: "string" },
+        target_name: { type: "string" },
+        target_id: { type: "integer" },
+    }),
+    container: payload({
+        rsn: { type: "string" },
+        container_kind: { type: "string" },
+        item_count: { type: "integer" },
+        total_value: { type: "integer" },
+    }),
+    container_delta: payload({
+        rsn: { type: "string" },
+        container_kind: { type: "string" },
+        item_name: { type: "string" },
+        item_id: { type: "integer" },
+        delta_quantity: { type: "integer" },
+        delta_value: { type: "integer" },
+    }),
+    menu_action: payload({
+        rsn: { type: "string" },
+        action: { type: "string" },
+        option: { type: "string" },
+        target: { type: "string" },
+    }),
+    stats: payload({
+        rsn: { type: "string" },
+        total_level: { type: "integer" },
+        xp_total: { type: "integer" },
+    }),
+    bank_open: payload({
+        rsn: { type: "string" },
+        region_name: { type: "string" },
+    }),
+    bank_close: payload({
+        rsn: { type: "string" },
+        item_count: { type: "integer" },
+        total_value: { type: "integer" },
+    }),
+    damage_dealt: payload({
+        rsn: { type: "string" },
+        target_kind: { type: "string" },
+        target_name: { type: "string" },
+        amount: { type: "integer" },
+        weapon_name: { type: "string" },
+    }),
+    damage_taken: payload({
+        rsn: { type: "string" },
+        source_kind: { type: "string" },
+        source_name: { type: "string" },
+        amount: { type: "integer" },
+    }),
+    boosts: payload({
+        rsn: { type: "string" },
+        skill: { type: "string" },
+        boosted_level: { type: "integer" },
+        base_level: { type: "integer" },
+    }),
+    rune_pouch: payload({
+        rsn: { type: "string" },
+        rune_name: { type: "string" },
+        rune_id: { type: "integer" },
+        quantity: { type: "integer" },
+    }),
+    quests: payload({
+        rsn: { type: "string" },
+        completed: { type: "integer" },
+        total: { type: "integer" },
+    }),
+    diaries: payload({
+        rsn: { type: "string" },
+        completed: { type: "integer" },
+        total: { type: "integer" },
+    }),
+    clue_opened: payload({
+        rsn: { type: "string" },
+        tier: { type: "string" },
+    }),
+    combat_achievements_snapshot: payload({
+        rsn: { type: "string" },
+        total_completed: { type: "integer" },
+        points: { type: "integer" },
+    }),
+    collection_log_snapshot: payload({
+        rsn: { type: "string" },
+        slots_filled: { type: "integer" },
+        slots_total: { type: "integer" },
+    }),
 };
 
 const CHAT_RESULT_SCHEMA: JSONSchema = {
@@ -128,13 +245,40 @@ const CHAT_RESULT_SCHEMA: JSONSchema = {
     properties: { recipientCount: { type: "integer" } },
 };
 
+const CHATBOX_COLOR_VALUES: readonly string[] = [
+    "ffffff",
+    "ffcc33",
+    "ff0000",
+    "00ff00",
+    "00ffff",
+    "ff00ff",
+    "ffff00",
+    "ff8000",
+    "8080ff",
+];
+const CHATBOX_COLOR_LABELS: readonly string[] = [
+    "White",
+    "Gold",
+    "Red",
+    "Green",
+    "Cyan",
+    "Magenta",
+    "Yellow",
+    "Orange",
+    "Light blue",
+];
+
 const CHATBOX_CLAN_INPUT: JSONSchema = {
     type: "object",
     required: ["message"],
     additionalProperties: false,
     properties: {
         message: { type: "string", minLength: 1, maxLength: 200 },
-        color: { type: "string", maxLength: 6 },
+        color: {
+            type: "string",
+            enum: CHATBOX_COLOR_VALUES as string[],
+            enumLabels: CHATBOX_COLOR_LABELS as string[],
+        },
     },
 };
 
@@ -145,7 +289,11 @@ const CHATBOX_MEMBER_INPUT: JSONSchema = {
     properties: {
         rsn: { type: "string", format: "rsn", minLength: 1, maxLength: 12 },
         message: { type: "string", minLength: 1, maxLength: 200 },
-        color: { type: "string", maxLength: 6 },
+        color: {
+            type: "string",
+            enum: CHATBOX_COLOR_VALUES as string[],
+            enumLabels: CHATBOX_COLOR_LABELS as string[],
+        },
     },
 };
 
@@ -191,7 +339,7 @@ const chatboxClanOp: OperationSpec = {
     safety_tier: "live",
     input_schema: CHATBOX_CLAN_INPUT,
     output_schema: CHAT_RESULT_SCHEMA,
-    side_effects: { writes_audit: false },
+    side_effects: { writes_audit: true },
     validation: {},
     result_classes: ["delivered"],
     handler: chatboxClanHandler,
@@ -201,7 +349,7 @@ const chatboxMemberOp: OperationSpec = {
     safety_tier: "live",
     input_schema: CHATBOX_MEMBER_INPUT,
     output_schema: CHAT_RESULT_SCHEMA,
-    side_effects: { writes_audit: false },
+    side_effects: { writes_audit: true },
     validation: {},
     result_classes: ["delivered", "no_recipient"],
     handler: chatboxMemberHandler,

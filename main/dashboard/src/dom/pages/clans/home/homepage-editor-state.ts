@@ -57,7 +57,6 @@ export interface EditorState extends Disposable {
     bringForward(id: string): void;
     sendBackward(id: string): void;
     setParent(id: string, parentId: string | null): void;
-    applyScaffold(): void;
     clearAll(): void;
     undo(): void;
     redo(): void;
@@ -346,12 +345,6 @@ export function createEditorState(slug: string, components$: ReadSignal<Homepage
         draft$.set(replaceById(draft$(), id, (c) => ({ ...c, parentId })));
     }
 
-    function applyScaffold(): void {
-        pushHistory();
-        draft$.set(defaultScaffold());
-        selectedId$.set(null);
-    }
-
     function clearAll(): void {
         pushHistory();
         draft$.set([]);
@@ -415,7 +408,6 @@ export function createEditorState(slug: string, components$: ReadSignal<Homepage
         bringForward,
         sendBackward,
         setParent,
-        applyScaffold,
         clearAll,
         undo,
         redo,

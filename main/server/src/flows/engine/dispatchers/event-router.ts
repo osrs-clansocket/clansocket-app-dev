@@ -2,7 +2,8 @@ import logger from "@clansocket/logger";
 import { clanFlowsDb } from "../../../database/index.js";
 import { parseFlowDefinition } from "../../store/parsers/flow-parser.js";
 import { stepDispatcher } from "./step-dispatcher.js";
-import { listWaitingByEvent } from "../store/execution-store.js";
+import { listWaitingByEvent, claimWaitingByEvent } from "../store/execution-store.js";
+import { claimEventIdempotency } from "../store/idempotency-store.js";
 import type { ExecContext } from "../context/exec-context.js";
 import type { FlowDefinition } from "../../store/flow-definition-types.js";
 
@@ -82,6 +83,7 @@ async function runFlowForEvent(row: FlowRow, input: FlowEventInput): Promise<voi
     const definition = loadFlowDefinition(input.clanId, row);
     if (!definition) return;
     if (!flowMatchesTrigger(definition, input.triggerId)) return;
+    if (!claimEventIdempotency(input.clanId, input.triggerId, input.payload, row.flow_id)) return;
     const ctx = buildExecContext(row, definition, input);
     try {
         await stepDispatcher.advance(ctx);
@@ -91,8 +93,10 @@ async function runFlowForEvent(row: FlowRow, input: FlowEventInput): Promise<voi
 }
 
 async function resumeWaitingForEvent(input: FlowEventInput): Promise<void> {
+    const now = Date.now();
     const waiting = listWaitingByEvent(input.clanId, input.triggerId);
     for (const wait of waiting) {
+        if (!claimWaitingByEvent(input.clanId, wait.executionId, input.triggerId, now)) continue;
         wait.ctx.status = "RUNNING";
         wait.ctx.wakeEventKind = null;
         wait.ctx.wakeAt = null;

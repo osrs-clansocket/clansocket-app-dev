@@ -11,17 +11,30 @@ type ElementFactory = (props: BaseProps) => Instance;
 interface EditableOpts {
     readonly factory: ElementFactory;
     readonly classes: readonly string[];
-    readonly initial: string;
+    readonly raw: string;
+    readonly ctx: HomepageContext;
     readonly editor: EditorState;
     readonly onCommit: (next: string) => void;
 }
 
 export function buildEditable(opts: EditableOpts): Instance {
-    const display = opts.factory(textProps([...opts.classes, EDITABLE_CLASS], opts.initial));
-    let latest = opts.initial;
+    const initial = interpolate(opts.raw, opts.ctx);
+    const display = opts.factory(textProps([...opts.classes, EDITABLE_CLASS], initial));
+    let latest = initial;
     display.trackDispose(
         effect(() => {
             display.el.setAttribute("contenteditable", opts.editor.editing$() ? "true" : "false");
+        }),
+    );
+    display.trackDispose(
+        effect(() => {
+            const next = interpolate(opts.raw, opts.ctx);
+            if (next === latest) return;
+            if (display.el === document.activeElement) return;
+            const current = (display.el.textContent ?? "").trim();
+            if (current !== latest) return;
+            display.setText(next);
+            latest = next;
         }),
     );
     display.el.addEventListener("blur", () => {
@@ -43,7 +56,8 @@ export function buildTextHostPair(ctx: HomepageContext, c: HomepageComponent, ed
         buildEditable({
             factory: paragraph,
             classes: [TEXT_DISPLAY_CLASS],
-            initial: interpolate(c.payload.text ?? "", ctx),
+            raw: c.payload.text ?? "",
+            ctx,
             editor,
             onCommit: commitField(editor, c.componentId, "text"),
         }),
@@ -60,7 +74,8 @@ export function buildKpiPartEditable(
     return buildEditable({
         factory: span,
         classes: [cls],
-        initial: interpolate(c.payload[field] ?? "", ctx),
+        raw: c.payload[field] ?? "",
+        ctx,
         editor,
         onCommit: commitField(editor, c.componentId, field),
     });

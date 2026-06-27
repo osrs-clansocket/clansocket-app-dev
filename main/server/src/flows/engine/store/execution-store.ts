@@ -161,3 +161,21 @@ export function listWaitingByEvent(clanId: string, eventKind: string): readonly 
     }
     return out;
 }
+
+const CLAIM_WAITING_TIME_SQL = `UPDATE clan_flow_executions
+    SET status = 'RUNNING', updated_at = ?, wake_at = NULL
+    WHERE id = ? AND status = 'WAITING' AND wake_at IS NOT NULL AND wake_at <= ?`;
+
+const CLAIM_WAITING_EVENT_SQL = `UPDATE clan_flow_executions
+    SET status = 'RUNNING', updated_at = ?, wake_event_kind = NULL, wake_at = NULL, wake_timeout_at = NULL
+    WHERE id = ? AND status = 'WAITING' AND wake_event_kind = ?`;
+
+export function claimWaitingByTime(clanId: string, executionId: number, now: number): boolean {
+    const result = clanFlowsDb(clanId).prepare(CLAIM_WAITING_TIME_SQL).run(now, executionId, now);
+    return result.changes === 1;
+}
+
+export function claimWaitingByEvent(clanId: string, executionId: number, eventKind: string, now: number): boolean {
+    const result = clanFlowsDb(clanId).prepare(CLAIM_WAITING_EVENT_SQL).run(now, executionId, eventKind);
+    return result.changes === 1;
+}

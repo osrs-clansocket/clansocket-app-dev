@@ -3,10 +3,17 @@ import { lookupOperation } from "../../registries/capability-registry.js";
 import { readHold } from "../holds/hold-store.js";
 import { enqueueReview } from "../../review/review-queue-store.js";
 import { insertExecution, updateExecution } from "../store/execution-store.js";
+import { claimCustomIdempotency } from "../store/idempotency-store.js";
+import { resolveTemplate } from "../store/template-resolver.js";
+import { memberPreferences } from "../../../database/clans/member-preferences-store.js";
+import { isInQuietHours } from "../../../database/clans/quiet-hours-evaluator.js";
+import { recordClanAudit } from "../../../database/index.js";
 import { BaseDispatcher } from "./base/base-dispatcher.js";
 import { registerDispatcher } from "./dispatcher-registry.js";
 import type { ExecContext } from "../context/exec-context.js";
 import type { FlowNode } from "../../store/flow-definition-types.js";
+
+const DEFAULT_IDEMPOTENCY_RETENTION_MS = 5 * 60_000;
 
 export interface StepDecision {
     readonly nodeId: string;
@@ -131,7 +138,6 @@ class StepDispatcher extends BaseDispatcher {
             try {
                 updateExecution(exec, persistedId);
             } catch {
-                // execution persistence best-effort
             }
         };
         try {
@@ -278,6 +284,57 @@ class StepDispatcher extends BaseDispatcher {
             this.advanceToNext(exec, node, "next");
             return;
         }
+        const sendOptions = node.config.send_options as Readonly<Record<string, unknown>> | undefined;
+        const keyTemplate = typeof sendOptions?.idempotency_key_template === "string"
+            ? sendOptions.idempotency_key_template
+            : null;
+        if (keyTemplate && keyTemplate.length > 0) {
+            const key = `action:${exec.clanId}:${resolveTemplate(keyTemplate, exec, node.id)}`;
+            if (!claimCustomIdempotency(exec.clanId, key, DEFAULT_IDEMPOTENCY_RETENTION_MS)) {
+                this.advanceToNext(exec, node, "next");
+                return;
+            }
+        }
+        const smartSend = sendOptions?.smart_send as Readonly<Record<string, unknown>> | undefined;
+        if (smartSend && smartSend.enabled === true) {
+            const windowMs = typeof smartSend.window_ms === "number" ? smartSend.window_ms : 60_000;
+            const rsn = typeof exec.entity.rsn === "string" ? exec.entity.rsn : "";
+            const key = `smart-send:${exec.clanId}:${exec.flowId}:${node.id}:${rsn}`;
+            if (!claimCustomIdempotency(exec.clanId, key, windowMs)) {
+                this.advanceToNext(exec, node, "next");
+                return;
+            }
+        }
+        const quietHours = sendOptions?.quiet_hours as Readonly<Record<string, unknown>> | undefined;
+        const systemCritical = sendOptions?.system_critical === true;
+        if (quietHours && quietHours.enabled === true && !systemCritical) {
+            const rsn = typeof exec.entity.rsn === "string" ? exec.entity.rsn : "";
+            const prefs = rsn.length > 0 ? memberPreferences(exec.clanId, rsn) : null;
+            if (prefs && isInQuietHours(prefs, Date.now())) {
+                this.advanceToNext(exec, node, "next");
+                return;
+            }
+        }
+        const channelClass = typeof sendOptions?.channel_class === "string" ? sendOptions.channel_class : null;
+        if (channelClass && !systemCritical) {
+            const rsn = typeof exec.entity.rsn === "string" ? exec.entity.rsn : "";
+            const prefs = rsn.length > 0 ? memberPreferences(exec.clanId, rsn) : null;
+            if (prefs && prefs.channelOptOut[channelClass] === true) {
+                this.advanceToNext(exec, node, "next");
+                return;
+            }
+        }
+        const newsletterListId = typeof sendOptions?.newsletter_list_id === "string"
+            ? sendOptions.newsletter_list_id
+            : null;
+        if (newsletterListId) {
+            const rsn = typeof exec.entity.rsn === "string" ? exec.entity.rsn : "";
+            const prefs = rsn.length > 0 ? memberPreferences(exec.clanId, rsn) : null;
+            if (!prefs || prefs.newsletterOptIn[newsletterListId] !== true) {
+                this.advanceToNext(exec, node, "next");
+                return;
+            }
+        }
         const result = await opSpec.handler(node.config, {
             clanId: exec.clanId,
             flowId: exec.flowId,
@@ -287,6 +344,28 @@ class StepDispatcher extends BaseDispatcher {
             botId: exec.botId,
             guildId: exec.guildId,
         });
+        if (opSpec.side_effects.writes_audit === true) {
+            try {
+                const rsnEntity = typeof exec.entity.rsn === "string" ? exec.entity.rsn : null;
+                recordClanAudit(exec.clanId, {
+                    actor: `flow:${exec.flowId}`,
+                    action: `flow:action.${result.result_class}` as never,
+                    targetId: node.id,
+                    payload: {
+                        flowId: exec.flowId,
+                        flowName: exec.flowName,
+                        flowVersion: exec.flowVersion,
+                        operationRef: node.operation_ref,
+                        nodeId: node.id,
+                        resultClass: result.result_class,
+                        rsn: rsnEntity,
+                        outputs: result.outputs,
+                    } as never,
+                });
+            } catch {
+                // audit failure is non-fatal
+            }
+        }
         this.advanceToNext(exec, node, result.result_class);
     }
 

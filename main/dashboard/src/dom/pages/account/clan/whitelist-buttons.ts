@@ -1,7 +1,14 @@
-import { button, image, type Instance } from "../../../factory";
+import {
+    button,
+    div,
+    image,
+    INLINE_CONFIRM_HOST_CLASS,
+    inlineConfirm,
+    type Instance,
+    baseProps,
+} from "../../../factory";
 import { clansClient } from "../../../../state/clans/clans-client/index.js";
 import { rankIconPath } from "../../../../state/icons/rank-icons.js";
-import { buildRevokeBtn } from "./whitelist-revoke.js";
 import {
     ACCOUNT_BRANDING_ICON_CLASS,
     ACCOUNT_RANK_ICON_BTN_CLASS,
@@ -51,9 +58,72 @@ function rankBtn(spec: RankBtnSpec): Instance {
     );
 }
 
-function poolEntry(rebuildKey: string, rank: string, extras?: RankBtnSpec): RankPoolEntry {
-    const btn = rankBtn({ rank, ...(extras ?? {}) });
-    return { btn, rebuildKey, inst: btn };
+function lockedEntry(rank: string): RankPoolEntry {
+    const btn = rankBtn({ rank, extraClasses: [ACCOUNT_RANK_ICON_BTN_LOCKED_CLASS] });
+    return { btn, rebuildKey: "locked", inst: btn };
+}
+
+interface ConfirmEntryArgs {
+    rank: string;
+    rebuildKey: string;
+    cancelLabel: string;
+    confirmLabel: string;
+    cancelContext: string;
+    confirmContext: string;
+    danger: boolean;
+    onConfirmed: () => Promise<void>;
+}
+
+function confirmEntry(args: ConfirmEntryArgs): RankPoolEntry {
+    const host = div(baseProps([INLINE_CONFIRM_HOST_CLASS]));
+    const btn = rankBtn({
+        rank: args.rank,
+        onClick: async () => {
+            const ok = await inlineConfirm(host, {
+                cancelLabel: args.cancelLabel,
+                confirmLabel: args.confirmLabel,
+                danger: args.danger,
+                cancelContext: args.cancelContext,
+                confirmContext: args.confirmContext,
+            });
+            if (!ok) return;
+            await args.onConfirmed();
+        },
+    });
+    host.addChild(btn);
+    return { btn, rebuildKey: args.rebuildKey, inst: host };
+}
+
+function addEntry(slug: string, rank: string, refresh: () => Promise<void>): RankPoolEntry {
+    return confirmEntry({
+        rank,
+        rebuildKey: "add",
+        cancelLabel: "Skip",
+        confirmLabel: "Whitelist",
+        cancelContext: `keep ${rank} off the whitelist`,
+        confirmContext: `confirm whitelisting ${rank} for manager access`,
+        danger: false,
+        onConfirmed: async () => {
+            await clansClient.addWhitelistRank(slug, rank, null);
+            await refresh();
+        },
+    });
+}
+
+function revokeEntry(slug: string, rank: string, entryId: string, refresh: () => Promise<void>): RankPoolEntry {
+    return confirmEntry({
+        rank,
+        rebuildKey: `revoke:${entryId}`,
+        cancelLabel: "Keep",
+        confirmLabel: "Revoke",
+        cancelContext: `keep ${rank} whitelisted`,
+        confirmContext: `confirm revoking ${rank} from the whitelist`,
+        danger: true,
+        onConfirmed: async () => {
+            await clansClient.revokeWhitelistEntry(slug, entryId);
+            await refresh();
+        },
+    });
 }
 
 export function buildRankEntry(
@@ -62,22 +132,10 @@ export function buildRankEntry(
     dataRef: RankDataRef,
     refresh: () => Promise<void>,
 ): RankPoolEntry {
-    if (isLockedRank(rank)) {
-        return poolEntry("locked", rank, { rank, extraClasses: [ACCOUNT_RANK_ICON_BTN_LOCKED_CLASS] });
-    }
+    if (isLockedRank(rank)) return lockedEntry(rank);
     const entryId = dataRef.activeByRank.get(rank);
-    if (entryId !== undefined) {
-        const triggerBtn = rankBtn({ rank });
-        const { inst, btn } = buildRevokeBtn({ triggerBtn, slug, rank, entryId, refresh });
-        return { inst, btn, rebuildKey: `revoke:${entryId}` };
-    }
-    return poolEntry("add", rank, {
-        rank,
-        onClick: async (): Promise<void> => {
-            await clansClient.addWhitelistRank(slug, rank, null);
-            await refresh();
-        },
-    });
+    if (entryId !== undefined) return revokeEntry(slug, rank, entryId, refresh);
+    return addEntry(slug, rank, refresh);
 }
 
 export function rebuildKeyFor(rank: string, dataRef: RankDataRef): string {

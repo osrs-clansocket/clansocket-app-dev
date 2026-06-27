@@ -1,16 +1,26 @@
+import type { ReadSignal } from "../../../dom/factory/reactive";
 import type { ClanRosterMember, ManagedClan } from "../clans-client/index.js";
 import { defaultThumbUrl } from "../../../dom/factory/data-ops/identity/clan-icon-url.js";
+import type { MetricValue } from "./homepage-metrics-store.js";
 
 export interface HomepageContext {
     readonly clan: ManagedClan;
     readonly memberCount: number;
     readonly iconUrl: string;
     readonly establishedYear: number | null;
+    readonly metrics: ReadSignal<Map<string, MetricValue>>;
 }
 
 const VARIABLE_PATTERN = /\{\{\s*([a-z][a-z0-9_.]*)\s*\}\}/gi;
 
+function formatMetric(m: MetricValue): string {
+    if (m.format === "gp") return `${m.value.toLocaleString()} gp`;
+    return m.value.toLocaleString();
+}
+
 function lookup(ctx: HomepageContext, key: string): string {
+    const metric = ctx.metrics().get(key);
+    if (metric !== undefined) return formatMetric(metric);
     switch (key) {
         case "clan.name":
             return ctx.clan.displayName;
@@ -20,8 +30,6 @@ function lookup(ctx: HomepageContext, key: string): string {
             return ctx.clan.status;
         case "clan.memberCount":
             return String(ctx.memberCount);
-        case "clan.iconUrl":
-            return ctx.iconUrl;
         case "clan.establishedYear":
             return ctx.establishedYear !== null ? String(ctx.establishedYear) : "—";
         default:
@@ -38,7 +46,6 @@ export const HOMEPAGE_VARIABLES: ReadonlyArray<{ key: string; description: strin
     { key: "clan.slug", description: "Clan slug" },
     { key: "clan.status", description: "Clan status (active / archived)" },
     { key: "clan.memberCount", description: "Total member count from latest roster" },
-    { key: "clan.iconUrl", description: "URL of the clan icon" },
     { key: "clan.establishedYear", description: "Year of the earliest member join (roster-derived)" },
 ];
 
@@ -54,10 +61,10 @@ function earliestJoinYear(members: readonly ClanRosterMember[]): number | null {
     return new Date(earliestMs).getUTCFullYear();
 }
 
-export function buildContext(clan: ManagedClan): HomepageContext {
+export function buildContext(clan: ManagedClan, metrics: ReadSignal<Map<string, MetricValue>>): HomepageContext {
     const memberCount = clan.roster?.memberCount ?? 0;
     const iconUrl = defaultThumbUrl(clan.slug);
     const members = clan.roster?.members ?? [];
     const establishedYear = earliestJoinYear(members);
-    return { clan, memberCount, iconUrl, establishedYear };
+    return { clan, memberCount, iconUrl, establishedYear, metrics };
 }

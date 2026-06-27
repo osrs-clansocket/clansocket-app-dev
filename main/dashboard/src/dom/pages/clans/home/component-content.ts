@@ -1,4 +1,4 @@
-import { div, image, paragraph, span, type Instance, baseProps, textProps } from "../../../factory";
+import { div, effect, image, paragraph, span, type Instance, baseProps, textProps } from "../../../factory";
 import type { HomepageComponent } from "../../../../state/clans/homepage/types.js";
 import { interpolate, type HomepageContext } from "../../../../state/clans/homepage/homepage-variables.js";
 import { isDefaultIconKey } from "../../../../state/clans/homepage/homepage-default-scaffold.js";
@@ -32,11 +32,32 @@ function resolveImageSrc(ctx: HomepageContext, c: HomepageComponent): string {
     return `/api/clans/${encodeURIComponent(ctx.clan.slug)}/homepage/images/${encodeURIComponent(key)}?v=${v}`;
 }
 
+function reactiveText(ctx: HomepageContext, raw: string, classes: readonly string[]): Instance {
+    const node = paragraph(textProps(classes, ""));
+    node.trackDispose(
+        effect(() => {
+            node.setText(interpolate(raw, ctx));
+        }),
+    );
+    return node;
+}
+
+function reactiveSpan(ctx: HomepageContext, raw: string, cls: string): Instance {
+    const node = span(textProps([cls], ""));
+    node.trackDispose(
+        effect(() => {
+            node.setText(interpolate(raw, ctx));
+        }),
+    );
+    return node;
+}
+
 function buildKpi(ctx: HomepageContext, c: HomepageComponent, editor: EditorState | null): Instance[] {
     if (editor === null) {
-        const label = interpolate(c.payload.label ?? "", ctx);
-        const value = interpolate(c.payload.value ?? "", ctx);
-        return [span(textProps([KPI_LABEL_CLASS], label)), span(textProps([KPI_VALUE_CLASS], value))];
+        return [
+            reactiveSpan(ctx, c.payload.label ?? "", KPI_LABEL_CLASS),
+            reactiveSpan(ctx, c.payload.value ?? "", KPI_VALUE_CLASS),
+        ];
     }
     return [
         buildKpiPartEditable(ctx, c, editor, "label", KPI_LABEL_CLASS),
@@ -51,8 +72,7 @@ export function buildContent(
 ): Instance | Instance[] | null {
     if (isTextKind(c)) {
         if (editor === null) {
-            const text = interpolate(c.payload.text ?? "", ctx);
-            return paragraph(textProps([TEXT_DISPLAY_CLASS], text));
+            return reactiveText(ctx, c.payload.text ?? "", [TEXT_DISPLAY_CLASS]);
         }
         return buildTextHostPair(ctx, c, editor);
     }

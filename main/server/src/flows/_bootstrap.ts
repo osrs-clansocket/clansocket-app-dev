@@ -4,12 +4,12 @@ import "./engine/dispatchers/_loader.js";
 import "./validators/_loader.js";
 import "./templates/_loader.js";
 import "./registries/capability-registry.js";
-// Per-capability flow-api registers must precede data-source-registry — populate() snapshots at load
 import "../discord/flow-api/register.js";
 import "../plugin-api/flow-api/register.js";
 import "../wom/flow-api/register.js";
 import "../clans/flow-api/register.js";
 import "../runewatch/flow-api/register.js";
+import "../http-flow/flow-api/register.js";
 import "./registries/data-source-registry.js";
 
 export { capabilityRegistry, lookupOperation, lookupTrigger } from "./registries/capability-registry.js";

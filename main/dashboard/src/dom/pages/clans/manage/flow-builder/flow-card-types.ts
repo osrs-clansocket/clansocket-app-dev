@@ -1,7 +1,20 @@
 import type { ConditionRow } from "../discord/modes/auto-hooks/condition-editor.js";
 
 export type WaitUnit = "seconds" | "minutes" | "hours" | "days";
+export type LoopIntervalUnit = "minutes" | "hours" | "days" | "weeks";
+export type LoopOverlap = "skip" | "queue" | "cancel";
 export type CardKind = "trigger" | "action" | "condition" | "delay" | "wait-for-event";
+
+export interface ScheduleTriggerConfig {
+    cronExpression: string;
+    timezone: string;
+}
+
+export interface LoopTriggerConfig {
+    intervalValue: number;
+    intervalUnit: LoopIntervalUnit;
+    onOverlap: LoopOverlap;
+}
 
 interface BaseCardConfig {
     readonly id: string;
@@ -13,6 +26,8 @@ export interface TriggerCardConfig extends BaseCardConfig {
     readonly kind: "trigger";
     triggerType: string;
     conditions: readonly ConditionRow[];
+    scheduleConfig: ScheduleTriggerConfig | null;
+    loopConfig: LoopTriggerConfig | null;
 }
 
 export interface ActionCardConfig extends BaseCardConfig {

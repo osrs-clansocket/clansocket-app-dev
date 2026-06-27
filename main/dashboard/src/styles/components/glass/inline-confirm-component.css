@@ -35,6 +35,14 @@
     border-color: var(--base-ember-200);
     background: rgb(from var(--base-ember-300) r g b / 0.15);
 }
+.glass-inline-confirm__btn--success {
+    border-color: var(--base-forest-300);
+    color: var(--base-forest-100);
+}
+.glass-inline-confirm__btn--success:hover {
+    border-color: var(--base-forest-100);
+    background: rgb(from var(--base-forest-300) r g b / 0.15);
+}
 @media (prefers-reduced-motion: reduce) {
     .glass-inline-confirm__actions {
         animation: none;

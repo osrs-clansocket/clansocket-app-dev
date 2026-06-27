@@ -122,6 +122,12 @@
     outline-offset: 0.125rem;
 }
 
+.clans-manage__flow-builder-operation-picker {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-0);
+}
+
 .clans-manage__flow-builder-card-slot > .clans-manage__auto-hooks-card {
     flex: 1 1 auto;
     block-size: 100%;

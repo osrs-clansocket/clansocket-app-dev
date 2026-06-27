@@ -59,6 +59,8 @@ export function defaultTriggerCard(): TriggerCardConfig {
         name: "Trigger",
         triggerType: "",
         conditions: [],
+        scheduleConfig: null,
+        loopConfig: null,
     };
 }
 
@@ -127,12 +129,16 @@ function migrateCardConfig(raw: unknown, isEntry: boolean): FlowCardConfig {
     const id = typeof o.id === "string" ? o.id : nextCardId();
     const name = typeof o.name === "string" ? o.name : kind === "trigger" ? "Trigger" : kind === "action" ? "Action" : "Node";
     if (kind === "trigger") {
+        const sc = (o as { scheduleConfig?: TriggerCardConfig["scheduleConfig"] }).scheduleConfig;
+        const lc = (o as { loopConfig?: TriggerCardConfig["loopConfig"] }).loopConfig;
         return {
             id,
             kind: "trigger",
             name,
             triggerType: typeof o.triggerType === "string" ? o.triggerType : "",
             conditions: Array.isArray(o.conditions) ? (o.conditions as TriggerCardConfig["conditions"]) : [],
+            scheduleConfig: sc && typeof sc === "object" ? sc : null,
+            loopConfig: lc && typeof lc === "object" ? lc : null,
         };
     }
     if (kind === "action") {

@@ -4,6 +4,7 @@ import { browseTopic } from "./browse-topic.js";
 import { clansTopic } from "./clans-topic.js";
 import { memberClansTopic } from "./member-clans-topic.js";
 import { notificationsTopic } from "./notifications-topic.js";
+import { flowsTopic } from "./flows-topic.js";
 import { registerTopic } from "./projection-registry.js";
 
 registerTopic("browse", (siteAccountId, q) => {
@@ -27,3 +28,9 @@ registerTopic("notifications", (siteAccountId) => notificationsTopic(siteAccount
 registerTopic("clans", (siteAccountId) => clansTopic(siteAccountId));
 
 registerTopic("member_clans", (siteAccountId) => memberClansTopic(siteAccountId));
+
+registerTopic("flows", (_siteAccountId, q) => {
+    const clanId = typeof q.clanId === "string" ? q.clanId : "";
+    if (clanId.length === 0) return null;
+    return flowsTopic(clanId);
+});

@@ -7,6 +7,7 @@ export interface ToolButtonOpts {
     name: string;
     label: string;
     active$(): boolean;
+    disabled$?(): boolean;
     onClick(): void;
 }
 
@@ -28,5 +29,14 @@ export function toolButton(opts: ToolButtonOpts): Instance {
             btn.toggleClass(TOOL_ACTIVE_CLASS, opts.active$());
         }),
     );
+    const disabled = opts.disabled$;
+    if (disabled !== undefined) {
+        btn.trackDispose(
+            effect(() => {
+                if (disabled()) btn.setAttr("disabled", "");
+                else btn.removeAttr("disabled");
+            }),
+        );
+    }
     return btn;
 }

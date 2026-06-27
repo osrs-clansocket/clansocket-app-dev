@@ -2,6 +2,7 @@ import "../../../../styles/pages/clans/home/index.css";
 import "../../../../styles/pages/routes/route-clan-page.css";
 import "../../../../styles/components/banner/index.css";
 import { div, onceEffect, span, type Instance, baseProps, textProps } from "../../../factory";
+import { signal } from "../../../factory/reactive";
 import { ROUTE_CLAN_CLASS } from "../../../../shared/constants/route/route-constants.js";
 import { clanSlug } from "../../../../managers/router";
 import { events } from "../../../../managers/events";
@@ -11,8 +12,10 @@ import { clansClient, type ManagedClan } from "../../../../state/clans/clans-cli
 import { buildClanTabs } from "../clan-page-buttons.js";
 import { adaptClanSummary } from "../../../../state/clans/mappers/clan-summary-mapper.js";
 import { ensureHomepageStore } from "../../../../state/clans/homepage/homepage-store.js";
+import { ensureMetricsStore } from "../../../../state/clans/homepage/homepage-metrics-store.js";
 import { buildCanvas } from "./canvas.js";
 import { buildEditStrip } from "./homepage-edit-strip.js";
+import { buildVariablesRow } from "./homepage-variable-picker.js";
 import { createEditorState, type EditorState } from "./homepage-editor-state.js";
 import { attachKeyboard } from "./homepage-keyboard.js";
 import { buildContext } from "../../../../state/clans/homepage/homepage-variables.js";
@@ -58,13 +61,16 @@ export async function renderClanHome(path: string): Promise<Instance> {
         .then((s) => s.isManager)
         .catch(() => false);
     const store = ensureHomepageStore(slug);
-    const ctx = buildContext(clan);
+    const metrics = ensureMetricsStore(slug);
+    const ctx = buildContext(clan, metrics.metrics$);
     const editor: EditorState | null = isManager ? createEditorState(slug, store.components$) : null;
+    const varsOpen$ = signal<boolean>(false);
     const innerChildren: Instance[] = [];
     if (editor !== null) {
         innerChildren.push(
             buildEditStrip({
                 state: editor,
+                varsOpen$,
                 onSave: async () => {
                     const ok = await editor.save();
                     if (ok) store.applyOptimistic(editor.draft$());
@@ -74,13 +80,17 @@ export async function renderClanHome(path: string): Promise<Instance> {
         );
     }
     innerChildren.push(buildCanvas(ctx, store.components$, editor));
+    const home = div(baseProps([HOME_ROOT_CLASS]), innerChildren);
+    const rootChildren: Instance[] = [buildClanTabs(clan.slug, isMember, isManager, "home"), home];
+    if (editor !== null) rootChildren.push(buildVariablesRow({ state: editor, ctx, open$: varsOpen$ }));
     const root = div(
         { classes: [ROUTE_CLAN_CLASS], effects: onceEffect("route-enter-right"), context: null, meta: null },
-        [buildClanTabs(clan.slug, isMember, isManager, "home"), div(baseProps([HOME_ROOT_CLASS]), innerChildren)],
+        rootChildren,
     );
     const offKeyboard = editor !== null ? attachKeyboard(editor) : () => undefined;
     const offRoute = events.on("route:change", () => {
         store.dispose();
+        metrics.dispose();
         editor?.dispose();
         offKeyboard();
         offRoute();

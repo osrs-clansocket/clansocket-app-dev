@@ -3,6 +3,18 @@ import { glassInput } from "../../../../../forms/glass/inputs/glass-input.js";
 import { buildGlassCheck } from "../../../../../forms/glass/inputs/glass-check.js";
 import { buildGlassSelect, type SelectOption } from "../../../../../forms/glass/inputs/select/index.js";
 import { getFormat, type FormatPickerContext, type JSONSchemaNode } from "./format-registry.js";
+import "./pickers/rsn-picker.js";
+import "./pickers/channel-picker.js";
+import "./pickers/member-picker.js";
+import "./pickers/role-picker.js";
+import "./pickers/guild-picker.js";
+import "./pickers/webhook-picker.js";
+import "./pickers/wom-metric-picker.js";
+import "./pickers/timezone-picker.js";
+import "./pickers/cron-preset-picker.js";
+import "./pickers/osrs-skill-picker.js";
+import "./pickers/osrs-boss-picker.js";
+import "./pickers/osrs-activity-picker.js";
 
 const ROW_CLASS = "clans-manage__flow-builder-schema-row";
 const LABEL_CLASS = "clans-manage__flow-builder-schema-label";
@@ -25,6 +37,12 @@ function readEnum(schema: JSONSchemaNode): readonly string[] | null {
     const e = schema.enum;
     if (!Array.isArray(e)) return null;
     return e.map((x) => String(x));
+}
+
+function readEnumLabels(schema: JSONSchemaNode): readonly string[] | null {
+    const labels = (schema as { enumLabels?: unknown }).enumLabels;
+    if (!Array.isArray(labels)) return null;
+    return labels.map((x) => String(x));
 }
 
 function readFormat(schema: JSONSchemaNode): string | undefined {
@@ -55,10 +73,14 @@ function asBoolean(v: unknown): boolean {
 function renderEnumControl(
     fieldName: string,
     options: readonly string[],
+    labels: readonly string[] | null,
     current: string,
     onChange: (next: string) => void,
 ): Instance {
-    const opts: SelectOption[] = options.map((value) => ({ value, label: value }));
+    const opts: SelectOption[] = options.map((value, idx) => ({
+        value,
+        label: labels && labels[idx] ? labels[idx] : value,
+    }));
     const select = buildGlassSelect(fieldName, opts, current);
     const hidden = select.el.querySelector<HTMLInputElement>("input[type='hidden']");
     if (hidden) hidden.addEventListener("change", () => onChange(hidden.value));
@@ -76,7 +98,7 @@ function renderStringControl(
     const formatPicker = getFormat(format);
     if (formatPicker) return formatPicker(schema, current, onChange, ctx);
     const enumValues = readEnum(schema);
-    if (enumValues) return renderEnumControl(fieldName, enumValues, current, onChange);
+    if (enumValues) return renderEnumControl(fieldName, enumValues, readEnumLabels(schema), current, onChange);
     const inputEl = glassInput({
         value: current,
         placeholder: readTitle(schema, fieldName),
@@ -93,6 +115,24 @@ function renderNumberControl(
     current: number | null,
     onChange: (next: number | null) => void,
 ): Instance {
+    const enumValues = readEnum(schema);
+    if (enumValues) {
+        const labels = readEnumLabels(schema);
+        return renderEnumControl(
+            fieldName,
+            enumValues,
+            labels,
+            current === null ? "" : String(current),
+            (next) => {
+                if (next.length === 0) {
+                    onChange(null);
+                    return;
+                }
+                const parsed = Number(next);
+                if (Number.isFinite(parsed)) onChange(parsed);
+            },
+        );
+    }
     const inputEl = glassInput({
         value: current === null ? "" : String(current),
         placeholder: readTitle(schema, fieldName),

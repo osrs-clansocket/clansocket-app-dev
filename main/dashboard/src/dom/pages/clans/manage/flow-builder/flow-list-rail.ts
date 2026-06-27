@@ -9,6 +9,7 @@ import {
     type Instance,
 } from "../../../../factory";
 import { flowMetaSignal, flowsListSignal, selectFlow, newFlow } from "./flow-card-state.js";
+import { flowsLiveFor } from "../../../../../state/flows/flows-live-store.js";
 
 const RAIL_CLASS = "clans-manage__flow-builder-rail";
 const RAIL_HEADER_CLASS = "clans-manage__flow-builder-rail-header";
@@ -31,7 +32,20 @@ function buildEntry(name: string, id: string, activeId: string): Instance {
     });
 }
 
-export function buildFlowListRail(): Instance<HTMLElement> {
+function buildServerEntry(name: string, id: string, activeId: string): Instance {
+    const classes = [ENTRY_FULL_CLASS, "clans-manage__flow-builder-rail-entry--server"];
+    if (id === activeId) classes.push(ENTRY_ACTIVE_CLASS);
+    return button({
+        variant: BTN_VARIANT_OUTLINE,
+        classes,
+        text: `${name} ↻`,
+        context: "select this server-persisted flow",
+        meta: ["action", "nav"],
+        onClick: () => selectFlow(id),
+    });
+}
+
+export function buildFlowListRail(clanId: string): Instance<HTMLElement> {
     const newBtn = button({
         variant: BTN_VARIANT_OUTLINE,
         classes: [RAIL_NEW_BTN_CLASS],
@@ -43,10 +57,16 @@ export function buildFlowListRail(): Instance<HTMLElement> {
     const headerLabel = span(textProps([RAIL_HEADER_LABEL_CLASS], "Flows"));
     const header = div(baseProps([RAIL_HEADER_CLASS]), [headerLabel, newBtn]);
     const listHost = div(baseProps([RAIL_ENTRIES_CLASS]));
+    const live = flowsLiveFor(clanId);
     effect(() => {
         const list = flowsListSignal();
+        const serverList = live.entries();
         const activeId = flowMetaSignal().id;
-        listHost.setChildren(...list.map((f) => buildEntry(f.name, f.id, activeId)));
+        const localIds = new Set(list.map((f) => f.id));
+        const serverOnly = serverList.filter((s) => !localIds.has(s.flow_id));
+        const localEntries = list.map((f) => buildEntry(f.name, f.id, activeId));
+        const serverEntries = serverOnly.map((s) => buildServerEntry(s.flow_name, s.flow_id, activeId));
+        listHost.setChildren(...localEntries, ...serverEntries);
     });
     return div(baseProps([RAIL_CLASS]), [header, listHost]);
 }

@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { interpolate, type HomepageContext } from "./homepage-variables.ts";
+import type { MetricValue } from "./homepage-metrics-store.ts";
 import type { ManagedClan } from "../clans-client/index.ts";
 
 function ctx(overrides: Partial<HomepageContext> = {}): HomepageContext {
@@ -21,14 +22,32 @@ function ctx(overrides: Partial<HomepageContext> = {}): HomepageContext {
         color: null,
         roster: null,
     };
+    const metricsMap = new Map<string, MetricValue>();
     return {
         clan,
         memberCount: 42,
         iconUrl: "/api/clans/varietyz/icon",
         establishedYear: 2021,
+        metrics: () => metricsMap,
         ...overrides,
     };
 }
+
+test("interpolates a live metric with int formatting", () => {
+    const metricsMap = new Map<string, MetricValue>([["clan.npc_kc.kc.total", { value: 1234567, format: "int" }]]);
+    assert.equal(
+        interpolate("KC {{clan.npc_kc.kc.total}}", ctx({ metrics: () => metricsMap })),
+        "KC 1,234,567",
+    );
+});
+
+test("interpolates a live metric with gp formatting", () => {
+    const metricsMap = new Map<string, MetricValue>([["clan.loot.value_gp.total", { value: 12345, format: "gp" }]]);
+    assert.equal(
+        interpolate("Loot {{clan.loot.value_gp.total}}", ctx({ metrics: () => metricsMap })),
+        "Loot 12,345 gp",
+    );
+});
 
 test("interpolates clan.name", () => {
     assert.equal(interpolate("Welcome to {{clan.name}}!", ctx()), "Welcome to Varietyz!");
@@ -59,10 +78,6 @@ test("interpolates multiple variables in one string", () => {
 
 test("ignores malformed variable syntax", () => {
     assert.equal(interpolate("Hello {clan.name}", ctx()), "Hello {clan.name}");
-});
-
-test("interpolates clan.iconUrl", () => {
-    assert.equal(interpolate("[icon: {{clan.iconUrl}}]", ctx()), "[icon: /api/clans/varietyz/icon]");
 });
 
 test("returns empty string unchanged", () => {

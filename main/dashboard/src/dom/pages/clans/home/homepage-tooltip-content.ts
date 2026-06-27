@@ -64,11 +64,6 @@ export const TOOL_TOOLTIPS: Record<string, TooltipDef> = {
         description: "Re-apply the last undone edit.",
         affects: "Draft state",
     },
-    "apply-scaffold": {
-        title: "Apply scaffold",
-        description: "Replace the canvas with the default template (clan icon, KPIs, about block).",
-        affects: "Draft state",
-    },
     "clear-all": {
         title: "Clear all",
         description: "Remove every component from the draft.",

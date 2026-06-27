@@ -15,7 +15,80 @@ import { componentRegistry } from "../engine/components/component-registry.js";
 import { isClanManager } from "../../database/clans/access/clan-manager-store.js";
 import { recordClanAudit } from "../../database/index.js";
 import { validateFlowReferences } from "../validators/reference-validator.js";
+import { dataSourceRegistry } from "../registries/data-source-registry.js";
+import { nextFireAt } from "../engine/dispatchers/cron-evaluator.js";
+import { dispatchEventSafe } from "../engine/dispatchers/event-router.js";
+import { byGuildId } from "../../database/discord/servers/by-guild-id.js";
+import { authenticate } from "../../api/middleware.js";
 import "../_bootstrap.js";
+
+const SCHEDULE_UPSERT_SQL = `INSERT INTO clan_flow_schedules (
+    flow_id, flow_name, enabled, cron_expression, timezone, next_fire_at
+) VALUES (?, ?, ?, ?, ?, ?)
+    ON CONFLICT (flow_id) DO UPDATE SET
+        flow_name = excluded.flow_name,
+        cron_expression = excluded.cron_expression,
+        timezone = excluded.timezone,
+        next_fire_at = excluded.next_fire_at`;
+
+const LOOP_UPSERT_SQL = `INSERT INTO clan_flow_loops (
+    flow_id, flow_name, enabled, interval_value, interval_unit, next_fire_at, on_overlap
+) VALUES (?, ?, ?, ?, ?, ?, ?)
+    ON CONFLICT (flow_id) DO UPDATE SET
+        flow_name = excluded.flow_name,
+        interval_value = excluded.interval_value,
+        interval_unit = excluded.interval_unit,
+        on_overlap = excluded.on_overlap,
+        next_fire_at = excluded.next_fire_at`;
+
+const LOOP_UNIT_MS: Readonly<Record<string, number>> = {
+    minutes: 60_000,
+    hours: 3_600_000,
+    days: 86_400_000,
+    weeks: 7 * 86_400_000,
+};
+
+interface ScheduleConfig {
+    cron_expression?: string;
+    timezone?: string;
+}
+
+interface LoopConfig {
+    interval_value?: number;
+    interval_unit?: string;
+    on_overlap?: string;
+}
+
+function upsertScheduleRow(
+    clanId: string,
+    flowId: string,
+    flowName: string,
+    enabled: number,
+    cfg: ScheduleConfig,
+): void {
+    const cron = typeof cfg.cron_expression === "string" ? cfg.cron_expression : "";
+    if (cron.length === 0) return;
+    const tz = typeof cfg.timezone === "string" && cfg.timezone.length > 0 ? cfg.timezone : "UTC";
+    const now = Date.now();
+    let nextAt = now + 60_000;
+    try {
+        nextAt = nextFireAt(cron, now, tz);
+    } catch {
+        return;
+    }
+    clanFlowsDb(clanId).prepare(SCHEDULE_UPSERT_SQL).run(flowId, flowName, enabled, cron, tz, nextAt);
+}
+
+function upsertLoopRow(clanId: string, flowId: string, flowName: string, enabled: number, cfg: LoopConfig): void {
+    const value = typeof cfg.interval_value === "number" ? cfg.interval_value : 0;
+    const unit = typeof cfg.interval_unit === "string" ? cfg.interval_unit : "minutes";
+    if (value <= 0) return;
+    const unitMs = LOOP_UNIT_MS[unit] ?? LOOP_UNIT_MS.minutes!;
+    const onOverlap = typeof cfg.on_overlap === "string" ? cfg.on_overlap : "skip";
+    clanFlowsDb(clanId)
+        .prepare(LOOP_UPSERT_SQL)
+        .run(flowId, flowName, enabled, value, unit, Date.now() + value * unitMs, onOverlap);
+}
 
 function requireFlowManager(req: express.Request, res: express.Response, clanId: string): string | null {
     const siteAccountId = req.siteAccountId;
@@ -45,7 +118,6 @@ function auditFlowAction(
             payload: { flowId, ...extra } as never,
         });
     } catch {
-        // audit registry may warn on unknown action; non-fatal
     }
 }
 
@@ -136,6 +208,35 @@ router.get("/component-kinds", (_req, res) => {
     res.json({ kinds });
 });
 
+router.get("/data-source", async (req, res) => {
+    const sourceId = String(req.query.source ?? "");
+    const clanId = String(req.query.clan_id ?? "");
+    if (sourceId.length === 0 || clanId.length === 0) {
+        res.status(400).json({ error: "source and clan_id required" });
+        return;
+    }
+    const siteAccountId = req.siteAccountId;
+    if (!siteAccountId) {
+        res.status(403).json({ error: "authentication required" });
+        return;
+    }
+    if (!isClanManager(siteAccountId, clanId)) {
+        res.status(403).json({ error: "manager access required" });
+        return;
+    }
+    const adapter = dataSourceRegistry.get(sourceId);
+    if (!adapter) {
+        res.status(404).json({ error: `unknown source: ${sourceId}` });
+        return;
+    }
+    try {
+        const items = await adapter.fetch(clanId);
+        res.json({ items });
+    } catch (err) {
+        res.status(500).json({ error: (err as Error).message });
+    }
+});
+
 router.get("/entity-attributes", (_req, res) => {
     const attrs = entityAttributes().map((a) => ({ path: a.path, label: a.label, type: a.type }));
     res.json({ attributes: attrs });
@@ -169,6 +270,28 @@ router.get("/value-options", (req, res) => {
     } catch (err) {
         res.status(400).json({ error: (err as Error).message });
     }
+});
+
+router.post("/discord-trigger", authenticate, (req, res) => {
+    const guildId = String(req.body?.guild_id ?? "");
+    const triggerId = String(req.body?.trigger_id ?? "");
+    const payload = (req.body?.payload ?? {}) as Readonly<Record<string, unknown>>;
+    if (guildId.length === 0 || triggerId.length === 0) {
+        res.status(400).json({ error: "guild_id and trigger_id required" });
+        return;
+    }
+    const routing = byGuildId(guildId);
+    if (!routing) {
+        res.status(404).json({ error: "guild not linked to clan" });
+        return;
+    }
+    dispatchEventSafe({
+        clanId: routing.clan_id,
+        triggerId,
+        rsn: null,
+        payload,
+    });
+    res.status(202).json({ ok: true });
 });
 
 router.post("/scope", (req, res) => {
@@ -312,6 +435,8 @@ router.post("/:clanId/:flowId/enable", (req, res) => {
         res.status(404).json({ error: "not found" });
         return;
     }
+    db.prepare("UPDATE clan_flow_schedules SET enabled = ? WHERE flow_id = ?").run(enabled, req.params.flowId);
+    db.prepare("UPDATE clan_flow_loops SET enabled = ? WHERE flow_id = ?").run(enabled, req.params.flowId);
     auditFlowAction(
         req.params.clanId,
         siteAccountId,
@@ -327,15 +452,15 @@ router.post("/:clanId/:flowId/publish", (req, res) => {
     try {
         const db = clanFlowsDb(req.params.clanId);
         const row = db
-            .prepare("SELECT flow_id, flow_name, definition_json, published_version FROM clan_flows WHERE flow_id = ?")
+            .prepare("SELECT flow_id, flow_name, definition_json, published_version, enabled FROM clan_flows WHERE flow_id = ?")
             .get(req.params.flowId) as
-            | { flow_id: string; flow_name: string; definition_json: string; published_version: number | null }
+            | { flow_id: string; flow_name: string; definition_json: string; published_version: number | null; enabled: number }
             | undefined;
         if (!row) {
             res.status(404).json({ error: "not found" });
             return;
         }
-        parseFlowDefinition(JSON.parse(row.definition_json));
+        const definition = parseFlowDefinition(JSON.parse(row.definition_json));
         const nextVersion = (row.published_version ?? 0) + 1;
         const now = 0;
         db.prepare(
@@ -346,6 +471,29 @@ router.post("/:clanId/:flowId/publish", (req, res) => {
             now,
             row.flow_id,
         );
+        const enabledForRow = row.enabled === 1 ? 1 : 0;
+        if (definition.trigger_type === "schedule") {
+            db.prepare("DELETE FROM clan_flow_loops WHERE flow_id = ?").run(row.flow_id);
+            upsertScheduleRow(
+                req.params.clanId,
+                row.flow_id,
+                row.flow_name,
+                enabledForRow,
+                definition.trigger_config as ScheduleConfig,
+            );
+        } else if (definition.trigger_type === "loop") {
+            db.prepare("DELETE FROM clan_flow_schedules WHERE flow_id = ?").run(row.flow_id);
+            upsertLoopRow(
+                req.params.clanId,
+                row.flow_id,
+                row.flow_name,
+                enabledForRow,
+                definition.trigger_config as LoopConfig,
+            );
+        } else {
+            db.prepare("DELETE FROM clan_flow_schedules WHERE flow_id = ?").run(row.flow_id);
+            db.prepare("DELETE FROM clan_flow_loops WHERE flow_id = ?").run(row.flow_id);
+        }
         auditFlowAction(req.params.clanId, siteAccountId, "server:flow.published", row.flow_id, {
             flowName: row.flow_name,
             version: nextVersion,
@@ -365,6 +513,8 @@ router.delete("/:clanId/:flowId", (req, res) => {
         res.status(404).json({ error: "not found" });
         return;
     }
+    db.prepare("DELETE FROM clan_flow_schedules WHERE flow_id = ?").run(req.params.flowId);
+    db.prepare("DELETE FROM clan_flow_loops WHERE flow_id = ?").run(req.params.flowId);
     auditFlowAction(req.params.clanId, siteAccountId, "server:flow.archived", req.params.flowId);
     res.status(204).end();
 });
