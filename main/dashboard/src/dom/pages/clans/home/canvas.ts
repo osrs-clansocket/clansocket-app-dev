@@ -8,8 +8,11 @@ import type { HomepageContext } from "../../../../state/clans/homepage/homepage-
 import { defaultScaffold } from "../../../../state/clans/homepage/homepage-default-scaffold.js";
 import { componentKey, computeContentHeight, makeCreate, orderForPaint, patchComponent } from "./canvas-helpers.js";
 import { buildBottomAdder } from "./homepage-bottom-adder.js";
+import { buildRulers } from "./homepage-rulers.js";
+import { buildGuidesLayer } from "./homepage-guides-layer.js";
 
 const CANVAS_CLASS = "clans-home__canvas";
+const FRAME_CLASS = "clans-home__canvas-frame";
 
 interface ReconcileCtx {
     readonly canvas: Instance;
@@ -52,8 +55,11 @@ function buildCanvasShell(editor: EditorState | null): Instance {
 }
 
 function wrapForEditor(canvas: Instance, editor: EditorState): Instance {
+    const guidesLayer = buildGuidesLayer(canvas, editor);
+    const rulers = buildRulers(canvas, editor);
+    const frame = div(baseProps([FRAME_CLASS]), [canvas, guidesLayer, rulers]);
     const adder = buildBottomAdder(editor);
-    const wrapper = div(baseProps(["clans-home__canvas-wrapper"]), [canvas, adder]);
+    const wrapper = div(baseProps(["clans-home__canvas-wrapper"]), [frame, adder]);
     wrapper.trackDispose(
         effect(() => {
             wrapper.toggleClass("is-editing", editor.editing$());

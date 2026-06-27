@@ -2,6 +2,7 @@ import { div, effect, type Instance, baseProps } from "../../../factory";
 import { wirePointerDrag } from "../../../factory/events/pointer-wirer.js";
 import type { HomepageComponent } from "../../../../state/clans/homepage/types.js";
 import type { EditorState } from "./homepage-editor-state.js";
+import { snapResize } from "./homepage-snap.js";
 
 const HANDLE_GRID_CLASS = "clans-home__handles";
 const HANDLE_GRID_OPEN_CLASS = "is-open";
@@ -18,11 +19,21 @@ interface ResizeSession {
     baseH: number;
     downClientX: number;
     downClientY: number;
+    scale: number;
     active: boolean;
 }
 
+const CANVAS_W = 960;
+
 function findComponent(state: EditorState, id: string): HomepageComponent | undefined {
     return state.draft$().find((c) => c.componentId === id);
+}
+
+function canvasScale(host: HTMLElement): number {
+    const canvasEl = host.closest(".clans-home__canvas");
+    if (!(canvasEl instanceof HTMLElement)) return 1;
+    const rect = canvasEl.getBoundingClientRect();
+    return rect.width > 0 ? CANVAS_W / rect.width : 1;
 }
 
 function applyResize(
@@ -60,6 +71,7 @@ function buildHandle(host: Instance, dir: Dir, state: EditorState, id: string): 
         baseH: 0,
         downClientX: 0,
         downClientY: 0,
+        scale: 1,
         active: false,
     };
     const handle = div(
@@ -82,6 +94,7 @@ function buildHandle(host: Instance, dir: Dir, state: EditorState, id: string): 
             session.baseH = comp.canvasH;
             session.downClientX = e.clientX;
             session.downClientY = e.clientY;
+            session.scale = canvasScale(host.el);
             session.active = true;
             handle.el.setPointerCapture(e.pointerId);
             e.preventDefault();
@@ -89,9 +102,10 @@ function buildHandle(host: Instance, dir: Dir, state: EditorState, id: string): 
         },
         move: (e: PointerEvent) => {
             if (!session.active) return;
-            const dx = e.clientX - session.downClientX;
-            const dy = e.clientY - session.downClientY;
-            const next = applyResize(dir, session, dx, dy);
+            const dx = (e.clientX - session.downClientX) * session.scale;
+            const dy = (e.clientY - session.downClientY) * session.scale;
+            let next = applyResize(dir, session, dx, dy);
+            if (state.guidesEnabled$()) next = snapResize(dir, next, state.guides$());
             state.resizeComponent(id, next.x, next.y, next.w, next.h);
         },
         up: (e: PointerEvent) => {
@@ -105,7 +119,6 @@ function buildHandle(host: Instance, dir: Dir, state: EditorState, id: string): 
             handle.el.releasePointerCapture(e.pointerId);
         },
     });
-    void host;
     handle.trackDispose({ dispose });
     return handle;
 }

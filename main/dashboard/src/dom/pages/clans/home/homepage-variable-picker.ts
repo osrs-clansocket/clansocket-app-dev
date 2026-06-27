@@ -30,7 +30,7 @@ function insertVariable(state: EditorState, key: string): boolean {
     if (!comp) return false;
     const current = comp.payload.text ?? "";
     const sep = current.length > 0 && !current.endsWith(" ") ? " " : "";
-    state.updateText(targetId, `${current}${sep}{{${key}}}`);
+    state.updateText(targetId, "text", `${current}${sep}{{${key}}}`);
     return true;
 }
 

@@ -5,6 +5,7 @@ import { saveHomepageComponents } from "../../../../state/clans/homepage/homepag
 import type { HomepageComponent } from "../../../../state/clans/homepage/types.js";
 import { defaultScaffold } from "../../../../state/clans/homepage/homepage-default-scaffold.js";
 import { CANVAS_BOUND_MAX, Z_INDEX_MAX, Z_INDEX_MIN } from "@clansocket/constants/clan-homepage-tokens";
+import { createGuidesState, type Guide, type GuideAxis } from "./homepage-guides-state.js";
 
 const CANVAS_W = 960;
 const CANVAS_H = CANVAS_BOUND_MAX;
@@ -30,6 +31,12 @@ export interface EditorState extends Disposable {
     readonly draft$: ReadSignal<HomepageComponent[]>;
     readonly canUndo$: ReadSignal<boolean>;
     readonly canRedo$: ReadSignal<boolean>;
+    readonly guides$: ReadSignal<Guide[]>;
+    readonly guidesEnabled$: ReadSignal<boolean>;
+    setGuidesEnabled(v: boolean): void;
+    addGuide(axis: GuideAxis, position: number): string;
+    moveGuide(id: string, position: number): void;
+    removeGuide(id: string): void;
     setEditing(v: boolean): void;
     select(id: string | null): void;
     addComponent(kind: HomepageComponent["componentName"]): void;
@@ -40,7 +47,7 @@ export interface EditorState extends Disposable {
     beginDragHistory(): void;
     moveComponent(id: string, dx: number, dy: number): void;
     resizeComponent(id: string, x: number, y: number, w: number, h: number): void;
-    updateText(id: string, text: string): void;
+    updateText(id: string, field: "text" | "label" | "value", text: string): void;
     updateImage(id: string, imageKey: string, imageVersion: number): void;
     setTokenOverride(id: string, property: string, value: string): void;
     clearTokenOverride(id: string, property: string): void;
@@ -140,6 +147,7 @@ export function createEditorState(slug: string, components$: ReadSignal<Homepage
     const redoStack: HomepageComponent[][] = [];
     const canUndo$ = signal<boolean>(false);
     const canRedo$ = signal<boolean>(false);
+    const guidesApi = createGuidesState(slug);
     let counter = 0;
 
     const syncDispose = effect(() => {
@@ -280,9 +288,9 @@ export function createEditorState(slug: string, components$: ReadSignal<Homepage
         );
     }
 
-    function updateText(id: string, text: string): void {
+    function updateText(id: string, field: "text" | "label" | "value", text: string): void {
         pushHistory();
-        draft$.set(replaceById(draft$(), id, (c) => ({ ...c, payload: { ...c.payload, text } })));
+        draft$.set(replaceById(draft$(), id, (c) => ({ ...c, payload: { ...c.payload, [field]: text } })));
     }
 
     function updateImage(id: string, imageKey: string, imageVersion: number): void {
@@ -378,6 +386,12 @@ export function createEditorState(slug: string, components$: ReadSignal<Homepage
         draft$,
         canUndo$,
         canRedo$,
+        guides$: guidesApi.guides$,
+        guidesEnabled$: guidesApi.guidesEnabled$,
+        setGuidesEnabled: guidesApi.setGuidesEnabled,
+        addGuide: guidesApi.addGuide,
+        moveGuide: guidesApi.moveGuide,
+        removeGuide: guidesApi.removeGuide,
         setEditing,
         select,
         addComponent,
@@ -400,6 +414,9 @@ export function createEditorState(slug: string, components$: ReadSignal<Homepage
         undo,
         redo,
         save,
-        dispose: syncDispose.dispose,
+        dispose: () => {
+            syncDispose.dispose();
+            guidesApi.dispose();
+        },
     };
 }

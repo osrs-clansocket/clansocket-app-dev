@@ -20,11 +20,116 @@
     inline-size: 100%;
 }
 
+.clans-home__canvas-frame {
+    position: relative;
+    inline-size: 100%;
+}
+
 .clans-home__canvas {
     position: relative;
     inline-size: 100%;
     aspect-ratio: 960 / max(var(--clan-home-content-h, 480), 480);
     padding-block: 4rem var(--sp-2);
+}
+
+.clans-home__guides-layer {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.clans-home__guide {
+    position: absolute;
+    z-index: 2;
+    pointer-events: auto;
+    background: var(--base-gold-400);
+    box-shadow: 0 0 var(--sp-1) rgb(from var(--base-gold-500) r g b / 0.6);
+    opacity: var(--opacity-medium);
+}
+
+.clans-home__guide--x {
+    inset-block: 0;
+    inset-inline-start: calc(var(--guide-pos, 0) / 960 * 100%);
+    inline-size: var(--sp-hairline);
+    cursor: ew-resize;
+}
+
+.clans-home__guide--y {
+    inset-inline: 0;
+    inset-block-start: calc(var(--guide-pos, 0) / max(var(--clan-home-content-h, 480), 480) * 100%);
+    block-size: var(--sp-hairline);
+    cursor: ns-resize;
+}
+
+.clans-home__guide.is-remove {
+    background: var(--base-ember-400);
+    box-shadow: 0 0 var(--sp-1) rgb(from var(--base-ember-500) r g b / 0.8);
+}
+
+.clans-home__rulers {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    display: none;
+    pointer-events: none;
+}
+
+.clans-home__rulers.is-on {
+    display: block;
+}
+
+.clans-home__ruler {
+    position: absolute;
+    background: rgb(from var(--base-graphite-900) r g b / 0.55);
+    backdrop-filter: blur(var(--blur-sm));
+    pointer-events: auto;
+    cursor: crosshair;
+    background-image: var(--ruler-ticks);
+}
+
+.clans-home__ruler--top {
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    inline-size: 100%;
+    block-size: var(--sp-3);
+    border-block-end: var(--sp-hairline) solid var(--base-gold-500);
+
+    --ruler-ticks: repeating-linear-gradient(
+        to right,
+        var(--base-graphite-400) 0,
+        var(--base-graphite-400) var(--sp-hairline),
+        transparent var(--sp-hairline),
+        transparent 5%
+    );
+}
+
+.clans-home__ruler--left {
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    inline-size: var(--sp-3);
+    block-size: 100%;
+    border-inline-end: var(--sp-hairline) solid var(--base-gold-500);
+
+    --ruler-ticks: repeating-linear-gradient(
+        to bottom,
+        var(--base-graphite-400) 0,
+        var(--base-graphite-400) var(--sp-hairline),
+        transparent var(--sp-hairline),
+        transparent 5%
+    );
+}
+
+.clans-home__ruler-corner {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    inline-size: var(--sp-3);
+    block-size: var(--sp-3);
+    background: rgb(from var(--base-graphite-900) r g b / 0.7);
+    border-block-end: var(--sp-hairline) solid var(--base-gold-500);
+    border-inline-end: var(--sp-hairline) solid var(--base-gold-500);
+    pointer-events: auto;
 }
 
 .clans-home__bottom-adder {
@@ -147,6 +252,11 @@
     object-fit: contain;
 }
 
+.clans-home__canvas-wrapper.is-editing .clans-home__component-image {
+    pointer-events: none;
+    user-select: none;
+}
+
 .clans-home__component--spacer {
     padding: 0;
 }
@@ -223,7 +333,11 @@
     z-index: var(--z-modal, 200);
     outline: var(--sp-hairline) solid var(--base-gold-500);
     outline-offset: calc(var(--sp-hairline) * -1);
-    cursor: default;
+}
+
+.clans-home__canvas-wrapper.is-editing .clans-home__component {
+    cursor: move;
+    touch-action: none;
 }
 
 .clans-home__grip {
@@ -257,13 +371,13 @@
     font-size: var(--sp-3);
 }
 
-.clans-home__component-text[contenteditable="true"] {
+.clans-home__editable[contenteditable="true"] {
     outline: none;
     cursor: text;
     caret-color: var(--base-gold-300);
 }
 
-.clans-home__component-text[contenteditable="true"]:focus {
+.clans-home__editable[contenteditable="true"]:focus {
     border-radius: var(--radius-md);
     background: rgb(from var(--base-gold-500) r g b / 0.08);
 }

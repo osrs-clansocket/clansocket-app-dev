@@ -1,6 +1,6 @@
 import { div, effect, icon, type Instance } from "../../../factory";
 import type { EditorState } from "./homepage-editor-state.js";
-import { attachGripDrag } from "./homepage-drag-session.js";
+import { attachHostDrag } from "./homepage-drag-session.js";
 
 const SELECT_OUTLINE_CLASS = "is-selected";
 const GRIP_CLASS = "clans-home__grip";
@@ -15,9 +15,10 @@ export function attachComponentEditor(host: Instance, componentId: string, state
     host.el.addEventListener("click", (e) => {
         if (!state.editing$()) return;
         const target = e.target as Element | null;
-        if (target?.closest(".clans-home__frame, .clans-home__handle, .clans-home__grip")) return;
+        if (target?.closest(".clans-home__frame, .clans-home__handle")) return;
         state.select(componentId);
     });
+    attachHostDrag(host, componentId, state);
     const grip = div(
         {
             classes: [GRIP_CLASS],
@@ -28,7 +29,6 @@ export function attachComponentEditor(host: Instance, componentId: string, state
         },
         [icon({ name: "arrows-move", context: null, meta: null }).el],
     );
-    attachGripDrag(grip, host, componentId, state);
     host.addChild(grip);
     host.trackDispose(
         effect(() => {

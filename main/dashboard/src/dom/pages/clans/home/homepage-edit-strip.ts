@@ -101,6 +101,23 @@ function buildVariablesToggle(varsOpen$: ReturnType<typeof signal<boolean>>): In
     return btn;
 }
 
+function buildGuidesToggle(state: EditorState): Instance {
+    const btn = button({
+        variant: BTN_VARIANT_OUTLINE,
+        text: "Guides",
+        ariaLabel: "Toggle guides and rulers",
+        context: "toggle photoshop-style guides and rulers for snapping",
+        meta: ["action"],
+        onClick: () => state.setGuidesEnabled(!state.guidesEnabled$()),
+    });
+    btn.trackDispose(
+        effect(() => {
+            btn.setText(state.guidesEnabled$() ? "× Guides" : "✚ Guides");
+        }),
+    );
+    return btn;
+}
+
 function buildEditingRows(opts: EditStripOpts, feedback$: ReturnType<typeof signal<string>>): Instance {
     const { state, onSave } = opts;
     const varsOpen$ = signal<boolean>(false);
@@ -114,6 +131,7 @@ function buildEditingRows(opts: EditStripOpts, feedback$: ReturnType<typeof sign
         buildAddBtn("+ Spacer", () => state.addComponent("spacer")),
         buildAddBtn("+ KPI", () => state.addComponent("kpi")),
         buildVariablesToggle(varsOpen$),
+        buildGuidesToggle(state),
         buildHistoryBtn(
             "↶ Undo",
             () => state.undo(),

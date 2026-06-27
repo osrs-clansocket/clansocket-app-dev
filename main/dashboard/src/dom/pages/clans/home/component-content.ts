@@ -4,7 +4,7 @@ import { interpolate, type HomepageContext } from "../../../../state/clans/homep
 import { isDefaultIconKey } from "../../../../state/clans/homepage/homepage-default-scaffold.js";
 import type { EditorState } from "./homepage-editor-state.js";
 import { COMPONENT_IMAGE_CLASS, TEXT_DISPLAY_CLASS } from "./component-classes.js";
-import { buildTextHostPair } from "./component-text-edit.js";
+import { buildKpiPartEditable, buildTextHostPair } from "./component-text-edit.js";
 
 const KPI_LABEL_CLASS = "clans-home__kpi-label";
 const KPI_VALUE_CLASS = "clans-home__kpi-value";
@@ -32,10 +32,16 @@ function resolveImageSrc(ctx: HomepageContext, c: HomepageComponent): string {
     return `/api/clans/${encodeURIComponent(ctx.clan.slug)}/homepage/images/${encodeURIComponent(key)}?v=${v}`;
 }
 
-function buildKpi(ctx: HomepageContext, c: HomepageComponent): Instance[] {
-    const label = interpolate(c.payload.label ?? "", ctx);
-    const value = interpolate(c.payload.value ?? "", ctx);
-    return [span(textProps([KPI_LABEL_CLASS], label)), span(textProps([KPI_VALUE_CLASS], value))];
+function buildKpi(ctx: HomepageContext, c: HomepageComponent, editor: EditorState | null): Instance[] {
+    if (editor === null) {
+        const label = interpolate(c.payload.label ?? "", ctx);
+        const value = interpolate(c.payload.value ?? "", ctx);
+        return [span(textProps([KPI_LABEL_CLASS], label)), span(textProps([KPI_VALUE_CLASS], value))];
+    }
+    return [
+        buildKpiPartEditable(ctx, c, editor, "label", KPI_LABEL_CLASS),
+        buildKpiPartEditable(ctx, c, editor, "value", KPI_VALUE_CLASS),
+    ];
 }
 
 export function buildContent(
@@ -60,7 +66,7 @@ export function buildContent(
         });
     }
     if (isKpiKind(c)) {
-        return buildKpi(ctx, c);
+        return buildKpi(ctx, c, editor);
     }
     if (isContainerKind(c)) {
         return div(baseProps(["clans-home__container-body"]));
