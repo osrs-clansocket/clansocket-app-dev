@@ -317,3 +317,17 @@ export function persistCurrentToList(): void {
     flowsListSignal.set(updated);
     writeStored(STORAGE_KEY, updated);
 }
+
+export async function saveCurrentToServer(clanId: string): Promise<{ ok: boolean; error?: string }> {
+    persistCurrentToList();
+    const current = flowMetaSignal();
+    try {
+        const { saveFlow } = await import("../../../../../state/flows/flows-client.js");
+        const { serializeFlowDefinition } = await import("../../../../../state/flows/flow-serializer.js");
+        const definition = serializeFlowDefinition(current);
+        await saveFlow(clanId, current.id, current.name, definition);
+        return { ok: true };
+    } catch (err) {
+        return { ok: false, error: (err as Error).message };
+    }
+}

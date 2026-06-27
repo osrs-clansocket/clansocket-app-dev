@@ -20,6 +20,7 @@ export interface ConditionEditorCallbacks {
     getValueOptions: (triggerType: string, field: string) => readonly string[];
     subscribeValueOptions: (listener: () => void) => () => void;
     subscribeTriggerChange: (listener: () => void) => () => void;
+    getFieldOptions?: (triggerType: string) => readonly SelectOption[];
 }
 
 export const OP_OPTIONS: ReadonlyArray<SelectOption> = [

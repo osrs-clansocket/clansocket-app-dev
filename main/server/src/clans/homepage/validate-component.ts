@@ -8,6 +8,8 @@ import {
     IMAGE_KEY_REGEX,
     COMPONENT_ID_REGEX,
     isAllowedComponentKind,
+    isColorProperty,
+    isHexColor,
     type ComponentKind,
 } from "@clansocket/constants/clan-homepage-tokens";
 import type { ValidatedComponent, ValidationError, ValidationResult } from "./homepage-validation-types.js";
@@ -41,7 +43,8 @@ function isPresentObject(v: unknown): v is Record<string, unknown> {
 function isAllowedTokenValue(property: string, value: string): boolean {
     const allowlist = ALLOWED_TOKENS_BY_PROPERTY[property];
     if (allowlist === undefined) return false;
-    return allowlist.includes(value);
+    if (allowlist.includes(value)) return true;
+    return isColorProperty(property) && isHexColor(value);
 }
 
 function validateOne(raw: unknown, errors: ValidationError[]): ValidatedComponent | null {

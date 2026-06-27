@@ -19,7 +19,9 @@ import {
     setFlowLoop,
     setFlowScheduleAtMs,
     persistCurrentToList,
+    saveCurrentToServer,
 } from "./flow-card-state.js";
+import { publishFlow, setFlowEnabledOnServer } from "../../../../../state/flows/flows-client.js";
 
 const HEADER_CLASS = "clans-manage__flow-builder-header";
 const SEGMENT_CLASS = "clans-manage__flow-builder-header-segment";
@@ -54,12 +56,15 @@ function buildNameField(): Instance {
     return div(baseProps([SEGMENT_CLASS]), [span(textProps([LABEL_CLASS], "Name")), inputEl]);
 }
 
-function buildEnabledToggle(): Instance {
+function buildEnabledToggle(clanId: string): Instance {
     const toggle = buildGlassCheck({
         name: "flow-enabled",
         ariaLabel: "Enable flow",
         checked: () => flowMetaSignal().enabled,
-        onChange: (next) => setFlowEnabled(next),
+        onChange: (next) => {
+            setFlowEnabled(next);
+            void setFlowEnabledOnServer(clanId, flowMetaSignal().id, next).catch(() => undefined);
+        },
     });
     return div(baseProps([SEGMENT_CLASS]), [span(textProps([LABEL_CLASS], "Enabled")), toggle]);
 }
@@ -84,33 +89,43 @@ function buildScheduleField(): Instance {
     return div(baseProps([SEGMENT_CLASS]), [span(textProps([LABEL_CLASS], "Schedule")), picker]);
 }
 
-function buildSaveButton(): Instance {
+function buildSaveButton(clanId: string): Instance {
     return button({
         variant: BTN_VARIANT_OUTLINE,
         text: "Save",
-        context: "save the current flow draft",
+        context: "save the current flow draft to the server",
         meta: ["action", "data"],
-        onClick: () => persistCurrentToList(),
+        onClick: () => {
+            void saveCurrentToServer(clanId);
+        },
     });
 }
 
-function buildPublishButton(): Instance {
+function buildPublishButton(clanId: string): Instance {
     return button({
         variant: BTN_VARIANT_PRIMARY,
         text: "Publish",
         context: "publish this flow",
         meta: ["action", "data"],
-        onClick: () => persistCurrentToList(),
+        onClick: async () => {
+            const saved = await saveCurrentToServer(clanId);
+            if (!saved.ok) return;
+            try {
+                await publishFlow(clanId, flowMetaSignal().id);
+            } catch {
+                persistCurrentToList();
+            }
+        },
     });
 }
 
-export function buildFlowHeader(): Instance {
+export function buildFlowHeader(clanId: string): Instance {
     return div(baseProps([HEADER_CLASS]), [
         buildNameField(),
-        buildEnabledToggle(),
+        buildEnabledToggle(clanId),
         buildLoopToggle(),
         buildScheduleField(),
-        buildSaveButton(),
-        buildPublishButton(),
+        buildSaveButton(clanId),
+        buildPublishButton(clanId),
     ]);
 }

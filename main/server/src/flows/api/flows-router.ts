@@ -10,7 +10,41 @@ import { templateRegistry } from "../templates/template-registry.js";
 import { listPendingReviews, approveReview, cancelReview } from "../review/review-queue-store.js";
 import { resolveValueOptions, type ValueOptionsScope } from "../value-resolvers/entity-value-options.js";
 import { entityAttributes } from "../registries/entity-attribute-schema.js";
+import { isClanManager } from "../../database/clans/access/clan-manager-store.js";
+import { recordClanAudit } from "../../database/index.js";
 import "../_bootstrap.js";
+
+function requireFlowManager(req: express.Request, res: express.Response, clanId: string): string | null {
+    const siteAccountId = req.siteAccountId;
+    if (!siteAccountId) {
+        res.status(403).json({ error: "authentication required" });
+        return null;
+    }
+    if (!isClanManager(siteAccountId, clanId)) {
+        res.status(403).json({ error: "manager access required" });
+        return null;
+    }
+    return siteAccountId;
+}
+
+function auditFlowAction(
+    clanId: string,
+    siteAccountId: string,
+    action: string,
+    flowId: string,
+    extra: Readonly<Record<string, unknown>> = {},
+): void {
+    try {
+        recordClanAudit(clanId, {
+            actor: siteAccountId,
+            action: action as never,
+            targetId: flowId,
+            payload: { flowId, ...extra } as never,
+        });
+    } catch {
+        // audit registry may warn on unknown action; non-fatal
+    }
+}
 
 const router = express.Router();
 
@@ -100,6 +134,15 @@ router.get("/value-options", (req, res) => {
         res.status(400).json({ error: "field and clan_id required" });
         return;
     }
+    const siteAccountId = req.siteAccountId;
+    if (!siteAccountId) {
+        res.status(403).json({ error: "authentication required" });
+        return;
+    }
+    if (!isClanManager(siteAccountId, clanId)) {
+        res.status(403).json({ error: "manager access required" });
+        return;
+    }
     try {
         const values = resolveValueOptions(scope, clanId, field, triggerType);
         res.json({ values });
@@ -166,6 +209,8 @@ router.get("/:clanId/:flowId", (req, res) => {
 });
 
 router.post("/:clanId", (req, res) => {
+    const siteAccountId = requireFlowManager(req, res, req.params.clanId);
+    if (!siteAccountId) return;
     try {
         const definition = parseFlowDefinition(req.body?.definition);
         const flowId = String(req.body?.flow_id ?? "");
@@ -176,9 +221,18 @@ router.post("/:clanId", (req, res) => {
         }
         const now = 0;
         const db = clanFlowsDb(req.params.clanId);
-        db.prepare(
-            "INSERT INTO clan_flows (flow_id, flow_name, definition_json, enabled, archived, created_at, updated_at) VALUES (?, ?, ?, 0, 0, ?, ?)",
-        ).run(flowId, flowName, JSON.stringify(definition), now, now);
+        const existing = db.prepare("SELECT flow_id FROM clan_flows WHERE flow_id = ?").get(flowId);
+        if (existing) {
+            db.prepare(
+                "UPDATE clan_flows SET flow_name = ?, definition_json = ?, updated_at = ? WHERE flow_id = ?",
+            ).run(flowName, JSON.stringify(definition), now, flowId);
+            auditFlowAction(req.params.clanId, siteAccountId, "server:flow.updated", flowId, { flowName });
+        } else {
+            db.prepare(
+                "INSERT INTO clan_flows (flow_id, flow_name, definition_json, enabled, archived, created_at, updated_at) VALUES (?, ?, ?, 0, 0, ?, ?)",
+            ).run(flowId, flowName, JSON.stringify(definition), now, now);
+            auditFlowAction(req.params.clanId, siteAccountId, "server:flow.created", flowId, { flowName });
+        }
         res.status(201).json({ flow_id: flowId });
     } catch (err) {
         res.status(400).json({ error: (err as Error).message });
@@ -186,6 +240,8 @@ router.post("/:clanId", (req, res) => {
 });
 
 router.patch("/:clanId/:flowId", (req, res) => {
+    const siteAccountId = requireFlowManager(req, res, req.params.clanId);
+    if (!siteAccountId) return;
     try {
         const definition = parseFlowDefinition(req.body?.definition);
         const flowName = String(req.body?.flow_name ?? "");
@@ -202,19 +258,81 @@ router.patch("/:clanId/:flowId", (req, res) => {
             res.status(404).json({ error: "not found" });
             return;
         }
+        auditFlowAction(req.params.clanId, siteAccountId, "server:flow.updated", req.params.flowId, { flowName });
         res.json({ flow_id: req.params.flowId });
     } catch (err) {
         res.status(400).json({ error: (err as Error).message });
     }
 });
 
+router.post("/:clanId/:flowId/enable", (req, res) => {
+    const siteAccountId = requireFlowManager(req, res, req.params.clanId);
+    if (!siteAccountId) return;
+    const enabled = req.body?.enabled === true ? 1 : 0;
+    const db = clanFlowsDb(req.params.clanId);
+    const result = db.prepare("UPDATE clan_flows SET enabled = ?, updated_at = ? WHERE flow_id = ?").run(
+        enabled,
+        0,
+        req.params.flowId,
+    );
+    if (result.changes === 0) {
+        res.status(404).json({ error: "not found" });
+        return;
+    }
+    auditFlowAction(
+        req.params.clanId,
+        siteAccountId,
+        enabled === 1 ? "server:flow.enabled" : "server:flow.disabled",
+        req.params.flowId,
+    );
+    res.json({ flow_id: req.params.flowId, enabled: enabled === 1 });
+});
+
+router.post("/:clanId/:flowId/publish", (req, res) => {
+    const siteAccountId = requireFlowManager(req, res, req.params.clanId);
+    if (!siteAccountId) return;
+    try {
+        const db = clanFlowsDb(req.params.clanId);
+        const row = db
+            .prepare("SELECT flow_id, flow_name, definition_json, published_version FROM clan_flows WHERE flow_id = ?")
+            .get(req.params.flowId) as
+            | { flow_id: string; flow_name: string; definition_json: string; published_version: number | null }
+            | undefined;
+        if (!row) {
+            res.status(404).json({ error: "not found" });
+            return;
+        }
+        parseFlowDefinition(JSON.parse(row.definition_json));
+        const nextVersion = (row.published_version ?? 0) + 1;
+        const now = 0;
+        db.prepare(
+            "INSERT INTO clan_flow_versions (flow_id, flow_name, version, definition_json, published_at) VALUES (?, ?, ?, ?, ?)",
+        ).run(row.flow_id, row.flow_name, nextVersion, row.definition_json, now);
+        db.prepare("UPDATE clan_flows SET published_version = ?, updated_at = ? WHERE flow_id = ?").run(
+            nextVersion,
+            now,
+            row.flow_id,
+        );
+        auditFlowAction(req.params.clanId, siteAccountId, "server:flow.published", row.flow_id, {
+            flowName: row.flow_name,
+            version: nextVersion,
+        });
+        res.json({ flow_id: row.flow_id, version: nextVersion });
+    } catch (err) {
+        res.status(400).json({ error: (err as Error).message });
+    }
+});
+
 router.delete("/:clanId/:flowId", (req, res) => {
+    const siteAccountId = requireFlowManager(req, res, req.params.clanId);
+    if (!siteAccountId) return;
     const db = clanFlowsDb(req.params.clanId);
     const result = db.prepare("UPDATE clan_flows SET archived = 1 WHERE flow_id = ?").run(req.params.flowId);
     if (result.changes === 0) {
         res.status(404).json({ error: "not found" });
         return;
     }
+    auditFlowAction(req.params.clanId, siteAccountId, "server:flow.archived", req.params.flowId);
     res.status(204).end();
 });
 

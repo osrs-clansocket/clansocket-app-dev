@@ -325,8 +325,9 @@
 
 .clans-home__component--container {
     border: var(--sp-hairline) solid rgb(from var(--base-graphite-500) r g b / 0.25);
+    border-color: var(--border-color, rgb(from var(--base-graphite-500) r g b / 0.25));
     border-radius: var(--radius-md);
-    background: rgb(from var(--base-graphite-900) r g b / 0.15);
+    background: var(--background, rgb(from var(--base-graphite-900) r g b / 0.15));
 }
 
 .clans-home__component--container.is-drop-target {
@@ -356,8 +357,9 @@
     gap: var(--sp-3);
     padding: var(--sp-3) var(--sp-4);
     border: var(--sp-hairline) solid rgb(from var(--base-gold-500) r g b / 0.3);
+    border-color: var(--border-color, rgb(from var(--base-gold-500) r g b / 0.3));
     border-radius: var(--radius-md);
-    background: rgb(from var(--base-graphite-900) r g b / 0.4);
+    background: var(--background, rgb(from var(--base-graphite-900) r g b / 0.4));
     backdrop-filter: blur(var(--blur-sm));
 }
 
@@ -370,7 +372,7 @@
     line-height: var(--lh-snug);
     letter-spacing: var(--ls-wide);
     text-transform: uppercase;
-    color: var(--base-graphite-300);
+    color: var(--kpi-label-color, var(--base-graphite-300));
 }
 
 .clans-home__kpi-value {
@@ -380,7 +382,7 @@
     font-size: var(--fs-md);
     font-weight: var(--fw-bold);
     line-height: var(--lh-snug);
-    color: var(--base-gold-300);
+    color: var(--kpi-value-color, var(--base-gold-300));
 }
 
 .clans-home__missing {
@@ -707,17 +709,14 @@
 
 .clans-home__frame {
     position: absolute;
-    inset-block-start: calc(100% + var(--sp-1));
-    inset-inline-start: 0;
+    inset: 0;
     z-index: var(--z-modal, 200);
     display: none;
-    flex-direction: column;
-    gap: var(--sp-1);
-    pointer-events: auto;
+    pointer-events: none;
 }
 
 .clans-home__frame.is-open {
-    display: flex;
+    display: block;
 }
 
 .clans-home__frame-toolbar {
@@ -735,6 +734,96 @@
     box-shadow: var(--shadow-glow);
     backdrop-filter: blur(var(--blur-md));
     scrollbar-width: thin;
+}
+
+.clans-home__frame-side {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    border: var(--sp-hairline) solid rgb(from var(--base-gold-500) r g b / 0.5);
+    border-radius: var(--radius-md);
+    background: var(--gradient-surface-opaque);
+    pointer-events: auto;
+}
+
+.clans-home__frame-side > * {
+    border: 0;
+}
+
+.clans-home__frame-side .picker {
+    display: inline-flex;
+    inline-size: var(--sp-6);
+    block-size: var(--sp-6);
+}
+
+.clans-home__frame-side .picker__swatch {
+    inline-size: 100%;
+    block-size: 100%;
+    padding: var(--sp-1);
+    border: 0;
+    border-radius: 0;
+}
+
+.clans-home__color-tool {
+    position: relative;
+    display: inline-flex;
+    inline-size: var(--sp-6);
+    block-size: var(--sp-6);
+}
+
+.clans-home__color-tool .picker {
+    inline-size: 100%;
+    block-size: 100%;
+}
+
+.clans-home__color-tool-icon {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+    color: var(--icon-tint, var(--base-graphite-400));
+}
+
+.clans-home__color-tool-icon i,
+.clans-home__color-tool-icon svg,
+.clans-home__color-tool-icon span {
+    inline-size: var(--sp-3);
+    block-size: var(--sp-3);
+    font-size: var(--sp-3);
+}
+
+.clans-home__frame-side--top {
+    inset-block-end: 100%;
+    inset-inline-start: 50%;
+    flex-direction: row;
+    margin-block-end: var(--sp-1);
+    transform: translateX(-50%);
+}
+
+.clans-home__frame-side--bottom {
+    inset-block-start: 100%;
+    inset-inline-start: 50%;
+    flex-direction: row;
+    margin-block-start: var(--sp-1);
+    transform: translateX(-50%);
+}
+
+.clans-home__frame-side--left {
+    inset-block-start: 50%;
+    inset-inline-end: 100%;
+    flex-direction: column;
+    margin-inline-end: var(--sp-1);
+    transform: translateY(-50%);
+}
+
+.clans-home__frame-side--right {
+    inset-block-start: 50%;
+    inset-inline-start: 100%;
+    flex-direction: column;
+    margin-inline-start: var(--sp-1);
+    transform: translateY(-50%);
 }
 
 .clans-home__frame-tool {
@@ -759,9 +848,12 @@
 }
 
 .clans-home__frame-popover-host {
-    position: relative;
+    position: absolute;
+    inset-block-start: 100%;
+    inset-inline-start: 0;
     z-index: 1;
-    align-self: flex-start;
+    margin-block-start: var(--sp-2);
+    pointer-events: auto;
     isolation: isolate;
 }
 

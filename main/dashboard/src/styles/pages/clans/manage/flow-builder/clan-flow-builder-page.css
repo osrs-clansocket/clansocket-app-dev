@@ -207,3 +207,112 @@
     block-size: var(--sp-3);
     transform: translateX(-50%);
 }
+
+.clans-manage__auto-hooks-card-header.clans-manage__flow-builder-card-header--kind-trigger {
+    border-block-end: 0.125rem solid var(--flow-kind-trigger);
+}
+
+.clans-manage__auto-hooks-card-header.clans-manage__flow-builder-card-header--kind-action {
+    border-block-end: 0.125rem solid var(--flow-kind-action);
+}
+
+.clans-manage__auto-hooks-card-header.clans-manage__flow-builder-card-header--kind-condition {
+    border-block-end: 0.125rem solid var(--flow-kind-condition);
+}
+
+.clans-manage__auto-hooks-card-header.clans-manage__flow-builder-card-header--kind-delay {
+    border-block-end: 0.125rem solid var(--flow-kind-delay);
+}
+
+.clans-manage__auto-hooks-card-header.clans-manage__flow-builder-card-header--kind-wait-for-event {
+    border-block-end: 0.125rem solid var(--flow-kind-wait-for-event);
+}
+
+.clans-manage__auto-hooks-card-header.clans-manage__flow-builder-card-header--capability-discord {
+    border-block-end-color: var(--flow-capability-discord);
+}
+
+.clans-manage__auto-hooks-card-header.clans-manage__flow-builder-card-header--capability-plugin {
+    border-block-end-color: var(--flow-capability-plugin);
+}
+
+.clans-manage__auto-hooks-card-header.clans-manage__flow-builder-card-header--capability-wom {
+    border-block-end-color: var(--flow-capability-wom);
+}
+
+.clans-manage__auto-hooks-card-header.clans-manage__flow-builder-card-header--capability-clans {
+    border-block-end-color: var(--flow-capability-clans);
+}
+
+.clans-manage__auto-hooks-card-header.clans-manage__flow-builder-card-header--capability-runewatch {
+    border-block-end-color: var(--flow-capability-runewatch);
+}
+
+.clans-manage__flow-builder-card-manual-badge {
+    display: inline-flex;
+    align-items: center;
+    padding-inline: var(--sp-1);
+    padding-block: var(--sp-0);
+    margin-inline-start: var(--sp-1);
+    border-radius: var(--radius-md);
+    font-size: var(--fs-3xs);
+    font-weight: var(--fw-semi);
+    letter-spacing: var(--ls-snug);
+    text-transform: uppercase;
+    color: var(--flow-manual-badge-fg);
+    background: var(--flow-manual-badge-bg);
+}
+
+.clans-manage__flow-builder-card-exit-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-0);
+}
+
+.clans-manage__flow-builder-card-exit-toggle {
+    padding: var(--sp-0) var(--sp-1);
+    border: 0.0625rem solid var(--base-graphite-500);
+    border-radius: var(--radius-md);
+    font-size: var(--fs-3xs);
+    cursor: pointer;
+}
+
+.clans-manage__flow-builder-card-exit-toggle--on {
+    border-color: var(--base-gold-500);
+    color: var(--base-gold-300);
+    background: rgb(from var(--base-gold-500) r g b / 0.15);
+}
+
+.clans-manage__flow-builder-card-exit-toggle--off {
+    color: var(--base-graphite-300);
+    background: transparent;
+}
+
+.clans-manage__flow-builder-schema-row {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sp-1h);
+    padding-block-start: var(--sp-0);
+}
+
+.clans-manage__flow-builder-schema-label {
+    flex-shrink: 0;
+    inline-size: 5rem;
+    font-size: var(--fs-3xs);
+    letter-spacing: var(--ls-snug);
+    text-transform: uppercase;
+    color: var(--base-graphite-300);
+}
+
+.clans-manage__flow-builder-schema-control {
+    flex: 1 1 0;
+    min-inline-size: 0;
+}
+
+.clans-manage__flow-builder-schema-nested {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-0);
+    padding-inline-start: var(--sp-1h);
+    border-inline-start: 0.0625rem solid var(--base-graphite-700);
+}

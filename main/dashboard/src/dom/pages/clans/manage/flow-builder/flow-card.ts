@@ -20,6 +20,7 @@ import {
     flatTriggerOptions,
     operationsByCapability,
     lookupOperation,
+    fieldOptionsForScope,
 } from "../../../../../state/flows/capabilities-store.js";
 import { schemaForm } from "./schema-form/index.js";
 import type {
@@ -309,6 +310,7 @@ function buildConditionRows(
         getValueOptions: () => [],
         subscribeValueOptions: () => NEVER_UNSUBSCRIBE,
         subscribeTriggerChange: () => NEVER_UNSUBSCRIBE,
+        getFieldOptions: (triggerType) => fieldOptionsForScope(triggerType.length > 0 ? triggerType : null),
     });
 }
 

@@ -89,6 +89,8 @@ export const ALLOWED_TOKENS_BY_PROPERTY: Record<string, readonly string[]> = {
     "--shadow": SHADOW_TOKENS,
     "--backdrop-filter": BACKDROP_FILTER_VALUES,
     "--flex-direction": FLEX_DIRECTION_VALUES,
+    "--kpi-label-color": COLOR_TOKENS,
+    "--kpi-value-color": COLOR_TOKENS,
 };
 
 export const CANVAS_BOUND_MIN = 0;
@@ -101,4 +103,39 @@ export const COMPONENT_ID_REGEX = /^[a-z0-9-]{1,40}$/;
 
 export function isAllowedComponentKind(kind: string): kind is ComponentKind {
     return (COMPONENT_KINDS as readonly string[]).includes(kind);
+}
+
+const COLOR_PROPERTIES: ReadonlySet<string> = new Set([
+    "--color",
+    "--background",
+    "--border-color",
+    "--kpi-label-color",
+    "--kpi-value-color",
+]);
+const HEX_RGB_LEN = 7;
+const HEX_RGBA_LEN = 9;
+const CODE_0 = 48;
+const CODE_9 = 57;
+const CODE_UPPER_A = 65;
+const CODE_UPPER_F = 70;
+const CODE_LOWER_A = 97;
+const CODE_LOWER_F = 102;
+
+export function isColorProperty(prop: string): boolean {
+    return COLOR_PROPERTIES.has(prop);
+}
+
+function isHexChar(c: number): boolean {
+    if (c >= CODE_0 && c <= CODE_9) return true;
+    if (c >= CODE_UPPER_A && c <= CODE_UPPER_F) return true;
+    return c >= CODE_LOWER_A && c <= CODE_LOWER_F;
+}
+
+export function isHexColor(value: string): boolean {
+    if (value.length !== HEX_RGB_LEN && value.length !== HEX_RGBA_LEN) return false;
+    if (value.charCodeAt(0) !== "#".charCodeAt(0)) return false;
+    for (let i = 1; i < value.length; i++) {
+        if (!isHexChar(value.charCodeAt(i))) return false;
+    }
+    return true;
 }

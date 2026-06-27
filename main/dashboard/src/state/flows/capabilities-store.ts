@@ -2,9 +2,27 @@ import { signal, type Signal } from "../../dom/factory";
 import { fetchCapabilities, type CapabilitySummary, type TriggerSummary } from "./flows-client.js";
 import { registerFieldsForTrigger } from "../../shared/constants/clan-manage-discord/condition-field-list.js";
 
+export interface EntityAttribute {
+    readonly path: string;
+    readonly label: string;
+    readonly type: string;
+}
+
 export const capabilitiesSignal: Signal<readonly CapabilitySummary[]> = signal<readonly CapabilitySummary[]>([]);
+export const entityAttributesSignal: Signal<readonly EntityAttribute[]> = signal<readonly EntityAttribute[]>([]);
 
 let loaded = false;
+
+async function fetchEntityAttributes(): Promise<readonly EntityAttribute[]> {
+    try {
+        const response = await fetch("/api/flows/entity-attributes");
+        if (!response.ok) return [];
+        const body = (await response.json()) as { attributes: readonly EntityAttribute[] };
+        return body.attributes;
+    } catch {
+        return [];
+    }
+}
 
 function humanizeKey(key: string): string {
     const spaced = key.replace(/_/g, " ").replace(/([a-z])([A-Z])/g, "$1 $2");
@@ -50,9 +68,31 @@ export async function ensureCapabilitiesLoaded(): Promise<void> {
         const response = await fetchCapabilities();
         capabilitiesSignal.set(response.capabilities);
         registerAllTriggerFields(response.capabilities);
+        const attrs = await fetchEntityAttributes();
+        entityAttributesSignal.set(attrs);
     } catch {
         loaded = false;
     }
+}
+
+export function fieldOptionsForScope(triggerId: string | null): readonly { value: string; label: string }[] {
+    const out: { value: string; label: string }[] = [];
+    if (triggerId) {
+        for (const cap of capabilitiesSignal()) {
+            const spec = cap.triggers[triggerId];
+            if (!spec) continue;
+            const props = spec.payload_schema.properties as Readonly<Record<string, unknown>> | undefined;
+            if (props) {
+                for (const fieldName of Object.keys(props)) {
+                    out.push({ value: `ctx.event.${fieldName}`, label: `event.${fieldName}` });
+                }
+            }
+        }
+    }
+    for (const attr of entityAttributesSignal()) {
+        out.push({ value: attr.path, label: attr.label });
+    }
+    return out;
 }
 
 export interface TriggerOption {

@@ -9,6 +9,8 @@ import { decryptedWebhookToken } from "../../discord/webhook-tokens/get-decrypte
 import { lookupAccountType } from "../state/lookup-account-type.js";
 import { clanMemberCount } from "../state/member-count.js";
 import { evaluateConditions } from "./condition-evaluator.js";
+import { dispatchEventSafe } from "../../../flows/engine/dispatchers/event-router.js";
+import { maybeTick } from "../../../flows/engine/dispatchers/tick-driver.js";
 
 const TARGET_KIND_WEBHOOK_POST = "webhook_post";
 
@@ -92,4 +94,11 @@ export function dispatchSafe(input: DispatchInput): void {
     } catch (err) {
         logger.warn(`auto-hook dispatch top-level failure: ${(err as Error).message}`);
     }
+    dispatchEventSafe({
+        clanId: input.clanId,
+        triggerId: input.triggerType,
+        rsn: input.rsn,
+        payload: input.payload as Readonly<Record<string, unknown>>,
+    });
+    maybeTick(Date.now());
 }

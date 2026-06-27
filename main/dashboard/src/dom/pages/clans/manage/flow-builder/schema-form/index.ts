@@ -37,10 +37,6 @@ function readType(schema: JSONSchemaNode): string | null {
     return typeof t === "string" ? t : null;
 }
 
-function readDefault(schema: JSONSchemaNode): unknown {
-    return schema.default;
-}
-
 function readTitle(schema: JSONSchemaNode, fallback: string): string {
     const t = schema.title;
     return typeof t === "string" ? t : humanize(fallback);

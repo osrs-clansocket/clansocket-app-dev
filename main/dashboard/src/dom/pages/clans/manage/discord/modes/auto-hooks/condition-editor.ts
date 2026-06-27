@@ -11,7 +11,8 @@ import {
     AUTO_HOOKS_EMBED_EDITOR_CLASS,
 } from "../../../../../../../shared/constants/clan-manage-discord/auto-hook-constants.js";
 
-function buildFieldOptions(triggerType: string): SelectOption[] {
+function buildFieldOptions(triggerType: string, cb: ConditionEditorCallbacks): SelectOption[] {
+    if (cb.getFieldOptions) return [...cb.getFieldOptions(triggerType)];
     return fieldsForTrigger(triggerType).map((f) => ({ value: f.field, label: f.label }));
 }
 
@@ -21,7 +22,7 @@ export function buildConditionEditor(initial: readonly ConditionRow[], cb: Condi
 
     function rerender(): void {
         const triggerType = cb.getTriggerType();
-        const fields = buildFieldOptions(triggerType);
+        const fields = buildFieldOptions(triggerType, cb);
         const rowEls = state.rows.map((row, idx) =>
             buildRow(makeRowCtx({ state, cb, rerender, row, idx, triggerType, fields })),
         );

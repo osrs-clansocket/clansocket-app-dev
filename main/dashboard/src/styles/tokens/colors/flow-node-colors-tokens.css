@@ -1,0 +1,14 @@
+:root {
+    --flow-kind-trigger: var(--base-azure-300);
+    --flow-kind-action: var(--base-gold-500);
+    --flow-kind-condition: var(--base-amber-300);
+    --flow-kind-delay: var(--base-graphite-400);
+    --flow-kind-wait-for-event: var(--base-azure-200);
+    --flow-capability-discord: var(--base-azure-400);
+    --flow-capability-plugin: var(--base-amber-500);
+    --flow-capability-wom: var(--base-forest-300);
+    --flow-capability-clans: var(--base-gold-600);
+    --flow-capability-runewatch: var(--base-ember-300);
+    --flow-manual-badge-bg: var(--base-amber-300);
+    --flow-manual-badge-fg: var(--base-graphite-900);
+}
