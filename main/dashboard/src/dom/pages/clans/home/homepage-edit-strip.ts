@@ -3,6 +3,8 @@ import { signal } from "../../../factory/reactive";
 import { uploadHomepageImage } from "../../../../state/clans/homepage/homepage-client.js";
 import type { EditorState } from "./homepage-editor-state.js";
 import { buildVariablesRow } from "./homepage-variable-picker.js";
+import { attachTooltip } from "./homepage-tooltip.js";
+import { TOOL_TOOLTIPS } from "./homepage-tooltip-content.js";
 
 const STRIP_CLASS = "clans-home__edit-strip";
 const ROWS_CLASS = "clans-home__edit-strip-rows";
@@ -40,8 +42,19 @@ function buildHiddenImageInput(state: EditorState): Instance<HTMLInputElement> {
     return picker;
 }
 
-function buildAddBtn(label: string, onClick: () => void): Instance {
-    return button({
+function tipped(trigger: Instance, key: string): Instance {
+    const def = TOOL_TOOLTIPS[key];
+    if (!def) return trigger;
+    return attachTooltip(trigger, {
+        title: def.title,
+        description: def.description,
+        affects: def.affects,
+        allowed: def.allowed,
+    });
+}
+
+function buildAddBtn(label: string, tipKey: string, onClick: () => void): Instance {
+    const btn = button({
         variant: BTN_VARIANT_OUTLINE,
         text: label,
         ariaLabel: label,
@@ -49,9 +62,10 @@ function buildAddBtn(label: string, onClick: () => void): Instance {
         meta: ["action"],
         onClick,
     });
+    return tipped(btn, tipKey);
 }
 
-function buildHistoryBtn(label: string, onClick: () => void, enabled$: () => boolean): Instance {
+function buildHistoryBtn(label: string, tipKey: string, onClick: () => void, enabled$: () => boolean): Instance {
     const btn = button({
         variant: BTN_VARIANT_OUTLINE,
         text: label,
@@ -66,7 +80,7 @@ function buildHistoryBtn(label: string, onClick: () => void, enabled$: () => boo
             else btn.setAttr("disabled", "");
         }),
     );
-    return btn;
+    return tipped(btn, tipKey);
 }
 
 function buildStatus(state: EditorState, feedback$: ReturnType<typeof signal<string>>): Instance {
@@ -98,7 +112,7 @@ function buildVariablesToggle(varsOpen$: ReturnType<typeof signal<boolean>>): In
             btn.setText(varsOpen$() ? "× Variables" : "{ Variables }");
         }),
     );
-    return btn;
+    return tipped(btn, "toggle-variables");
 }
 
 function buildGuidesToggle(state: EditorState): Instance {
@@ -115,7 +129,7 @@ function buildGuidesToggle(state: EditorState): Instance {
             btn.setText(state.guidesEnabled$() ? "× Guides" : "✚ Guides");
         }),
     );
-    return btn;
+    return tipped(btn, "toggle-guides");
 }
 
 function buildEditingRows(opts: EditStripOpts, feedback$: ReturnType<typeof signal<string>>): Instance {
@@ -123,28 +137,30 @@ function buildEditingRows(opts: EditStripOpts, feedback$: ReturnType<typeof sign
     const varsOpen$ = signal<boolean>(false);
     const picker = buildHiddenImageInput(state);
     const mainRow = div(baseProps([MAIN_ROW_CLASS]), [
-        buildAddBtn("+ Heading", () => state.addComponent("heading")),
-        buildAddBtn("+ Paragraph", () => state.addComponent("paragraph")),
-        buildAddBtn("+ Image", () => picker.el.click()),
+        buildAddBtn("+ Heading", "add-heading", () => state.addComponent("heading")),
+        buildAddBtn("+ Paragraph", "add-paragraph", () => state.addComponent("paragraph")),
+        buildAddBtn("+ Image", "add-image", () => picker.el.click()),
         picker,
-        buildAddBtn("+ Container", () => state.addComponent("container")),
-        buildAddBtn("+ Spacer", () => state.addComponent("spacer")),
-        buildAddBtn("+ KPI", () => state.addComponent("kpi")),
+        buildAddBtn("+ Container", "add-container", () => state.addComponent("container")),
+        buildAddBtn("+ Spacer", "add-spacer", () => state.addComponent("spacer")),
+        buildAddBtn("+ KPI", "add-kpi", () => state.addComponent("kpi")),
         buildVariablesToggle(varsOpen$),
         buildGuidesToggle(state),
         buildHistoryBtn(
             "↶ Undo",
+            "undo",
             () => state.undo(),
             () => state.canUndo$(),
         ),
         buildHistoryBtn(
             "↷ Redo",
+            "redo",
             () => state.redo(),
             () => state.canRedo$(),
         ),
-        buildAddBtn("Apply scaffold", () => state.applyScaffold()),
-        buildAddBtn("Clear all", () => state.clearAll()),
-        button({
+        buildAddBtn("Apply scaffold", "apply-scaffold", () => state.applyScaffold()),
+        buildAddBtn("Clear all", "clear-all", () => state.clearAll()),
+        tipped(button({
             variant: BTN_VARIANT_OUTLINE,
             text: "Save",
             ariaLabel: "Save homepage",
@@ -160,15 +176,15 @@ function buildEditingRows(opts: EditStripOpts, feedback$: ReturnType<typeof sign
                 }
                 setTimeout(() => feedback$.set(""), SAVE_FEEDBACK_RESET_MS);
             },
-        }),
-        button({
+        }), "save"),
+        tipped(button({
             variant: BTN_VARIANT_OUTLINE,
             text: "Exit edit",
             ariaLabel: "Exit edit mode",
             context: "exit edit mode without saving",
             meta: ["action"],
             onClick: () => state.setEditing(false),
-        }),
+        }), "exit-edit"),
         buildStatus(state, feedback$),
     ]);
     const rows = div(baseProps([ROWS_CLASS]), [mainRow, buildVariablesRow({ state, open$: varsOpen$ })]);

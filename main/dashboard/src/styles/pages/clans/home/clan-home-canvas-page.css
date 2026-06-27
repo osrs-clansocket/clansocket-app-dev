@@ -27,11 +27,9 @@
 
 .clans-home__canvas {
     position: relative;
-    z-index: 0;
     inline-size: 100%;
     aspect-ratio: 960 / max(var(--clan-home-content-h, 480), 480);
     padding-block: 4rem var(--sp-2);
-    isolation: isolate;
 }
 
 .clans-home__guides-layer {
@@ -103,8 +101,7 @@
     z-index: var(--z-toast);
     display: none;
     flex-direction: row;
-    gap: var(--sp-1);
-    padding: var(--sp-1);
+    align-items: center;
     border: var(--sp-hairline) solid var(--base-gold-500);
     border-radius: var(--radius-md);
     background: var(--gradient-surface-opaque);
@@ -223,6 +220,35 @@
     inline-size: var(--sp-6);
     block-size: var(--sp-6);
     font-size: var(--sp-6);
+}
+
+.clans-home__add-child-head {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.clans-home__popover-close {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--base-graphite-300);
+    cursor: pointer;
+    line-height: 0;
+}
+
+.clans-home__popover-close:hover {
+    color: var(--base-gold-300);
+}
+
+.clans-home__popover-close i,
+.clans-home__popover-close svg,
+.clans-home__popover-close span {
+    inline-size: var(--sp-3);
+    block-size: var(--sp-3);
+    font-size: var(--sp-3);
 }
 
 .clans-home__add-child-popover {
@@ -746,17 +772,23 @@
     pointer-events: auto;
 }
 
-.clans-home__frame-side > * {
+.clans-home__frame-side > *,
+.clans-home__frame-side .clans-home__frame-tool,
+.clans-home__frame-side .clans-home__color-tool,
+.clans-home__guide-actions > *,
+.clans-home__guide-actions .clans-home__frame-tool {
     border: 0;
 }
 
-.clans-home__frame-side .picker {
+.clans-home__frame-side .picker,
+.clans-home__guide-actions .picker {
     display: inline-flex;
     inline-size: var(--sp-6);
     block-size: var(--sp-6);
 }
 
-.clans-home__frame-side .picker__swatch {
+.clans-home__frame-side .picker__swatch,
+.clans-home__guide-actions .picker__swatch {
     inline-size: 100%;
     block-size: 100%;
     padding: var(--sp-1);
@@ -792,6 +824,58 @@
     inline-size: var(--sp-3);
     block-size: var(--sp-3);
     font-size: var(--sp-3);
+}
+
+.clans-home__tooltip {
+    position: fixed;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    z-index: var(--z-toast);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-0h);
+    min-inline-size: 12rem;
+    max-inline-size: 18rem;
+    padding: var(--sp-2);
+    border: var(--sp-hairline) solid var(--base-gold-500);
+    border-radius: var(--radius-md);
+    background: var(--gradient-surface-opaque);
+    color: var(--base-cream-100);
+    font-size: var(--fs-2xs);
+    line-height: var(--lh-snug);
+    pointer-events: none;
+}
+
+.clans-home__tooltip-title {
+    font-weight: var(--fw-bold);
+    color: var(--base-gold-300);
+}
+
+.clans-home__tooltip-desc {
+    color: var(--base-cream-100);
+}
+
+.clans-home__tooltip-row {
+    display: flex;
+    gap: var(--sp-1);
+    align-items: baseline;
+    margin-block-start: var(--sp-0h);
+}
+
+.clans-home__tooltip-label {
+    flex: 0 0 auto;
+    font-size: var(--fs-3xs);
+    font-weight: var(--fw-semi);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    color: var(--base-graphite-300);
+}
+
+.clans-home__tooltip-value {
+    flex: 1 1 auto;
+    font-family: var(--font-mono);
+    color: var(--base-cream-50);
+    word-break: break-all;
 }
 
 .clans-home__frame-side--top {
@@ -848,14 +932,13 @@
 }
 
 .clans-home__frame-popover-host {
-    position: absolute;
-    inset-block-start: 100%;
+    position: fixed;
+    inset-block-start: 0;
     inset-inline-start: 0;
-    z-index: 1;
-    margin-block-start: var(--sp-2);
+    z-index: var(--z-modal);
     pointer-events: auto;
-    isolation: isolate;
 }
+
 
 .clans-home__swatch-popover {
     display: flex;
@@ -873,11 +956,14 @@
 
 .clans-home__swatch-head {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    gap: var(--sp-2);
+    gap: var(--sp-1);
     padding-block-end: var(--sp-1);
     border-block-end: var(--sp-hairline) solid rgb(from var(--base-graphite-500) r g b / 0.3);
+}
+
+.clans-home__swatch-head-label {
+    margin-inline-end: auto;
 }
 
 .clans-home__swatch-head-label {
@@ -947,10 +1033,14 @@
 
 .clans-home__override-head {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    gap: var(--sp-1);
     padding-block-end: var(--sp-1);
     border-block-end: var(--sp-hairline) solid rgb(from var(--base-graphite-500) r g b / 0.3);
+}
+
+.clans-home__override-title {
+    margin-inline-end: auto;
 }
 
 .clans-home__override-title {
@@ -1033,8 +1123,15 @@
 }
 
 .clans-home__img-source-head {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-1);
     padding-block-end: var(--sp-1);
     border-block-end: var(--sp-hairline) solid rgb(from var(--base-graphite-500) r g b / 0.3);
+}
+
+.clans-home__img-source-label {
+    margin-inline-end: auto;
 }
 
 .clans-home__img-source-label {

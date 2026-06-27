@@ -75,6 +75,9 @@ class ScheduleTickDispatcher extends BaseDispatcher {
                 status: "RUNNING",
                 exitReason: null,
                 failureReason: null,
+                wakeEventKind: null,
+                wakeAt: null,
+                wakeTimeoutAt: null,
             },
             { dryRun: false },
         );

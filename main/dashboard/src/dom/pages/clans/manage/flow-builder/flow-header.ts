@@ -22,6 +22,7 @@ import {
     saveCurrentToServer,
 } from "./flow-card-state.js";
 import { publishFlow, setFlowEnabledOnServer } from "../../../../../state/flows/flows-client.js";
+import { runDryRunForCurrent, dryRunErrorSignal } from "../../../../../state/flows/dry-run-store.js";
 
 const HEADER_CLASS = "clans-manage__flow-builder-header";
 const SEGMENT_CLASS = "clans-manage__flow-builder-header-segment";
@@ -119,6 +120,21 @@ function buildPublishButton(clanId: string): Instance {
     });
 }
 
+function buildDryRunButton(clanId: string): Instance {
+    return button({
+        variant: BTN_VARIANT_OUTLINE,
+        text: "Dry run",
+        context: "execute the current flow definition without firing actions",
+        meta: ["action"],
+        onClick: () => {
+            void runDryRunForCurrent(clanId).then(() => {
+                const err = dryRunErrorSignal();
+                if (err) console.error("[flow-builder] dry-run error:", err);
+            });
+        },
+    });
+}
+
 export function buildFlowHeader(clanId: string): Instance {
     return div(baseProps([HEADER_CLASS]), [
         buildNameField(),
@@ -127,5 +143,6 @@ export function buildFlowHeader(clanId: string): Instance {
         buildScheduleField(),
         buildSaveButton(clanId),
         buildPublishButton(clanId),
+        buildDryRunButton(clanId),
     ]);
 }

@@ -3,6 +3,7 @@
 @import "./discord/index.css";
 @import "./flow-builder/index.css";
 @import "./identity/index.css";
+@import "./review-queue/index.css";
 @import "./runewatch/index.css";
 @import "./clan-back-page.css";
 @import "./clan-body-page.css";

@@ -101,6 +101,27 @@
     user-select: text;
 }
 
+.clans-manage__flow-builder-card-slot--decision-would-fire {
+    outline: 0.125rem solid var(--base-forest-100);
+    outline-offset: 0.125rem;
+}
+
+.clans-manage__flow-builder-card-slot--decision-would-skip {
+    outline: 0.125rem solid var(--base-graphite-400);
+    outline-offset: 0.125rem;
+    opacity: var(--opacity-medium, 0.7);
+}
+
+.clans-manage__flow-builder-card-slot--decision-would-pause {
+    outline: 0.125rem solid var(--base-azure-300);
+    outline-offset: 0.125rem;
+}
+
+.clans-manage__flow-builder-card-slot--decision-would-fail {
+    outline: 0.125rem solid var(--base-ember-200);
+    outline-offset: 0.125rem;
+}
+
 .clans-manage__flow-builder-card-slot > .clans-manage__auto-hooks-card {
     flex: 1 1 auto;
     block-size: 100%;

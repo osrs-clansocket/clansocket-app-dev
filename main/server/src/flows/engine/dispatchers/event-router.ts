@@ -2,6 +2,7 @@ import logger from "@clansocket/logger";
 import { clanFlowsDb } from "../../../database/index.js";
 import { parseFlowDefinition } from "../../store/parsers/flow-parser.js";
 import { stepDispatcher } from "./step-dispatcher.js";
+import { listWaitingByEvent } from "../store/execution-store.js";
 import type { ExecContext } from "../context/exec-context.js";
 import type { FlowDefinition } from "../../store/flow-definition-types.js";
 
@@ -71,6 +72,9 @@ function buildExecContext(row: FlowRow, definition: FlowDefinition, input: FlowE
         status: "RUNNING",
         exitReason: null,
         failureReason: null,
+        wakeEventKind: null,
+        wakeAt: null,
+        wakeTimeoutAt: null,
     };
 }
 
@@ -86,7 +90,23 @@ async function runFlowForEvent(row: FlowRow, input: FlowEventInput): Promise<voi
     }
 }
 
+async function resumeWaitingForEvent(input: FlowEventInput): Promise<void> {
+    const waiting = listWaitingByEvent(input.clanId, input.triggerId);
+    for (const wait of waiting) {
+        wait.ctx.status = "RUNNING";
+        wait.ctx.wakeEventKind = null;
+        wait.ctx.wakeAt = null;
+        wait.ctx.wakeTimeoutAt = null;
+        try {
+            await stepDispatcher.advance(wait.ctx);
+        } catch (err) {
+            logger.warn(`flow event-router: resume failed for execution ${wait.executionId}: ${(err as Error).message}`);
+        }
+    }
+}
+
 export async function dispatchEventToFlows(input: FlowEventInput): Promise<void> {
+    await resumeWaitingForEvent(input);
     let rows: FlowRow[] = [];
     try {
         rows = clanFlowsDb(input.clanId).prepare(SELECT_ENABLED_FLOWS_SQL).all() as FlowRow[];

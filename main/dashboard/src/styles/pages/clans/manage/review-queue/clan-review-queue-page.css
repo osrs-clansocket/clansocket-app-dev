@@ -1,0 +1,51 @@
+.clans-manage__review-queue {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: var(--sp-2);
+    padding: var(--sp-2);
+}
+
+.clans-manage__review-queue-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-2);
+}
+
+.clans-manage__review-queue-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-1);
+}
+
+.clans-manage__review-queue-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-2);
+    padding: var(--sp-1h) var(--sp-2);
+    border: var(--sp-hairline) solid var(--base-graphite-700);
+    border-radius: var(--radius-md);
+    background: rgb(from var(--base-graphite-800) r g b / 0.6);
+}
+
+.clans-manage__review-queue-meta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-0);
+    font-size: var(--fs-xs);
+    color: var(--base-graphite-100);
+}
+
+.clans-manage__review-queue-actions {
+    display: flex;
+    gap: var(--sp-1);
+}
+
+.clans-manage__review-queue-empty {
+    padding: var(--sp-3);
+    font-size: var(--fs-2xs);
+    text-align: center;
+    color: var(--base-graphite-300);
+}

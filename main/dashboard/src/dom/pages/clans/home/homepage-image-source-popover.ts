@@ -2,6 +2,7 @@ import { BTN_VARIANT_OUTLINE, button, div, input, span, type Instance, baseProps
 import { uploadHomepageImage } from "../../../../state/clans/homepage/homepage-client.js";
 import { isDefaultIconKey } from "../../../../state/clans/homepage/homepage-default-scaffold.js";
 import type { EditorState } from "./homepage-editor-state.js";
+import { popoverCloseBtn } from "./homepage-popover-close.js";
 
 const POPOVER_CLASS = "clans-home__img-source";
 const HEAD_CLASS = "clans-home__img-source-head";
@@ -29,12 +30,15 @@ function buildHiddenInput(state: EditorState, id: string): Instance<HTMLInputEle
     return picker;
 }
 
-export function buildImageSourcePopover(state: EditorState, id: string): Instance {
+export function buildImageSourcePopover(state: EditorState, id: string, onClose: () => void): Instance {
     const picker = buildHiddenInput(state, id);
     const comp = state.draft$().find((c) => c.componentId === id);
     const currentKey = comp?.payload.imageKey;
     return div(baseProps([POPOVER_CLASS]), [
-        div(baseProps([HEAD_CLASS]), [span(textProps(["clans-home__img-source-label"], "Image source"))]),
+        div(baseProps([HEAD_CLASS]), [
+            span(textProps(["clans-home__img-source-label"], "Image source")),
+            popoverCloseBtn(onClose),
+        ]),
         div(baseProps([ROW_CLASS]), [
             button({
                 variant: BTN_VARIANT_OUTLINE,

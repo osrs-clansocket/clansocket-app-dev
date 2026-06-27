@@ -5,6 +5,8 @@ import { buildGlassColor } from "../../../forms/glass/inputs/color/index.js";
 import type { HomepageComponent } from "../../../../state/clans/homepage/types.js";
 import { ACTION_TOOLS, PROP_TOOLS, UNPARENT_TOOL, type FrameContext, type PropTool } from "./homepage-frame-tools.js";
 import { toolButton } from "./homepage-frame-button.js";
+import { attachTooltip, type TooltipOpts } from "./homepage-tooltip.js";
+import { TOOL_TOOLTIPS } from "./homepage-tooltip-content.js";
 
 const SIDEBAR_CLASS = "clans-home__frame-side";
 const SIDEBAR_TOP = "clans-home__frame-side--top";
@@ -37,22 +39,42 @@ interface Capacity {
     left: number;
 }
 
-function buildToggleTool(toolId: string, name: string, label: string, open$: OpenSignal): Instance {
-    return toolButton({
+function resolveTooltip(toolId: string, ctx: FrameContext): TooltipOpts | undefined {
+    const def = TOOL_TOOLTIPS[toolId];
+    if (!def) return undefined;
+    const value$ = def.valueBuilder !== undefined ? def.valueBuilder({ state: ctx.state, id: ctx.id }) : undefined;
+    return {
+        title: def.title,
+        description: def.description,
+        affects: def.affects,
+        allowed: def.allowed,
+        value$,
+    };
+}
+
+function withTooltip(trigger: Instance, toolId: string, ctx: FrameContext): Instance {
+    const tip = resolveTooltip(toolId, ctx);
+    return tip ? attachTooltip(trigger, tip) : trigger;
+}
+
+function buildToggleTool(toolId: string, name: string, label: string, open$: OpenSignal, ctx: FrameContext): Instance {
+    const btn = toolButton({
         name,
         label,
         active$: () => open$() === toolId,
         onClick: () => open$.set(open$() === toolId ? null : toolId),
     });
+    return withTooltip(btn, toolId, ctx);
 }
 
 function buildActionTool(tool: (typeof ACTION_TOOLS)[number], ctx: FrameContext): Instance {
-    return toolButton({
+    const btn = toolButton({
         name: tool.name,
         label: tool.label,
         active$: () => false,
         onClick: () => tool.run(ctx),
     });
+    return withTooltip(btn, tool.id, ctx);
 }
 
 type Kind = HomepageComponent["componentName"];
@@ -147,6 +169,15 @@ function tintForLuminance(l: number): string {
     return l > 0.5 ? "var(--base-graphite-800)" : "var(--base-graphite-100)";
 }
 
+function tooltipKeyForProp(prop: string): string {
+    if (prop === "--color") return "color";
+    if (prop === "--background") return "background";
+    if (prop === "--border-color") return "border-color";
+    if (prop === "--kpi-label-color") return "kpi-label-color";
+    if (prop === "--kpi-value-color") return "kpi-value-color";
+    return prop;
+}
+
 function buildColorTool(ctx: FrameContext, kind: Kind, prop: string): Instance {
     const picker = buildGlassColor({
         name: prop,
@@ -164,12 +195,12 @@ function buildColorTool(ctx: FrameContext, kind: Kind, prop: string): Instance {
             setDynProps(wrap.el, { "--icon-tint": tintForLuminance(hexLuminance(hex)) });
         }),
     );
-    return wrap;
+    return withTooltip(wrap, tooltipKeyForProp(prop), ctx);
 }
 
 function buildPropEntry(tool: PropTool, ctx: FrameContext, kind: Kind, open$: OpenSignal): Instance {
     if (COLOR_PROP_IDS.has(tool.id)) return buildColorTool(ctx, kind, tool.property);
-    return buildToggleTool(tool.id, tool.name, tool.label, open$);
+    return buildToggleTool(tool.id, tool.name, tool.label, open$, ctx);
 }
 
 const KPI_COLOR_SLOTS: ReadonlyArray<{ property: string; label: string }> = [
@@ -188,12 +219,12 @@ function gatherTools(component: HomepageComponent, ctx: FrameContext, open$: Ope
         for (const slot of KPI_COLOR_SLOTS) tools.push(buildColorTool(ctx, kind, slot.property));
     }
     if (component.componentName === "image") {
-        tools.push(buildToggleTool(IMAGE_SOURCE_TOOL.id, IMAGE_SOURCE_TOOL.name, IMAGE_SOURCE_TOOL.label, open$));
+        tools.push(buildToggleTool(IMAGE_SOURCE_TOOL.id, IMAGE_SOURCE_TOOL.name, IMAGE_SOURCE_TOOL.label, open$, ctx));
     }
     if (component.componentName === "container") {
-        tools.push(buildToggleTool(ADD_CHILD_TOOL.id, ADD_CHILD_TOOL.name, ADD_CHILD_TOOL.label, open$));
+        tools.push(buildToggleTool(ADD_CHILD_TOOL.id, ADD_CHILD_TOOL.name, ADD_CHILD_TOOL.label, open$, ctx));
     }
-    tools.push(buildToggleTool(INFO_TOOL.id, INFO_TOOL.name, INFO_TOOL.label, open$));
+    tools.push(buildToggleTool(INFO_TOOL.id, INFO_TOOL.name, INFO_TOOL.label, open$, ctx));
     for (const tool of ACTION_TOOLS) tools.push(buildActionTool(tool, ctx));
     const unparent = buildActionTool(UNPARENT_TOOL, ctx);
     tools.push(unparent);
@@ -248,6 +279,28 @@ function applyDistribution(sides: SideRefs, dist: Record<Side, Instance[]>): voi
     for (const t of dist.left) sides.left.el.appendChild(t.el);
 }
 
+function clampToViewport(el: HTMLElement): void {
+    el.style.translate = "";
+    const rect = el.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) return;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    let dx = 0;
+    let dy = 0;
+    if (rect.left < 0) dx = -rect.left;
+    else if (rect.right > vw) dx = vw - rect.right;
+    if (rect.top < 0) dy = -rect.top;
+    else if (rect.bottom > vh) dy = vh - rect.bottom;
+    if (dx !== 0 || dy !== 0) el.style.translate = `${dx}px ${dy}px`;
+}
+
+function clampSidesToViewport(sides: SideRefs): void {
+    clampToViewport(sides.top.el);
+    clampToViewport(sides.right.el);
+    clampToViewport(sides.bottom.el);
+    clampToViewport(sides.left.el);
+}
+
 function makeSides(): SideRefs {
     return {
         top: div(baseProps([SIDEBAR_CLASS, SIDEBAR_TOP])),
@@ -273,9 +326,19 @@ export function attachFrameSides(
     const redistribute = (): void => {
         const rect = ctx.host.el.getBoundingClientRect();
         applyDistribution(sides, distribute(tools, computeCapacity(rect)));
+        clampSidesToViewport(sides);
     };
     redistribute();
     const ro = new ResizeObserver(() => redistribute());
     ro.observe(ctx.host.el);
-    frame.trackDispose({ dispose: () => ro.disconnect() });
+    const onView = (): void => clampSidesToViewport(sides);
+    window.addEventListener("scroll", onView, true);
+    window.addEventListener("resize", onView);
+    frame.trackDispose({
+        dispose: () => {
+            ro.disconnect();
+            window.removeEventListener("scroll", onView, true);
+            window.removeEventListener("resize", onView);
+        },
+    });
 }

@@ -2,6 +2,7 @@ import express from "express";
 import { randomUUID } from "node:crypto";
 import { auditContext, readCausedHeader } from "./shared/audit-context.js";
 import { HTTP_BAD_REQUEST, HTTP_INTERNAL_ERROR } from "./shared/http/http-status.js";
+import { maybeTick } from "./flows/engine/dispatchers/tick-driver.js";
 
 function jsonErrorMiddleware(
     err: unknown,
@@ -31,6 +32,11 @@ function auditContextMiddleware(req: express.Request, _res: express.Response, ne
     auditContext.run({ causedBy, requestId: randomUUID(), startMs: Date.now() }, () => next());
 }
 
+function flowTickMiddleware(_req: express.Request, _res: express.Response, next: express.NextFunction): void {
+    maybeTick(Date.now());
+    next();
+}
+
 export function attachBootMiddleware(app: express.Express): void {
     app.use(
         express.json({
@@ -42,4 +48,5 @@ export function attachBootMiddleware(app: express.Express): void {
     );
     app.use(jsonErrorMiddleware);
     app.use(auditContextMiddleware);
+    app.use(flowTickMiddleware);
 }

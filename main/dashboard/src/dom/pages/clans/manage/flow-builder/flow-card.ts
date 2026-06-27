@@ -23,6 +23,7 @@ import {
     fieldOptionsForScope,
 } from "../../../../../state/flows/capabilities-store.js";
 import { schemaForm } from "./schema-form/index.js";
+import { dryRunTraceSignal, decisionForNode } from "../../../../../state/flows/dry-run-store.js";
 import type {
     ActionCardConfig,
     CardKind,
@@ -432,7 +433,22 @@ function belowAdorner(placement: FlowCardPlacement): Instance {
     );
 }
 
+const DECISION_CLASS_PREFIX = "clans-manage__flow-builder-card-slot--decision-";
+
 export function buildFlowCard(placement: FlowCardPlacement, clanId: string): Instance {
     const card = div(baseProps([CARD_CLASS]), [buildHeader(placement.config), buildBody(placement, clanId)]);
-    return div(baseProps([SLOT_CLASS]), [card, rightAdorner(placement), belowAdorner(placement)]);
+    const slot = div(baseProps([SLOT_CLASS]), [card, rightAdorner(placement), belowAdorner(placement)]);
+    effect(() => {
+        void dryRunTraceSignal();
+        const decision = decisionForNode(placement.config.id);
+        const el = slot.el;
+        el.classList.remove(
+            `${DECISION_CLASS_PREFIX}would-fire`,
+            `${DECISION_CLASS_PREFIX}would-skip`,
+            `${DECISION_CLASS_PREFIX}would-pause`,
+            `${DECISION_CLASS_PREFIX}would-fail`,
+        );
+        if (decision) el.classList.add(`${DECISION_CLASS_PREFIX}${decision}`);
+    });
+    return slot;
 }

@@ -10,6 +10,9 @@ export async function runDryRun(
         status: "RUNNING",
         exitReason: null,
         failureReason: null,
+        wakeEventKind: null,
+        wakeAt: null,
+        wakeTimeoutAt: null,
     };
     const visitedSteps: DryRunStep[] = [];
     await stepDispatcher.advance(exec, {

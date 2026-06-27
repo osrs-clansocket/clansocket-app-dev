@@ -10,8 +10,11 @@ import { templateRegistry } from "../templates/template-registry.js";
 import { listPendingReviews, approveReview, cancelReview } from "../review/review-queue-store.js";
 import { resolveValueOptions, type ValueOptionsScope } from "../value-resolvers/entity-value-options.js";
 import { entityAttributes } from "../registries/entity-attribute-schema.js";
+import { FILTER_OPERATORS } from "../../filter/dsl-types.js";
+import { componentRegistry } from "../engine/components/component-registry.js";
 import { isClanManager } from "../../database/clans/access/clan-manager-store.js";
 import { recordClanAudit } from "../../database/index.js";
+import { validateFlowReferences } from "../validators/reference-validator.js";
 import "../_bootstrap.js";
 
 function requireFlowManager(req: express.Request, res: express.Response, clanId: string): string | null {
@@ -116,6 +119,23 @@ router.post("/validate", (req, res) => {
     }
 });
 
+router.get("/operators", (_req, res) => {
+    res.json({ operators: FILTER_OPERATORS });
+});
+
+router.get("/component-kinds", (_req, res) => {
+    const kinds = componentRegistry.list().map((c) => ({
+        kind: c.kind,
+        label: c.label,
+        color: c.color,
+        reads_event: c.reads_event,
+        reads_live_entity: c.reads_live_entity,
+        yields_execution: c.yields_execution,
+        default_output_handles: c.default_output_handles,
+    }));
+    res.json({ kinds });
+});
+
 router.get("/entity-attributes", (_req, res) => {
     const attrs = entityAttributes().map((a) => ({ path: a.path, label: a.label, type: a.type }));
     res.json({ attributes: attrs });
@@ -177,6 +197,9 @@ router.post("/dry-run-direct", async (req, res) => {
             variables: {},
             trackers: {},
             currentStep: definition.entry_node_id,
+            wakeEventKind: null,
+            wakeAt: null,
+            wakeTimeoutAt: null,
         });
         res.json({ trace });
     } catch (err) {
@@ -213,6 +236,11 @@ router.post("/:clanId", (req, res) => {
     if (!siteAccountId) return;
     try {
         const definition = parseFlowDefinition(req.body?.definition);
+        const refErrors = validateFlowReferences(definition);
+        if (refErrors.length > 0) {
+            res.status(400).json({ error: "unknown_refs", details: refErrors });
+            return;
+        }
         const flowId = String(req.body?.flow_id ?? "");
         const flowName = String(req.body?.flow_name ?? "");
         if (!flowId || !flowName) {
@@ -244,6 +272,11 @@ router.patch("/:clanId/:flowId", (req, res) => {
     if (!siteAccountId) return;
     try {
         const definition = parseFlowDefinition(req.body?.definition);
+        const refErrors = validateFlowReferences(definition);
+        if (refErrors.length > 0) {
+            res.status(400).json({ error: "unknown_refs", details: refErrors });
+            return;
+        }
         const flowName = String(req.body?.flow_name ?? "");
         if (!flowName) {
             res.status(400).json({ error: "flow_name required" });
@@ -386,6 +419,9 @@ router.post("/:clanId/:flowId/dry-run", async (req, res) => {
             variables: {},
             trackers: {},
             currentStep: definition.entry_node_id,
+            wakeEventKind: null,
+            wakeAt: null,
+            wakeTimeoutAt: null,
         });
         res.json({ trace });
     } catch (err) {

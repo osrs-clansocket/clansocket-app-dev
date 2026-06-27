@@ -1,6 +1,7 @@
 import { div, effect, span, type Instance, baseProps, textProps } from "../../../factory";
 import { setDynProps } from "../../../../state/dynamic-styles.js";
 import type { EditorState } from "./homepage-editor-state.js";
+import { popoverCloseBtn } from "./homepage-popover-close.js";
 
 const PANEL_CLASS = "clans-home__override-panel";
 const HEAD_CLASS = "clans-home__override-head";
@@ -39,7 +40,7 @@ function buildRow(state: EditorState, id: string, property: string, value: strin
     ]);
 }
 
-export function buildOverrideList(state: EditorState, id: string): Instance {
+export function buildOverrideList(state: EditorState, id: string, onClose: () => void): Instance {
     const panel = div(baseProps([PANEL_CLASS]));
     panel.trackDispose(
         effect(() => {
@@ -50,6 +51,7 @@ export function buildOverrideList(state: EditorState, id: string): Instance {
                 div(baseProps([HEAD_CLASS]), [
                     span(textProps(["clans-home__override-title"], "Overrides")),
                     span(textProps(["clans-home__override-count"], String(entries.length))),
+                    popoverCloseBtn(onClose),
                 ]),
             );
             if (entries.length === 0) {

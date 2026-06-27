@@ -2,6 +2,7 @@ import { gateRegistry } from "../gates/gate-registry.js";
 import { lookupOperation } from "../../registries/capability-registry.js";
 import { readHold } from "../holds/hold-store.js";
 import { enqueueReview } from "../../review/review-queue-store.js";
+import { insertExecution, updateExecution } from "../store/execution-store.js";
 import { BaseDispatcher } from "./base/base-dispatcher.js";
 import { registerDispatcher } from "./dispatcher-registry.js";
 import type { ExecContext } from "../context/exec-context.js";
@@ -14,12 +15,135 @@ export interface StepDecision {
     readonly reason?: string;
 }
 
+function readStringConfig(node: FlowNode, key: string, fallback = ""): string {
+    const v = node.config[key];
+    return typeof v === "string" ? v : fallback;
+}
+
+function readArrayConfig(node: FlowNode, key: string): readonly unknown[] {
+    const v = node.config[key];
+    return Array.isArray(v) ? v : [];
+}
+
+function executeVariable(exec: ExecContext, node: FlowNode): void {
+    const name = readStringConfig(node, "name");
+    if (name.length === 0) return;
+    exec.variables[name] = node.config.value ?? null;
+}
+
+function executeTracker(exec: ExecContext, node: FlowNode): void {
+    const name = readStringConfig(node, "name");
+    if (name.length === 0) return;
+    const op = readStringConfig(node, "op", "set");
+    const value = node.config.value;
+    const current = exec.trackers[name];
+    if (op === "increment") {
+        const n = typeof current === "number" ? current : 0;
+        const delta = typeof value === "number" ? value : 1;
+        exec.trackers[name] = n + delta;
+        return;
+    }
+    if (op === "append") {
+        const list = Array.isArray(current) ? [...current] : [];
+        list.push(value);
+        exec.trackers[name] = list;
+        return;
+    }
+    exec.trackers[name] = value ?? null;
+}
+
+function executeRandomPick(exec: ExecContext, node: FlowNode): void {
+    const pool = readArrayConfig(node, "pool");
+    if (pool.length === 0) return;
+    const idx = Math.floor(Math.random() * pool.length);
+    const out = readStringConfig(node, "output_variable");
+    if (out.length > 0) exec.variables[out] = pool[idx];
+}
+
+function executeCyclePick(exec: ExecContext, node: FlowNode): void {
+    const pool = readArrayConfig(node, "pool");
+    if (pool.length === 0) return;
+    const trackerKey = readStringConfig(node, "tracker_key", `cycle:${node.id}`);
+    const current = exec.trackers[trackerKey];
+    const idx = (typeof current === "number" ? current : -1) + 1;
+    const wrapped = idx % pool.length;
+    exec.trackers[trackerKey] = wrapped;
+    const out = readStringConfig(node, "output_variable");
+    if (out.length > 0) exec.variables[out] = pool[wrapped];
+}
+
+const UNIT_MS_MAP: Readonly<Record<string, number>> = {
+    seconds: 1_000,
+    minutes: 60_000,
+    hours: 3_600_000,
+    days: 86_400_000,
+};
+
+function executeDelay(exec: ExecContext, node: FlowNode, dryRun: boolean): void {
+    if (dryRun) return;
+    const value = typeof node.config.value === "number" ? node.config.value : 0;
+    const unit = readStringConfig(node, "unit", "minutes");
+    const ms = value * (UNIT_MS_MAP[unit] ?? UNIT_MS_MAP.minutes!);
+    exec.status = "WAITING";
+    exec.wakeAt = Date.now() + ms;
+    exec.wakeEventKind = null;
+    exec.wakeTimeoutAt = null;
+}
+
+function executeWaitForEvent(exec: ExecContext, node: FlowNode, dryRun: boolean): void {
+    if (dryRun) return;
+    const eventTriggerId = readStringConfig(node, "event_trigger_id");
+    if (eventTriggerId.length === 0) return;
+    const timeoutMs = typeof node.config.timeout_ms === "number" ? node.config.timeout_ms : null;
+    exec.status = "WAITING";
+    exec.wakeEventKind = eventTriggerId;
+    exec.wakeAt = null;
+    exec.wakeTimeoutAt = timeoutMs !== null ? Date.now() + timeoutMs : null;
+}
+
+function executeExhaustPick(exec: ExecContext, node: FlowNode): void {
+    const pool = readArrayConfig(node, "pool");
+    if (pool.length === 0) return;
+    const trackerKey = readStringConfig(node, "tracker_key", `exhaust:${node.id}`);
+    const drawn = exec.trackers[trackerKey];
+    let drawnIndices = Array.isArray(drawn) ? (drawn as number[]).filter((n) => Number.isInteger(n)) : [];
+    if (drawnIndices.length >= pool.length) drawnIndices = [];
+    const remaining: number[] = [];
+    for (let i = 0; i < pool.length; i += 1) if (!drawnIndices.includes(i)) remaining.push(i);
+    if (remaining.length === 0) return;
+    const pickIdx = remaining[Math.floor(Math.random() * remaining.length)]!;
+    drawnIndices.push(pickIdx);
+    exec.trackers[trackerKey] = drawnIndices;
+    const out = readStringConfig(node, "output_variable");
+    if (out.length > 0) exec.variables[out] = pool[pickIdx];
+}
+
 class StepDispatcher extends BaseDispatcher {
     public readonly kind = "step-dispatcher";
 
     public async advance(
         exec: ExecContext,
         opts: { dryRun?: boolean; onStep?: (decision: StepDecision) => void } = {},
+    ): Promise<void> {
+        const persistedId = !opts.dryRun && exec.executionId === 0 ? insertExecution(exec) : exec.executionId;
+        const writeBack = (): void => {
+            if (opts.dryRun) return;
+            try {
+                updateExecution(exec, persistedId);
+            } catch {
+                // execution persistence best-effort
+            }
+        };
+        try {
+            await this.runLoop(exec, opts);
+        } finally {
+            writeBack();
+        }
+    }
+
+    private async runLoop(
+        exec: ExecContext,
+        opts: { dryRun?: boolean; onStep?: (decision: StepDecision) => void },
     ): Promise<void> {
         while (exec.status === "RUNNING") {
             const node = this.currentNode(exec);
@@ -105,6 +229,39 @@ class StepDispatcher extends BaseDispatcher {
         }
         if (node.kind === "action" && node.operation_ref) {
             await this.executeAction(exec, node, opts);
+            return;
+        }
+        if (node.kind === "variable") {
+            executeVariable(exec, node);
+            this.advanceToNext(exec, node, "next");
+            return;
+        }
+        if (node.kind === "tracker") {
+            executeTracker(exec, node);
+            this.advanceToNext(exec, node, "next");
+            return;
+        }
+        if (node.kind === "random-pick") {
+            executeRandomPick(exec, node);
+            this.advanceToNext(exec, node, "next");
+            return;
+        }
+        if (node.kind === "cycle-pick") {
+            executeCyclePick(exec, node);
+            this.advanceToNext(exec, node, "next");
+            return;
+        }
+        if (node.kind === "exhaust-pick") {
+            executeExhaustPick(exec, node);
+            this.advanceToNext(exec, node, "next");
+            return;
+        }
+        if (node.kind === "delay") {
+            executeDelay(exec, node, opts.dryRun ?? false);
+            return;
+        }
+        if (node.kind === "wait-for-event") {
+            executeWaitForEvent(exec, node, opts.dryRun ?? false);
             return;
         }
         this.advanceToNext(exec, node, "next");

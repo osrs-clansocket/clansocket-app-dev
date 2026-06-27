@@ -98,3 +98,35 @@ export async function archiveFlow(clanId: string, flowId: string): Promise<void>
         throw new Error(`archiveFlow failed: ${response.status} ${text}`);
     }
 }
+
+export interface DryRunStep {
+    readonly node_id: string;
+    readonly node_kind: string;
+    readonly decision: "would-fire" | "would-skip" | "would-pause" | "would-fail";
+    readonly reason?: string;
+}
+
+export interface DryRunTrace {
+    readonly flow_id: string;
+    readonly flow_version: number;
+    readonly steps: readonly DryRunStep[];
+    readonly outcome: "completed" | "exited" | "failed";
+    readonly final_node_id: string;
+}
+
+export interface DryRunResponse {
+    readonly trace: DryRunTrace;
+}
+
+export async function dryRunFlow(definition: unknown, clanId: string): Promise<DryRunResponse> {
+    const response = await fetch("/api/flows/dry-run-direct", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ definition, clan_id: clanId, event: {}, entity: {} }),
+    });
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`dryRunFlow failed: ${response.status} ${text}`);
+    }
+    return (await response.json()) as DryRunResponse;
+}

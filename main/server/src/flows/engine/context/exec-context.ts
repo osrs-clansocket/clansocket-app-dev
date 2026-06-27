@@ -8,7 +8,7 @@ export interface ExecContext {
     readonly flowId: string;
     readonly flowName: string;
     readonly flowVersion: number;
-    readonly executionId: number;
+    executionId: number;
     readonly definition: FlowDefinition;
     readonly event: Readonly<Record<string, unknown>>;
     entity: Record<string, unknown>;
@@ -18,6 +18,9 @@ export interface ExecContext {
     status: ExecutionStatus;
     exitReason: string | null;
     failureReason: string | null;
+    wakeEventKind: string | null;
+    wakeAt: number | null;
+    wakeTimeoutAt: number | null;
     botId?: string;
     guildId?: string;
 }

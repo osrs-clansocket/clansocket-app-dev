@@ -1,6 +1,7 @@
 import { div, span, type Instance, baseProps, textProps } from "../../../factory";
 import { setDynProps } from "../../../../state/dynamic-styles.js";
 import { ALLOWED_TOKENS_BY_PROPERTY } from "@clansocket/constants/clan-homepage-tokens";
+import { popoverCloseBtn } from "./homepage-popover-close.js";
 
 const POPOVER_CLASS = "clans-home__swatch-popover";
 const SWATCH_CLASS = "clans-home__swatch";
@@ -74,14 +75,16 @@ export interface SwatchPopoverOpts {
     property: string;
     onSelect(value: string): void;
     onClear(): void;
+    onClose(): void;
 }
 
 export function buildSwatchPopover(opts: SwatchPopoverOpts): Instance {
-    const { property, onSelect, onClear } = opts;
+    const { property, onSelect, onClear, onClose } = opts;
     const allowed = ALLOWED_TOKENS_BY_PROPERTY[property] ?? [];
     const head = div(baseProps([POPOVER_HEAD_CLASS]), [
         span(textProps(["clans-home__swatch-head-label"], property)),
         clearButton(onClear),
+        popoverCloseBtn(onClose),
     ]);
     const swatches = allowed.map((value) =>
         isColorProp(property) ? colorSwatch(property, value, onSelect) : textSwatch(property, value, onSelect),

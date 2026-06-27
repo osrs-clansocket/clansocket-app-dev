@@ -24,6 +24,43 @@ async function fetchEntityAttributes(): Promise<readonly EntityAttribute[]> {
     }
 }
 
+export interface FilterOperatorDef {
+    readonly value: string;
+    readonly label: string;
+}
+
+export interface ComponentKindDef {
+    readonly kind: string;
+    readonly label: string;
+    readonly color: string;
+    readonly default_output_handles: readonly string[];
+}
+
+export const operatorsSignal: Signal<readonly FilterOperatorDef[]> = signal<readonly FilterOperatorDef[]>([]);
+export const componentKindsSignal: Signal<readonly ComponentKindDef[]> = signal<readonly ComponentKindDef[]>([]);
+
+async function fetchOperators(): Promise<readonly FilterOperatorDef[]> {
+    try {
+        const response = await fetch("/api/flows/operators");
+        if (!response.ok) return [];
+        const body = (await response.json()) as { operators: readonly string[] };
+        return body.operators.map((op) => ({ value: op, label: op }));
+    } catch {
+        return [];
+    }
+}
+
+async function fetchComponentKinds(): Promise<readonly ComponentKindDef[]> {
+    try {
+        const response = await fetch("/api/flows/component-kinds");
+        if (!response.ok) return [];
+        const body = (await response.json()) as { kinds: readonly ComponentKindDef[] };
+        return body.kinds;
+    } catch {
+        return [];
+    }
+}
+
 function humanizeKey(key: string): string {
     const spaced = key.replace(/_/g, " ").replace(/([a-z])([A-Z])/g, "$1 $2");
     return spaced.charAt(0).toUpperCase() + spaced.slice(1);
@@ -68,8 +105,10 @@ export async function ensureCapabilitiesLoaded(): Promise<void> {
         const response = await fetchCapabilities();
         capabilitiesSignal.set(response.capabilities);
         registerAllTriggerFields(response.capabilities);
-        const attrs = await fetchEntityAttributes();
+        const [attrs, ops, kinds] = await Promise.all([fetchEntityAttributes(), fetchOperators(), fetchComponentKinds()]);
         entityAttributesSignal.set(attrs);
+        operatorsSignal.set(ops);
+        componentKindsSignal.set(kinds);
     } catch {
         loaded = false;
     }

@@ -51,11 +51,35 @@ class LoopTickDispatcher extends BaseDispatcher {
         for (const row of rows) {
             const claimed = this.claim(clanId, row, now);
             if (!claimed) continue;
+            const inflight = this.countInflight(clanId, row.flow_id);
+            const policy = row.on_overlap || "skip";
+            if (inflight > 0 && policy === "skip") {
+                this.advance(clanId, row, now);
+                continue;
+            }
+            if (inflight > 0 && policy === "cancel-previous") {
+                this.cancelInflight(clanId, row.flow_id, now);
+            }
             await this.fire(clanId, row, now);
             this.advance(clanId, row, now);
             fired.push(row.flow_id);
         }
         return fired;
+    }
+
+    private countInflight(clanId: string, flowId: string): number {
+        const db = clanFlowsDb(clanId);
+        const result = db
+            .prepare("SELECT COUNT(*) AS c FROM clan_flow_executions WHERE flow_id = ? AND status IN ('RUNNING', 'WAITING')")
+            .get(flowId) as { c: number } | undefined;
+        return result?.c ?? 0;
+    }
+
+    private cancelInflight(clanId: string, flowId: string, now: number): void {
+        const db = clanFlowsDb(clanId);
+        db.prepare(
+            "UPDATE clan_flow_executions SET status = 'CANCELLED', terminal_at = ?, updated_at = ? WHERE flow_id = ? AND status IN ('RUNNING', 'WAITING')",
+        ).run(now, now, flowId);
     }
 
     private claim(clanId: string, row: LoopRow, now: number): boolean {
@@ -92,6 +116,9 @@ class LoopTickDispatcher extends BaseDispatcher {
                 status: "RUNNING",
                 exitReason: null,
                 failureReason: null,
+                wakeEventKind: null,
+                wakeAt: null,
+                wakeTimeoutAt: null,
             },
             { dryRun: false },
         );
