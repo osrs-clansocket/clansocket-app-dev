@@ -4,6 +4,7 @@ export type WaitUnit = "seconds" | "minutes" | "hours" | "days";
 
 export interface FlowCardConfig {
     readonly id: string;
+    name: string;
     triggerType: string;
     conditions: readonly ConditionRow[];
     waitValue: number | null;

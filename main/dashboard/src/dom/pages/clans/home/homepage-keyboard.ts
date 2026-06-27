@@ -19,10 +19,11 @@ function isEditingInputElement(target: EventTarget | null): boolean {
     const tag = target.tagName;
     if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return true;
     const ce = target.getAttribute("contenteditable");
-    if (ce !== null && ce !== "false") return true;
+    if (ce === "true" || ce === "plaintext-only" || ce === "") return true;
     const closest = target.closest("[contenteditable]");
-    if (closest !== null && closest.getAttribute("contenteditable") !== "false") return true;
-    return false;
+    if (closest === null) return false;
+    const closestCe = closest.getAttribute("contenteditable");
+    return closestCe === "true" || closestCe === "plaintext-only" || closestCe === "";
 }
 
 function moveDelta(key: string, step: number): { dx: number; dy: number } {

@@ -2,28 +2,34 @@ import {
     div,
     span,
     button,
+    icon,
     baseProps,
     textProps,
     effect,
+    inlineConfirm,
+    INLINE_CONFIRM_HOST_CLASS,
     BTN_VARIANT_BARE,
     type Instance,
 } from "../../../../factory";
 import { buildGlassSelect, type SelectOption } from "../../../../forms/glass/inputs/select/index.js";
 import { buildConditionEditor, type ConditionRow } from "../discord/modes/auto-hooks/condition-editor.js";
+import { editName } from "../../../account/workflows/display-name-edit.js";
 import { addRight, addBelow, removeCard, updateCard, placementsCurrent } from "./flow-card-state.js";
 import { capabilitiesSignal, flatTriggerOptions } from "../../../../../state/flows/capabilities-store.js";
 import type { FlowCardConfig, FlowCardPlacement } from "./flow-card-types.js";
 
 const CARD_CLASS = "clans-manage__auto-hooks-card";
 const HEADER_CLASS = "clans-manage__auto-hooks-card-header";
-const NAME_ROW_CLASS = "account__greeting-name-row";
-const NAME_CLASS = "account__greeting-name";
 const BODY_CLASS = "clans-manage__auto-hooks-card-body";
 const STACK_CLASS = "clans-manage__auto-hooks-card-body-stack";
 const ROW_CLASS = "clans-manage__auto-hooks-card-row";
 const LABEL_CLASS = "clans-manage__auto-hooks-card-label";
 const VALUE_CLASS = "clans-manage__auto-hooks-card-value";
 const DELETE_BTN_CLASS = "clans-manage__auto-hooks-card-delete";
+const NAME_ROW_CLASS = "clans-manage__flow-builder-card-name-row";
+const NAME_CLASS = "clans-manage__flow-builder-card-name";
+const EDIT_BTN_CLASS = "clans-manage__flow-builder-card-edit";
+const NAME_LABEL = "Node name";
 
 const SLOT_CLASS = "clans-manage__flow-builder-card-slot";
 const ADD_BTN_RIGHT_CLASS = "clans-manage__flow-builder-add-right";
@@ -61,9 +67,53 @@ function hasNeighbor(placement: FlowCardPlacement, dr: number, dc: number): bool
     return placementsCurrent().some((p) => p.row === targetRow && p.col === targetCol);
 }
 
+function buildEditIcon(nameEl: Instance, onSaveName: (n: string) => void): Instance<HTMLButtonElement> {
+    const editIcon: Instance<HTMLButtonElement> = button(
+        {
+            classes: [EDIT_BTN_CLASS],
+            ariaLabel: `Edit ${NAME_LABEL}`,
+            title: `Edit ${NAME_LABEL}`,
+            context: "edit the flow node display name",
+            meta: ["action"],
+            onClick: () =>
+                editName({
+                    nameEl: nameEl.el,
+                    iconEl: editIcon.el,
+                    ariaLabel: NAME_LABEL,
+                    context: "edit the flow node display name",
+                    onSave: onSaveName,
+                }),
+        },
+        [icon({ provider: "bi", name: "pencil", ariaHidden: true, context: null, meta: null })],
+    );
+    return editIcon;
+}
+
+function buildNameRow(config: FlowCardConfig): Instance {
+    const nameEl = span(textProps([NAME_CLASS], config.name));
+    const onSaveName = (next: string): void => {
+        updateCard(config.id, { name: next });
+        nameEl.setText(next);
+    };
+    const editIcon = buildEditIcon(nameEl, onSaveName);
+    return div(baseProps([NAME_ROW_CLASS]), [nameEl, editIcon]);
+}
+
+async function runDelete(host: Instance, id: string): Promise<void> {
+    const confirmed = await inlineConfirm(host, {
+        cancelLabel: "Keep",
+        confirmLabel: "Delete",
+        danger: true,
+        cancelContext: "keep this flow card",
+        confirmContext: "confirm deleting this flow card and any disconnected downstream cards",
+    });
+    if (!confirmed) return;
+    removeCard(id);
+}
+
 function buildHeader(config: FlowCardConfig): Instance {
-    const nameText = span(textProps([NAME_CLASS], `Node ${config.id}`));
-    const nameRow = div(baseProps([NAME_ROW_CLASS]), [nameText]);
+    const nameRow = buildNameRow(config);
+    const delHost = div(baseProps([INLINE_CONFIRM_HOST_CLASS]));
     const del = button(
         {
             variant: BTN_VARIANT_BARE,
@@ -71,11 +121,12 @@ function buildHeader(config: FlowCardConfig): Instance {
             ariaLabel: "Delete card",
             context: "delete this flow card",
             meta: ["action", "destructive"],
-            onClick: () => removeCard(config.id),
+            onClick: () => runDelete(delHost, config.id),
         },
-        ["×"],
+        [icon({ name: "trash", context: null, meta: null })],
     );
-    return div(baseProps([HEADER_CLASS]), [nameRow, del]);
+    delHost.addChild(del);
+    return div(baseProps([HEADER_CLASS]), [nameRow, delHost]);
 }
 
 function row(labelText: string, value: Instance): Instance {
@@ -138,7 +189,12 @@ function buildWaitRow(config: FlowCardConfig): Instance {
     return row("Wait for", pair);
 }
 
-function buildBody(config: FlowCardConfig): Instance {
+function isEntry(placement: FlowCardPlacement): boolean {
+    return placement.row === 0 && placement.col === 0;
+}
+
+function buildBody(placement: FlowCardPlacement): Instance {
+    const config = placement.config;
     const conditionEditor = buildConditionEditor(config.conditions as ConditionRow[], {
         onChange: (next) => updateCard(config.id, { conditions: next }),
         getTriggerType: () => config.triggerType,
@@ -146,11 +202,11 @@ function buildBody(config: FlowCardConfig): Instance {
         subscribeValueOptions: () => NEVER_UNSUBSCRIBE,
         subscribeTriggerChange: () => NEVER_UNSUBSCRIBE,
     });
-    const stack = div(baseProps([STACK_CLASS]), [
-        row("Trigger", buildTriggerSelect(config)),
-        conditionEditor,
-        buildWaitRow(config),
-    ]);
+    const children: Instance[] = [];
+    if (isEntry(placement)) children.push(row("Trigger", buildTriggerSelect(config)));
+    children.push(conditionEditor);
+    if (!isEntry(placement)) children.push(buildWaitRow(config));
+    const stack = div(baseProps([STACK_CLASS]), children);
     return div(baseProps([BODY_CLASS]), [stack]);
 }
 
@@ -185,6 +241,6 @@ function belowAdorner(placement: FlowCardPlacement): Instance {
 }
 
 export function buildFlowCard(placement: FlowCardPlacement): Instance {
-    const card = div(baseProps([CARD_CLASS]), [buildHeader(placement.config), buildBody(placement.config)]);
+    const card = div(baseProps([CARD_CLASS]), [buildHeader(placement.config), buildBody(placement)]);
     return div(baseProps([SLOT_CLASS]), [card, rightAdorner(placement), belowAdorner(placement)]);
 }

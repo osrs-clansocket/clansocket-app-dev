@@ -217,16 +217,47 @@
     z-index: var(--z-modal, 200);
     outline: var(--sp-hairline) solid var(--base-gold-500);
     outline-offset: calc(var(--sp-hairline) * -1);
-    cursor: move;
+    cursor: default;
 }
 
-.clans-home__component-text[contenteditable="plaintext-only"] {
+.clans-home__grip {
+    position: absolute;
+    inset-block-start: calc(var(--sp-3) * -1);
+    inset-inline-start: calc(var(--sp-3) * -1);
+    z-index: calc(var(--z-modal, 200) + 1);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    inline-size: var(--sp-4);
+    block-size: var(--sp-4);
+    border: var(--sp-hairline) solid var(--base-graphite-900);
+    border-radius: var(--radius-full);
+    color: var(--base-graphite-900);
+    background: var(--base-gold-300);
+    box-shadow: var(--shadow-glow);
+    cursor: move;
+    touch-action: none;
+}
+
+.clans-home__grip.is-open {
+    display: inline-flex;
+}
+
+.clans-home__grip i,
+.clans-home__grip svg,
+.clans-home__grip span {
+    inline-size: var(--sp-3);
+    block-size: var(--sp-3);
+    font-size: var(--sp-3);
+}
+
+.clans-home__component-text[contenteditable="true"] {
     outline: none;
     cursor: text;
     caret-color: var(--base-gold-300);
 }
 
-.clans-home__component-text[contenteditable="plaintext-only"]:focus {
+.clans-home__component-text[contenteditable="true"]:focus {
     border-radius: var(--radius-md);
     background: rgb(from var(--base-gold-500) r g b / 0.08);
 }

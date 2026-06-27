@@ -1,5 +1,8 @@
 import { signal, type Signal } from "../../../../factory";
+import { readStored, writeStored } from "../../../../../state/persistence/index.js";
 import type { FlowCardConfig, FlowCardPlacement, FlowMeta } from "./flow-card-types.js";
+
+const STORAGE_KEY = "flow-builder.flows";
 
 let SEQUENCE = 0;
 
@@ -15,7 +18,14 @@ function nextFlowId(): string {
 }
 
 function defaultCardConfig(): FlowCardConfig {
-    return { id: nextCardId(), triggerType: "", conditions: [], waitValue: null, waitUnit: "minutes" };
+    return {
+        id: nextCardId(),
+        name: "New node",
+        triggerType: "",
+        conditions: [],
+        waitValue: null,
+        waitUnit: "minutes",
+    };
 }
 
 function defaultFlowMeta(): FlowMeta {
@@ -29,8 +39,16 @@ function defaultFlowMeta(): FlowMeta {
     };
 }
 
-export const flowMetaSignal: Signal<FlowMeta> = signal<FlowMeta>(defaultFlowMeta());
-export const flowsListSignal: Signal<readonly FlowMeta[]> = signal<readonly FlowMeta[]>([flowMetaSignal()]);
+function loadStoredFlows(): readonly FlowMeta[] {
+    const stored = readStored<readonly FlowMeta[]>(STORAGE_KEY);
+    if (!stored || stored.length === 0) return [defaultFlowMeta()];
+    return stored;
+}
+
+const storedFlows = loadStoredFlows();
+
+export const flowMetaSignal: Signal<FlowMeta> = signal<FlowMeta>(storedFlows[0]!);
+export const flowsListSignal: Signal<readonly FlowMeta[]> = signal<readonly FlowMeta[]>(storedFlows);
 
 export function placementsCurrent(): readonly FlowCardPlacement[] {
     return flowMetaSignal().placements;
@@ -68,8 +86,18 @@ export function addBelow(fromId: string): void {
     setPlacements([...placementsCurrent(), { config: defaultCardConfig(), row, col: from.col }]);
 }
 
+function cascadeCleanup(placements: readonly FlowCardPlacement[]): readonly FlowCardPlacement[] {
+    const colsWithCards = new Set(placements.map((p) => p.col));
+    let lastConnected = -1;
+    for (let c = 0; colsWithCards.has(c); c += 1) lastConnected = c;
+    return placements.filter((p) => p.col <= lastConnected);
+}
+
 export function removeCard(id: string): void {
-    setPlacements(placementsCurrent().filter((p) => p.config.id !== id));
+    const target = placementsCurrent().find((p) => p.config.id === id);
+    if (target && target.row === 0 && target.col === 0) return;
+    const remaining = placementsCurrent().filter((p) => p.config.id !== id);
+    setPlacements(cascadeCleanup(remaining));
 }
 
 export function updateCard(id: string, patch: Partial<FlowCardConfig>): void {
@@ -101,11 +129,15 @@ export function selectFlow(id: string): void {
 
 export function newFlow(): void {
     const fresh = defaultFlowMeta();
-    flowsListSignal.set([...flowsListSignal(), fresh]);
+    const updated = [...flowsListSignal(), fresh];
+    flowsListSignal.set(updated);
     flowMetaSignal.set(fresh);
+    writeStored(STORAGE_KEY, updated);
 }
 
 export function persistCurrentToList(): void {
     const current = flowMetaSignal();
-    flowsListSignal.set(flowsListSignal().map((f) => (f.id === current.id ? current : f)));
+    const updated = flowsListSignal().map((f) => (f.id === current.id ? current : f));
+    flowsListSignal.set(updated);
+    writeStored(STORAGE_KEY, updated);
 }

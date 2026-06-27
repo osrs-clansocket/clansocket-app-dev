@@ -1,17 +1,17 @@
 import {
     div,
     span,
-    input,
     button,
     baseProps,
     textProps,
-    wireInput,
-    wireClick,
     effect,
-    BTN_VARIANT_BARE,
+    BTN_VARIANT_OUTLINE,
+    BTN_VARIANT_PRIMARY,
     type Instance,
 } from "../../../../factory";
 import { buildGlassCheck } from "../../../../forms/glass/inputs/glass-check.js";
+import { glassDate } from "../../../../forms/glass/inputs/date/index.js";
+import { glassInput } from "../../../../forms/glass/inputs/glass-input.js";
 import {
     flowMetaSignal,
     setFlowName,
@@ -24,43 +24,34 @@ import {
 const HEADER_CLASS = "clans-manage__flow-builder-header";
 const SEGMENT_CLASS = "clans-manage__flow-builder-header-segment";
 const LABEL_CLASS = "clans-manage__flow-builder-header-label";
-const NAME_INPUT_CLASS = "clans-manage__flow-builder-header-name";
-const SCHEDULE_INPUT_CLASS = "clans-manage__flow-builder-header-schedule";
-const BTN_CLASS = "clans-manage__flow-builder-header-btn";
-const BTN_PRIMARY_CLASS = "clans-manage__flow-builder-header-btn--primary";
 
-function msToDatetimeLocal(ms: number | null): string {
+function msToIsoDate(ms: number | null): string {
     if (ms === null) return "";
     const date = new Date(ms);
     const pad = (n: number): string => n.toString().padStart(2, "0");
-    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 }
 
-function datetimeLocalToMs(value: string): number | null {
-    if (value.length === 0) return null;
-    const ms = Date.parse(value);
+function isoDateToMs(iso: string): number | null {
+    if (iso.length === 0) return null;
+    const ms = Date.parse(`${iso}T00:00:00`);
     return Number.isFinite(ms) ? ms : null;
 }
 
 function buildNameField(): Instance {
-    const inputEl = input({
-        name: "flow-name",
-        type: "text",
-        classes: [NAME_INPUT_CLASS, "glass-input"],
+    const inputEl = glassInput({
         value: flowMetaSignal().name,
+        placeholder: "Flow name",
         ariaLabel: "Flow name",
-        context: "the display name for this flow",
-        meta: ["input"],
+        autocomplete: "off",
+        onInput: (e) => setFlowName((e.target as HTMLInputElement).value),
     });
-    wireInput(inputEl.el, () => setFlowName(inputEl.el.value));
     effect(() => {
         const name = flowMetaSignal().name;
-        if (inputEl.el.value !== name) inputEl.el.value = name;
+        const el = inputEl.el as HTMLInputElement;
+        if (el.value !== name) el.value = name;
     });
-    return div(baseProps([SEGMENT_CLASS]), [
-        span(textProps([LABEL_CLASS], "Name")),
-        inputEl,
-    ]);
+    return div(baseProps([SEGMENT_CLASS]), [span(textProps([LABEL_CLASS], "Name")), inputEl]);
 }
 
 function buildEnabledToggle(): Instance {
@@ -83,51 +74,34 @@ function buildLoopToggle(): Instance {
     return div(baseProps([SEGMENT_CLASS]), [span(textProps([LABEL_CLASS], "Loop")), toggle]);
 }
 
-function buildSchedulePicker(): Instance {
-    const inputEl = input({
+function buildScheduleField(): Instance {
+    const picker = glassDate({
         name: "flow-schedule",
-        type: "datetime-local",
-        classes: [SCHEDULE_INPUT_CLASS, "glass-input"],
-        value: msToDatetimeLocal(flowMetaSignal().scheduleAtMs),
-        ariaLabel: "Schedule date and time",
-        context: "first time this flow fires; db-canonical",
-        meta: ["input"],
+        value: msToIsoDate(flowMetaSignal().scheduleAtMs),
+        placeholder: "pick a date",
+        onChange: (iso) => setFlowScheduleAtMs(isoDateToMs(iso)),
     });
-    wireInput(inputEl.el, () => setFlowScheduleAtMs(datetimeLocalToMs(inputEl.el.value)));
-    effect(() => {
-        const next = msToDatetimeLocal(flowMetaSignal().scheduleAtMs);
-        if (inputEl.el.value !== next) inputEl.el.value = next;
-    });
-    return div(baseProps([SEGMENT_CLASS]), [span(textProps([LABEL_CLASS], "Schedule")), inputEl]);
+    return div(baseProps([SEGMENT_CLASS]), [span(textProps([LABEL_CLASS], "Schedule")), picker]);
 }
 
 function buildSaveButton(): Instance {
-    const btn = button(
-        {
-            classes: [BTN_CLASS],
-            ariaLabel: "Save draft",
-            context: "save the current flow draft",
-            meta: ["action"],
-        },
-        ["Save"],
-    );
-    wireClick(btn.el, () => persistCurrentToList());
-    return btn;
+    return button({
+        variant: BTN_VARIANT_OUTLINE,
+        text: "Save",
+        context: "save the current flow draft",
+        meta: ["action", "data"],
+        onClick: () => persistCurrentToList(),
+    });
 }
 
 function buildPublishButton(): Instance {
-    const btn = button(
-        {
-            classes: [BTN_CLASS, BTN_PRIMARY_CLASS],
-            variant: BTN_VARIANT_BARE,
-            ariaLabel: "Publish flow",
-            context: "publish this flow",
-            meta: ["action"],
-        },
-        ["Publish"],
-    );
-    wireClick(btn.el, () => persistCurrentToList());
-    return btn;
+    return button({
+        variant: BTN_VARIANT_PRIMARY,
+        text: "Publish",
+        context: "publish this flow",
+        meta: ["action", "data"],
+        onClick: () => persistCurrentToList(),
+    });
 }
 
 export function buildFlowHeader(): Instance {
@@ -135,7 +109,7 @@ export function buildFlowHeader(): Instance {
         buildNameField(),
         buildEnabledToggle(),
         buildLoopToggle(),
-        buildSchedulePicker(),
+        buildScheduleField(),
         buildSaveButton(),
         buildPublishButton(),
     ]);

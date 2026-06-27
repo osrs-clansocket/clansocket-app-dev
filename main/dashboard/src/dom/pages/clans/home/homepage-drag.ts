@@ -1,10 +1,12 @@
-import { effect, type Instance } from "../../../factory";
+import { div, effect, icon, type Instance } from "../../../factory";
 import { wirePointerDrag } from "../../../factory/events/pointer-wirer.js";
 import { setDynProps } from "../../../../state/dynamic-styles.js";
 import type { HomepageComponent } from "../../../../state/clans/homepage/types.js";
 import type { EditorState } from "./homepage-editor-state.js";
 
 const SELECT_OUTLINE_CLASS = "is-selected";
+const GRIP_CLASS = "clans-home__grip";
+const GRIP_OPEN_CLASS = "is-open";
 
 interface DragSession {
     downX: number;
@@ -18,27 +20,16 @@ function findById(state: EditorState, componentId: string): HomepageComponent | 
     return state.draft$().find((c) => c.componentId === componentId);
 }
 
-function endDrag(host: Instance, session: DragSession, e: PointerEvent): void {
-    if (!session.dragging) return;
-    session.dragging = false;
-    host.el.releasePointerCapture(e.pointerId);
-}
-
-export function attachComponentEditor(host: Instance, componentId: string, state: EditorState): void {
+function attachGripDrag(grip: Instance, host: Instance, componentId: string, state: EditorState): void {
     const session: DragSession = { downX: 0, downY: 0, baseX: 0, baseY: 0, dragging: false };
-    host.trackDispose(
-        effect(() => {
-            host.toggleClass(SELECT_OUTLINE_CLASS, state.selectedId$() === componentId);
-        }),
-    );
-    const dispose = wirePointerDrag(host.el, {
+    function endDrag(e: PointerEvent): void {
+        if (!session.dragging) return;
+        session.dragging = false;
+        if (grip.el.hasPointerCapture(e.pointerId)) grip.el.releasePointerCapture(e.pointerId);
+    }
+    const dispose = wirePointerDrag(grip.el, {
         down: (e: PointerEvent) => {
             if (!state.editing$()) return;
-            const target = e.target as Element | null;
-            if (target?.closest(".clans-home__frame, .clans-home__handle")) return;
-            if (target?.closest(".clans-home__component-text, .clans-home__kpi-label, .clans-home__kpi-value")) {
-                return;
-            }
             state.select(componentId);
             const comp = findById(state, componentId);
             if (!comp) return;
@@ -48,8 +39,9 @@ export function attachComponentEditor(host: Instance, componentId: string, state
             session.baseX = comp.canvasX;
             session.baseY = comp.canvasY;
             session.dragging = true;
-            host.el.setPointerCapture(e.pointerId);
+            grip.el.setPointerCapture(e.pointerId);
             e.preventDefault();
+            e.stopPropagation();
         },
         move: (e: PointerEvent) => {
             if (!session.dragging) return;
@@ -62,8 +54,39 @@ export function attachComponentEditor(host: Instance, componentId: string, state
             if (dx !== 0 || dy !== 0) state.moveComponent(componentId, dx, dy);
             setDynProps(host.el, { "--clan-home-x": String(liveX), "--clan-home-y": String(liveY) });
         },
-        up: (e: PointerEvent) => endDrag(host, session, e),
-        cancel: (e: PointerEvent) => endDrag(host, session, e),
+        up: endDrag,
+        cancel: endDrag,
     });
-    host.trackDispose({ dispose });
+    grip.trackDispose({ dispose });
+}
+
+export function attachComponentEditor(host: Instance, componentId: string, state: EditorState): void {
+    host.trackDispose(
+        effect(() => {
+            host.toggleClass(SELECT_OUTLINE_CLASS, state.selectedId$() === componentId);
+        }),
+    );
+    host.el.addEventListener("click", (e) => {
+        if (!state.editing$()) return;
+        const target = e.target as Element | null;
+        if (target?.closest(".clans-home__frame, .clans-home__handle, .clans-home__grip")) return;
+        state.select(componentId);
+    });
+    const grip = div(
+        {
+            classes: [GRIP_CLASS],
+            ariaLabel: "Drag to move component",
+            title: "Drag to move",
+            context: "drag handle for moving the component",
+            meta: ["action"],
+        },
+        [icon({ name: "arrows-move", context: null, meta: null }).el],
+    );
+    attachGripDrag(grip, host, componentId, state);
+    host.addChild(grip);
+    host.trackDispose(
+        effect(() => {
+            grip.toggleClass(GRIP_OPEN_CLASS, state.selectedId$() === componentId);
+        }),
+    );
 }

@@ -10,6 +10,8 @@
 }
 
 .clans-manage__flow-builder-header {
+    position: relative;
+    z-index: var(--z-overlay);
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -32,35 +34,6 @@
     color: var(--base-graphite-300);
 }
 
-.clans-manage__flow-builder-header-name,
-.clans-manage__flow-builder-header-schedule {
-    padding: var(--sp-0) var(--sp-1);
-    border: 0.0625rem solid var(--base-graphite-600);
-    border-radius: var(--radius-md);
-    font-size: var(--fs-xs);
-    color: var(--base-graphite-100);
-    background: var(--base-graphite-800);
-}
-
-.clans-manage__flow-builder-header-name {
-    min-inline-size: 14rem;
-}
-
-.clans-manage__flow-builder-header-btn {
-    padding: var(--sp-0) var(--sp-1h);
-    border: 0.0625rem solid var(--base-graphite-600);
-    border-radius: var(--radius-md);
-    font-size: var(--fs-xs);
-    color: var(--base-graphite-100);
-    background: var(--base-graphite-800);
-    cursor: pointer;
-}
-
-.clans-manage__flow-builder-header-btn--primary {
-    border-color: var(--base-gold-500);
-    color: var(--base-gold-100);
-    background: var(--base-gold-700);
-}
 
 .clans-manage__flow-builder-rail {
     display: flex;
@@ -71,6 +44,18 @@
     overflow: auto;
     padding: var(--sp-1h);
     border-inline-end: 0.0625rem solid var(--base-graphite-700);
+}
+
+.clans-manage__flow-builder-rail-entries {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-0);
+}
+
+.clans-manage__flow-builder-rail-entry,
+.clans-manage__flow-builder-rail-new {
+    justify-content: flex-start;
+    inline-size: 100%;
 }
 
 .clans-manage__flow-builder-rail-header {
@@ -87,29 +72,6 @@
     color: var(--base-graphite-300);
 }
 
-.clans-manage__flow-builder-rail-new {
-    padding: var(--sp-0) var(--sp-1);
-    border: 0.0625rem solid var(--base-gold-500);
-    border-radius: var(--radius-md);
-    font-size: var(--fs-3xs);
-    color: var(--base-gold-300);
-    background: transparent;
-    cursor: pointer;
-}
-
-.clans-manage__flow-builder-rail-entry {
-    padding: var(--sp-0) var(--sp-1);
-    border: 0.0625rem solid transparent;
-    border-radius: var(--radius-md);
-    font-size: var(--fs-xs);
-    color: var(--base-graphite-100);
-    cursor: pointer;
-}
-
-.clans-manage__flow-builder-rail-entry--active {
-    border-color: var(--base-gold-500);
-    background: var(--base-graphite-800);
-}
 
 .clans-manage__flow-builder-grid {
     display: grid;
@@ -123,6 +85,39 @@
 
 .clans-manage__flow-builder-card-slot {
     position: relative;
+}
+
+.clans-manage__flow-builder-card-name-row {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    gap: var(--sp-1);
+    min-inline-size: 0;
+}
+
+.clans-manage__flow-builder-card-name {
+    overflow: hidden;
+    font-size: var(--fs-xs);
+    line-height: var(--lh-tight);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--base-graphite-100);
+}
+
+.clans-manage__flow-builder-card-edit {
+    display: inline-flex;
+    align-items: center;
+    padding: 0;
+    border: 0;
+    font-size: var(--fs-3xs);
+    line-height: var(--lh-flat);
+    color: var(--base-graphite-300);
+    background: transparent;
+    cursor: pointer;
+}
+
+.clans-manage__flow-builder-card-edit:hover {
+    color: var(--base-gold-300);
 }
 
 .clans-manage__flow-builder-wait-pair {
