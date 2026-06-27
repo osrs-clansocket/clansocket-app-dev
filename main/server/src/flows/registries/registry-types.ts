@@ -29,7 +29,10 @@ export interface OperationResult {
     readonly outputs: Readonly<Record<string, unknown>>;
 }
 
+export type SafetyTier = "live" | "manual";
+
 export interface OperationSpec {
+    readonly safety_tier: SafetyTier;
     readonly input_schema: JSONSchema;
     readonly output_schema: JSONSchema;
     readonly side_effects: SideEffectsDescriptor;

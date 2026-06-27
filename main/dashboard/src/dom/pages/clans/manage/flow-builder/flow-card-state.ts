@@ -1,6 +1,16 @@
 import { signal, type Signal } from "../../../../factory";
 import { readStored, writeStored } from "../../../../../state/persistence/index.js";
-import type { FlowCardConfig, FlowCardPlacement, FlowMeta } from "./flow-card-types.js";
+import type {
+    ActionCardConfig,
+    CardKind,
+    ConditionCardConfig,
+    DelayCardConfig,
+    FlowCardConfig,
+    FlowCardPlacement,
+    FlowMeta,
+    TriggerCardConfig,
+    WaitForEventCardConfig,
+} from "./flow-card-types.js";
 
 const STORAGE_KEY = "flow-builder.flows";
 
@@ -42,15 +52,62 @@ function seedSequences(flows: readonly FlowMeta[]): void {
     SEQUENCE = maxIdSuffix(cardIds, CARD_ID_PATTERN);
 }
 
-function defaultCardConfig(): FlowCardConfig {
+export function defaultTriggerCard(): TriggerCardConfig {
     return {
         id: nextCardId(),
-        name: "New node",
+        kind: "trigger",
+        name: "Trigger",
         triggerType: "",
         conditions: [],
+    };
+}
+
+export function defaultActionCard(): ActionCardConfig {
+    return {
+        id: nextCardId(),
+        kind: "action",
+        name: "Action",
+        operationId: "",
+        inputValues: {},
+        openExits: [],
+    };
+}
+
+export function defaultConditionCard(): ConditionCardConfig {
+    return {
+        id: nextCardId(),
+        kind: "condition",
+        name: "Condition",
+        conditions: [],
+    };
+}
+
+export function defaultDelayCard(): DelayCardConfig {
+    return {
+        id: nextCardId(),
+        kind: "delay",
+        name: "Delay",
         waitValue: null,
         waitUnit: "minutes",
     };
+}
+
+export function defaultWaitForEventCard(): WaitForEventCardConfig {
+    return {
+        id: nextCardId(),
+        kind: "wait-for-event",
+        name: "Wait for event",
+        eventTriggerId: "",
+        timeoutMs: null,
+    };
+}
+
+function defaultCardForKind(kind: CardKind): FlowCardConfig {
+    if (kind === "trigger") return defaultTriggerCard();
+    if (kind === "action") return defaultActionCard();
+    if (kind === "condition") return defaultConditionCard();
+    if (kind === "delay") return defaultDelayCard();
+    return defaultWaitForEventCard();
 }
 
 function defaultFlowMeta(): FlowMeta {
@@ -60,8 +117,66 @@ function defaultFlowMeta(): FlowMeta {
         enabled: false,
         loop: false,
         scheduleAtMs: null,
-        placements: [{ config: defaultCardConfig(), row: 0, col: 0 }],
+        placements: [{ config: defaultTriggerCard(), row: 0, col: 0 }],
     };
+}
+
+function migrateCardConfig(raw: unknown, isEntry: boolean): FlowCardConfig {
+    const o = raw as Partial<FlowCardConfig> & Record<string, unknown>;
+    const kind = typeof o.kind === "string" ? (o.kind as CardKind) : isEntry ? "trigger" : "condition";
+    const id = typeof o.id === "string" ? o.id : nextCardId();
+    const name = typeof o.name === "string" ? o.name : kind === "trigger" ? "Trigger" : kind === "action" ? "Action" : "Node";
+    if (kind === "trigger") {
+        return {
+            id,
+            kind: "trigger",
+            name,
+            triggerType: typeof o.triggerType === "string" ? o.triggerType : "",
+            conditions: Array.isArray(o.conditions) ? (o.conditions as TriggerCardConfig["conditions"]) : [],
+        };
+    }
+    if (kind === "action") {
+        return {
+            id,
+            kind: "action",
+            name,
+            operationId: typeof o.operationId === "string" ? o.operationId : "",
+            inputValues: (o.inputValues as Record<string, unknown>) ?? {},
+            openExits: Array.isArray(o.openExits) ? (o.openExits as readonly string[]) : [],
+        };
+    }
+    if (kind === "delay") {
+        return {
+            id,
+            kind: "delay",
+            name,
+            waitValue: typeof o.waitValue === "number" ? o.waitValue : null,
+            waitUnit: (o.waitUnit as DelayCardConfig["waitUnit"]) ?? "minutes",
+        };
+    }
+    if (kind === "wait-for-event") {
+        return {
+            id,
+            kind: "wait-for-event",
+            name,
+            eventTriggerId: typeof o.eventTriggerId === "string" ? o.eventTriggerId : "",
+            timeoutMs: typeof o.timeoutMs === "number" ? o.timeoutMs : null,
+        };
+    }
+    return {
+        id,
+        kind: "condition",
+        name,
+        conditions: Array.isArray(o.conditions) ? (o.conditions as ConditionCardConfig["conditions"]) : [],
+    };
+}
+
+function migrateFlow(flow: FlowMeta): FlowMeta {
+    const placements = flow.placements.map((p, idx) => {
+        const isEntry = idx === 0 || (p.row === 0 && p.col === 0);
+        return { ...p, config: migrateCardConfig(p.config, isEntry) };
+    });
+    return { ...flow, placements };
 }
 
 function compactPlacements(placements: readonly FlowCardPlacement[]): readonly FlowCardPlacement[] {
@@ -80,7 +195,7 @@ function compactFlow(flow: FlowMeta): FlowMeta {
 function loadStoredFlows(): readonly FlowMeta[] {
     const stored = readStored<readonly FlowMeta[]>(STORAGE_KEY);
     if (!stored || stored.length === 0) return [defaultFlowMeta()];
-    return stored.map(compactFlow);
+    return stored.map(migrateFlow).map(compactFlow);
 }
 
 function dedupeFlowIds(flows: readonly FlowMeta[]): readonly FlowMeta[] {
@@ -131,7 +246,7 @@ export function addRight(fromId: string): void {
     if (!from) return;
     let col = from.col + 1;
     while (isOccupied(from.row, col)) col += 1;
-    setPlacements([...placementsCurrent(), { config: defaultCardConfig(), row: from.row, col }]);
+    setPlacements([...placementsCurrent(), { config: defaultActionCard(), row: from.row, col }]);
 }
 
 export function addBelow(fromId: string): void {
@@ -139,7 +254,7 @@ export function addBelow(fromId: string): void {
     if (!from) return;
     let row = from.row + 1;
     while (isOccupied(row, from.col)) row += 1;
-    setPlacements([...placementsCurrent(), { config: defaultCardConfig(), row, col: from.col }]);
+    setPlacements([...placementsCurrent(), { config: defaultActionCard(), row, col: from.col }]);
 }
 
 export function removeCard(id: string): void {
@@ -149,9 +264,21 @@ export function removeCard(id: string): void {
     setPlacements(remaining);
 }
 
-export function updateCard(id: string, patch: Partial<FlowCardConfig>): void {
+export function updateCard(id: string, patch: Readonly<Record<string, unknown>>): void {
     setPlacements(
-        placementsCurrent().map((p) => (p.config.id === id ? { ...p, config: { ...p.config, ...patch } } : p)),
+        placementsCurrent().map((p) =>
+            p.config.id === id ? { ...p, config: { ...p.config, ...patch } as FlowCardConfig } : p,
+        ),
+    );
+}
+
+export function changeCardKind(id: string, kind: CardKind): void {
+    setPlacements(
+        placementsCurrent().map((p) => {
+            if (p.config.id !== id) return p;
+            const next = defaultCardForKind(kind);
+            return { ...p, config: { ...next, id: p.config.id, name: p.config.name } as FlowCardConfig };
+        }),
     );
 }
 

@@ -105,7 +105,7 @@ function buildHandle(host: Instance, dir: Dir, state: EditorState, id: string): 
             const dx = (e.clientX - session.downClientX) * session.scale;
             const dy = (e.clientY - session.downClientY) * session.scale;
             let next = applyResize(dir, session, dx, dy);
-            if (state.guidesEnabled$()) next = snapResize(dir, next, state.guides$());
+            if (state.guidesEnabled$() && !e.ctrlKey) next = snapResize(dir, next, state.guides$());
             state.resizeComponent(id, next.x, next.y, next.w, next.h);
         },
         up: (e: PointerEvent) => {

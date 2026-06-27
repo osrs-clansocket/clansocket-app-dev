@@ -1,5 +1,6 @@
 import { enqueueOutboundEvent } from "../../database/discord/outbound/enqueue.js";
 import { discordGuildDb } from "../../database/discord/discord.js";
+import { listByClan } from "../../database/discord/servers/list-by-clan.js";
 import type {
     CapabilityManifest,
     DataSourceAdapter,
@@ -96,6 +97,7 @@ const channelOpResultClasses: readonly string[] = [
 ];
 
 const channelCreateOp: OperationSpec = {
+    safety_tier: "live",
     input_schema: CHANNEL_CREATE_INPUT_SCHEMA,
     output_schema: ENQUEUE_RESULT_SCHEMA,
     side_effects: {
@@ -137,8 +139,8 @@ function listChannelsForClan(clanId: string): readonly DataSourceItem[] {
     return items;
 }
 
-function listGuildsForClan(_clanId: string): readonly string[] {
-    return [];
+function listGuildsForClan(clanId: string): readonly string[] {
+    return listByClan(clanId).map((row) => row.guild_id);
 }
 
 interface ChannelRow {

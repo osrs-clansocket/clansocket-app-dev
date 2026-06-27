@@ -26,7 +26,10 @@ function pickSource(editor: EditorState | null, components$: ReadSignal<Homepage
 }
 
 function runReconcile(ctx: ReconcileCtx, items: HomepageComponent[]): void {
-    setDynProps(ctx.canvas.el, { "--clan-home-content-h": String(computeContentHeight(items)) });
+    const h = String(computeContentHeight(items));
+    setDynProps(ctx.canvas.el, { "--clan-home-content-h": h });
+    const parent = ctx.canvas.el.parentElement;
+    if (parent !== null) setDynProps(parent, { "--clan-home-content-h": h });
     reconcile<HomepageComponent>({
         items,
         create: ctx.create,

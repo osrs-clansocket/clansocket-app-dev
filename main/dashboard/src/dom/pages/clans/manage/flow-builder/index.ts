@@ -7,11 +7,11 @@ import { ensureCapabilitiesLoaded } from "../../../../../state/flows/capabilitie
 
 const ROOT_CLASS = "clans-manage__flow-builder";
 
-export function build(_slug: string): HTMLElement {
+export function build(slug: string): HTMLElement {
     void ensureCapabilitiesLoaded();
     const header = buildFlowHeader();
     const rail = buildFlowListRail();
-    const grid = buildFlowGrid();
+    const grid = buildFlowGrid(slug);
     const host = div(baseProps([ROOT_CLASS]), [header, rail, grid]);
     return host.el;
 }

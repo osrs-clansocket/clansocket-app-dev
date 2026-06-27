@@ -74,6 +74,13 @@
     text-transform: uppercase;
     color: var(--base-graphite-300);
 }
+.picker__popup .picker__control-slider {
+    inline-size: 100%;
+    min-inline-size: 0;
+}
+.picker__popup-alpha {
+    grid-template-columns: var(--sp-4) 1fr var(--sp-6);
+}
 .picker__popup .picker__control-slider::-webkit-slider-thumb {
     inline-size: var(--sp-2h);
     block-size: var(--sp-2h);

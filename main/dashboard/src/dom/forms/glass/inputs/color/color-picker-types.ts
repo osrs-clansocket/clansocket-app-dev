@@ -7,6 +7,7 @@ export interface PickerState {
     r: number;
     g: number;
     b: number;
+    a: number;
     broadcasting: boolean;
 }
 
@@ -17,4 +18,5 @@ export interface PickerSliders {
     red: SliderHandle;
     grn: SliderHandle;
     blu: SliderHandle;
+    alpha: SliderHandle;
 }

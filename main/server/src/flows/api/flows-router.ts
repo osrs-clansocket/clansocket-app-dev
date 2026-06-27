@@ -8,6 +8,8 @@ import { runDryRun } from "../engine/dry-run/dry-run-executor.js";
 import { walkScopeFor } from "../../filter/walkers/scope-walker.js";
 import { templateRegistry } from "../templates/template-registry.js";
 import { listPendingReviews, approveReview, cancelReview } from "../review/review-queue-store.js";
+import { resolveValueOptions, type ValueOptionsScope } from "../value-resolvers/entity-value-options.js";
+import { entityAttributes } from "../registries/entity-attribute-schema.js";
 import "../_bootstrap.js";
 
 const router = express.Router();
@@ -47,6 +49,7 @@ router.get("/capabilities", (_req, res) => {
             Object.entries(m.operations).map(([opId, spec]) => [
                 opId,
                 {
+                    safety_tier: spec.safety_tier,
                     input_schema: spec.input_schema,
                     output_schema: spec.output_schema,
                     result_classes: spec.result_classes,
@@ -74,6 +77,32 @@ router.post("/validate", (req, res) => {
         const definition = parseFlowDefinition(req.body?.definition);
         const findings = runAllValidators({ definition });
         res.json({ findings });
+    } catch (err) {
+        res.status(400).json({ error: (err as Error).message });
+    }
+});
+
+router.get("/entity-attributes", (_req, res) => {
+    const attrs = entityAttributes().map((a) => ({ path: a.path, label: a.label, type: a.type }));
+    res.json({ attributes: attrs });
+});
+
+router.get("/value-options", (req, res) => {
+    const scope = String(req.query.scope ?? "") as ValueOptionsScope;
+    const field = String(req.query.field ?? "");
+    const clanId = String(req.query.clan_id ?? "");
+    const triggerType = req.query.trigger_type ? String(req.query.trigger_type) : null;
+    if (scope !== "trigger" && scope !== "entity" && scope !== "event") {
+        res.status(400).json({ error: "scope must be trigger|entity|event" });
+        return;
+    }
+    if (!field || !clanId) {
+        res.status(400).json({ error: "field and clan_id required" });
+        return;
+    }
+    try {
+        const values = resolveValueOptions(scope, clanId, field, triggerType);
+        res.json({ values });
     } catch (err) {
         res.status(400).json({ error: (err as Error).message });
     }

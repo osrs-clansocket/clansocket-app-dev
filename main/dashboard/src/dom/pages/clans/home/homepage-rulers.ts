@@ -2,6 +2,7 @@ import { div, effect, type Instance, baseProps } from "../../../factory";
 import { wirePointerDrag } from "../../../factory/events/pointer-wirer.js";
 import type { EditorState } from "./homepage-editor-state.js";
 import type { GuideAxis } from "./homepage-guides-state.js";
+import { snapAxis } from "./homepage-snap.js";
 
 const RULER_CLASS = "clans-home__ruler";
 const RULER_TOP_CLASS = "clans-home__ruler--top";
@@ -18,6 +19,11 @@ interface CreateCtx {
     guideId: string | null;
 }
 
+function snappedPosition(ctx: CreateCtx, e: PointerEvent): number {
+    const raw = positionFromPointer(ctx, e);
+    return e.ctrlKey ? raw : snapAxis(ctx.axis, raw, ctx.state.draft$());
+}
+
 function pointerInsideCanvas(canvas: HTMLElement, e: PointerEvent): boolean {
     const r = canvas.getBoundingClientRect();
     return e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom;
@@ -32,7 +38,7 @@ function positionFromPointer(ctx: CreateCtx, e: PointerEvent): number {
 function onRulerDown(ctx: CreateCtx, e: PointerEvent): void {
     const rect = ctx.canvas.getBoundingClientRect();
     ctx.scale = rect.width > 0 ? CANVAS_W / rect.width : 1;
-    ctx.guideId = ctx.state.addGuide(ctx.axis, positionFromPointer(ctx, e));
+    ctx.guideId = ctx.state.addGuide(ctx.axis, snappedPosition(ctx, e));
     ctx.ruler.el.setPointerCapture(e.pointerId);
     e.preventDefault();
     e.stopPropagation();
@@ -40,7 +46,7 @@ function onRulerDown(ctx: CreateCtx, e: PointerEvent): void {
 
 function onRulerMove(ctx: CreateCtx, e: PointerEvent): void {
     if (ctx.guideId === null) return;
-    ctx.state.moveGuide(ctx.guideId, positionFromPointer(ctx, e));
+    ctx.state.moveGuide(ctx.guideId, snappedPosition(ctx, e));
 }
 
 function onRulerUp(ctx: CreateCtx, e: PointerEvent): void {

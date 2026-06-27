@@ -1,4 +1,5 @@
-import type { Guide } from "./homepage-guides-state.js";
+import type { HomepageComponent } from "../../../../state/clans/homepage/types.js";
+import type { Guide, GuideAxis } from "./homepage-guides-state.js";
 
 export const SNAP_THRESHOLD = 8;
 
@@ -75,4 +76,28 @@ export function snapResize(dir: Dir, box: Box, guides: ReadonlyArray<Guide>): Bo
         h = bottom - y;
     }
     return { x, y, w, h };
+}
+
+function componentSnapTargets(c: HomepageComponent, axis: GuideAxis): readonly number[] {
+    if (axis === "x") return [c.canvasX, c.canvasX + c.canvasW / 2, c.canvasX + c.canvasW];
+    return [c.canvasY, c.canvasY + c.canvasH / 2, c.canvasY + c.canvasH];
+}
+
+export function snapAxis(
+    axis: GuideAxis,
+    position: number,
+    components: ReadonlyArray<HomepageComponent>,
+): number {
+    let bestPos = position;
+    let bestDist = SNAP_THRESHOLD + 1;
+    for (const c of components) {
+        for (const target of componentSnapTargets(c, axis)) {
+            const dist = Math.abs(position - target);
+            if (dist < bestDist) {
+                bestDist = dist;
+                bestPos = target;
+            }
+        }
+    }
+    return bestDist <= SNAP_THRESHOLD ? bestPos : position;
 }

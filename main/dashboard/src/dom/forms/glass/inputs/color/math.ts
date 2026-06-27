@@ -7,6 +7,7 @@ export const PCT_MAX = 100;
 export const BYTE_MAX = 255;
 const HEX_FALLBACK = "#000000";
 const HEX_FULL_LEN = 6;
+const HEX_RGBA_LEN = 8;
 const HEX_SHORT_LEN = 3;
 const RADIX_HEX = 16;
 const PAD_HEX = 2;
@@ -15,13 +16,17 @@ const HEX_SLICE_R0 = 1;
 const HEX_SLICE_R1 = 3;
 const HEX_SLICE_G1 = 5;
 const HEX_SLICE_B1 = 7;
+const HEX_SLICE_A0 = 7;
+const HEX_SLICE_A1 = 9;
 
 export function normalizeHex(text: string): string | null {
     const t = text.trim();
     if (!t.startsWith("#")) {
+        if (hasHexChars(t, HEX_RGBA_LEN)) return `#${t.toLowerCase()}`;
         if (hasHexChars(t, HEX_FULL_LEN)) return `#${t.toLowerCase()}`;
         return null;
     }
+    if (hasHexChars(t.slice(1), HEX_RGBA_LEN)) return t.toLowerCase();
     if (hasHexChars(t.slice(1), HEX_FULL_LEN)) return t.toLowerCase();
     if (hasHexChars(t.slice(1), HEX_SHORT_LEN)) {
         const r = t.charAt(1);
@@ -41,8 +46,25 @@ export function hexToRgb(hex: string): { r: number; g: number; b: number } {
     };
 }
 
+export function hexToAlpha(hex: string): number {
+    const normalized = normalizeHex(hex);
+    if (normalized === null || normalized.length < HEX_SLICE_A1) return BYTE_MAX;
+    return Number.parseInt(normalized.slice(HEX_SLICE_A0, HEX_SLICE_A1), RADIX_HEX);
+}
+
+function clampByte(v: number): number {
+    return Math.max(0, Math.min(BYTE_MAX, Math.round(v)));
+}
+
+function byteHex(v: number): string {
+    return clampByte(v).toString(RADIX_HEX).padStart(PAD_HEX, "0");
+}
+
 export function rgbToHex(r: number, g: number, b: number): string {
-    const clamp = (v: number): number => Math.max(0, Math.min(BYTE_MAX, Math.round(v)));
-    const toHex = (v: number): string => clamp(v).toString(RADIX_HEX).padStart(PAD_HEX, "0");
-    return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+    return `#${byteHex(r)}${byteHex(g)}${byteHex(b)}`;
+}
+
+export function withAlpha(rgbHex: string, alpha: number): string {
+    if (clampByte(alpha) >= BYTE_MAX) return rgbHex;
+    return `${rgbHex}${byteHex(alpha)}`;
 }

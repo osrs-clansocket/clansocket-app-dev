@@ -1,5 +1,5 @@
 import type { Instance } from "../../../../factory/index.js";
-import { hexToRgb } from "./math.js";
+import { hexToAlpha, hexToRgb } from "./math.js";
 import { hexToHsl } from "./hsl.js";
 import { setSlider } from "./sliders.js";
 import type { PickerSliders, PickerState } from "./color-picker-types.js";
@@ -13,6 +13,7 @@ function syncFromHex(st: PickerState, hex: string): void {
     st.r = rgb.r;
     st.g = rgb.g;
     st.b = rgb.b;
+    st.a = hexToAlpha(hex);
 }
 
 function syncSliders(sliders: PickerSliders, st: PickerState): void {
@@ -22,6 +23,7 @@ function syncSliders(sliders: PickerSliders, st: PickerState): void {
     setSlider(sliders.red, st.r);
     setSlider(sliders.grn, st.g);
     setSlider(sliders.blu, st.b);
+    setSlider(sliders.alpha, st.a);
 }
 
 export function broadcastPickerHex(args: {

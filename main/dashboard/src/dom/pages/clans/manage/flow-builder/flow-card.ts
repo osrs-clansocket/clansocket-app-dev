@@ -14,9 +14,24 @@ import {
 import { buildGlassSelect, type SelectOption } from "../../../../forms/glass/inputs/select/index.js";
 import { buildConditionEditor, type ConditionRow } from "../discord/modes/auto-hooks/condition-editor.js";
 import { editName } from "../../../account/workflows/display-name-edit.js";
-import { addRight, addBelow, removeCard, updateCard, placementsCurrent } from "./flow-card-state.js";
-import { capabilitiesSignal, flatTriggerOptions } from "../../../../../state/flows/capabilities-store.js";
-import type { FlowCardConfig, FlowCardPlacement } from "./flow-card-types.js";
+import { addRight, addBelow, removeCard, updateCard, changeCardKind, placementsCurrent } from "./flow-card-state.js";
+import {
+    capabilitiesSignal,
+    flatTriggerOptions,
+    operationsByCapability,
+    lookupOperation,
+} from "../../../../../state/flows/capabilities-store.js";
+import { schemaForm } from "./schema-form/index.js";
+import type {
+    ActionCardConfig,
+    CardKind,
+    ConditionCardConfig,
+    DelayCardConfig,
+    FlowCardConfig,
+    FlowCardPlacement,
+    TriggerCardConfig,
+    WaitForEventCardConfig,
+} from "./flow-card-types.js";
 
 const CARD_CLASS = "clans-manage__auto-hooks-card";
 const HEADER_CLASS = "clans-manage__auto-hooks-card-header";
@@ -30,6 +45,11 @@ const NAME_ROW_CLASS = "clans-manage__flow-builder-card-name-row";
 const NAME_CLASS = "clans-manage__flow-builder-card-name";
 const EDIT_BTN_CLASS = "clans-manage__flow-builder-card-edit";
 const NAME_LABEL = "Node name";
+const MANUAL_BADGE_CLASS = "clans-manage__flow-builder-card-manual-badge";
+const KIND_MOD_PREFIX = "clans-manage__flow-builder-card-header--kind-";
+const CAPABILITY_MOD_PREFIX = "clans-manage__flow-builder-card-header--capability-";
+const EXIT_ROW_CLASS = "clans-manage__flow-builder-card-exit-row";
+const EXIT_TOGGLE_CLASS = "clans-manage__flow-builder-card-exit-toggle";
 
 const SLOT_CLASS = "clans-manage__flow-builder-card-slot";
 const ADD_BTN_RIGHT_CLASS = "clans-manage__flow-builder-add-right";
@@ -38,6 +58,15 @@ const CONNECTOR_RIGHT_CLASS = "clans-manage__flow-builder-connector-right";
 const CONNECTOR_BELOW_CLASS = "clans-manage__flow-builder-connector-below";
 
 const TRIGGER_PLACEHOLDER: SelectOption = { value: "", label: "Pick a trigger" };
+const OPERATION_PLACEHOLDER: SelectOption = { value: "", label: "Pick an action" };
+
+const KIND_OPTIONS: readonly SelectOption[] = [
+    { value: "trigger", label: "Trigger" },
+    { value: "action", label: "Action" },
+    { value: "condition", label: "Condition" },
+    { value: "delay", label: "Delay" },
+    { value: "wait-for-event", label: "Wait for event" },
+];
 
 const WAIT_VALUE_OPTIONS: readonly SelectOption[] = [
     { value: "", label: "—" },
@@ -111,6 +140,17 @@ async function runDelete(host: Instance, id: string): Promise<void> {
     removeCard(id);
 }
 
+function deriveCapabilityForCard(config: FlowCardConfig): string | null {
+    if (config.kind !== "action") return null;
+    const colonIdx = config.operationId.indexOf(":");
+    if (colonIdx < 0) return null;
+    return config.operationId.slice(0, colonIdx);
+}
+
+function manualBadge(): Instance {
+    return span(textProps([MANUAL_BADGE_CLASS], "MANUAL"));
+}
+
 function buildHeader(config: FlowCardConfig): Instance {
     const nameRow = buildNameRow(config);
     const delHost = div(baseProps([INLINE_CONFIRM_HOST_CLASS]));
@@ -126,7 +166,16 @@ function buildHeader(config: FlowCardConfig): Instance {
         [icon({ name: "trash", context: null, meta: null })],
     );
     delHost.addChild(del);
-    return div(baseProps([HEADER_CLASS]), [nameRow, delHost]);
+    const headerChildren: Instance[] = [nameRow];
+    const cap = deriveCapabilityForCard(config);
+    const headerClasses = [HEADER_CLASS, `${KIND_MOD_PREFIX}${config.kind}`];
+    if (cap) headerClasses.push(`${CAPABILITY_MOD_PREFIX}${cap}`);
+    if (config.kind === "action") {
+        const op = lookupOperation(config.operationId);
+        if (op && op.safety_tier === "manual") headerChildren.push(manualBadge());
+    }
+    headerChildren.push(delHost);
+    return div(baseProps(headerClasses), headerChildren);
 }
 
 function row(labelText: string, value: Instance): Instance {
@@ -134,6 +183,17 @@ function row(labelText: string, value: Instance): Instance {
         span(textProps([LABEL_CLASS], labelText)),
         div(baseProps([VALUE_CLASS]), [value]),
     ]);
+}
+
+function kindSwitcher(config: FlowCardConfig, placement: FlowCardPlacement): Instance {
+    const isEntry = placement.row === 0 && placement.col === 0;
+    const options: readonly SelectOption[] = isEntry
+        ? [{ value: "trigger", label: "Trigger" }]
+        : KIND_OPTIONS.filter((o) => o.value !== "trigger");
+    const select = buildGlassSelect(`kind-${config.id}`, options, config.kind);
+    const hidden = select.el.querySelector<HTMLInputElement>("input[type='hidden']");
+    if (hidden) hidden.addEventListener("change", () => changeCardKind(config.id, hidden.value as CardKind));
+    return row("Kind", select);
 }
 
 function triggerOptions(): readonly SelectOption[] {
@@ -145,7 +205,7 @@ function triggerOptions(): readonly SelectOption[] {
     ];
 }
 
-function buildTriggerSelect(config: FlowCardConfig): Instance {
+function buildTriggerSelect(config: TriggerCardConfig): Instance {
     const host = div(baseProps([]));
     effect(() => {
         void capabilitiesSignal();
@@ -158,7 +218,101 @@ function buildTriggerSelect(config: FlowCardConfig): Instance {
     return host;
 }
 
-function buildWaitValue(config: FlowCardConfig): Instance {
+function buildOperationSelect(config: ActionCardConfig): Instance {
+    const host = div(baseProps([]));
+    effect(() => {
+        const grouped = operationsByCapability();
+        const flat: SelectOption[] = [OPERATION_PLACEHOLDER];
+        for (const [capName, ops] of Object.entries(grouped)) {
+            for (const op of ops) {
+                const tierTag = op.safetyTier === "manual" ? " [MANUAL]" : "";
+                flat.push({ value: op.value, label: `${capName} — ${op.label}${tierTag}` });
+            }
+        }
+        const select = buildGlassSelect(`operation-${config.id}`, flat, config.operationId);
+        const hidden = select.el.querySelector<HTMLInputElement>("input[type='hidden']");
+        if (hidden)
+            hidden.addEventListener("change", () =>
+                updateCard(config.id, { operationId: hidden.value, inputValues: {}, openExits: [] }),
+            );
+        host.setChildren(select);
+    });
+    return host;
+}
+
+function buildActionInputForm(config: ActionCardConfig, clanId: string): Instance {
+    const host = div(baseProps([]));
+    effect(() => {
+        void capabilitiesSignal();
+        const op = lookupOperation(config.operationId);
+        if (!op || !op.input_schema || Object.keys(op.input_schema).length === 0) {
+            host.setChildren(span(textProps([VALUE_CLASS], "Pick an action to configure.")));
+            return;
+        }
+        const form = schemaForm({
+            schema: op.input_schema,
+            value: config.inputValues,
+            onChange: (next) => updateCard(config.id, { inputValues: next }),
+            ctx: {
+                fieldName: "",
+                clanId,
+                capabilityId: deriveCapabilityForCard(config),
+                operationId: config.operationId,
+            },
+        });
+        host.setChildren(form);
+    });
+    return host;
+}
+
+function buildExitsRow(config: ActionCardConfig): Instance {
+    const host = div(baseProps([EXIT_ROW_CLASS]));
+    effect(() => {
+        void capabilitiesSignal();
+        const op = lookupOperation(config.operationId);
+        if (!op) {
+            host.setChildren();
+            return;
+        }
+        const opened = new Set(config.openExits);
+        const toggles = op.result_classes.map((cls) => {
+            const isOpen = opened.has(cls);
+            return button(
+                {
+                    variant: BTN_VARIANT_BARE,
+                    classes: [EXIT_TOGGLE_CLASS, isOpen ? `${EXIT_TOGGLE_CLASS}--on` : `${EXIT_TOGGLE_CLASS}--off`],
+                    text: cls,
+                    ariaLabel: `Toggle exit handle ${cls}`,
+                    context: `toggle the ${cls} downstream handle for this action`,
+                    meta: ["action"],
+                    onClick: () => {
+                        const next = new Set(config.openExits);
+                        if (next.has(cls)) next.delete(cls);
+                        else next.add(cls);
+                        updateCard(config.id, { openExits: [...next] });
+                    },
+                },
+            );
+        });
+        host.setChildren(...toggles);
+    });
+    return row("Exits", host);
+}
+
+function buildConditionRows(
+    config: TriggerCardConfig | ConditionCardConfig,
+    triggerTypeGetter: () => string,
+): Instance {
+    return buildConditionEditor(config.conditions as ConditionRow[], {
+        onChange: (next) => updateCard(config.id, { conditions: next }),
+        getTriggerType: triggerTypeGetter,
+        getValueOptions: () => [],
+        subscribeValueOptions: () => NEVER_UNSUBSCRIBE,
+        subscribeTriggerChange: () => NEVER_UNSUBSCRIBE,
+    });
+}
+
+function buildWaitValue(config: DelayCardConfig): Instance {
     const current = config.waitValue?.toString() ?? "";
     const select = buildGlassSelect(`wait-value-${config.id}`, WAIT_VALUE_OPTIONS, current);
     const hidden = select.el.querySelector<HTMLInputElement>("input[type='hidden']");
@@ -171,17 +325,14 @@ function buildWaitValue(config: FlowCardConfig): Instance {
     return select;
 }
 
-function buildWaitUnit(config: FlowCardConfig): Instance {
+function buildWaitUnit(config: DelayCardConfig): Instance {
     const select = buildGlassSelect(`wait-unit-${config.id}`, WAIT_UNIT_OPTIONS, config.waitUnit);
     const hidden = select.el.querySelector<HTMLInputElement>("input[type='hidden']");
-    if (hidden)
-        hidden.addEventListener("change", () =>
-            updateCard(config.id, { waitUnit: hidden.value as FlowCardConfig["waitUnit"] }),
-        );
+    if (hidden) hidden.addEventListener("change", () => updateCard(config.id, { waitUnit: hidden.value }));
     return select;
 }
 
-function buildWaitRow(config: FlowCardConfig): Instance {
+function buildWaitRow(config: DelayCardConfig): Instance {
     const pair = div(baseProps(["clans-manage__flow-builder-wait-pair"]), [
         buildWaitValue(config),
         buildWaitUnit(config),
@@ -189,25 +340,64 @@ function buildWaitRow(config: FlowCardConfig): Instance {
     return row("Wait for", pair);
 }
 
-function isEntry(placement: FlowCardPlacement): boolean {
-    return placement.row === 0 && placement.col === 0;
+function buildTriggerBody(config: TriggerCardConfig, placement: FlowCardPlacement): Instance {
+    const children: Instance[] = [];
+    children.push(kindSwitcher(config, placement));
+    children.push(row("Trigger", buildTriggerSelect(config)));
+    children.push(buildConditionRows(config, () => config.triggerType));
+    const stack = div(baseProps([STACK_CLASS]), children);
+    return div(baseProps([BODY_CLASS]), [stack]);
 }
 
-function buildBody(placement: FlowCardPlacement): Instance {
-    const config = placement.config;
-    const conditionEditor = buildConditionEditor(config.conditions as ConditionRow[], {
-        onChange: (next) => updateCard(config.id, { conditions: next }),
-        getTriggerType: () => config.triggerType,
-        getValueOptions: () => [],
-        subscribeValueOptions: () => NEVER_UNSUBSCRIBE,
-        subscribeTriggerChange: () => NEVER_UNSUBSCRIBE,
-    });
+function buildActionBody(config: ActionCardConfig, placement: FlowCardPlacement, clanId: string): Instance {
     const children: Instance[] = [];
-    if (isEntry(placement)) children.push(row("Trigger", buildTriggerSelect(config)));
-    children.push(conditionEditor);
+    children.push(kindSwitcher(config, placement));
+    children.push(row("Action", buildOperationSelect(config)));
+    children.push(row("Config", buildActionInputForm(config, clanId)));
+    children.push(buildExitsRow(config));
+    const stack = div(baseProps([STACK_CLASS]), children);
+    return div(baseProps([BODY_CLASS]), [stack]);
+}
+
+function buildConditionBody(config: ConditionCardConfig, placement: FlowCardPlacement): Instance {
+    const children: Instance[] = [];
+    children.push(kindSwitcher(config, placement));
+    children.push(buildConditionRows(config, () => ""));
+    const stack = div(baseProps([STACK_CLASS]), children);
+    return div(baseProps([BODY_CLASS]), [stack]);
+}
+
+function buildDelayBody(config: DelayCardConfig, placement: FlowCardPlacement): Instance {
+    const children: Instance[] = [];
+    children.push(kindSwitcher(config, placement));
     children.push(buildWaitRow(config));
     const stack = div(baseProps([STACK_CLASS]), children);
     return div(baseProps([BODY_CLASS]), [stack]);
+}
+
+function buildWaitForEventBody(config: WaitForEventCardConfig, placement: FlowCardPlacement): Instance {
+    const children: Instance[] = [];
+    children.push(kindSwitcher(config, placement));
+    const eventHost = div(baseProps([]));
+    effect(() => {
+        const options = triggerOptions();
+        const select = buildGlassSelect(`event-${config.id}`, options, config.eventTriggerId);
+        const hidden = select.el.querySelector<HTMLInputElement>("input[type='hidden']");
+        if (hidden) hidden.addEventListener("change", () => updateCard(config.id, { eventTriggerId: hidden.value }));
+        eventHost.setChildren(select);
+    });
+    children.push(row("Event", eventHost));
+    const stack = div(baseProps([STACK_CLASS]), children);
+    return div(baseProps([BODY_CLASS]), [stack]);
+}
+
+function buildBody(placement: FlowCardPlacement, clanId: string): Instance {
+    const config = placement.config;
+    if (config.kind === "trigger") return buildTriggerBody(config, placement);
+    if (config.kind === "action") return buildActionBody(config, placement, clanId);
+    if (config.kind === "condition") return buildConditionBody(config, placement);
+    if (config.kind === "delay") return buildDelayBody(config, placement);
+    return buildWaitForEventBody(config, placement);
 }
 
 function rightAdorner(placement: FlowCardPlacement): Instance {
@@ -240,7 +430,7 @@ function belowAdorner(placement: FlowCardPlacement): Instance {
     );
 }
 
-export function buildFlowCard(placement: FlowCardPlacement): Instance {
-    const card = div(baseProps([CARD_CLASS]), [buildHeader(placement.config), buildBody(placement)]);
+export function buildFlowCard(placement: FlowCardPlacement, clanId: string): Instance {
+    const card = div(baseProps([CARD_CLASS]), [buildHeader(placement.config), buildBody(placement, clanId)]);
     return div(baseProps([SLOT_CLASS]), [card, rightAdorner(placement), belowAdorner(placement)]);
 }

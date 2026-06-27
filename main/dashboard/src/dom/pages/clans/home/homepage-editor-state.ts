@@ -5,7 +5,7 @@ import { saveHomepageComponents } from "../../../../state/clans/homepage/homepag
 import type { HomepageComponent } from "../../../../state/clans/homepage/types.js";
 import { defaultScaffold } from "../../../../state/clans/homepage/homepage-default-scaffold.js";
 import { CANVAS_BOUND_MAX, Z_INDEX_MAX, Z_INDEX_MIN } from "@clansocket/constants/clan-homepage-tokens";
-import { createGuidesState, type Guide, type GuideAxis } from "./homepage-guides-state.js";
+import { createGuidesState, type Guide, type GuideAxis, type GuideColor, type GuideStyle } from "./homepage-guides-state.js";
 
 const CANVAS_W = 960;
 const CANVAS_H = CANVAS_BOUND_MAX;
@@ -37,6 +37,9 @@ export interface EditorState extends Disposable {
     addGuide(axis: GuideAxis, position: number): string;
     moveGuide(id: string, position: number): void;
     removeGuide(id: string): void;
+    setGuideLocked(id: string, locked: boolean): void;
+    setGuideColor(id: string, color: GuideColor): void;
+    setGuideStyle(id: string, style: GuideStyle): void;
     setEditing(v: boolean): void;
     select(id: string | null): void;
     addComponent(kind: HomepageComponent["componentName"]): void;
@@ -392,6 +395,9 @@ export function createEditorState(slug: string, components$: ReadSignal<Homepage
         addGuide: guidesApi.addGuide,
         moveGuide: guidesApi.moveGuide,
         removeGuide: guidesApi.removeGuide,
+        setGuideLocked: guidesApi.setGuideLocked,
+        setGuideColor: guidesApi.setGuideColor,
+        setGuideStyle: guidesApi.setGuideStyle,
         setEditing,
         select,
         addComponent,

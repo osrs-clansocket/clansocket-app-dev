@@ -4,13 +4,19 @@ import { reconcile } from "../../../factory/live-ops/reconcile.js";
 import { setDynProps } from "../../../../state/dynamic-styles.js";
 import type { EditorState } from "./homepage-editor-state.js";
 import type { Guide } from "./homepage-guides-state.js";
+import { buildGuideActions } from "./homepage-guide-actions.js";
+import { snapAxis } from "./homepage-snap.js";
 
 const LAYER_CLASS = "clans-home__guides-layer";
 const GUIDE_CLASS = "clans-home__guide";
 const GUIDE_X_CLASS = "clans-home__guide--x";
 const GUIDE_Y_CLASS = "clans-home__guide--y";
+const DASHED_CLASS = "clans-home__guide--dashed";
+const LOCKED_CLASS = "clans-home__guide--locked";
 const REMOVE_HOVER_CLASS = "is-remove";
+const ACTIONS_SELECTOR = ".clans-home__guide-actions";
 const CANVAS_W = 960;
+const MENU_OFFSET_Y = 5;
 
 interface GuideDragCtx {
     readonly host: Instance;
@@ -30,13 +36,26 @@ function pointerInsideCanvas(canvas: HTMLElement, e: PointerEvent): boolean {
 }
 
 function patchGuide(host: Instance, g: Guide): void {
-    setDynProps(host.el, { "--guide-pos": String(g.position) });
+    setDynProps(host.el, {
+        "--guide-pos": String(g.position),
+        "--guide-color": g.color,
+    });
+    host.toggleClass(DASHED_CLASS, g.style === "dashed");
+    host.toggleClass(LOCKED_CLASS, g.locked);
 }
 
-function onGuideDown(ctx: GuideDragCtx, baseGuide: Guide, e: PointerEvent): void {
+function isGuideLocked(state: EditorState, id: string): boolean {
+    return state.guides$().find((g) => g.id === id)?.locked ?? false;
+}
+
+function onGuideDown(ctx: GuideDragCtx, e: PointerEvent): void {
+    if ((e.target as Element | null)?.closest(ACTIONS_SELECTOR)) return;
+    if (isGuideLocked(ctx.state, ctx.id)) return;
+    const current = ctx.state.guides$().find((g) => g.id === ctx.id);
+    if (current === undefined) return;
     const rect = ctx.canvas.getBoundingClientRect();
     ctx.scale = rect.width > 0 ? CANVAS_W / rect.width : 1;
-    ctx.base = baseGuide.position;
+    ctx.base = current.position;
     ctx.downClient = ctx.axis === "x" ? e.clientX : e.clientY;
     ctx.dragging = true;
     ctx.host.el.setPointerCapture(e.pointerId);
@@ -47,7 +66,9 @@ function onGuideDown(ctx: GuideDragCtx, baseGuide: Guide, e: PointerEvent): void
 function onGuideMove(ctx: GuideDragCtx, e: PointerEvent): void {
     if (!ctx.dragging) return;
     const delta = (ctx.axis === "x" ? e.clientX : e.clientY) - ctx.downClient;
-    ctx.state.moveGuide(ctx.id, ctx.base + delta * ctx.scale);
+    const raw = ctx.base + delta * ctx.scale;
+    const snapped = e.ctrlKey ? raw : snapAxis(ctx.axis, raw, ctx.state.draft$());
+    ctx.state.moveGuide(ctx.id, snapped);
     ctx.host.toggleClass(REMOVE_HOVER_CLASS, !pointerInsideCanvas(ctx.canvas, e));
 }
 
@@ -79,7 +100,7 @@ function attachGuideDrag(host: Instance, g: Guide, canvas: HTMLElement, state: E
         state,
     };
     const dispose = wirePointerDrag(host.el, {
-        down: (e) => onGuideDown(ctx, g, e),
+        down: (e) => onGuideDown(ctx, e),
         move: (e) => onGuideMove(ctx, e),
         up: (e) => onGuideUp(ctx, e),
         cancel: (e) => onGuideCancel(ctx, e),
@@ -93,6 +114,14 @@ function makeGuideCreator(canvas: HTMLElement, state: EditorState): (g: Guide) =
         const host = div(baseProps([GUIDE_CLASS, variantClass]));
         patchGuide(host, g);
         attachGuideDrag(host, g, canvas, state);
+        host.addChild(buildGuideActions(g, state));
+        host.el.addEventListener("pointerenter", (e) => {
+            const r = host.el.getBoundingClientRect();
+            setDynProps(host.el, {
+                "--menu-x": `${e.clientX - r.left}px`,
+                "--menu-y": `${e.clientY - r.top + MENU_OFFSET_Y}px`,
+            });
+        });
         return host;
     };
 }

@@ -80,7 +80,7 @@ function attachWheelHorizontal(el: HTMLElement): void {
     });
 }
 
-export function buildFlowGrid(): Instance<HTMLElement> {
+export function buildFlowGrid(clanId: string): Instance<HTMLElement> {
     const host = div(baseProps([GRID_CLASS]));
     attachPan(host.el);
     attachWheelHorizontal(host.el);
@@ -90,7 +90,7 @@ export function buildFlowGrid(): Instance<HTMLElement> {
         host.el.style.gridTemplateColumns = `repeat(${dims.columns}, 26rem)`;
         host.el.style.gridTemplateRows = `repeat(${dims.rows}, max-content)`;
         const cells = placements.map((placement) =>
-            gridCell({ row: placement.row, col: placement.col }, [buildFlowCard(placement)]),
+            gridCell({ row: placement.row, col: placement.col }, [buildFlowCard(placement, clanId)]),
         );
         host.setChildren(...cells);
     });

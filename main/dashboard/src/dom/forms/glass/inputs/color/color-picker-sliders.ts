@@ -1,4 +1,4 @@
-import { BYTE_MAX, HUE_MAX, PCT_MAX, rgbToHex } from "./math.js";
+import { BYTE_MAX, HUE_MAX, PCT_MAX, rgbToHex, withAlpha } from "./math.js";
 import { hslToHex } from "./hsl.js";
 import { makeSlider, type SliderHandle } from "./sliders.js";
 import type { PickerSliders, PickerState } from "./color-picker-types.js";
@@ -27,8 +27,8 @@ function makePickerHsl(
 }
 
 export function makePickerSliders(st: PickerState, broadcast: (hex: string) => void): PickerSliders {
-    const pushFromHsl = (): void => broadcast(hslToHex(st.h, st.s, st.l));
-    const pushFromRgb = (): void => broadcast(rgbToHex(st.r, st.g, st.b));
+    const pushFromHsl = (): void => broadcast(withAlpha(hslToHex(st.h, st.s, st.l), st.a));
+    const pushFromRgb = (): void => broadcast(withAlpha(rgbToHex(st.r, st.g, st.b), st.a));
     return {
         ...makePickerHsl(st, pushFromHsl),
         red: makeSlider(0, BYTE_MAX, st.r, (v) => {
@@ -44,6 +44,11 @@ export function makePickerSliders(st: PickerState, broadcast: (hex: string) => v
         blu: makeSlider(0, BYTE_MAX, st.b, (v) => {
             if (st.broadcasting) return;
             st.b = v;
+            pushFromRgb();
+        }),
+        alpha: makeSlider(0, BYTE_MAX, st.a, (v) => {
+            if (st.broadcasting) return;
+            st.a = v;
             pushFromRgb();
         }),
     };

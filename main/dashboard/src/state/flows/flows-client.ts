@@ -1,4 +1,7 @@
+export type SafetyTier = "live" | "manual";
+
 export interface OperationSummary {
+    readonly safety_tier: SafetyTier;
     readonly input_schema: Readonly<Record<string, unknown>>;
     readonly output_schema: Readonly<Record<string, unknown>>;
     readonly result_classes: readonly string[];

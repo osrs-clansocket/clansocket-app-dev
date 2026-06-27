@@ -61,6 +61,14 @@ export interface TriggerOption {
     readonly group: string;
 }
 
+export interface OperationOption {
+    readonly value: string;
+    readonly label: string;
+    readonly group: string;
+    readonly safetyTier: "live" | "manual";
+    readonly capabilityColor: string;
+}
+
 export function flatTriggerOptions(): readonly TriggerOption[] {
     const fromRegistry: TriggerOption[] = [];
     for (const capability of capabilitiesSignal()) {
@@ -70,4 +78,43 @@ export function flatTriggerOptions(): readonly TriggerOption[] {
         }
     }
     return fromRegistry;
+}
+
+export function flatOperationOptions(): readonly OperationOption[] {
+    const out: OperationOption[] = [];
+    for (const capability of capabilitiesSignal()) {
+        for (const [opId, spec] of Object.entries(capability.operations)) {
+            out.push({
+                value: opId,
+                label: opId,
+                group: capability.name,
+                safetyTier: spec.safety_tier,
+                capabilityColor: capability.capability_color,
+            });
+        }
+    }
+    return out;
+}
+
+export function operationsByCapability(): Readonly<Record<string, readonly OperationOption[]>> {
+    const grouped: Record<string, OperationOption[]> = {};
+    for (const opt of flatOperationOptions()) {
+        if (!grouped[opt.group]) grouped[opt.group] = [];
+        grouped[opt.group]!.push(opt);
+    }
+    return grouped;
+}
+
+export function lookupCapability(capabilityName: string): import("./flows-client.js").CapabilitySummary | null {
+    for (const cap of capabilitiesSignal()) if (cap.name === capabilityName) return cap;
+    return null;
+}
+
+export function lookupOperation(qualifiedOpId: string): import("./flows-client.js").OperationSummary | null {
+    const colonIdx = qualifiedOpId.indexOf(":");
+    if (colonIdx < 0) return null;
+    const capName = qualifiedOpId.slice(0, colonIdx);
+    const cap = lookupCapability(capName);
+    if (!cap) return null;
+    return cap.operations[qualifiedOpId] ?? null;
 }
