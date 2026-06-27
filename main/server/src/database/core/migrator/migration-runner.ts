@@ -4,7 +4,9 @@ import { dirname, resolve } from "path";
 import { fileURLToPath, pathToFileURL } from "url";
 import {
     CLAN_AUDIT_SCHEMA_KEY,
+    CLAN_FLOWS_SCHEMA_KEY,
     CLAN_SCHEMA_KEY,
+    CLAN_UI_SCHEMA_KEY,
     CLAN_VAULT_SCHEMA_KEY,
     DISCORD_BOT_SCHEMA_KEY,
     DISCORD_GUILD_SCHEMA_KEY,
@@ -31,6 +33,8 @@ const ALL_SCHEMA_KEYS: readonly string[] = [
     CLAN_SCHEMA_KEY,
     CLAN_AUDIT_SCHEMA_KEY,
     CLAN_VAULT_SCHEMA_KEY,
+    CLAN_UI_SCHEMA_KEY,
+    CLAN_FLOWS_SCHEMA_KEY,
     "world_map",
     "game_ids",
 ];

@@ -1,5 +1,7 @@
 /* Chrome bucket — components used by the dashboard SHELL on every route.
    Loaded by pages/dashboard/index.css. Feature-only components live in per-route buckets. */
+@import "./ai/bar-component.css";
+@import "./ai/ai-prose-component.css";
 @import "./buttons/index.css";
 @import "./glass/index.css";
 @import "./icon-label/index.css";

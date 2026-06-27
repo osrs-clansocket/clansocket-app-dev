@@ -145,3 +145,17 @@ export interface WomBackfillFailed extends AuditCommonPayload {
     lastErrorCode?: number;
     msElapsed: number;
 }
+
+export interface HomepageComponentsUpdatedPayload extends AuditCommonPayload {
+    componentCount: number;
+    fingerprint?: string;
+    errorCount?: number;
+}
+export interface HomepageImageUploadedPayload extends AuditCommonPayload {
+    imageKey: string;
+    ext: string;
+    byteSize: number;
+}
+export interface HomepageImageDeletedPayload extends AuditCommonPayload {
+    imageKey: string;
+}

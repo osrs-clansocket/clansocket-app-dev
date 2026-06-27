@@ -3,20 +3,24 @@ import Database from "better-sqlite3";
 import { existsSync, readdirSync } from "fs";
 import { resolve } from "path";
 import { wrapDbWrites } from "../../data-rights/streams/writes-watcher.js";
-import { scopeKeyClan, auditScopeKey, scopeKeyPlugin } from "../../data-rights/streams/writes-stream.js";
+import { scopeKeyClan, auditScopeKey, scopeKeyPlugin, scopeKeyFlows } from "../../data-rights/streams/writes-stream.js";
 import { applyBootstrap } from "./bootstrap.js";
 import { deleteCachedConnection, eachCachedConnection, getCachedConnection, setCachedConnection } from "./db-cache.js";
 import {
     CLAN_AUDIT_DB_FILE,
     CLAN_AUDIT_SCHEMA_KEY,
     CLAN_DB_FILE,
+    CLAN_FLOWS_DB_FILE,
+    CLAN_FLOWS_SCHEMA_KEY,
     CLAN_SCHEMA_KEY,
+    CLAN_UI_DB_FILE,
+    CLAN_UI_SCHEMA_KEY,
     CLAN_VAULT_DB_FILE,
     CLAN_VAULT_SCHEMA_KEY,
     PLUGIN_DB_PREFIX,
     PLUGIN_SCHEMA_KEY,
 } from "./db-constants.js";
-import { auditDbKey, clanDbKey, clanDirPath, pluginDbKey, vaultDbKey, ensureClanDir } from "./db-paths.js";
+import { auditDbKey, clanDbKey, clanDirPath, flowsDbKey, pluginDbKey, uiDbKey, vaultDbKey, ensureClanDir } from "./db-paths.js";
 
 export function getClanDb(clanId: string): Database.Database {
     const key = clanDbKey(clanId);
@@ -49,6 +53,30 @@ export function clanVaultDb(clanId: string): Database.Database {
     const dir = ensureClanDir(clanId);
     const db = new Database(resolve(dir, CLAN_VAULT_DB_FILE));
     applyBootstrap(db, CLAN_VAULT_SCHEMA_KEY);
+    setCachedConnection(key, db);
+    return db;
+}
+
+export function clanUiDb(clanId: string): Database.Database {
+    const key = uiDbKey(clanId);
+    const cached = getCachedConnection(key);
+    if (cached) return cached;
+    const dir = ensureClanDir(clanId);
+    const db = new Database(resolve(dir, CLAN_UI_DB_FILE));
+    applyBootstrap(db, CLAN_UI_SCHEMA_KEY);
+    wrapDbWrites(db, scopeKeyClan(clanId));
+    setCachedConnection(key, db);
+    return db;
+}
+
+export function clanFlowsDb(clanId: string): Database.Database {
+    const key = flowsDbKey(clanId);
+    const cached = getCachedConnection(key);
+    if (cached) return cached;
+    const dir = ensureClanDir(clanId);
+    const db = new Database(resolve(dir, CLAN_FLOWS_DB_FILE));
+    applyBootstrap(db, CLAN_FLOWS_SCHEMA_KEY);
+    wrapDbWrites(db, scopeKeyFlows(clanId));
     setCachedConnection(key, db);
     return db;
 }

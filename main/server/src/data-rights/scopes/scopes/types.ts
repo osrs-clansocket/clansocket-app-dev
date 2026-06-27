@@ -3,7 +3,7 @@ export interface ScopeListTable {
     hasRows: boolean;
 }
 
-export type ScopeListKind = "app" | "varez" | "discord" | "clan" | "clan_audit" | "plugin";
+export type ScopeListKind = "app" | "varez" | "discord" | "clan" | "clan_audit" | "clan_flows" | "plugin";
 
 export interface ScopeListItem {
     kind: ScopeListKind;

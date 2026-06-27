@@ -1,20 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Google tag (gtag.js) — production hosts only; localhost/127.0.0.1/0.0.0.0 dev skips both the script load and the config. -->
+    <!-- Google tag (gtag.js) — production hosts only; localhost/127.0.0.1/0.0.0.0 dev skips both the script load and the config.
+         dataLayer + gtag shim is wired immediately so events queue correctly; the 156 KiB fetch+parse defers to idle/after-load
+         so it doesn't compete with the main bundle for first paint. queued events drain when the real script lands. -->
     <script type="text/javascript">
       (function () {
         var host = window.location.hostname;
         if (host === "localhost" || host === "127.0.0.1" || host === "0.0.0.0") return;
-        var s = document.createElement("script");
-        s.async = true;
-        s.src = "https://www.googletagmanager.com/gtag/js?id=G-ZJZT7C3B9M";
-        document.head.appendChild(s);
         window.dataLayer = window.dataLayer || [];
         function gtag() { window.dataLayer.push(arguments); }
         window.gtag = gtag;
         gtag("js", new Date());
         gtag("config", "G-ZJZT7C3B9M");
+        function inject() {
+          var s = document.createElement("script");
+          s.async = true;
+          s.src = "https://www.googletagmanager.com/gtag/js?id=G-ZJZT7C3B9M";
+          document.head.appendChild(s);
+        }
+        if ("requestIdleCallback" in window) {
+          window.requestIdleCallback(inject, { timeout: 4000 });
+        } else if (document.readyState === "complete") {
+          setTimeout(inject, 2000);
+        } else {
+          window.addEventListener("load", function () { setTimeout(inject, 2000); }, { once: true });
+        }
       })();
     </script>
 

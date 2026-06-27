@@ -32,16 +32,16 @@
     border-radius: var(--radius-md);
     color: var(--base-gold-300);
     background: transparent;
-    cursor: pointer;
     transition:
         border-color var(--dur-fast) var(--ease-out),
         background var(--dur-fast) var(--ease-out),
         transform var(--dur-fast) var(--ease-out);
+    cursor: pointer;
 }
 
 .ai-memory__new:hover {
-    border-color: var(--base-gold-500);
     border-style: solid;
+    border-color: var(--base-gold-500);
     background: rgb(from var(--base-gold-500) r g b / 0.08);
     transform: translateY(calc(-1 * var(--sp-0h)));
 }
@@ -78,11 +78,11 @@
     color: var(--base-cream-100);
     background: var(--gradient-surface);
     backdrop-filter: blur(var(--blur-sm));
-    cursor: pointer;
     transition:
         border-color var(--dur-fast) var(--ease-out),
         background var(--dur-fast) var(--ease-out),
         transform var(--dur-fast) var(--ease-out);
+    cursor: pointer;
 }
 
 .ai-memory__list-item:hover {
@@ -96,8 +96,8 @@
     font-size: var(--fs-xs);
     font-weight: var(--fw-semi);
     line-height: var(--lh-tight);
-    color: var(--base-gold-300);
     word-break: break-word;
+    color: var(--base-gold-300);
 }
 
 .ai-memory__list-type {
@@ -120,11 +120,11 @@
 }
 
 .ai-memory__loader {
-    grid-column: 1 / -1;
     display: inline-flex;
     justify-content: center;
     align-items: center;
     gap: var(--sp-1h);
+    grid-column: 1 / -1;
     padding: var(--sp-4) var(--sp-3);
 }
 

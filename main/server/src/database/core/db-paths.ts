@@ -8,7 +8,9 @@ export {
     clanDbKey,
     auditDbKey,
     vaultDbKey,
+    uiDbKey,
     pluginDbKey,
+    flowsDbKey,
 } from "./clan-db-paths.js";
 export { guildDbFile, guildDbKey } from "./guild-db-paths.js";
 export { staticDbPath, staticDbKey } from "./static-db-paths.js";

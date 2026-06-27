@@ -9,5 +9,7 @@ export {
     matchClanPath,
     matchAiSettings,
     aiSettingsTab,
+    matchRoster,
+    rosterSlug,
 } from "./slug-paths.js";
 export { router } from "./router-api.js";

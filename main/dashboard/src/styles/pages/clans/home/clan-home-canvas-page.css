@@ -1,0 +1,752 @@
+.clans-home__root {
+    display: grid;
+    flex: 1 1 0;
+    grid-template-columns: minmax(0, 1fr);
+    grid-auto-rows: max-content;
+    box-sizing: border-box;
+    inline-size: 100%;
+    min-block-size: 0;
+    overflow: auto;
+    background: var(--gradient-surface);
+    justify-items: center;
+}
+
+.clans-home__canvas-wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sp-3);
+    inline-size: 100%;
+}
+
+.clans-home__canvas {
+    position: relative;
+    inline-size: 100%;
+    aspect-ratio: 960 / max(var(--clan-home-content-h, 480), 480);
+    padding-block: 4rem var(--sp-2);
+}
+
+.clans-home__bottom-adder {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sp-2);
+    padding-block-end: var(--sp-6);
+}
+
+.clans-home__canvas-wrapper:not(.is-editing) .clans-home__bottom-adder {
+    display: none;
+}
+
+.clans-home__bottom-adder-trigger {
+    inline-size: var(--sp-8);
+    block-size: var(--sp-8);
+    padding: var(--sp-2);
+    border: var(--sp-hairline) solid rgb(from var(--base-gold-500) r g b / 0.5);
+    color: var(--base-gold-300);
+    background: var(--gradient-surface-opaque);
+    box-shadow: var(--shadow-glow);
+}
+
+.clans-home__bottom-adder-trigger i,
+.clans-home__bottom-adder-trigger svg,
+.clans-home__bottom-adder-trigger span {
+    inline-size: var(--sp-6);
+    block-size: var(--sp-6);
+    font-size: var(--sp-6);
+}
+
+.clans-home__bottom-adder-popover {
+    display: none;
+    flex-direction: column;
+    gap: var(--sp-1);
+    padding: var(--sp-2);
+    border: var(--sp-hairline) solid rgb(from var(--base-gold-500) r g b / 0.4);
+    border-radius: var(--radius-md);
+    background: var(--gradient-surface-opaque);
+    box-shadow: var(--shadow-glow);
+    backdrop-filter: blur(var(--blur-md));
+}
+
+.clans-home__bottom-adder-popover.is-open {
+    display: flex;
+}
+
+.clans-home__bottom-adder-row {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    padding-inline-end: var(--sp-2);
+}
+
+.clans-home__bottom-adder-label {
+    font-size: var(--fs-2xs);
+    color: var(--base-cream-100);
+}
+
+.clans-home__canvas-empty {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    padding: var(--sp-4);
+    font-size: var(--fs-2xs);
+    text-align: center;
+    color: var(--base-graphite-300);
+}
+
+.clans-home__component {
+    position: absolute;
+    inset-block-start: calc(var(--clan-home-y, 0) / max(var(--clan-home-content-h, 480), 480) * 100%);
+    inset-inline-start: calc(var(--clan-home-x, 0) / 960 * 100%);
+    z-index: var(--clan-home-z, 0);
+    box-sizing: border-box;
+    inline-size: calc(var(--clan-home-w, 100) / 960 * 100%);
+    block-size: calc(var(--clan-home-h, 40) / max(var(--clan-home-content-h, 480), 480) * 100%);
+    margin: var(--margin, 0);
+    padding: var(--padding, var(--sp-2));
+    border-color: var(--border-color, transparent);
+    border-radius: var(--border-radius, 0);
+    text-align: var(--text-align, start);
+    color: var(--color, var(--base-cream-100));
+    background: var(--background, transparent);
+    box-shadow: var(--shadow, none);
+    backdrop-filter: var(--backdrop-filter, none);
+    opacity: var(--opacity, 1);
+}
+
+.clans-home__component--heading {
+    font-family: var(--font-family, var(--font-heading));
+    font-size: var(--font-size, var(--fs-lg));
+    font-weight: var(--font-weight, var(--fw-semi));
+    line-height: var(--line-height, var(--lh-snug));
+    letter-spacing: var(--letter-spacing, var(--ls-wide));
+    text-transform: uppercase;
+}
+
+.clans-home__component--paragraph {
+    font-family: var(--font-family, var(--font-body));
+    font-size: var(--font-size, var(--fs-2xs));
+    line-height: var(--line-height, var(--lh-normal));
+}
+
+.clans-home__component--image {
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    backdrop-filter: none;
+}
+
+.clans-home__component--image .clans-home__component-image {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: contain;
+}
+
+.clans-home__component--spacer {
+    padding: 0;
+}
+
+.clans-home__component--container {
+    border: var(--sp-hairline) solid rgb(from var(--base-graphite-500) r g b / 0.25);
+    border-radius: var(--radius-md);
+    background: rgb(from var(--base-graphite-900) r g b / 0.15);
+}
+
+.clans-home__container-body {
+    inline-size: 100%;
+    block-size: 100%;
+}
+
+.clans-home__component-text {
+    margin: 0;
+}
+
+.clans-home__component--kpi {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: var(--sp-3);
+    padding: var(--sp-3) var(--sp-4);
+    border: var(--sp-hairline) solid rgb(from var(--base-gold-500) r g b / 0.3);
+    border-radius: var(--radius-md);
+    background: rgb(from var(--base-graphite-900) r g b / 0.4);
+    backdrop-filter: blur(var(--blur-sm));
+}
+
+.clans-home__kpi-label {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-body);
+    font-size: var(--fs-3xs);
+    font-weight: var(--fw-medium);
+    line-height: var(--lh-snug);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    color: var(--base-graphite-300);
+}
+
+.clans-home__kpi-value {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-heading);
+    font-size: var(--fs-md);
+    font-weight: var(--fw-bold);
+    line-height: var(--lh-snug);
+    color: var(--base-gold-300);
+}
+
+.clans-home__missing {
+    display: block;
+    padding: var(--sp-4);
+    font-size: var(--fs-xs);
+    text-align: center;
+    color: var(--base-graphite-300);
+}
+
+.clans-home__component.is-selected {
+    z-index: var(--z-modal, 200);
+    outline: var(--sp-hairline) solid var(--base-gold-500);
+    outline-offset: calc(var(--sp-hairline) * -1);
+    cursor: move;
+}
+
+.clans-home__component-text[contenteditable="plaintext-only"] {
+    outline: none;
+    cursor: text;
+    caret-color: var(--base-gold-300);
+}
+
+.clans-home__component-text[contenteditable="plaintext-only"]:focus {
+    border-radius: var(--radius-md);
+    background: rgb(from var(--base-gold-500) r g b / 0.08);
+}
+
+.clans-home__handles {
+    position: absolute;
+    inset: 0;
+    display: none;
+    pointer-events: none;
+}
+
+.clans-home__handles.is-open {
+    display: block;
+}
+
+.clans-home__handle {
+    position: absolute;
+    inline-size: var(--sp-2);
+    block-size: var(--sp-2);
+    border: var(--sp-hairline) solid var(--base-graphite-900);
+    border-radius: var(--radius-full);
+    background: var(--base-gold-300);
+    cursor: nwse-resize;
+    pointer-events: auto;
+}
+
+.clans-home__handle--nw {
+    inset-block-start: calc(var(--sp-1) * -1);
+    inset-inline-start: calc(var(--sp-1) * -1);
+    cursor: nwse-resize;
+}
+
+.clans-home__handle--n {
+    inset-block-start: calc(var(--sp-1) * -1);
+    inset-inline-start: 50%;
+    transform: translateX(-50%);
+    cursor: ns-resize;
+}
+
+.clans-home__handle--ne {
+    inset-block-start: calc(var(--sp-1) * -1);
+    inset-inline-end: calc(var(--sp-1) * -1);
+    cursor: nesw-resize;
+}
+
+.clans-home__handle--e {
+    inset-block-start: 50%;
+    inset-inline-end: calc(var(--sp-1) * -1);
+    transform: translateY(-50%);
+    cursor: ew-resize;
+}
+
+.clans-home__handle--se {
+    inset-block-end: calc(var(--sp-1) * -1);
+    inset-inline-end: calc(var(--sp-1) * -1);
+    cursor: nwse-resize;
+}
+
+.clans-home__handle--s {
+    inset-block-end: calc(var(--sp-1) * -1);
+    inset-inline-start: 50%;
+    transform: translateX(-50%);
+    cursor: ns-resize;
+}
+
+.clans-home__handle--sw {
+    inset-block-end: calc(var(--sp-1) * -1);
+    inset-inline-start: calc(var(--sp-1) * -1);
+    cursor: nesw-resize;
+}
+
+.clans-home__handle--w {
+    inset-block-start: 50%;
+    inset-inline-start: calc(var(--sp-1) * -1);
+    transform: translateY(-50%);
+    cursor: ew-resize;
+}
+
+.clans-home__component-input {
+    inline-size: 100%;
+    margin: 0;
+    padding: var(--sp-1);
+    border: var(--sp-hairline) solid var(--base-gold-500);
+    border-radius: var(--radius-md);
+    outline: none;
+    font: inherit;
+    color: inherit;
+    background: rgb(from var(--base-graphite-900) r g b / 0.6);
+}
+
+.clans-home__edit-strip {
+    inline-size: 100%;
+    border-block-end: var(--sp-hairline) solid rgb(from var(--base-graphite-500) r g b / 0.3);
+    background: var(--gradient-surface);
+    backdrop-filter: blur(var(--blur-sm));
+    justify-self: stretch;
+}
+
+.clans-home__edit-strip-rows {
+    display: flex;
+    flex-direction: column;
+}
+
+.clans-home__edit-row-main {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sp-2);
+    padding: var(--sp-2) var(--sp-3);
+}
+
+.clans-home__var-row {
+    display: none;
+    border-block-start: var(--sp-hairline) solid rgb(from var(--base-graphite-500) r g b / 0.3);
+    background: rgb(from var(--base-graphite-900) r g b / 0.5);
+}
+
+.clans-home__var-row.is-open {
+    display: block;
+}
+
+.clans-home__var-strip {
+    display: flex;
+    align-items: stretch;
+    gap: var(--sp-1);
+    padding: var(--sp-2) var(--sp-3);
+}
+
+.clans-home__var-arrow {
+    display: inline-flex;
+    flex: 0 0 auto;
+    justify-content: center;
+    align-items: center;
+    inline-size: var(--sp-4);
+    border: var(--sp-hairline) solid rgb(from var(--base-gold-500) r g b / 0.3);
+    border-radius: var(--radius-md);
+    color: var(--base-gold-300);
+    background: rgb(from var(--base-graphite-900) r g b / 0.4);
+    cursor: pointer;
+}
+
+.clans-home__var-arrow:hover {
+    background: rgb(from var(--base-gold-500) r g b / 0.2);
+}
+
+.clans-home__var-track {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: stretch;
+    gap: var(--sp-1);
+    min-inline-size: 0;
+    overflow: auto hidden;
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+}
+
+.clans-home__var-chip {
+    display: inline-flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    gap: var(--sp-0h);
+    padding: var(--sp-1) var(--sp-2);
+    border: var(--sp-hairline) solid rgb(from var(--base-gold-500) r g b / 0.4);
+    border-radius: var(--radius-md);
+    background: rgb(from var(--base-gold-500) r g b / 0.1);
+    cursor: pointer;
+}
+
+.clans-home__var-chip:hover {
+    background: rgb(from var(--base-gold-500) r g b / 0.25);
+}
+
+.clans-home__var-chip-key {
+    font-family: var(--font-mono);
+    font-size: var(--fs-3xs);
+    white-space: nowrap;
+    color: var(--base-gold-300);
+}
+
+.clans-home__var-chip-desc {
+    font-size: var(--fs-3xs);
+    white-space: nowrap;
+    color: var(--base-graphite-300);
+}
+
+.clans-home__var-hint {
+    min-block-size: var(--sp-2);
+    padding: 0 var(--sp-3) var(--sp-1);
+    font-size: var(--fs-3xs);
+    text-align: center;
+    color: var(--base-graphite-300);
+}
+
+.clans-home__edit-status {
+    margin-inline-start: auto;
+    font-size: var(--fs-2xs);
+    color: var(--base-graphite-300);
+}
+
+.clans-home__edit-image-picker {
+    position: absolute;
+    inline-size: var(--sp-hairline);
+    block-size: var(--sp-hairline);
+    overflow: hidden;
+    margin: calc(var(--sp-hairline) * -1);
+    padding: 0;
+    border: 0;
+    white-space: nowrap;
+    clip-path: inset(50%);
+}
+
+.clans-home__variable-host {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.clans-home__variable-picker {
+    position: absolute;
+    inset-block-start: 100%;
+    inset-inline-start: 0;
+    z-index: var(--z-popover, 50);
+    display: none;
+    flex-direction: column;
+    gap: var(--sp-1);
+    min-inline-size: 18rem;
+    max-block-size: 18rem;
+    overflow: auto;
+    margin-block-start: var(--sp-1);
+    padding: var(--sp-2);
+    border: var(--sp-hairline) solid rgb(from var(--base-gold-500) r g b / 0.4);
+    border-radius: var(--radius-md);
+    background: var(--gradient-surface-opaque);
+    box-shadow: var(--shadow-glow);
+    backdrop-filter: blur(var(--blur-md));
+}
+
+.clans-home__variable-picker.is-open {
+    display: flex;
+}
+
+.clans-home__variable-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: var(--sp-1) var(--sp-2);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+}
+
+.clans-home__variable-row:hover {
+    background: rgb(from var(--base-gold-500) r g b / 0.15);
+}
+
+.clans-home__variable-key {
+    font-family: var(--font-mono);
+    font-size: var(--fs-2xs);
+    color: var(--base-gold-300);
+}
+
+.clans-home__variable-desc {
+    font-size: var(--fs-2xs);
+    color: var(--base-graphite-300);
+}
+
+.clans-home__frame {
+    position: absolute;
+    inset-block-start: calc(100% + var(--sp-1));
+    inset-inline-start: 0;
+    z-index: var(--z-modal, 200);
+    display: none;
+    flex-direction: column;
+    gap: var(--sp-1);
+    pointer-events: auto;
+}
+
+.clans-home__frame.is-open {
+    display: flex;
+}
+
+.clans-home__frame-toolbar {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: var(--sp-1);
+    inline-size: max-content;
+    max-inline-size: 56rem;
+    overflow: auto hidden;
+    padding: var(--sp-1) var(--sp-2);
+    border: var(--sp-hairline) solid rgb(from var(--base-gold-500) r g b / 0.5);
+    border-radius: var(--radius-md);
+    background: var(--gradient-surface-opaque);
+    box-shadow: var(--shadow-glow);
+    backdrop-filter: blur(var(--blur-md));
+    scrollbar-width: thin;
+}
+
+.clans-home__frame-tool {
+    flex: 0 0 auto;
+    inline-size: var(--sp-6);
+    block-size: var(--sp-6);
+    padding: var(--sp-1);
+}
+
+.clans-home__frame-tool.is-active {
+    border-color: rgb(from var(--base-gold-500) r g b / 0.6);
+    color: var(--base-gold-300);
+    background: rgb(from var(--base-gold-500) r g b / 0.25);
+}
+
+.clans-home__frame-tool i,
+.clans-home__frame-tool svg,
+.clans-home__frame-tool span {
+    inline-size: var(--sp-4);
+    block-size: var(--sp-4);
+    font-size: var(--sp-4);
+}
+
+.clans-home__frame-popover-host {
+    position: relative;
+    z-index: 1;
+    align-self: flex-start;
+    isolation: isolate;
+}
+
+.clans-home__swatch-popover {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+    min-inline-size: 16rem;
+    max-inline-size: 20rem;
+    padding: var(--sp-2);
+    border: var(--sp-hairline) solid rgb(from var(--base-gold-500) r g b / 0.4);
+    border-radius: var(--radius-md);
+    background: var(--gradient-surface-opaque);
+    box-shadow: var(--shadow-glow);
+    backdrop-filter: blur(var(--blur-md));
+}
+
+.clans-home__swatch-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--sp-2);
+    padding-block-end: var(--sp-1);
+    border-block-end: var(--sp-hairline) solid rgb(from var(--base-graphite-500) r g b / 0.3);
+}
+
+.clans-home__swatch-head-label {
+    font-family: var(--font-mono);
+    font-size: var(--fs-2xs);
+    color: var(--base-gold-300);
+}
+
+.clans-home__swatch-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-1);
+}
+
+.clans-home__swatch {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    min-inline-size: var(--sp-3);
+    min-block-size: var(--sp-3);
+    padding: var(--sp-1);
+    border: var(--sp-hairline) solid rgb(from var(--base-graphite-500) r g b / 0.3);
+    border-radius: var(--radius-md);
+    background: rgb(from var(--base-graphite-900) r g b / 0.4);
+    cursor: pointer;
+}
+
+.clans-home__swatch:hover {
+    border-color: var(--base-gold-500);
+}
+
+.clans-home__swatch--color {
+    inline-size: var(--sp-3);
+    block-size: var(--sp-3);
+    padding: 0;
+    background: var(--swatch-color, transparent);
+}
+
+.clans-home__swatch--text {
+    inline-size: auto;
+}
+
+.clans-home__swatch-value {
+    font-family: var(--font-mono);
+    font-size: var(--fs-3xs);
+    white-space: nowrap;
+    color: var(--base-cream-100);
+}
+
+.clans-home__swatch-clear {
+    border-color: rgb(from var(--base-ember-500) r g b / 0.4);
+    background: rgb(from var(--base-ember-500) r g b / 0.2);
+}
+
+.clans-home__override-panel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-1);
+    min-inline-size: 14rem;
+    padding: var(--sp-2);
+    border: var(--sp-hairline) solid rgb(from var(--base-gold-500) r g b / 0.4);
+    border-radius: var(--radius-md);
+    background: var(--gradient-surface-opaque);
+    box-shadow: var(--shadow-glow);
+    backdrop-filter: blur(var(--blur-md));
+}
+
+.clans-home__override-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-block-end: var(--sp-1);
+    border-block-end: var(--sp-hairline) solid rgb(from var(--base-graphite-500) r g b / 0.3);
+}
+
+.clans-home__override-title {
+    font-size: var(--fs-2xs);
+    color: var(--base-gold-300);
+}
+
+.clans-home__override-count {
+    font-family: var(--font-mono);
+    font-size: var(--fs-3xs);
+    color: var(--base-graphite-300);
+}
+
+.clans-home__override-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--sp-2);
+    padding: var(--sp-1);
+    border-radius: var(--radius-md);
+}
+
+.clans-home__override-row:hover {
+    background: rgb(from var(--base-gold-500) r g b / 0.1);
+}
+
+.clans-home__override-prop {
+    flex: 1 1 auto;
+    font-family: var(--font-mono);
+    font-size: var(--fs-3xs);
+    color: var(--base-cream-100);
+}
+
+.clans-home__override-value {
+    font-family: var(--font-mono);
+    font-size: var(--fs-3xs);
+    color: var(--base-graphite-300);
+}
+
+.clans-home__override-swatch {
+    inline-size: var(--sp-3);
+    block-size: var(--sp-3);
+    border: var(--sp-hairline) solid rgb(from var(--base-graphite-500) r g b / 0.5);
+    border-radius: var(--radius-md);
+    background: var(--swatch-color, transparent);
+}
+
+.clans-home__override-reset {
+    padding: var(--sp-0h) var(--sp-1);
+    border: var(--sp-hairline) solid rgb(from var(--base-ember-500) r g b / 0.4);
+    border-radius: var(--radius-md);
+    font-size: var(--fs-3xs);
+    color: var(--base-ember-300);
+    background: rgb(from var(--base-ember-500) r g b / 0.15);
+    cursor: pointer;
+}
+
+.clans-home__override-reset:hover {
+    background: rgb(from var(--base-ember-500) r g b / 0.3);
+}
+
+.clans-home__override-empty {
+    padding: var(--sp-2);
+    font-size: var(--fs-2xs);
+    text-align: center;
+    color: var(--base-graphite-300);
+}
+
+.clans-home__img-source {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+    min-inline-size: 12rem;
+    padding: var(--sp-2);
+    border: var(--sp-hairline) solid rgb(from var(--base-gold-500) r g b / 0.4);
+    border-radius: var(--radius-md);
+    background: var(--gradient-surface-opaque);
+    box-shadow: var(--shadow-glow);
+    backdrop-filter: blur(var(--blur-md));
+}
+
+.clans-home__img-source-head {
+    padding-block-end: var(--sp-1);
+    border-block-end: var(--sp-hairline) solid rgb(from var(--base-graphite-500) r g b / 0.3);
+}
+
+.clans-home__img-source-label {
+    font-size: var(--fs-2xs);
+    color: var(--base-gold-300);
+}
+
+.clans-home__img-source-row {
+    display: flex;
+    align-items: center;
+}
+
+.clans-home__variable-hint {
+    margin: var(--sp-1) 0 0;
+    padding-block-start: var(--sp-1);
+    border-block-start: var(--sp-hairline) solid rgb(from var(--base-graphite-500) r g b / 0.3);
+    font-size: var(--fs-2xs);
+    text-align: center;
+    color: var(--base-graphite-300);
+}

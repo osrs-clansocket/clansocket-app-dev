@@ -98,6 +98,9 @@ const EXEMPT_BASES = new Set([
     "message",
     "wom_group",
     "wom_player",
+    "parent", // self-referential tree-parent FK (no separate entity_name needed)
+    "action", // flow node action id (opaque step identifier; no entity with a name)
+    "execution", // flow execution rowid (opaque integer id; no entity with a name)
 ]);
 
 const EXEMPT_BASE_TABLE_PAIRS = new Set([
@@ -189,6 +192,7 @@ const EXEMPT_OVERLAP_NAMES = new Set([
     "built_at", // static catalog build ts
     "cache_timestamp", // static catalog build ts (alt)
     "timestamp", // generic event ts (plugin/discord)
+    "published_at", // publish timestamp (clansocket_runewatch_cases + clan_flow_versions)
 
     // ── canonical FK pairs (across all prefixes that reference them) ──────
     "clan_name", // ClanSocket clan name — denorm of clansocket_clans.name
@@ -213,6 +217,11 @@ const EXEMPT_OVERLAP_NAMES = new Set([
     "payload_hash", // outbound payload hash
     "payload_json", // outbound payload body
 
+    // ── flow attribution (clan_flow_* + discord_outbound_events.flow_id_origin) ─
+    "flow_id", // flow row id (clan_flows + denorm to discord outbound for attribution)
+    "flow_name", // flow name denorm (clan_flow_* + discord outbound attribution)
+    "flow_version", // flow version snapshot (clan_flow_versions/executions + discord outbound)
+
     // ── identity/account axes ─────────────────────────────────────────────
     "display_name", // user-facing display name
     "avatar_url", // user/account avatar URL
@@ -234,6 +243,9 @@ const EXEMPT_OVERLAP_NAMES = new Set([
     "key", // generic KV key column
     "description", // generic prose description column
     "color", // visual color (role/preset)
+    "enabled", // generic boolean lifecycle flag (clan/discord)
+    "parent_id", // tree-parent relationship (clan_ui_components / discord_channels)
+    "reason", // generic explanation column (clansocket/clan)
 
     // ── audit-script parser quirks (sql operators picked up via CHECK clauses) ─
     "OR", // CHECK constraint operator — false positive

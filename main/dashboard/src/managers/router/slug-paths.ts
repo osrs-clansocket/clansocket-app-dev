@@ -12,6 +12,7 @@ const CLAN_PREFIX = "/clans/";
 const SINGULAR_CLAN_PREFIX = "/clan/";
 const MANAGE_SEGMENT = "/manage";
 const LIVE_SEGMENT = "/live";
+const ROSTER_SEGMENT = "/roster";
 
 function inRange(c: number, lo: number, hi: number): boolean {
     return c >= lo && c <= hi;
@@ -79,8 +80,20 @@ function liveSlugBody(path: string): string {
     return slugBodyOf(path, LIVE_SEGMENT);
 }
 
+function rosterSlugBody(path: string): string {
+    return slugBodyOf(path, ROSTER_SEGMENT);
+}
+
 export function matchManage(path: string): boolean {
     return manageSlugBody(path).length > 0;
+}
+
+export function matchRoster(path: string): boolean {
+    return rosterSlugBody(path).length > 0;
+}
+
+export function rosterSlug(path: string): string {
+    return rosterSlugBody(path).toLowerCase();
 }
 
 export function manageSlug(path: string): string {

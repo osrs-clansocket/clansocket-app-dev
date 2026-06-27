@@ -1,0 +1,16 @@
+{
+  "name": "@clansocket/constants",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./clan-homepage-tokens": {
+      "types": "./clan-homepage-tokens.ts",
+      "import": "./clan-homepage-tokens.ts"
+    },
+    "./clan-homepage-types": {
+      "types": "./clan-homepage-types.ts",
+      "import": "./clan-homepage-types.ts"
+    }
+  }
+}

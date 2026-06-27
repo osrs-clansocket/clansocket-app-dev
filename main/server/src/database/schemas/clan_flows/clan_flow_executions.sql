@@ -1,0 +1,31 @@
+CREATE TABLE IF NOT EXISTS clan_flow_executions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    flow_id TEXT NOT NULL,
+    flow_name TEXT NOT NULL,
+    flow_version INTEGER NOT NULL,
+    account_hash TEXT,
+    rsn TEXT,
+    status TEXT NOT NULL,
+    current_step TEXT,
+    context_json TEXT NOT NULL,
+    wake_event_kind TEXT,
+    wake_predicate_json TEXT,
+    wake_at INTEGER,
+    wake_timeout_at INTEGER,
+    entered_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL,
+    terminal_at INTEGER,
+    exit_reason TEXT,
+    failure_reason TEXT
+);
+
+CREATE INDEX IF NOT EXISTS idx_clan_flow_executions_flow ON clan_flow_executions (flow_id, status, entered_at DESC);
+
+CREATE INDEX IF NOT EXISTS idx_clan_flow_executions_waiting_time ON clan_flow_executions (status, wake_at)
+WHERE status = 'WAITING' AND wake_at IS NOT NULL;
+
+CREATE INDEX IF NOT EXISTS idx_clan_flow_executions_waiting_event ON clan_flow_executions (status, wake_event_kind)
+WHERE status = 'WAITING' AND wake_event_kind IS NOT NULL;
+
+CREATE INDEX IF NOT EXISTS idx_clan_flow_executions_rsn ON clan_flow_executions (rsn, entered_at DESC)
+WHERE rsn IS NOT NULL;

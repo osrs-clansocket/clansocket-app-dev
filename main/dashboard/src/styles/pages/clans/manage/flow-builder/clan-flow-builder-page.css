@@ -1,0 +1,187 @@
+.clans-manage__flow-builder {
+    display: grid;
+    flex: 1 1 auto;
+    grid-template: "header header" auto "rail   grid" 1fr / 14rem 1fr;
+    min-block-size: 0;
+    overflow: hidden;
+    border: 0.0625rem solid var(--base-graphite-700);
+    border-radius: var(--radius-md);
+    background: var(--base-graphite-900);
+}
+
+.clans-manage__flow-builder-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sp-2);
+    grid-area: header;
+    padding: var(--sp-1h) var(--sp-2);
+    border-block-end: 0.0625rem solid var(--base-graphite-700);
+}
+
+.clans-manage__flow-builder-header-segment {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-1);
+}
+
+.clans-manage__flow-builder-header-label {
+    font-size: var(--fs-3xs);
+    letter-spacing: var(--ls-snug);
+    text-transform: uppercase;
+    color: var(--base-graphite-300);
+}
+
+.clans-manage__flow-builder-header-name,
+.clans-manage__flow-builder-header-schedule {
+    padding: var(--sp-0) var(--sp-1);
+    border: 0.0625rem solid var(--base-graphite-600);
+    border-radius: var(--radius-md);
+    font-size: var(--fs-xs);
+    color: var(--base-graphite-100);
+    background: var(--base-graphite-800);
+}
+
+.clans-manage__flow-builder-header-name {
+    min-inline-size: 14rem;
+}
+
+.clans-manage__flow-builder-header-btn {
+    padding: var(--sp-0) var(--sp-1h);
+    border: 0.0625rem solid var(--base-graphite-600);
+    border-radius: var(--radius-md);
+    font-size: var(--fs-xs);
+    color: var(--base-graphite-100);
+    background: var(--base-graphite-800);
+    cursor: pointer;
+}
+
+.clans-manage__flow-builder-header-btn--primary {
+    border-color: var(--base-gold-500);
+    color: var(--base-gold-100);
+    background: var(--base-gold-700);
+}
+
+.clans-manage__flow-builder-rail {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-1);
+    grid-area: rail;
+    min-block-size: 0;
+    overflow: auto;
+    padding: var(--sp-1h);
+    border-inline-end: 0.0625rem solid var(--base-graphite-700);
+}
+
+.clans-manage__flow-builder-rail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--sp-1);
+}
+
+.clans-manage__flow-builder-rail-header-label {
+    font-size: var(--fs-3xs);
+    letter-spacing: var(--ls-snug);
+    text-transform: uppercase;
+    color: var(--base-graphite-300);
+}
+
+.clans-manage__flow-builder-rail-new {
+    padding: var(--sp-0) var(--sp-1);
+    border: 0.0625rem solid var(--base-gold-500);
+    border-radius: var(--radius-md);
+    font-size: var(--fs-3xs);
+    color: var(--base-gold-300);
+    background: transparent;
+    cursor: pointer;
+}
+
+.clans-manage__flow-builder-rail-entry {
+    padding: var(--sp-0) var(--sp-1);
+    border: 0.0625rem solid transparent;
+    border-radius: var(--radius-md);
+    font-size: var(--fs-xs);
+    color: var(--base-graphite-100);
+    cursor: pointer;
+}
+
+.clans-manage__flow-builder-rail-entry--active {
+    border-color: var(--base-gold-500);
+    background: var(--base-graphite-800);
+}
+
+.clans-manage__flow-builder-grid {
+    display: grid;
+    align-items: start;
+    gap: var(--sp-3);
+    grid-area: grid;
+    min-block-size: 0;
+    overflow: auto;
+    padding: var(--sp-2);
+}
+
+.clans-manage__flow-builder-card-slot {
+    position: relative;
+}
+
+.clans-manage__flow-builder-wait-pair {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sp-1);
+}
+
+
+.clans-manage__flow-builder-add-right,
+.clans-manage__flow-builder-add-below {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    inline-size: var(--sp-2);
+    block-size: var(--sp-2);
+    padding: 0;
+    border: 0.0625rem solid var(--base-gold-500);
+    border-radius: var(--radius-pill);
+    font-size: var(--fs-2xs);
+    line-height: 1;
+    color: var(--base-gold-300);
+    background: var(--base-graphite-800);
+    cursor: pointer;
+}
+
+.clans-manage__flow-builder-add-right {
+    inset-block-start: 50%;
+    inset-inline-end: calc(-1 * var(--sp-2));
+    transform: translate(50%, -50%);
+}
+
+.clans-manage__flow-builder-add-below {
+    inset-block-end: calc(-1 * var(--sp-2));
+    inset-inline-start: 50%;
+    transform: translate(-50%, 50%);
+}
+
+.clans-manage__flow-builder-connector-right,
+.clans-manage__flow-builder-connector-below {
+    position: absolute;
+    background: var(--base-gold-500);
+    opacity: var(--opacity-high);
+    pointer-events: none;
+}
+
+.clans-manage__flow-builder-connector-right {
+    inset-block-start: 50%;
+    inset-inline-end: calc(-1 * var(--sp-3));
+    inline-size: var(--sp-3);
+    block-size: 0.125rem;
+    transform: translateY(-50%);
+}
+
+.clans-manage__flow-builder-connector-below {
+    inset-block-end: calc(-1 * var(--sp-3));
+    inset-inline-start: 50%;
+    inline-size: 0.125rem;
+    block-size: var(--sp-3);
+    transform: translateX(-50%);
+}

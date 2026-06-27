@@ -29,6 +29,14 @@ export function vaultDbKey(clanId: string): string {
     return `clan:${clanId}:vault`;
 }
 
+export function uiDbKey(clanId: string): string {
+    return `clan:${clanId}:ui`;
+}
+
 export function pluginDbKey(clanId: string, mode: string): string {
     return `clan:${clanId}:${PLUGIN_DB_PREFIX}${mode}`;
+}
+
+export function flowsDbKey(clanId: string): string {
+    return `clan:${clanId}:flows`;
 }

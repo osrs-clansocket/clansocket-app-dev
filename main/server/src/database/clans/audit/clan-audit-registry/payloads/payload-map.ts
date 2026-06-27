@@ -82,6 +82,9 @@ export type PayloadMap = {
     "discord:auto-hooks.update": D.AutoHookUpdated;
     "discord:auto-hooks.delete": D.AutoHookDeleted;
     "discord:auto-hooks.toggle": D.AutoHookToggled;
+    "server:homepage.components_updated": P.HomepageComponentsUpdatedPayload;
+    "server:homepage.image_uploaded": P.HomepageImageUploadedPayload;
+    "server:homepage.image_deleted": P.HomepageImageDeletedPayload;
 };
 
 export type AnyAuditAction = keyof PayloadMap;

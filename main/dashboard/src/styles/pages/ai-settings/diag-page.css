@@ -45,8 +45,8 @@
 .ai-settings__diag-entry-key {
     font-family: var(--font-mono);
     font-size: var(--fs-3xs);
-    color: var(--base-cream-100);
     overflow-wrap: anywhere;
+    color: var(--base-cream-100);
 }
 
 .ai-settings__diag-entry-diff {
@@ -57,14 +57,14 @@
 }
 
 .ai-settings__diag-entry-from {
-    color: var(--base-graphite-300);
     text-decoration: line-through;
     overflow-wrap: anywhere;
+    color: var(--base-graphite-300);
 }
 
 .ai-settings__diag-entry-to {
-    color: var(--base-gold-300);
     overflow-wrap: anywhere;
+    color: var(--base-gold-300);
 }
 
 .ai-settings__diag-entry-time {

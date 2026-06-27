@@ -67,17 +67,17 @@
     font-size: var(--fs-3xs);
     line-height: var(--lh-snug);
     letter-spacing: var(--ls-tight);
-    color: var(--base-gold-300);
-    overflow-wrap: anywhere;
     word-break: break-all;
+    overflow-wrap: anywhere;
+    color: var(--base-gold-300);
 }
 
 .ai-settings-profile__entry-value {
     font-size: var(--fs-2xs);
     line-height: var(--lh-snug);
-    color: var(--base-cream-100);
-    overflow-wrap: anywhere;
     word-break: break-word;
+    overflow-wrap: anywhere;
+    color: var(--base-cream-100);
 }
 
 .ai-settings-profile__entry-actions {
@@ -206,9 +206,9 @@
     min-inline-size: 0;
     font-size: var(--fs-2xs);
     line-height: var(--lh-snug);
-    color: var(--base-cream-100);
-    overflow-wrap: anywhere;
     word-break: break-word;
+    overflow-wrap: anywhere;
+    color: var(--base-cream-100);
 }
 
 .ai-settings-profile__sessions {
@@ -271,9 +271,9 @@
 .ai-settings-profile__session-text {
     font-size: var(--fs-2xs);
     line-height: var(--lh-snug);
-    color: var(--base-cream-100);
-    overflow-wrap: anywhere;
     word-break: break-word;
+    overflow-wrap: anywhere;
+    color: var(--base-cream-100);
 }
 
 .ai-settings-profile__clear-row {

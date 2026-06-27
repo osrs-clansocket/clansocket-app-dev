@@ -9,37 +9,18 @@ import "../../../styles/pages/clans/clan-section-page.css";
 import "../../../styles/pages/clans/clan-status-page.css";
 import "../../../styles/pages/clans/clan-view-page.css";
 import type { Instance } from "../../factory";
-import { clansClient, type ClanSummary, type ManagedClan } from "../../../state/clans/clans-client/index.js";
+import { clansClient, type ManagedClan } from "../../../state/clans/clans-client/index.js";
 import { clansStore } from "../../../state/clans/stores/clans-store.js";
 import { memberClansStore } from "../../../state/clans/stores/member-clans-store.js";
-import { clanSlug } from "../../../managers/router";
+import { rosterSlug } from "../../../managers/router";
 import { fetchLadder, type ClanRankLadder } from "../../../state/icons/rank-sort.js";
 import { readSort, readView } from "../../../state/clans/roster/prefs.js";
+import { adaptClanSummary } from "../../../state/clans/mappers/clan-summary-mapper.js";
 import { buildMissing } from "./clan-page-buttons.js";
 import { buildLoaded } from "./clan-roster-render.js";
 
-function adaptClanSummary(s: ClanSummary): ManagedClan {
-    return {
-        id: s.id,
-        slug: s.slug,
-        displayName: s.displayName,
-        status: s.status,
-        role: "",
-        grantedVia: "",
-        grantedAt: 0,
-        createdAt: s.createdAt,
-        iconKind: null,
-        iconValue: null,
-        iconCustomized: false,
-        iconTransform: null,
-        iconVersion: 0,
-        color: null,
-        roster: s.roster,
-    };
-}
-
-export async function renderClan(path: string): Promise<Instance> {
-    const slug = clanSlug(path);
+export async function renderClanRoster(path: string): Promise<Instance> {
+    const slug = rosterSlug(path);
     if (slug.length === 0) return buildMissing();
     await Promise.all([clansStore.ready(), memberClansStore.ready()]);
     const managed = clansStore.managed$().find((c) => c.slug === slug);

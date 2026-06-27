@@ -39,6 +39,7 @@ const noWarningComments = require("./eslint-rules/no-warning-comments.cjs");
 const noLeakShape = require("./eslint-rules/no-leak-shape.cjs");
 const noEnvFallback = require("./eslint-rules/no-env-fallback.cjs");
 const maxNameWords = require("./eslint-rules/max-name-words.cjs");
+const iconNameLiteral = require("./eslint-rules/icon-name-literal.cjs");
 
 // session-added rules
 const aggregator = require("./eslint-rules/no-aggregator-god-class.cjs");
@@ -106,6 +107,7 @@ const rules = {
     "no-leak-shape": noLeakShape,
     "no-env-fallback": noEnvFallback,
     "max-name-words": maxNameWords,
+    "icon-name-literal": iconNameLiteral,
     "no-aggregator-god-class": aggregator,
     "no-prepare-in-loop": prepareInLoop,
     "no-await-in-loop": awaitInLoop,
@@ -173,6 +175,7 @@ const severities = {
     "lvi/no-leak-shape": "error",
     "lvi/no-env-fallback": "error",
     "lvi/max-name-words": "error",
+    "lvi/icon-name-literal": "error",
     "lvi/no-aggregator-god-class": "error",
     "lvi/no-prepare-in-loop": "error",
     "lvi/no-await-in-loop": "error",

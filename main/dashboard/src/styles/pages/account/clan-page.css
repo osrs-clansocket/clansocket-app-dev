@@ -119,8 +119,8 @@
     background: var(--base-graphite-800);
 }
 .account__clan-row-view:hover {
-    color: var(--base-gold-200);
     border-color: var(--base-gold-500);
+    color: var(--base-gold-200);
 }
 .account__clan-chevron {
     flex-shrink: 0;

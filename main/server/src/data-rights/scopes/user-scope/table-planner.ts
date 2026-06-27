@@ -8,7 +8,15 @@ import {
 } from "../manifest/index.js";
 import { appUnionPlan, byAccountHash, byClanScoped, bySiteAccount, makePlan } from "./plan-resolver.js";
 import { SQL_COLUMNS } from "../../../database/core/sql-columns.js";
-import { SCOPE_APP, SCOPE_CLAN, SCOPE_CLAN_AUDIT, SCOPE_VAREZ, type Scope, type TablePlan } from "./scope.js";
+import {
+    SCOPE_APP,
+    SCOPE_CLAN,
+    SCOPE_CLAN_AUDIT,
+    SCOPE_CLAN_FLOWS,
+    SCOPE_VAREZ,
+    type Scope,
+    type TablePlan,
+} from "./scope.js";
 
 export function planForTable(siteAccountId: string, scope: Scope, table: string): TablePlan | null {
     if (scope.kind === SCOPE_APP) {
@@ -30,6 +38,9 @@ export function planForTable(siteAccountId: string, scope: Scope, table: string)
     }
     if (scope.kind === SCOPE_CLAN_AUDIT) {
         return byClanScoped(siteAccountId, table, CLAN_AUDIT_DB_SITE_ACCOUNT_TABLES, SQL_COLUMNS.SITE_ACCOUNT_ID);
+    }
+    if (scope.kind === SCOPE_CLAN_FLOWS) {
+        return null;
     }
     return byAccountHash(siteAccountId, table, PLUGIN_USER_TABLES);
 }

@@ -1,4 +1,5 @@
 import "./ai/routes/chat/index.js";
+import "./flows/api/flows-router.js";
 import "./ai/routes/memory-routes.js";
 import "./ai/routes/persona-routes.js";
 import "./auth/site-routes/index.js";

@@ -21,7 +21,7 @@ import {
 } from "../../../shared/constants/banner/banner-constants.js";
 import { ROUTE_CLAN_CLASS, ROUTE_ROOT_CLASS } from "../../../shared/constants/route/route-constants.js";
 
-export type ClanTabKey = "roster" | "map" | "config";
+export type ClanTabKey = "home" | "roster" | "map" | "config";
 
 export function buildMissing(): Instance {
     return div(
@@ -94,7 +94,10 @@ export function buildClanTabs(
     isManager: boolean,
     active: ClanTabKey,
 ): Instance {
-    const tabs: Instance[] = [buildClanTab("Roster", `/clans/${slug}`, active === "roster")];
+    const tabs: Instance[] = [
+        buildClanTab("Home", `/clans/${slug}`, active === "home"),
+        buildClanTab("Roster", `/clans/${slug}/roster`, active === "roster"),
+    ];
     if (isMember || isManager) {
         tabs.push(buildClanTab("Map", `/clans/${slug}/live`, active === "map"));
     }

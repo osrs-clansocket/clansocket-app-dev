@@ -33,6 +33,10 @@
             "description": "Clan management (manager-only; non-managers are redirected to the clan dashboard)."
         },
         {
+            "pattern": "/clans/varietyz/roster",
+            "description": "A clan's roster page. :slug is the clan's lowercase slug."
+        },
+        {
             "pattern": "/data-rights",
             "description": "Your data-rights browser — export or delete your stored data."
         },

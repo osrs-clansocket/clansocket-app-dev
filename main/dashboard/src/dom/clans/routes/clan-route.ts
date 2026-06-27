@@ -28,5 +28,5 @@ defineRoute({
         if (slug.length === 0) return null;
         return lookupOrFetch(slug);
     },
-    render: async (path) => (await import("../../pages/clans/index.js")).renderClan(path),
+    render: async (path) => (await import("../../pages/clans/home/render-clan-home.js")).renderClanHome(path),
 });

@@ -3,6 +3,7 @@ const CLANS_PATH = "/clans";
 export const AppRoutes = {
     HOME: "/",
     CLAN: CLANS_PATH,
+    CLAN_ROSTER: CLANS_PATH,
     CLAN_MANAGE: CLANS_PATH,
     CLAN_LIVE: CLANS_PATH,
     ACCOUNT: "/account",

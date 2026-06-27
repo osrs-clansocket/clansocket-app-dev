@@ -71,6 +71,9 @@ export const ClanAuditActions = {
     WomRsnChanged: "wom:rsn.changed",
     WomBackfillCompleted: "wom:backfill.completed",
     WomBackfillFailed: "wom:backfill.failed",
+    HomepageComponentsUpdated: "server:homepage.components_updated",
+    HomepageImageUploaded: "server:homepage.image_uploaded",
+    HomepageImageDeleted: "server:homepage.image_deleted",
 } as const;
 
 export const ClanAuditTargetTypes = {
@@ -96,6 +99,7 @@ export const ClanAuditTargetTypes = {
     DiscordWebhookToken: "discord-webhook-token",
     VaultEntry: "vault-entry",
     WomLink: "wom-link",
+    Homepage: "homepage",
 } as const;
 
 export type ClanAuditAction = (typeof ClanAuditActions)[keyof typeof ClanAuditActions];

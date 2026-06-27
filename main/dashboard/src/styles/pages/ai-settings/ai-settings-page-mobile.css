@@ -1,7 +1,7 @@
 @media (width <= 48rem) {
     .ai-settings {
-        grid-template: "header" auto "content" 1fr "diag" auto / 1fr;
         gap: var(--sp-2);
+        grid-template: "header" auto "content" 1fr "diag" auto / 1fr;
         padding: var(--sp-2);
     }
 

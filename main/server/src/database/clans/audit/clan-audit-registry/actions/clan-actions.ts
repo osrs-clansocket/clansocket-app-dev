@@ -104,3 +104,21 @@ registerAuditAction(
     def("server", ClanAuditTargetTypes.Clan, false),
     requireStrings("reason"),
 );
+
+registerAuditAction(
+    ClanAuditActions.HomepageComponentsUpdated,
+    def("server", ClanAuditTargetTypes.Homepage, true),
+    (p) => isNumber(p.componentCount),
+);
+
+registerAuditAction(
+    ClanAuditActions.HomepageImageUploaded,
+    def("server", ClanAuditTargetTypes.Homepage, true),
+    (p) => isString(p.imageKey) && isString(p.ext) && isNumber(p.byteSize),
+);
+
+registerAuditAction(
+    ClanAuditActions.HomepageImageDeleted,
+    def("server", ClanAuditTargetTypes.Homepage, true),
+    (p) => isString(p.imageKey),
+);
