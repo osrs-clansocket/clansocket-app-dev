@@ -69,7 +69,11 @@ function targetRowFor(meta: ReturnType<typeof flowMetaSignal>, edge: FlowEdge): 
 
 export function buildConnectorOverlay(scrollHost: HTMLElement): SvgInstance<SVGSVGElement> {
     const overlay = svg({ classes: [SVG_CLASS] });
+    let pending = false;
+    const observedCards = new Set<HTMLElement>();
+    const cardRo = new ResizeObserver(() => scheduleRecompute());
     const recompute = (): void => {
+        pending = false;
         overlay.clear();
         const w = Math.max(scrollHost.scrollWidth, scrollHost.clientWidth, 1);
         const h = Math.max(scrollHost.scrollHeight, scrollHost.clientHeight, 1);
@@ -77,23 +81,37 @@ export function buildConnectorOverlay(scrollHost: HTMLElement): SvgInstance<SVGS
         overlay.el.style.height = `${h}px`;
         const meta = flowMetaSignal();
         const boxes = readCardBoxes(scrollHost);
+        const liveCards = new Set<HTMLElement>();
+        for (const card of scrollHost.querySelectorAll<HTMLElement>(".clans-manage__flow-builder-card-slot[data-card-id]")) {
+            liveCards.add(card);
+            if (!observedCards.has(card)) {
+                cardRo.observe(card);
+                observedCards.add(card);
+            }
+        }
+        for (const card of observedCards) {
+            if (!liveCards.has(card)) {
+                cardRo.unobserve(card);
+                observedCards.delete(card);
+            }
+        }
         for (const edge of meta.edges) {
             const p = buildEdgePath(edge, boxes, targetRowFor(meta, edge));
             if (p) overlay.addChild(p);
         }
     };
-    const scheduleRecompute = (): void => {
+    function scheduleRecompute(): void {
+        if (pending) return;
+        pending = true;
         requestAnimationFrame(recompute);
-    };
+    }
     scheduleRecompute();
     effect(() => {
         void flowMetaSignal();
         scheduleRecompute();
     });
-    const ro = new ResizeObserver(scheduleRecompute);
-    ro.observe(scrollHost);
+    const hostRo = new ResizeObserver(scheduleRecompute);
+    hostRo.observe(scrollHost);
     scrollHost.addEventListener("scroll", scheduleRecompute);
-    const mo = new MutationObserver(scheduleRecompute);
-    mo.observe(scrollHost, { childList: true, subtree: true });
     return overlay;
 }
