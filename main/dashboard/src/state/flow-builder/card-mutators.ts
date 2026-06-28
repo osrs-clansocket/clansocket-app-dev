@@ -38,7 +38,17 @@ function makeEdge(fromId: string, fromHandle: string, toId: string): FlowEdge {
 }
 
 function pickPosition(fromRow: number, fromCol: number, handleIndex: number): { row: number; col: number } {
-    let row = fromRow + handleIndex;
+    if (handleIndex === 0) {
+        let col = fromCol + 1;
+        while (isOccupied(fromRow, col)) col += 1;
+        return { row: fromRow, col };
+    }
+    if (handleIndex === 1) {
+        let row = fromRow + 1;
+        while (isOccupied(row, fromCol)) row += 1;
+        return { row, col: fromCol };
+    }
+    let row = fromRow + (handleIndex - 1);
     const col = fromCol + 1;
     while (isOccupied(row, col)) row += 1;
     return { row, col };
@@ -133,6 +143,23 @@ export function addBelow(fromId: string): void {
     const from = placementById(fromId);
     if (!from) return;
     addNodeWithEdge(fromId, firstHandleId(from.config), "action", 1);
+}
+
+export function addParallelSibling(siblingId: string): void {
+    const sibling = placementById(siblingId);
+    if (!sibling) return;
+    const inbound = edgesCurrent().find((e) => e.to_node_id === siblingId);
+    if (!inbound) {
+        addNodeWithEdge(siblingId, firstHandleId(sibling.config), "action", 1);
+        return;
+    }
+    const fresh = defaultCard("action");
+    let row = sibling.row + 1;
+    const col = sibling.col;
+    while (isOccupied(row, col)) row += 1;
+    const placement = { config: fresh, row, col };
+    const edge = makeEdge(inbound.from_node_id, inbound.from_handle_id, fresh.id);
+    setPlacementsAndEdges([...placementsCurrent(), placement], [...edgesCurrent(), edge]);
 }
 
 export function removeCard(id: string): void {

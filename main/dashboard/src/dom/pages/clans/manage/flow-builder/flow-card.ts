@@ -17,7 +17,7 @@ import { buildConditionEditor, type ConditionRow } from "../discord/modes/auto-h
 import { editName } from "../../../account/workflows/display-name-edit.js";
 import {
     addRight,
-    addBelow,
+    addParallelSibling,
     closeExitAndRemove,
     openExitAndAdd,
     removeCard,
@@ -606,16 +606,15 @@ function rightAdorner(placement: FlowCardPlacement): Instance | null {
 
 function belowAdorner(placement: FlowCardPlacement): Instance | null {
     const config = placement.config;
-    if (!isCardComplete(config)) return null;
-    if (config.kind === "action" && config.openExits.length > 0) return null;
+    if (config.kind === "trigger") return null;
     return button(
         {
             variant: BTN_VARIANT_BARE,
             classes: [ADD_BTN_BELOW_CLASS],
-            ariaLabel: "Add parallel branch",
-            context: "add a parallel downstream card",
+            ariaLabel: "Add parallel sibling",
+            context: "add a parallel sibling that fires from the same upstream source as this card",
             meta: ["action"],
-            onClick: () => addBelow(config.id),
+            onClick: () => addParallelSibling(config.id),
         },
         [icon({ provider: "bi", name: "plus-lg", ariaHidden: true, context: null, meta: null })],
     );
