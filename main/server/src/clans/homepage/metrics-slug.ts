@@ -3,11 +3,7 @@ const SLUG_COLLAPSE_RE = /_+/g;
 const SLUG_TRIM_RE = /^_+|_+$/g;
 
 export function slugify(value: string): string {
-    return value
-        .toLowerCase()
-        .replace(SLUG_REPLACE_RE, "_")
-        .replace(SLUG_COLLAPSE_RE, "_")
-        .replace(SLUG_TRIM_RE, "");
+    return value.toLowerCase().replace(SLUG_REPLACE_RE, "_").replace(SLUG_COLLAPSE_RE, "_").replace(SLUG_TRIM_RE, "");
 }
 
 export function disambiguate(slug: string, seen: Set<string>): string {

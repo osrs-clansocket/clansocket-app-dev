@@ -5,7 +5,10 @@ interface DistinctRow {
     v: unknown;
 }
 
-function distinctFromClan(table: string, column: string): (clanId: string) => Promise<readonly { id: string; name: string }[]> {
+function distinctFromClan(
+    table: string,
+    column: string,
+): (clanId: string) => Promise<readonly { id: string; name: string }[]> {
     const sql = `SELECT DISTINCT "${column}" AS v FROM "${table}" WHERE "${column}" IS NOT NULL AND "${column}" != '' ORDER BY "${column}"`;
     return async (clanId: string) => {
         const db = getClanDb(clanId);
@@ -17,7 +20,10 @@ function distinctFromClan(table: string, column: string): (clanId: string) => Pr
     };
 }
 
-function distinctAcrossPluginModes(table: string, column: string): (clanId: string) => Promise<readonly { id: string; name: string }[]> {
+function distinctAcrossPluginModes(
+    table: string,
+    column: string,
+): (clanId: string) => Promise<readonly { id: string; name: string }[]> {
     const sql = `SELECT DISTINCT "${column}" AS v FROM "${table}" WHERE "${column}" IS NOT NULL AND "${column}" != '' ORDER BY "${column}"`;
     return async (clanId: string) => {
         const set = new Set<string>();

@@ -49,7 +49,9 @@ async function enqueueMessage(
 }
 
 async function sendMessage(input: Readonly<Record<string, unknown>>, ctx: OperationContext): Promise<OperationResult> {
-    return enqueueMessage(TARGET_KIND_CHANNEL_MESSAGE, "channelId", input, ctx, { content: readString(input, "content") });
+    return enqueueMessage(TARGET_KIND_CHANNEL_MESSAGE, "channelId", input, ctx, {
+        content: readString(input, "content"),
+    });
 }
 
 async function sendEmbed(input: Readonly<Record<string, unknown>>, ctx: OperationContext): Promise<OperationResult> {
@@ -82,7 +84,11 @@ async function sendWebhook(input: Readonly<Record<string, unknown>>, ctx: Operat
     return { result_class: "sent", outputs: { queueId } };
 }
 
-function sendOp(opId: string, inputFields: FlowFieldList, handler: (i: Readonly<Record<string, unknown>>, c: OperationContext) => Promise<OperationResult>): void {
+function sendOp(
+    opId: string,
+    inputFields: FlowFieldList,
+    handler: (i: Readonly<Record<string, unknown>>, c: OperationContext) => Promise<OperationResult>,
+): void {
     registerOperation({
         capability: "discord",
         opId,
@@ -98,19 +104,22 @@ function sendOp(opId: string, inputFields: FlowFieldList, handler: (i: Readonly<
 
 sendOp("discord:send-message", [FIELD_CHANNEL, FIELD_CONTENT], sendMessage);
 
-sendOp("discord:send-embed", [
-    FIELD_CHANNEL,
-    { name: "title", type: "string", required: true, minLength: 1, maxLength: 256 },
-    { name: "description", type: "string", maxLength: 4096 },
-    { name: "color", type: "integer" },
-    { name: "url", type: "string", maxLength: 2048 },
-], sendEmbed);
+sendOp(
+    "discord:send-embed",
+    [
+        FIELD_CHANNEL,
+        { name: "title", type: "string", required: true, minLength: 1, maxLength: 256 },
+        { name: "description", type: "string", maxLength: 4096 },
+        { name: "color", type: "integer" },
+        { name: "url", type: "string", maxLength: 2048 },
+    ],
+    sendEmbed,
+);
 
 sendOp("discord:send-dm", [FIELD_USER, FIELD_CONTENT], sendDm);
 
-sendOp("discord:send-webhook", [
-    FIELD_WEBHOOK,
-    FIELD_CONTENT,
-    { name: "username", type: "string", maxLength: 80 },
-    FIELD_AVATAR_URL,
-], sendWebhook);
+sendOp(
+    "discord:send-webhook",
+    [FIELD_WEBHOOK, FIELD_CONTENT, { name: "username", type: "string", maxLength: 80 }, FIELD_AVATAR_URL],
+    sendWebhook,
+);

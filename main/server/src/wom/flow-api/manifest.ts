@@ -30,13 +30,25 @@ function readOp(opId: string, inputFields: FlowFieldList, handler: OperationSpec
     });
 }
 
-readOp("wom:player-snapshot", [{ name: "rsn", type: "rsn", valueSourceRef: "rsn", required: true, minLength: 1, maxLength: 12 }], playerSnapshotHandler);
-readOp("wom:group-hiscores", [{ name: "metric", type: "osrs-metric", valueSourceRef: "osrs-metric", required: true }], groupHiscoresHandler);
+readOp(
+    "wom:player-snapshot",
+    [{ name: "rsn", type: "rsn", valueSourceRef: "rsn", required: true, minLength: 1, maxLength: 12 }],
+    playerSnapshotHandler,
+);
+readOp(
+    "wom:group-hiscores",
+    [{ name: "metric", type: "osrs-metric", valueSourceRef: "osrs-metric", required: true }],
+    groupHiscoresHandler,
+);
 readOp("wom:group-details", [], groupDetailsHandler);
-readOp("wom:group-gained", [
-    { name: "metric", type: "osrs-metric", valueSourceRef: "osrs-metric", required: true },
-    { name: "period", type: "string", valueSourceRef: "wom-period", required: true },
-], groupGainedHandler);
+readOp(
+    "wom:group-gained",
+    [
+        { name: "metric", type: "osrs-metric", valueSourceRef: "osrs-metric", required: true },
+        { name: "period", type: "string", valueSourceRef: "wom-period", required: true },
+    ],
+    groupGainedHandler,
+);
 readOp("wom:group-name-changes", [], groupNameChangesHandler);
 
 export const manifest: CapabilityManifest = buildCapabilityFromRegistries({

@@ -8,10 +8,13 @@ export interface TooltipDef {
     valueBuilder?: (ctx: { state: EditorState; id: string }) => () => string;
 }
 
-const propOverride = (prop: string) => ({ state, id }: { state: EditorState; id: string }) => (): string => {
-    const v = state.draft$().find((c) => c.componentId === id)?.tokenOverrides[prop];
-    return v !== undefined && v !== "" ? v : "(default)";
-};
+const propOverride =
+    (prop: string) =>
+    ({ state, id }: { state: EditorState; id: string }) =>
+    (): string => {
+        const v = state.draft$().find((c) => c.componentId === id)?.tokenOverrides[prop];
+        return v !== undefined && v !== "" ? v : "(default)";
+    };
 
 export const TOOL_TOOLTIPS: Record<string, TooltipDef> = {
     "add-heading": {
@@ -46,7 +49,8 @@ export const TOOL_TOOLTIPS: Record<string, TooltipDef> = {
     },
     "toggle-variables": {
         title: "Variables row",
-        description: "Toggle the variables strip — insert {{clan.X}} tokens (name, slug, status, memberCount, etc.) into selected text.",
+        description:
+            "Toggle the variables strip — insert {{clan.X}} tokens (name, slug, status, memberCount, etc.) into selected text.",
         affects: "Editor chrome",
     },
     "toggle-charts": {
@@ -56,20 +60,22 @@ export const TOOL_TOOLTIPS: Record<string, TooltipDef> = {
     },
     "chart-source": {
         title: "Chart preset",
-        description: "Swap which chart preset this component renders. The size resets to the new preset's recommended dimensions.",
+        description:
+            "Swap which chart preset this component renders. The size resets to the new preset's recommended dimensions.",
         affects: "Chart binding + size",
     },
     "toggle-guides": {
         title: "Guides + rulers",
-        description: "Toggle photoshop-style guides and rulers. Drag from a ruler to add a guide; components snap to nearby guides while dragging.",
+        description:
+            "Toggle photoshop-style guides and rulers. Drag from a ruler to add a guide; components snap to nearby guides while dragging.",
         affects: "Editor chrome + snapping",
     },
-    "undo": {
+    undo: {
         title: "Undo",
         description: "Revert the last edit. History keeps up to 50 steps.",
         affects: "Draft state",
     },
-    "redo": {
+    redo: {
         title: "Redo",
         description: "Re-apply the last undone edit.",
         affects: "Draft state",
@@ -79,7 +85,7 @@ export const TOOL_TOOLTIPS: Record<string, TooltipDef> = {
         description: "Remove every component from the draft.",
         affects: "Draft state",
     },
-    "save": {
+    save: {
         title: "Save homepage",
         description: "Persist the current draft to the server.",
         affects: "Saved state",
@@ -94,28 +100,28 @@ export const TOOL_TOOLTIPS: Record<string, TooltipDef> = {
         description: "Append a full-width container below the current content.",
         affects: "Component list",
     },
-    "color": {
+    color: {
         title: "Text color",
         description: "Foreground color of text rendered inside this component.",
         affects: "CSS --color",
         allowed: "Any color (hex with alpha)",
         valueBuilder: propOverride("--color"),
     },
-    "background": {
+    background: {
         title: "Background",
         description: "Fill color of the component's background area.",
         affects: "CSS --background",
         allowed: "Any color (hex with alpha)",
         valueBuilder: propOverride("--background"),
     },
-    "padding": {
+    padding: {
         title: "Padding",
         description: "Inner spacing between the component's edge and its content.",
         affects: "CSS --padding",
         allowed: "Spacing token (--sp-0 to --sp-8)",
         valueBuilder: propOverride("--padding"),
     },
-    "margin": {
+    margin: {
         title: "Margin",
         description: "Outer spacing around the component.",
         affects: "CSS --margin",
@@ -178,14 +184,14 @@ export const TOOL_TOOLTIPS: Record<string, TooltipDef> = {
         allowed: "--lh-flat / snug / normal / loose",
         valueBuilder: propOverride("--line-height"),
     },
-    "opacity": {
+    opacity: {
         title: "Opacity",
         description: "Translucency of the entire component, content included.",
         affects: "CSS --opacity",
         allowed: "--opacity-faint / medium / solid / 1",
         valueBuilder: propOverride("--opacity"),
     },
-    "shadow": {
+    shadow: {
         title: "Shadow",
         description: "Drop shadow applied to the component box.",
         affects: "CSS --shadow",
@@ -199,11 +205,11 @@ export const TOOL_TOOLTIPS: Record<string, TooltipDef> = {
         allowed: "blur(--blur-sm / md / lg) / none",
         valueBuilder: propOverride("--backdrop-filter"),
     },
-    "fit": { title: "Fit to content", description: "Resize this component to wrap its content tightly." },
-    "duplicate": { title: "Duplicate", description: "Make a copy of the selected component, offset slightly." },
+    fit: { title: "Fit to content", description: "Resize this component to wrap its content tightly." },
+    duplicate: { title: "Duplicate", description: "Make a copy of the selected component, offset slightly." },
     "z-up": { title: "Bring forward", description: "Raise this component one layer above its siblings." },
     "z-down": { title: "Send backward", description: "Lower this component one layer below its siblings." },
-    "delete": { title: "Delete", description: "Permanently remove this component from the draft." },
+    delete: { title: "Delete", description: "Permanently remove this component from the draft." },
     "image-source": {
         title: "Image source",
         description: "Pick which image to render — uploaded file, clan icon, or upload a new one.",
@@ -214,11 +220,11 @@ export const TOOL_TOOLTIPS: Record<string, TooltipDef> = {
         description: "Add a new component as a child of this container.",
         affects: "Component list",
     },
-    "info": {
+    info: {
         title: "Applied overrides",
         description: "Lists every token override currently applied to this component.",
     },
-    "unparent": {
+    unparent: {
         title: "Remove from section",
         description: "Detach this component from its parent container — back to top-level.",
         affects: "Component parentId",

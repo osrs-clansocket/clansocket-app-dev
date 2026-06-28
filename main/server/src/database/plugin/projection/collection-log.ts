@@ -3,10 +3,7 @@ import { buildChangeEmitter } from "./change-inserter.js";
 import type { HandlerCtx } from "./handler-ctx.js";
 import { asNumber, asNumberNullable, asString, extractWhere, sanitizeItemName } from "./projection-utils.js";
 import { upsertItemsCatalog } from "./items-catalog.js";
-import {
-    EVENT_COLLECTION_LOG_ENTRY,
-    EVENT_COLLECTION_LOG_SNAPSHOT,
-} from "../../../plugin-api/event-types.js";
+import { EVENT_COLLECTION_LOG_ENTRY, EVENT_COLLECTION_LOG_SNAPSHOT } from "../../../plugin-api/event-types.js";
 import { registerPluginEvent } from "../../../flows/registries/plugin-event-registry.js";
 
 interface SnapshotItem {

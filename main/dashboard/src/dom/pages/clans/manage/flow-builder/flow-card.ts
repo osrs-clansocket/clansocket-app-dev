@@ -15,8 +15,16 @@ import {
 import { buildGlassSelect, type SelectOption } from "../../../../forms/glass/inputs/select/index.js";
 import { buildConditionEditor, type ConditionRow } from "../discord/modes/auto-hooks/condition-editor.js";
 import { editName } from "../../../account/workflows/display-name-edit.js";
-import { addRight, addBelow, removeCard, updateCard, changeCardKind } from "../../../../../state/flow-builder/card-mutators.js";
-import { placementsCurrent } from "../../../../../state/flow-builder/placement-helpers.js";
+import {
+    addRight,
+    addBelow,
+    closeExitAndRemove,
+    openExitAndAdd,
+    removeCard,
+    updateCard,
+    changeCardKind,
+} from "../../../../../state/flow-builder/card-mutators.js";
+import { flowMetaSignal } from "../../../../../state/flow-builder/flow-store.js";
 import {
     capabilitiesSignal,
     flatTriggerOptions,
@@ -66,8 +74,6 @@ const EMPTY_HINT_CLASS = "clans-manage__flow-builder-card-empty-hint";
 const SLOT_CLASS = "clans-manage__flow-builder-card-slot";
 const ADD_BTN_RIGHT_CLASS = "clans-manage__flow-builder-add-right";
 const ADD_BTN_BELOW_CLASS = "clans-manage__flow-builder-add-below";
-const CONNECTOR_RIGHT_CLASS = "clans-manage__flow-builder-connector-right";
-const CONNECTOR_BELOW_CLASS = "clans-manage__flow-builder-connector-below";
 
 const TRIGGER_PLACEHOLDER: SelectOption = { value: "", label: "Pick a trigger" };
 const OPERATION_PLACEHOLDER: SelectOption = { value: "", label: "Pick an action" };
@@ -101,12 +107,6 @@ const WAIT_UNIT_OPTIONS: readonly SelectOption[] = [
 ];
 
 const NEVER_UNSUBSCRIBE: () => void = () => undefined;
-
-function hasNeighbor(placement: FlowCardPlacement, dr: number, dc: number): boolean {
-    const targetRow = placement.row + dr;
-    const targetCol = placement.col + dc;
-    return placementsCurrent().some((p) => p.row === targetRow && p.col === targetCol);
-}
 
 function buildEditIcon(nameEl: Instance, onSaveName: (n: string) => void): Instance<HTMLButtonElement> {
     const editIcon: Instance<HTMLButtonElement> = button(
@@ -225,10 +225,7 @@ function triggerOptions(): readonly SelectOption[] {
         { value: MANUAL_TRIGGER_VALUE, label: "Manual — runs only on demand" },
     ];
     if (fromRegistry.length === 0) return base;
-    return [
-        ...base,
-        ...fromRegistry.map((opt) => ({ value: opt.value, label: opt.label })),
-    ];
+    return [...base, ...fromRegistry.map((opt) => ({ value: opt.value, label: opt.label }))];
 }
 
 function triggerNameFor(value: string): string {
@@ -247,23 +244,25 @@ function triggerCardWasDefaultNamed(name: string, prevTriggerType: string): bool
 
 function buildTriggerSelect(config: TriggerCardConfig): Instance {
     const host = div(baseProps([]));
-    host.trackDispose(effect(() => {
-        void capabilitiesSignal();
-        const options = triggerOptions();
-        const select = buildGlassSelect(`trigger-${config.id}`, options, config.triggerType, "list");
-        const hidden = select.el.querySelector<HTMLInputElement>("input[type='hidden']");
-        if (hidden) {
-            hidden.addEventListener("change", () => {
-                const next = hidden.value;
-                const patch: Record<string, unknown> = { triggerType: next };
-                if (triggerCardWasDefaultNamed(config.name, config.triggerType)) {
-                    patch.name = triggerNameFor(next);
-                }
-                updateCard(config.id, patch);
-            });
-        }
-        host.setChildren(select);
-    }));
+    host.trackDispose(
+        effect(() => {
+            void capabilitiesSignal();
+            const options = triggerOptions();
+            const select = buildGlassSelect(`trigger-${config.id}`, options, config.triggerType, "list");
+            const hidden = select.el.querySelector<HTMLInputElement>("input[type='hidden']");
+            if (hidden) {
+                hidden.addEventListener("change", () => {
+                    const next = hidden.value;
+                    const patch: Record<string, unknown> = { triggerType: next };
+                    if (triggerCardWasDefaultNamed(config.name, config.triggerType)) {
+                        patch.name = triggerNameFor(next);
+                    }
+                    updateCard(config.id, patch);
+                });
+            }
+            host.setChildren(select);
+        }),
+    );
     return host;
 }
 
@@ -279,44 +278,48 @@ function buildOperationSelect(config: ActionCardConfig): Instance {
     const filterHost = div(baseProps([]));
     const opHost = div(baseProps([]));
     const root = div(baseProps(["clans-manage__flow-builder-operation-picker"]), [filterHost, opHost]);
-    root.trackDispose(effect(() => {
-        const grouped = operationsByCapability();
-        const capabilities = Object.keys(grouped).sort();
-        const filterOptions: SelectOption[] = [{ value: CAPABILITY_FILTER_ALL, label: "All capabilities" }];
-        for (const cap of capabilities) filterOptions.push({ value: cap, label: cap });
-        const filterSelect = buildGlassSelect(`op-filter-${config.id}`, filterOptions, filterSignal());
-        const filterHidden = filterSelect.el.querySelector<HTMLInputElement>("input[type='hidden']");
-        if (filterHidden) filterHidden.addEventListener("change", () => filterSignal.set(filterHidden.value));
-        filterHost.setChildren(filterSelect);
-    }));
-    root.trackDispose(effect(() => {
-        const grouped = operationsByCapability();
-        const active = filterSignal();
-        const flat: SelectOption[] = [OPERATION_PLACEHOLDER];
-        for (const [capName, ops] of Object.entries(grouped)) {
-            if (active !== CAPABILITY_FILTER_ALL && capName !== active) continue;
-            for (const op of ops) {
-                const tierTag = op.safetyTier === "manual" ? " [MANUAL]" : "";
-                flat.push({ value: op.value, label: `${op.label}${tierTag}` });
-            }
-        }
-        const select = buildGlassSelect(`operation-${config.id}`, flat, config.operationId);
-        const hidden = select.el.querySelector<HTMLInputElement>("input[type='hidden']");
-        if (hidden)
-            hidden.addEventListener("change", () => {
-                const next = hidden.value;
-                const patch: Record<string, unknown> = {
-                    operationId: next,
-                    inputValues: {},
-                    openExits: [],
-                };
-                if (actionCardWasDefaultNamed(config.name, config.operationId)) {
-                    patch.name = operationCardNameFor(next);
+    root.trackDispose(
+        effect(() => {
+            const grouped = operationsByCapability();
+            const capabilities = Object.keys(grouped).sort();
+            const filterOptions: SelectOption[] = [{ value: CAPABILITY_FILTER_ALL, label: "All capabilities" }];
+            for (const cap of capabilities) filterOptions.push({ value: cap, label: cap });
+            const filterSelect = buildGlassSelect(`op-filter-${config.id}`, filterOptions, filterSignal());
+            const filterHidden = filterSelect.el.querySelector<HTMLInputElement>("input[type='hidden']");
+            if (filterHidden) filterHidden.addEventListener("change", () => filterSignal.set(filterHidden.value));
+            filterHost.setChildren(filterSelect);
+        }),
+    );
+    root.trackDispose(
+        effect(() => {
+            const grouped = operationsByCapability();
+            const active = filterSignal();
+            const flat: SelectOption[] = [OPERATION_PLACEHOLDER];
+            for (const [capName, ops] of Object.entries(grouped)) {
+                if (active !== CAPABILITY_FILTER_ALL && capName !== active) continue;
+                for (const op of ops) {
+                    const tierTag = op.safetyTier === "manual" ? " [MANUAL]" : "";
+                    flat.push({ value: op.value, label: `${op.label}${tierTag}` });
                 }
-                updateCard(config.id, patch);
-            });
-        opHost.setChildren(select);
-    }));
+            }
+            const select = buildGlassSelect(`operation-${config.id}`, flat, config.operationId);
+            const hidden = select.el.querySelector<HTMLInputElement>("input[type='hidden']");
+            if (hidden)
+                hidden.addEventListener("change", () => {
+                    const next = hidden.value;
+                    const patch: Record<string, unknown> = {
+                        operationId: next,
+                        inputValues: {},
+                        openExits: [],
+                    };
+                    if (actionCardWasDefaultNamed(config.name, config.operationId)) {
+                        patch.name = operationCardNameFor(next);
+                    }
+                    updateCard(config.id, patch);
+                });
+            opHost.setChildren(select);
+        }),
+    );
     return root;
 }
 
@@ -335,60 +338,63 @@ function actionCardWasDefaultNamed(name: string, prevOpId: string): boolean {
 
 function buildActionInputForm(config: ActionCardConfig, clanId: string): Instance {
     const host = div(baseProps([]));
-    host.trackDispose(effect(() => {
-        void capabilitiesSignal();
-        const op = lookupOperation(config.operationId);
-        if (!op || !op.input_schema || Object.keys(op.input_schema).length === 0) {
-            host.setChildren(span(textProps([EMPTY_HINT_CLASS], "Pick an action to configure.")));
-            return;
-        }
-        const form = schemaForm({
-            schema: op.input_schema,
-            value: config.inputValues,
-            onChange: (next) => updateCard(config.id, { inputValues: next }),
-            ctx: {
-                fieldName: "",
-                clanId,
-                capabilityId: deriveCapabilityForCard(config),
-                operationId: config.operationId,
-            },
-        });
-        host.setChildren(form);
-    }));
+    host.trackDispose(
+        effect(() => {
+            void capabilitiesSignal();
+            const op = lookupOperation(config.operationId);
+            if (!op || !op.input_schema || Object.keys(op.input_schema).length === 0) {
+                host.setChildren(span(textProps([EMPTY_HINT_CLASS], "Pick an action to configure.")));
+                return;
+            }
+            const form = schemaForm({
+                schema: op.input_schema,
+                value: config.inputValues,
+                onChange: (next) => updateCard(config.id, { inputValues: next }),
+                ctx: {
+                    fieldName: "",
+                    clanId,
+                    capabilityId: deriveCapabilityForCard(config),
+                    operationId: config.operationId,
+                },
+            });
+            host.setChildren(form);
+        }),
+    );
     return host;
+}
+
+function buildExitToggle(config: ActionCardConfig, cls: string, isOpen: boolean): Instance {
+    return button({
+        variant: BTN_VARIANT_BARE,
+        classes: [EXIT_TOGGLE_CLASS, isOpen ? `${EXIT_TOGGLE_CLASS}--on` : `${EXIT_TOGGLE_CLASS}--off`],
+        text: cls,
+        ariaLabel: isOpen ? `Remove ${cls} downstream branch` : `Add ${cls} downstream branch`,
+        context: isOpen
+            ? `close the ${cls} exit and remove its downstream card`
+            : `open the ${cls} exit and add a downstream card`,
+        meta: ["action"],
+        onClick: () => {
+            if (isOpen) closeExitAndRemove(config.id, cls);
+            else openExitAndAdd(config.id, cls);
+        },
+    });
 }
 
 function buildExitsRow(config: ActionCardConfig): Instance {
     const host = div(baseProps([EXIT_ROW_CLASS]));
-    host.trackDispose(effect(() => {
-        void capabilitiesSignal();
-        const op = lookupOperation(config.operationId);
-        if (!op) {
-            host.setChildren();
-            return;
-        }
-        const opened = new Set(config.openExits);
-        const toggles = op.result_classes.map((cls) => {
-            const isOpen = opened.has(cls);
-            return button(
-                {
-                    variant: BTN_VARIANT_BARE,
-                    classes: [EXIT_TOGGLE_CLASS, isOpen ? `${EXIT_TOGGLE_CLASS}--on` : `${EXIT_TOGGLE_CLASS}--off`],
-                    text: cls,
-                    ariaLabel: `Toggle exit handle ${cls}`,
-                    context: `toggle the ${cls} downstream handle for this action`,
-                    meta: ["action"],
-                    onClick: () => {
-                        const next = new Set(config.openExits);
-                        if (next.has(cls)) next.delete(cls);
-                        else next.add(cls);
-                        updateCard(config.id, { openExits: [...next] });
-                    },
-                },
-            );
-        });
-        host.setChildren(...toggles);
-    }));
+    host.trackDispose(
+        effect(() => {
+            void capabilitiesSignal();
+            const op = lookupOperation(config.operationId);
+            if (!op) {
+                host.setChildren();
+                return;
+            }
+            const opened = new Set(config.openExits);
+            const cells = op.result_classes.map((cls) => buildExitToggle(config, cls, opened.has(cls)));
+            host.setChildren(...cells);
+        }),
+    );
     return row("Exits", host);
 }
 
@@ -543,13 +549,16 @@ function buildWaitForEventBody(config: WaitForEventCardConfig, placement: FlowCa
     const children: Instance[] = [];
     pushKindSwitcher(children, config, placement);
     const eventHost = div(baseProps([]));
-    eventHost.trackDispose(effect(() => {
-        const options = triggerOptions();
-        const select = buildGlassSelect(`event-${config.id}`, options, config.eventTriggerId);
-        const hidden = select.el.querySelector<HTMLInputElement>("input[type='hidden']");
-        if (hidden) hidden.addEventListener("change", () => updateCard(config.id, { eventTriggerId: hidden.value }));
-        eventHost.setChildren(select);
-    }));
+    eventHost.trackDispose(
+        effect(() => {
+            const options = triggerOptions();
+            const select = buildGlassSelect(`event-${config.id}`, options, config.eventTriggerId);
+            const hidden = select.el.querySelector<HTMLInputElement>("input[type='hidden']");
+            if (hidden)
+                hidden.addEventListener("change", () => updateCard(config.id, { eventTriggerId: hidden.value }));
+            eventHost.setChildren(select);
+        }),
+    );
     children.push(row("Event", eventHost));
     const stack = div(baseProps([STACK_CLASS]), children);
     return div(baseProps([BODY_CLASS]), [stack]);
@@ -573,33 +582,40 @@ function isCardComplete(config: FlowCardConfig): boolean {
     return true;
 }
 
+function hasOutboundEdge(cardId: string): boolean {
+    return flowMetaSignal().edges.some((e) => e.from_node_id === cardId);
+}
+
 function rightAdorner(placement: FlowCardPlacement): Instance | null {
-    if (hasNeighbor(placement, 0, 1)) return div(baseProps([CONNECTOR_RIGHT_CLASS]));
-    if (!isCardComplete(placement.config)) return null;
+    const config = placement.config;
+    if (!isCardComplete(config)) return null;
+    if (config.kind === "action" && config.openExits.length > 0) return null;
+    if (hasOutboundEdge(config.id)) return null;
     return button(
         {
             variant: BTN_VARIANT_BARE,
             classes: [ADD_BTN_RIGHT_CLASS],
-            ariaLabel: "Add sequential card to the right",
-            context: "add a sequential continuation",
+            ariaLabel: "Add downstream card",
+            context: "add a downstream continuation",
             meta: ["action"],
-            onClick: () => addRight(placement.config.id),
+            onClick: () => addRight(config.id),
         },
         [icon({ provider: "bi", name: "plus-lg", ariaHidden: true, context: null, meta: null })],
     );
 }
 
 function belowAdorner(placement: FlowCardPlacement): Instance | null {
-    if (hasNeighbor(placement, 1, 0)) return div(baseProps([CONNECTOR_BELOW_CLASS]));
-    if (!isCardComplete(placement.config)) return null;
+    const config = placement.config;
+    if (!isCardComplete(config)) return null;
+    if (config.kind === "action" && config.openExits.length > 0) return null;
     return button(
         {
             variant: BTN_VARIANT_BARE,
             classes: [ADD_BTN_BELOW_CLASS],
-            ariaLabel: "Add parallel card below",
-            context: "add a parallel branch",
+            ariaLabel: "Add parallel branch",
+            context: "add a parallel downstream card",
             meta: ["action"],
-            onClick: () => addBelow(placement.config.id),
+            onClick: () => addBelow(config.id),
         },
         [icon({ provider: "bi", name: "plus-lg", ariaHidden: true, context: null, meta: null })],
     );
@@ -609,19 +625,23 @@ const DECISION_CLASS_PREFIX = "clans-manage__flow-builder-card-slot--decision-";
 
 export function buildFlowCard(placement: FlowCardPlacement, clanId: string): Instance {
     const card = div(baseProps([CARD_CLASS]), [buildHeader(placement.config), buildBody(placement, clanId)]);
+    card.el.setAttribute("data-card-id", placement.config.id);
     const adorners = [rightAdorner(placement), belowAdorner(placement)].filter((a): a is Instance => a !== null);
     const slot = div(baseProps([SLOT_CLASS]), [card, ...adorners]);
-    slot.trackDispose(effect(() => {
-        void dryRunTraceSignal();
-        const decision = decisionForNode(placement.config.id);
-        const el = slot.el;
-        el.classList.remove(
-            `${DECISION_CLASS_PREFIX}would-fire`,
-            `${DECISION_CLASS_PREFIX}would-skip`,
-            `${DECISION_CLASS_PREFIX}would-pause`,
-            `${DECISION_CLASS_PREFIX}would-fail`,
-        );
-        if (decision) el.classList.add(`${DECISION_CLASS_PREFIX}${decision}`);
-    }));
+    slot.el.setAttribute("data-card-id", placement.config.id);
+    slot.trackDispose(
+        effect(() => {
+            void dryRunTraceSignal();
+            const decision = decisionForNode(placement.config.id);
+            const el = slot.el;
+            el.classList.remove(
+                `${DECISION_CLASS_PREFIX}would-fire`,
+                `${DECISION_CLASS_PREFIX}would-skip`,
+                `${DECISION_CLASS_PREFIX}would-pause`,
+                `${DECISION_CLASS_PREFIX}would-fail`,
+            );
+            if (decision) el.classList.add(`${DECISION_CLASS_PREFIX}${decision}`);
+        }),
+    );
     return slot;
 }

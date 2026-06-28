@@ -10,10 +10,7 @@ function readString(input: Readonly<Record<string, unknown>>, key: string, requi
     return "";
 }
 
-async function recordEvent(
-    input: Readonly<Record<string, unknown>>,
-    ctx: OperationContext,
-): Promise<OperationResult> {
+async function recordEvent(input: Readonly<Record<string, unknown>>, ctx: OperationContext): Promise<OperationResult> {
     const category = readString(input, "category", true);
     const summary = readString(input, "summary", true);
     const rsn = readString(input, "rsn", false);

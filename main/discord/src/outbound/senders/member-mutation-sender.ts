@@ -18,7 +18,11 @@ function parsePayload(json: string): MemberMutationPayload {
     return JSON.parse(json) as MemberMutationPayload;
 }
 
-async function fetchTarget(client: Client, p: MemberMutationPayload, userId: string): Promise<{ guild: Guild; member: GuildMember }> {
+async function fetchTarget(
+    client: Client,
+    p: MemberMutationPayload,
+    userId: string,
+): Promise<{ guild: Guild; member: GuildMember }> {
     const guild = await client.guilds.fetch(p.guild_id);
     const member = await guild.members.fetch(userId);
     return { guild, member };
@@ -73,7 +77,10 @@ async function timeoutMember(client: Client, p: MemberMutationPayload, userId: s
     return member.id;
 }
 
-const ACTION_HANDLERS: Record<string, (client: Client, p: MemberMutationPayload, userId: string) => Promise<string | null>> = {
+const ACTION_HANDLERS: Record<
+    string,
+    (client: Client, p: MemberMutationPayload, userId: string) => Promise<string | null>
+> = {
     "add-role": addRole,
     "remove-role": removeRole,
     "set-nickname": setNickname,

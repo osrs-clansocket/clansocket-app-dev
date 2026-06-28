@@ -122,9 +122,11 @@ async function webhookCreate(client: Client, p: StructuralMutationPayload, chann
     const opts: Record<string, unknown> = { name };
     if (typeof p.avatar_url === "string") opts.avatar = p.avatar_url;
     if (typeof p.reason === "string") opts.reason = p.reason;
-    const webhook = await (channel as unknown as {
-        createWebhook: (opts: Record<string, unknown>) => Promise<{ id: string }>;
-    }).createWebhook(opts);
+    const webhook = await (
+        channel as unknown as {
+            createWebhook: (opts: Record<string, unknown>) => Promise<{ id: string }>;
+        }
+    ).createWebhook(opts);
     return webhook.id;
 }
 
@@ -146,7 +148,10 @@ async function channelMove(client: Client, p: StructuralMutationPayload, channel
     return channelId;
 }
 
-const ACTION_HANDLERS: Record<string, (client: Client, p: StructuralMutationPayload, targetId: string) => Promise<string | null>> = {
+const ACTION_HANDLERS: Record<
+    string,
+    (client: Client, p: StructuralMutationPayload, targetId: string) => Promise<string | null>
+> = {
     "channel.create": (client, p) => channelCreate(client, p),
     "channel.update": channelUpdate,
     "channel.delete": channelDelete,

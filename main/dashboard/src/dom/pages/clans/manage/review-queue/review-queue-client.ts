@@ -18,28 +18,22 @@ export async function listReviewQueue(clanId: string): Promise<readonly ReviewQu
 }
 
 export async function approveReview(clanId: string, id: number, reason: string | null): Promise<boolean> {
-    const response = await fetch(
-        `/api/flows/${encodeURIComponent(clanId)}/review-queue/${id}/approve`,
-        {
-            method: "POST",
-            headers: { "content-type": "application/json" },
-            body: JSON.stringify({ reason }),
-        },
-    );
+    const response = await fetch(`/api/flows/${encodeURIComponent(clanId)}/review-queue/${id}/approve`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ reason }),
+    });
     if (!response.ok) return false;
     const body = (await response.json()) as { ok: boolean };
     return body.ok;
 }
 
 export async function cancelReview(clanId: string, id: number, reason: string | null): Promise<boolean> {
-    const response = await fetch(
-        `/api/flows/${encodeURIComponent(clanId)}/review-queue/${id}/cancel`,
-        {
-            method: "POST",
-            headers: { "content-type": "application/json" },
-            body: JSON.stringify({ reason }),
-        },
-    );
+    const response = await fetch(`/api/flows/${encodeURIComponent(clanId)}/review-queue/${id}/cancel`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ reason }),
+    });
     if (!response.ok) return false;
     const body = (await response.json()) as { ok: boolean };
     return body.ok;

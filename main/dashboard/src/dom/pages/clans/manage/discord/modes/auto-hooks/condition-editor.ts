@@ -27,9 +27,7 @@ export function buildConditionEditor(initial: readonly ConditionRow[], cb: Condi
     function rerender(): void {
         const triggerType = cb.getTriggerType();
         const fields = buildFieldOptions(triggerType, cb);
-        const cbWithType: ConditionEditorCallbacks = cb.getFieldType
-            ? cb
-            : { ...cb, getFieldType: defaultFieldType };
+        const cbWithType: ConditionEditorCallbacks = cb.getFieldType ? cb : { ...cb, getFieldType: defaultFieldType };
         const rowEls = state.rows.map((row, idx) =>
             buildRow(makeRowCtx({ state, cb: cbWithType, rerender, row, idx, triggerType, fields })),
         );

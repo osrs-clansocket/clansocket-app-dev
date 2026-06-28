@@ -20,13 +20,23 @@ function dedupeFlowIds(flows: readonly FlowMeta[]): readonly FlowMeta[] {
         const flowId = seenFlow.has(flow.id) ? nextFlowId() : flow.id;
         seenFlow.add(flowId);
         const seenCard = new Set<string>();
+        const cardIdRemap = new Map<string, string>();
         const placements = flow.placements.map((p) => {
             const cardId = seenCard.has(p.config.id) ? nextCardId() : p.config.id;
             seenCard.add(cardId);
+            if (cardId !== p.config.id) cardIdRemap.set(p.config.id, cardId);
             if (cardId === p.config.id && flowId === flow.id) return p;
             return { ...p, config: { ...p.config, id: cardId } };
         });
-        return { ...flow, id: flowId, placements };
+        const edges = cardIdRemap.size === 0
+            ? flow.edges
+            : flow.edges.map((e) => {
+                const fromRemap = cardIdRemap.get(e.from_node_id);
+                const toRemap = cardIdRemap.get(e.to_node_id);
+                if (!fromRemap && !toRemap) return e;
+                return { ...e, from_node_id: fromRemap ?? e.from_node_id, to_node_id: toRemap ?? e.to_node_id };
+            });
+        return { ...flow, id: flowId, placements, edges };
     });
 }
 

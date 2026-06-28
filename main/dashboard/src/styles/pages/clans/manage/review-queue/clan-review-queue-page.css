@@ -8,9 +8,16 @@
 
 .clans-manage__review-queue-header {
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
     gap: var(--sp-2);
+}
+
+.clans-manage__review-queue-title {
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-semi);
+    line-height: var(--lh-tight);
+    color: var(--base-gold-200);
 }
 
 .clans-manage__review-queue-list {
@@ -21,8 +28,8 @@
 
 .clans-manage__review-queue-row {
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
     gap: var(--sp-2);
     padding: var(--sp-1h) var(--sp-2);
     border: var(--sp-hairline) solid var(--base-graphite-700);

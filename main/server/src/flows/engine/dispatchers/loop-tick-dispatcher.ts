@@ -90,7 +90,9 @@ class LoopTickDispatcher extends BaseDispatcher {
     private countInflight(clanId: string, flowId: string): number {
         const db = clanFlowsDb(clanId);
         const result = db
-            .prepare("SELECT COUNT(*) AS c FROM clan_flow_executions WHERE flow_id = ? AND status IN ('RUNNING', 'WAITING')")
+            .prepare(
+                "SELECT COUNT(*) AS c FROM clan_flow_executions WHERE flow_id = ? AND status IN ('RUNNING', 'WAITING')",
+            )
             .get(flowId) as { c: number } | undefined;
         return result?.c ?? 0;
     }

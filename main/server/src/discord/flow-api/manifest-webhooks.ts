@@ -13,7 +13,10 @@ import {
 
 const QUEUE_OUTPUT: FlowFieldList = [{ name: "queueId", type: "string" }];
 
-async function webhookCreate(input: Readonly<Record<string, unknown>>, ctx: OperationContext): Promise<OperationResult> {
+async function webhookCreate(
+    input: Readonly<Record<string, unknown>>,
+    ctx: OperationContext,
+): Promise<OperationResult> {
     const extra: Record<string, unknown> = {
         name: readString(input, "name"),
         channel_id: readString(input, "channelId"),
@@ -22,11 +25,19 @@ async function webhookCreate(input: Readonly<Record<string, unknown>>, ctx: Oper
     return structuralEnqueueHandler("webhook.create", "channelId", input, ctx, extra);
 }
 
-async function webhookDelete(input: Readonly<Record<string, unknown>>, ctx: OperationContext): Promise<OperationResult> {
+async function webhookDelete(
+    input: Readonly<Record<string, unknown>>,
+    ctx: OperationContext,
+): Promise<OperationResult> {
     return structuralEnqueueHandler("webhook.delete", "webhookId", input, ctx, {});
 }
 
-function webhookOp(opId: string, tier: "live" | "manual", inputFields: FlowFieldList, handler: (i: Readonly<Record<string, unknown>>, c: OperationContext) => Promise<OperationResult>): void {
+function webhookOp(
+    opId: string,
+    tier: "live" | "manual",
+    inputFields: FlowFieldList,
+    handler: (i: Readonly<Record<string, unknown>>, c: OperationContext) => Promise<OperationResult>,
+): void {
     registerOperation({
         capability: "discord",
         opId,
@@ -40,5 +51,10 @@ function webhookOp(opId: string, tier: "live" | "manual", inputFields: FlowField
     });
 }
 
-webhookOp("discord:webhooks.create", "live", [FIELD_GUILD, FIELD_CHANNEL, FIELD_NAME_80, FIELD_AVATAR_URL, FIELD_REASON], webhookCreate);
+webhookOp(
+    "discord:webhooks.create",
+    "live",
+    [FIELD_GUILD, FIELD_CHANNEL, FIELD_NAME_80, FIELD_AVATAR_URL, FIELD_REASON],
+    webhookCreate,
+);
 webhookOp("discord:webhooks.delete", "manual", [FIELD_GUILD, FIELD_WEBHOOK, FIELD_REASON], webhookDelete);

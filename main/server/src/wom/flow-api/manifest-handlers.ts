@@ -41,10 +41,7 @@ export async function groupDetailsHandler(
     if (!loaded) return { result_class: "not_linked", outputs: {} };
     const client = new WOMClient({ apiKey: loaded.creds.api_key, userAgent: loaded.creds.user_agent });
     return withRateLimit(ctx, (loaded.creds.api_key ?? "").length > 0, async () => {
-        const data = await withTimeout(
-            client.groups.getGroupDetails(loaded.identity.wom_group_id),
-            "group-details",
-        );
+        const data = await withTimeout(client.groups.getGroupDetails(loaded.identity.wom_group_id), "group-details");
         return { data, statusCode: 200 };
     });
 }

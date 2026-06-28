@@ -14,10 +14,7 @@ function emitNumeric(raw: string, onChange: (next: number | null) => void): void
     if (Number.isFinite(parsed)) onChange(parsed);
 }
 
-function renderNumericEnum(
-    p: NumberControlProps,
-    enumValues: readonly string[],
-): Instance {
+function renderNumericEnum(p: NumberControlProps, enumValues: readonly string[]): Instance {
     return renderEnumControl({
         fieldName: p.fieldName,
         options: enumValues,

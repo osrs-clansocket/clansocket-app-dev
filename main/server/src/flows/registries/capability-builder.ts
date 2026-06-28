@@ -1,9 +1,4 @@
-import type {
-    CapabilityManifest,
-    JSONSchema,
-    OperationSpec,
-    TriggerSpec,
-} from "./registry-types.js";
+import type { CapabilityManifest, JSONSchema, OperationSpec, TriggerSpec } from "./registry-types.js";
 import { ENVELOPE_PAYLOAD_FIELDS, type FlowField, type FlowFieldList } from "./payload-field-types.js";
 import { operationsByCapability, type RegisteredOperation } from "./operation-registry.js";
 import { triggersByCapability } from "./trigger-registry.js";

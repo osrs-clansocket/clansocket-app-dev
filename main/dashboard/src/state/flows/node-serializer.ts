@@ -1,7 +1,4 @@
-import type {
-    FlowCardConfig,
-    FlowCardPlacement,
-} from "../../dom/pages/clans/manage/flow-builder/flow-card-types.js";
+import type { FlowCardConfig, FlowCardPlacement } from "../../dom/pages/clans/manage/flow-builder/flow-card-types.js";
 import { conditionsToFilterDsl } from "./condition-dsl-bridge.js";
 import { outputHandlesFor } from "./node-handles.js";
 import type { SerializedNode } from "./serializer-types.js";

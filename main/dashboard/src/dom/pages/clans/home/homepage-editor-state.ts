@@ -5,7 +5,13 @@ import { saveHomepageComponents } from "../../../../state/clans/homepage/homepag
 import type { HomepageComponent } from "../../../../state/clans/homepage/types.js";
 import { defaultScaffold } from "../../../../state/clans/homepage/homepage-default-scaffold.js";
 import { CANVAS_BOUND_MAX, Z_INDEX_MAX, Z_INDEX_MIN } from "@clansocket/constants/clan-homepage-tokens";
-import { createGuidesState, type Guide, type GuideAxis, type GuideColor, type GuideStyle } from "./homepage-guides-state.js";
+import {
+    createGuidesState,
+    type Guide,
+    type GuideAxis,
+    type GuideColor,
+    type GuideStyle,
+} from "./homepage-guides-state.js";
 
 const CANVAS_W = 960;
 const CANVAS_H = CANVAS_BOUND_MAX;
@@ -157,8 +163,7 @@ export function createEditorState(slug: string, components$: ReadSignal<Homepage
     const initialUpstream = components$();
     const persistedDraft$ = persistedSignal<HomepageComponent[] | null>(`clan-home-draft.${slug}`, null);
     const initialDraft =
-        persistedDraft$() ??
-        (editing$() && initialUpstream.length === 0 ? defaultScaffold() : initialUpstream);
+        persistedDraft$() ?? (editing$() && initialUpstream.length === 0 ? defaultScaffold() : initialUpstream);
     const draft$ = signal<HomepageComponent[]>(initialDraft);
     const isDirty$ = signal<boolean>(fingerprint(initialDraft) !== fingerprint(initialUpstream));
     const undoStack: HomepageComponent[][] = [];
@@ -263,13 +268,15 @@ export function createEditorState(slug: string, components$: ReadSignal<Homepage
         const parent = findInDraft(parentId);
         if (parent === undefined || parent.componentName !== "container") return;
         pushHistory();
-        appendBuilt(buildComponent({
-            id: nextId(),
-            x: parent.canvasX + CHILD_INSET,
-            y: parent.canvasY + CHILD_INSET,
-            kind,
-            parentId,
-        }));
+        appendBuilt(
+            buildComponent({
+                id: nextId(),
+                x: parent.canvasX + CHILD_INSET,
+                y: parent.canvasY + CHILD_INSET,
+                kind,
+                parentId,
+            }),
+        );
     }
 
     function deleteSelected(): void {
@@ -312,9 +319,11 @@ export function createEditorState(slug: string, components$: ReadSignal<Homepage
             }
         }
         draft$.set(
-            components.map((c) => movingIds.has(c.componentId)
-                ? { ...c, canvasX: clampX(c.canvasX + dx, c.canvasW), canvasY: clampY(c.canvasY + dy, c.canvasH) }
-                : c),
+            components.map((c) =>
+                movingIds.has(c.componentId)
+                    ? { ...c, canvasX: clampX(c.canvasX + dx, c.canvasW), canvasY: clampY(c.canvasY + dy, c.canvasH) }
+                    : c,
+            ),
         );
     }
 

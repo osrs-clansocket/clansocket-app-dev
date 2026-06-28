@@ -23,12 +23,10 @@ interface PluginScope {
 const scanCache = new Map<string, TableScan[]>();
 
 function listPluginTables(db: Database.Database): string[] {
-    const rows = db
-        .prepare("SELECT name FROM sqlite_master WHERE type = 'table' AND name LIKE 'plugin_%'")
-        .all() as { name: string }[];
-    return rows
-        .map((r) => r.name)
-        .filter((name) => !EXCLUDED_TABLES.has(name) && !name.endsWith("_changes"));
+    const rows = db.prepare("SELECT name FROM sqlite_master WHERE type = 'table' AND name LIKE 'plugin_%'").all() as {
+        name: string;
+    }[];
+    return rows.map((r) => r.name).filter((name) => !EXCLUDED_TABLES.has(name) && !name.endsWith("_changes"));
 }
 
 function scanTable(db: Database.Database, mode: string, table: string): TableScan {
@@ -67,7 +65,14 @@ function totalKey(scope: PluginScope, mode: string, short: string, col: string):
     return `clan.${modePrefix(mode, scope)}${short}.${col}.total`;
 }
 
-function groupKey(scope: PluginScope, mode: string, short: string, col: string, groupCol: string, slug: string): string {
+function groupKey(
+    scope: PluginScope,
+    mode: string,
+    short: string,
+    col: string,
+    groupCol: string,
+    slug: string,
+): string {
     return `clan.${modePrefix(mode, scope)}${short}.${col}.by_${groupCol}.${slug}`;
 }
 
@@ -146,9 +151,10 @@ function emitCountByGroup(
     db: Database.Database,
     groupCol: string,
 ): void {
-    const rows = db
-        .prepare(`SELECT ${groupCol} AS g, COUNT(*) AS v FROM ${scan.table} GROUP BY ${groupCol}`)
-        .all() as { g: string | null; v: number | null }[];
+    const rows = db.prepare(`SELECT ${groupCol} AS g, COUNT(*) AS v FROM ${scan.table} GROUP BY ${groupCol}`).all() as {
+        g: string | null;
+        v: number | null;
+    }[];
     const seen = new Set<string>();
     for (const r of rows) {
         if (r.g === null || r.g === "") continue;
@@ -165,9 +171,7 @@ function emitCountByGroup(
 }
 
 function emitMembers(out: MetricRow[], scope: PluginScope, scan: TableScan, db: Database.Database): void {
-    const row = db
-        .prepare(`SELECT COUNT(DISTINCT account_hash) AS v FROM ${scan.table}`)
-        .get() as { v: number | null };
+    const row = db.prepare(`SELECT COUNT(DISTINCT account_hash) AS v FROM ${scan.table}`).get() as { v: number | null };
     out.push({
         variable_key: membersKey(scope, scan.mode, scan.short),
         value: Number(row?.v ?? 0),

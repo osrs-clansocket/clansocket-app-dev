@@ -12,15 +12,11 @@ import {
     type Instance,
 } from "../../../../factory";
 import { clansStore } from "../../../../../state/clans/stores/clans-store.js";
-import {
-    listReviewQueue,
-    approveReview,
-    cancelReview,
-    type ReviewQueueRow,
-} from "./review-queue-client.js";
+import { listReviewQueue, approveReview, cancelReview, type ReviewQueueRow } from "./review-queue-client.js";
 
 const ROOT_CLASS = "clans-manage__review-queue";
 const HEADER_CLASS = "clans-manage__review-queue-header";
+const TITLE_CLASS = "clans-manage__review-queue-title";
 const LIST_CLASS = "clans-manage__review-queue-list";
 const ROW_CLASS = "clans-manage__review-queue-row";
 const META_CLASS = "clans-manage__review-queue-meta";
@@ -71,7 +67,7 @@ export function build(slug: string): HTMLElement {
     };
     void refresh();
     const header = div(baseProps([HEADER_CLASS]), [
-        span(textProps([], "Pending manual approvals")),
+        span(textProps([TITLE_CLASS], "Pending manual approvals")),
         button({
             variant: BTN_VARIANT_OUTLINE,
             text: "Refresh",

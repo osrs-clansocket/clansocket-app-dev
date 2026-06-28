@@ -72,8 +72,7 @@ async function sweepClan(clanId: string, now: number): Promise<void> {
     await resumeWaitingExecutions(clanId, now);
     try {
         pruneExpiredIdempotency(clanId, now);
-    } catch {
-    }
+    } catch {}
 }
 
 async function tick(now: number): Promise<void> {

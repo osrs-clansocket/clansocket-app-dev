@@ -16,7 +16,10 @@ import {
 const QUEUE_OUTPUT: FlowFieldList = [{ name: "queueId", type: "string" }];
 const CHANNEL_BASE: FlowFieldList = [FIELD_GUILD, FIELD_CHANNEL];
 
-async function channelUpdate(input: Readonly<Record<string, unknown>>, ctx: OperationContext): Promise<OperationResult> {
+async function channelUpdate(
+    input: Readonly<Record<string, unknown>>,
+    ctx: OperationContext,
+): Promise<OperationResult> {
     const extra: Record<string, unknown> = {};
     if (typeof input.name === "string") extra.name = input.name;
     if (typeof input.topic === "string") extra.topic = input.topic;
@@ -25,7 +28,10 @@ async function channelUpdate(input: Readonly<Record<string, unknown>>, ctx: Oper
     return structuralEnqueueHandler("channel.update", "channelId", input, ctx, extra);
 }
 
-async function channelDelete(input: Readonly<Record<string, unknown>>, ctx: OperationContext): Promise<OperationResult> {
+async function channelDelete(
+    input: Readonly<Record<string, unknown>>,
+    ctx: OperationContext,
+): Promise<OperationResult> {
     return structuralEnqueueHandler("channel.delete", "channelId", input, ctx, {});
 }
 
@@ -35,7 +41,11 @@ async function channelMove(input: Readonly<Record<string, unknown>>, ctx: Operat
     });
 }
 
-function channelOp(opId: string, inputFields: FlowFieldList, handler: (i: Readonly<Record<string, unknown>>, c: OperationContext) => Promise<OperationResult>): void {
+function channelOp(
+    opId: string,
+    inputFields: FlowFieldList,
+    handler: (i: Readonly<Record<string, unknown>>, c: OperationContext) => Promise<OperationResult>,
+): void {
     registerOperation({
         capability: "discord",
         opId,
@@ -49,14 +59,18 @@ function channelOp(opId: string, inputFields: FlowFieldList, handler: (i: Readon
     });
 }
 
-channelOp("discord:channels.update", [
-    ...CHANNEL_BASE,
-    { ...FIELD_NAME_100, required: false },
-    FIELD_TOPIC,
-    FIELD_PARENT_CHANNEL,
-    FIELD_POSITION_OPTIONAL,
-    FIELD_REASON,
-], channelUpdate);
+channelOp(
+    "discord:channels.update",
+    [
+        ...CHANNEL_BASE,
+        { ...FIELD_NAME_100, required: false },
+        FIELD_TOPIC,
+        FIELD_PARENT_CHANNEL,
+        FIELD_POSITION_OPTIONAL,
+        FIELD_REASON,
+    ],
+    channelUpdate,
+);
 
 channelOp("discord:channels.delete", [...CHANNEL_BASE, FIELD_REASON], channelDelete);
 

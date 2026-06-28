@@ -16,11 +16,7 @@ class TriggerRegistryStore extends BaseRegistry<string, RegisteredTrigger> {}
 export const triggerRegistry = new TriggerRegistryStore();
 
 export function registerTrigger(spec: RegisteredTrigger): void {
-    triggerRegistry.registerUnique(
-        spec.triggerId,
-        spec,
-        (key) => new Error(`trigger "${key}" already registered`),
-    );
+    triggerRegistry.registerUnique(spec.triggerId, spec, (key) => new Error(`trigger "${key}" already registered`));
 }
 
 export function triggersByCapability(capability: string): readonly RegisteredTrigger[] {

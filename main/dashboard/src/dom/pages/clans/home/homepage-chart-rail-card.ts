@@ -59,7 +59,11 @@ function attachPreview(
             else mount.update(spec);
         }),
     );
-    host.trackDispose({ dispose: () => { if (mount !== null) chartRegistry.destroy(canvasEl); } });
+    host.trackDispose({
+        dispose: () => {
+            if (mount !== null) chartRegistry.destroy(canvasEl);
+        },
+    });
 }
 
 export function buildChartRailCard(preset: ChartPreset, ctx: HomepageContext, onPick: (id: string) => void): Instance {

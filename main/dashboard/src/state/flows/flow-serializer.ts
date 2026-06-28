@@ -1,6 +1,5 @@
 import type { FlowMeta } from "../../dom/pages/clans/manage/flow-builder/flow-card-types.js";
 import { serializeNode } from "./node-serializer.js";
-import { deriveEdges } from "./edge-serializer.js";
 import { entryNodeId, inferTriggerType, triggerConfigFor } from "./trigger-serializer.js";
 
 export function serializeFlowDefinition(meta: FlowMeta): Readonly<Record<string, unknown>> {
@@ -9,6 +8,6 @@ export function serializeFlowDefinition(meta: FlowMeta): Readonly<Record<string,
         trigger_config: triggerConfigFor(meta),
         entry_node_id: entryNodeId(meta.placements),
         nodes: meta.placements.map(serializeNode),
-        edges: deriveEdges(meta.placements),
+        edges: meta.edges,
     };
 }

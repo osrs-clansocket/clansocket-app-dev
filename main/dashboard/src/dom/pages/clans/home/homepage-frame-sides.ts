@@ -98,7 +98,7 @@ function defaultColorFor(kind: Kind, prop: string): string {
 }
 
 function readCss(host: HTMLElement, selector: string, prop: string): string {
-    const el = selector ? (host.querySelector(selector) as HTMLElement | null) ?? host : host;
+    const el = selector ? ((host.querySelector(selector) as HTMLElement | null) ?? host) : host;
     return getComputedStyle(el).getPropertyValue(prop).trim();
 }
 
@@ -107,8 +107,14 @@ function rgbToHex(rgb: string): string | null {
     const lp = rgb.indexOf("(");
     const rp = rgb.indexOf(")");
     if (lp < 0 || rp < 0) return null;
-    const inner = rgb.slice(lp + 1, rp).split("/").join(",");
-    const parts = inner.split(",").map((s) => s.trim()).filter((s) => s.length > 0);
+    const inner = rgb
+        .slice(lp + 1, rp)
+        .split("/")
+        .join(",");
+    const parts = inner
+        .split(",")
+        .map((s) => s.trim())
+        .filter((s) => s.length > 0);
     if (parts.length < 3) return null;
     const r = Number.parseInt(parts[0], 10);
     const g = Number.parseInt(parts[1], 10);

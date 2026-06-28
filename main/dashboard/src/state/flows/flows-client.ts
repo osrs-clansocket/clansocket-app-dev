@@ -63,10 +63,9 @@ export async function saveFlow(clanId: string, flowId: string, flowName: string,
 }
 
 export async function publishFlow(clanId: string, flowId: string): Promise<{ flow_id: string; version: number }> {
-    const response = await fetch(
-        `/api/flows/${encodeURIComponent(clanId)}/${encodeURIComponent(flowId)}/publish`,
-        { method: "POST" },
-    );
+    const response = await fetch(`/api/flows/${encodeURIComponent(clanId)}/${encodeURIComponent(flowId)}/publish`, {
+        method: "POST",
+    });
     if (!response.ok) {
         const text = await response.text();
         throw new Error(`publishFlow failed: ${response.status} ${text}`);
@@ -75,14 +74,11 @@ export async function publishFlow(clanId: string, flowId: string): Promise<{ flo
 }
 
 export async function setFlowEnabledOnServer(clanId: string, flowId: string, enabled: boolean): Promise<void> {
-    const response = await fetch(
-        `/api/flows/${encodeURIComponent(clanId)}/${encodeURIComponent(flowId)}/enable`,
-        {
-            method: "POST",
-            headers: { "content-type": "application/json" },
-            body: JSON.stringify({ enabled }),
-        },
-    );
+    const response = await fetch(`/api/flows/${encodeURIComponent(clanId)}/${encodeURIComponent(flowId)}/enable`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ enabled }),
+    });
     if (!response.ok) {
         const text = await response.text();
         throw new Error(`setFlowEnabled failed: ${response.status} ${text}`);

@@ -4,11 +4,13 @@ import type {
     ConditionCardConfig,
     DelayCardConfig,
     FlowCardConfig,
+    FlowEdge,
     FlowMeta,
     TriggerCardConfig,
     WaitForEventCardConfig,
 } from "../../dom/pages/clans/manage/flow-builder/flow-card-types.js";
 import { nextCardId } from "./id-generator.js";
+import { deriveEdgesFromGrid } from "./legacy-edge-derivation.js";
 
 type RawCard = Partial<FlowCardConfig> & Record<string, unknown>;
 
@@ -79,11 +81,11 @@ function migrateCondition(o: RawCard, id: string, name: string): ConditionCardCo
 }
 
 const MIGRATORS: Readonly<Record<CardKind, (o: RawCard, id: string, name: string) => FlowCardConfig>> = {
-    "trigger": migrateTrigger,
-    "action": migrateAction,
-    "delay": migrateDelay,
+    trigger: migrateTrigger,
+    action: migrateAction,
+    delay: migrateDelay,
     "wait-for-event": migrateWaitEvent,
-    "condition": migrateCondition,
+    condition: migrateCondition,
 };
 
 export function migrateCardConfig(raw: unknown, isEntry: boolean): FlowCardConfig {
@@ -95,10 +97,33 @@ export function migrateCardConfig(raw: unknown, isEntry: boolean): FlowCardConfi
     return migrator(o, id, name);
 }
 
+function migrateEdges(flow: FlowMeta, placements: readonly FlowMeta["placements"][number][]): readonly FlowEdge[] {
+    const raw = (flow as { edges?: unknown }).edges;
+    if (Array.isArray(raw)) {
+        const out: FlowEdge[] = [];
+        for (const e of raw) {
+            const edge = e as Partial<FlowEdge>;
+            if (typeof edge.id !== "string") continue;
+            if (typeof edge.from_node_id !== "string") continue;
+            if (typeof edge.from_handle_id !== "string") continue;
+            if (typeof edge.to_node_id !== "string") continue;
+            out.push({
+                id: edge.id,
+                from_node_id: edge.from_node_id,
+                from_handle_id: edge.from_handle_id,
+                to_node_id: edge.to_node_id,
+            });
+        }
+        return out;
+    }
+    return deriveEdgesFromGrid(placements);
+}
+
 export function migrateFlow(flow: FlowMeta): FlowMeta {
     const placements = flow.placements.map((p, idx) => {
         const isEntry = idx === 0 || (p.row === 0 && p.col === 0);
         return { ...p, config: migrateCardConfig(p.config, isEntry) };
     });
-    return { ...flow, placements };
+    const edges = migrateEdges(flow, placements);
+    return { ...flow, placements, edges };
 }

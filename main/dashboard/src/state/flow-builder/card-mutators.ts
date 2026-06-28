@@ -1,14 +1,19 @@
 import type {
     CardKind,
     FlowCardConfig,
+    FlowEdge,
 } from "../../dom/pages/clans/manage/flow-builder/flow-card-types.js";
-import { defaultActionCard, defaultCard } from "./card-defaults.js";
+import { defaultCard } from "./card-defaults.js";
 import {
+    edgesCurrent,
     isOccupied,
     placementById,
     placementsCurrent,
+    setEdges,
     setPlacements,
+    setPlacementsAndEdges,
 } from "./placement-helpers.js";
+import { outputHandlesFor } from "../flows/node-handles.js";
 
 function withPatched(id: string, patch: Readonly<Record<string, unknown>>): void {
     setPlacements(
@@ -18,26 +23,144 @@ function withPatched(id: string, patch: Readonly<Record<string, unknown>>): void
     );
 }
 
+function firstHandleId(config: FlowCardConfig): string {
+    const handles = outputHandlesFor(config);
+    return handles[0]?.id ?? "next";
+}
+
+function makeEdge(fromId: string, fromHandle: string, toId: string): FlowEdge {
+    return {
+        id: `${fromId}:${fromHandle}->${toId}`,
+        from_node_id: fromId,
+        from_handle_id: fromHandle,
+        to_node_id: toId,
+    };
+}
+
+function pickPosition(fromRow: number, fromCol: number, handleIndex: number): { row: number; col: number } {
+    let row = fromRow + handleIndex;
+    const col = fromCol + 1;
+    while (isOccupied(row, col)) row += 1;
+    return { row, col };
+}
+
+function addNodeWithEdge(fromId: string, handleId: string, kind: CardKind, handleIndex: number): void {
+    const from = placementById(fromId);
+    if (!from) return;
+    const { row, col } = pickPosition(from.row, from.col, handleIndex);
+    const newCard = defaultCard(kind);
+    const placement = { config: newCard, row, col };
+    const edge = makeEdge(fromId, handleId, newCard.id);
+    setPlacementsAndEdges([...placementsCurrent(), placement], [...edgesCurrent(), edge]);
+}
+
+export function addDownstream(fromId: string, handleId: string, kind: CardKind = "action"): void {
+    const from = placementById(fromId);
+    if (!from) return;
+    const handles = outputHandlesFor(from.config);
+    const handleIndex = Math.max(0, handles.findIndex((h) => h.id === handleId));
+    addNodeWithEdge(fromId, handleId, kind, handleIndex);
+}
+
+function humanizeExit(cls: string): string {
+    const spaced = cls.split(/[_-]/g).filter((s) => s.length > 0);
+    if (spaced.length === 0) return cls;
+    return spaced.map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(" ");
+}
+
+export function openExitAndAdd(fromId: string, cls: string): void {
+    const from = placementById(fromId);
+    if (!from) return;
+    if (from.config.kind !== "action") return;
+    const action = from.config;
+    const alreadyOpen = action.openExits.includes(cls);
+    const handles = outputHandlesFor(action);
+    const handleIndex = alreadyOpen
+        ? handles.findIndex((h) => h.id === cls)
+        : action.openExits.length;
+    const placements = placementsCurrent().map((p) =>
+        p.config.id === fromId
+            ? { ...p, config: { ...action, openExits: alreadyOpen ? action.openExits : [...action.openExits, cls] } }
+            : p,
+    );
+    setPlacements(placements);
+    const fresh = { ...defaultCard("action"), name: humanizeExit(cls) };
+    const { row, col } = pickPosition(from.row, from.col, Math.max(0, handleIndex));
+    const placement = { config: fresh, row, col };
+    const edge = makeEdge(fromId, cls, fresh.id);
+    setPlacementsAndEdges([...placementsCurrent(), placement], [...edgesCurrent(), edge]);
+}
+
+export function closeExitAndRemove(fromId: string, cls: string): void {
+    const from = placementById(fromId);
+    if (!from) return;
+    if (from.config.kind !== "action") return;
+    const action = from.config;
+    const wired = edgesCurrent().filter((e) => e.from_node_id === fromId && e.from_handle_id === cls);
+    const targetIds = new Set(wired.map((e) => e.to_node_id));
+    const placements = placementsCurrent()
+        .filter((p) => !targetIds.has(p.config.id))
+        .map((p) =>
+            p.config.id === fromId
+                ? { ...p, config: { ...action, openExits: action.openExits.filter((c) => c !== cls) } }
+                : p,
+        );
+    const edges = edgesCurrent().filter(
+        (e) =>
+            !(e.from_node_id === fromId && e.from_handle_id === cls) &&
+            !targetIds.has(e.from_node_id) &&
+            !targetIds.has(e.to_node_id),
+    );
+    setPlacementsAndEdges(placements, edges);
+}
+
+export function connectExisting(fromId: string, handleId: string, toId: string): void {
+    if (fromId === toId) return;
+    const dup = edgesCurrent().some(
+        (e) => e.from_node_id === fromId && e.from_handle_id === handleId && e.to_node_id === toId,
+    );
+    if (dup) return;
+    setEdges([...edgesCurrent(), makeEdge(fromId, handleId, toId)]);
+}
+
 export function addRight(fromId: string): void {
     const from = placementById(fromId);
     if (!from) return;
-    let col = from.col + 1;
-    while (isOccupied(from.row, col)) col += 1;
-    setPlacements([...placementsCurrent(), { config: defaultActionCard(), row: from.row, col }]);
+    addNodeWithEdge(fromId, firstHandleId(from.config), "action", 0);
 }
 
 export function addBelow(fromId: string): void {
     const from = placementById(fromId);
     if (!from) return;
-    let row = from.row + 1;
-    while (isOccupied(row, from.col)) row += 1;
-    setPlacements([...placementsCurrent(), { config: defaultActionCard(), row, col: from.col }]);
+    addNodeWithEdge(fromId, firstHandleId(from.config), "action", 1);
 }
 
 export function removeCard(id: string): void {
     const target = placementById(id);
     if (target && target.row === 0 && target.col === 0) return;
-    setPlacements(placementsCurrent().filter((p) => p.config.id !== id));
+    const inboundEdges = edgesCurrent().filter((e) => e.to_node_id === id);
+    const openExitsToClose = new Map<string, Set<string>>();
+    for (const edge of inboundEdges) {
+        const source = placementById(edge.from_node_id);
+        if (!source || source.config.kind !== "action") continue;
+        if (!source.config.openExits.includes(edge.from_handle_id)) continue;
+        const set = openExitsToClose.get(source.config.id) ?? new Set<string>();
+        set.add(edge.from_handle_id);
+        openExitsToClose.set(source.config.id, set);
+    }
+    const placements = placementsCurrent()
+        .filter((p) => p.config.id !== id)
+        .map((p) => {
+            const close = openExitsToClose.get(p.config.id);
+            if (!close || p.config.kind !== "action") return p;
+            const action = p.config;
+            return {
+                ...p,
+                config: { ...action, openExits: action.openExits.filter((c) => !close.has(c)) },
+            };
+        });
+    const edges = edgesCurrent().filter((e) => e.from_node_id !== id && e.to_node_id !== id);
+    setPlacementsAndEdges(placements, edges);
 }
 
 export function updateCard(id: string, patch: Readonly<Record<string, unknown>>): void {
@@ -48,5 +171,11 @@ export function changeCardKind(id: string, kind: CardKind): void {
     const target = placementById(id);
     if (!target) return;
     const fresh = defaultCard(kind);
-    withPatched(id, { ...fresh, id: target.config.id, name: target.config.name });
+    const placements = placementsCurrent().map((p) =>
+        p.config.id === id
+            ? { ...p, config: { ...fresh, id: target.config.id, name: target.config.name } as FlowCardConfig }
+            : p,
+    );
+    const edges = edgesCurrent().filter((e) => e.from_node_id !== id);
+    setPlacementsAndEdges(placements, edges);
 }

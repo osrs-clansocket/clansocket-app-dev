@@ -103,8 +103,8 @@
     min-block-size: 0;
     max-block-size: 22rem;
     overflow-y: auto;
-    overscroll-behavior: contain;
     background: transparent;
+    overscroll-behavior: contain;
 }
 .glass-select__grid--list {
     grid-template-columns: 1fr;

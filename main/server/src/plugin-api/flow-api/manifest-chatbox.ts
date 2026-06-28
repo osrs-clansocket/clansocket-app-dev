@@ -1,10 +1,7 @@
 import { registerOperation } from "../../flows/registries/operation-registry.js";
 import type { OperationContext, OperationResult } from "../../flows/registries/registry-types.js";
 import { pushChatboxToClan, pushChatboxToMember } from "../handlers/flow-push.js";
-import {
-    CHATBOX_DELIVERED_OR_MISSING_RESULT_CLASSES,
-    CHATBOX_DELIVERED_RESULT_CLASSES,
-} from "./result-classes.js";
+import { CHATBOX_DELIVERED_OR_MISSING_RESULT_CLASSES, CHATBOX_DELIVERED_RESULT_CLASSES } from "./result-classes.js";
 
 function readString(input: Readonly<Record<string, unknown>>, key: string, required: boolean): string {
     const v = input[key];
@@ -18,10 +15,7 @@ function readOptionalString(input: Readonly<Record<string, unknown>>, key: strin
     return typeof v === "string" ? v : undefined;
 }
 
-async function chatboxClan(
-    input: Readonly<Record<string, unknown>>,
-    ctx: OperationContext,
-): Promise<OperationResult> {
+async function chatboxClan(input: Readonly<Record<string, unknown>>, ctx: OperationContext): Promise<OperationResult> {
     const out = pushChatboxToClan({
         clanId: ctx.clanId,
         message: readString(input, "message", true),

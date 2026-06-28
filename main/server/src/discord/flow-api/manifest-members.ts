@@ -9,7 +9,11 @@ const QUEUE_OUTPUT: FlowFieldList = [{ name: "queueId", type: "string" }];
 
 const GUILD_USER: FlowFieldList = [FIELD_GUILD, FIELD_USER];
 const MEMBER_ROLE_INPUT: FlowFieldList = [...GUILD_USER, FIELD_ROLE, FIELD_REASON];
-const MEMBER_NICKNAME_INPUT: FlowFieldList = [...GUILD_USER, { name: "nickname", type: "string", maxLength: 32 }, FIELD_REASON];
+const MEMBER_NICKNAME_INPUT: FlowFieldList = [
+    ...GUILD_USER,
+    { name: "nickname", type: "string", maxLength: 32 },
+    FIELD_REASON,
+];
 const MEMBER_TIMEOUT_INPUT: FlowFieldList = [
     ...GUILD_USER,
     { name: "durationMs", type: "integer", required: true, minimum: 0, maximum: 2_419_200_000 },
@@ -55,7 +59,10 @@ async function setNickname(input: Readonly<Record<string, unknown>>, ctx: Operat
     return memberMutationEnqueueHandler("set-nickname", input, ctx, extra);
 }
 
-async function timeoutMember(input: Readonly<Record<string, unknown>>, ctx: OperationContext): Promise<OperationResult> {
+async function timeoutMember(
+    input: Readonly<Record<string, unknown>>,
+    ctx: OperationContext,
+): Promise<OperationResult> {
     return memberMutationEnqueueHandler("timeout", input, ctx, { duration_ms: input.durationMs ?? 0 });
 }
 
@@ -73,7 +80,13 @@ async function unban(input: Readonly<Record<string, unknown>>, ctx: OperationCon
     return memberMutationEnqueueHandler("unban", input, ctx, {});
 }
 
-function memberOp(opId: string, tier: "live" | "manual", inputFields: FlowFieldList, handler: (i: Readonly<Record<string, unknown>>, c: OperationContext) => Promise<OperationResult>, botPermission: string): void {
+function memberOp(
+    opId: string,
+    tier: "live" | "manual",
+    inputFields: FlowFieldList,
+    handler: (i: Readonly<Record<string, unknown>>, c: OperationContext) => Promise<OperationResult>,
+    botPermission: string,
+): void {
     registerOperation({
         capability: "discord",
         opId,

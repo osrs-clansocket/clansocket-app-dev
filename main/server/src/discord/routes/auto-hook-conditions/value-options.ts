@@ -15,11 +15,12 @@ interface OptionsGate {
 }
 
 function gateOptions(req: Request, res: Response, guildId: string): OptionsGate | null {
-    const triggerType = typeof req.query.trigger_type === "string"
-        ? req.query.trigger_type
-        : typeof req.query.trigger === "string"
-            ? req.query.trigger
-            : "";
+    const triggerType =
+        typeof req.query.trigger_type === "string"
+            ? req.query.trigger_type
+            : typeof req.query.trigger === "string"
+              ? req.query.trigger
+              : "";
     const field = typeof req.query.field === "string" ? req.query.field : "";
     if (triggerType.length === 0 || field.length === 0) {
         res.status(HTTP_BAD_REQUEST).json({ error: "missing_params" });

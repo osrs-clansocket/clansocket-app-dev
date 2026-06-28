@@ -56,7 +56,16 @@ function applyOverlays(base: ChartTheme, root: CSSStyleDeclaration): ChartTheme 
     const textMuted = readOverlay(root, "--chart-text-muted") || base.textMuted;
     const grid = readOverlay(root, "--chart-grid") || readOverlay(root, "--border-color") || base.grid;
     const fontBody = readOverlay(root, "--chart-font-family") || readOverlay(root, "--font-family") || base.fontBody;
-    const palette = [primary, base.secondary, text, base.statusWarn, base.primary, base.statusDanger, base.fontBody, textMuted];
+    const palette = [
+        primary,
+        base.secondary,
+        text,
+        base.statusWarn,
+        base.primary,
+        base.statusDanger,
+        base.fontBody,
+        textMuted,
+    ];
     return { ...base, primary, text, textMuted, grid, palette, fontBody };
 }
 

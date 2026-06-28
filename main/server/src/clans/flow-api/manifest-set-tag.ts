@@ -14,10 +14,7 @@ function readString(input: Readonly<Record<string, unknown>>, key: string, requi
     return "";
 }
 
-async function setMemberTag(
-    input: Readonly<Record<string, unknown>>,
-    ctx: OperationContext,
-): Promise<OperationResult> {
+async function setMemberTag(input: Readonly<Record<string, unknown>>, ctx: OperationContext): Promise<OperationResult> {
     const rsn = readString(input, "rsn", true);
     const tagKey = readString(input, "tag_key", true);
     const tagValue = readString(input, "tag_value", false);

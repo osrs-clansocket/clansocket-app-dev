@@ -27,8 +27,7 @@ function maybePrune(clanId: string, now: number): void {
     lastPruneAt = now;
     try {
         clanFlowsDb(clanId).prepare(PRUNE_SQL).run(now);
-    } catch {
-    }
+    } catch {}
 }
 
 export function pruneExpiredIdempotency(clanId: string, now: number): void {
@@ -44,7 +43,9 @@ export function claimEventIdempotency(
     const now = Date.now();
     const key = `${flowId}:${bucketKey(triggerId, payload, now)}`;
     try {
-        clanFlowsDb(clanId).prepare(INSERT_SQL).run(key, flowId, triggerId, now, now + DEFAULT_RETENTION_MS);
+        clanFlowsDb(clanId)
+            .prepare(INSERT_SQL)
+            .run(key, flowId, triggerId, now, now + DEFAULT_RETENTION_MS);
         maybePrune(clanId, now);
         return true;
     } catch (err) {
@@ -57,7 +58,9 @@ export function claimEventIdempotency(
 export function claimCustomIdempotency(clanId: string, key: string, retentionMs: number): boolean {
     const now = Date.now();
     try {
-        clanFlowsDb(clanId).prepare(INSERT_SQL).run(key, null, null, now, now + retentionMs);
+        clanFlowsDb(clanId)
+            .prepare(INSERT_SQL)
+            .run(key, null, null, now, now + retentionMs);
         return true;
     } catch (err) {
         const code = (err as { code?: string } | null)?.code;

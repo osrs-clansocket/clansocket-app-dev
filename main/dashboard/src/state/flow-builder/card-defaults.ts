@@ -63,10 +63,10 @@ export function defaultWaitEvent(): WaitForEventCardConfig {
 }
 
 const KIND_DEFAULTS: Readonly<Record<CardKind, () => FlowCardConfig>> = {
-    "trigger": defaultTriggerCard,
-    "action": defaultActionCard,
-    "condition": defaultConditionCard,
-    "delay": defaultDelayCard,
+    trigger: defaultTriggerCard,
+    action: defaultActionCard,
+    condition: defaultConditionCard,
+    delay: defaultDelayCard,
     "wait-for-event": defaultWaitEvent,
 };
 
@@ -82,5 +82,6 @@ export function defaultFlowMeta(): FlowMeta {
         loop: false,
         scheduleAtMs: null,
         placements: [{ config: defaultTriggerCard(), row: 0, col: 0 }],
+        edges: [],
     };
 }

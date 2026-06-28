@@ -97,14 +97,21 @@ export interface WaitingExecution {
     readonly ctx: ExecContext;
 }
 
-function loadDefinitionForRow(clanId: string, row: ExecutionRow): import("../../store/flow-definition-types.js").FlowDefinition | null {
+function loadDefinitionForRow(
+    clanId: string,
+    row: ExecutionRow,
+): import("../../store/flow-definition-types.js").FlowDefinition | null {
     try {
-        const versionRow = clanFlowsDb(clanId)
-            .prepare(SELECT_FLOW_VERSION_SQL)
-            .get(row.flow_id, row.flow_version) as { definition_json: string } | undefined;
-        const json = versionRow?.definition_json ?? (clanFlowsDb(clanId)
-            .prepare(SELECT_FLOW_DEFINITION_SQL)
-            .get(row.flow_id) as { definition_json: string } | undefined)?.definition_json;
+        const versionRow = clanFlowsDb(clanId).prepare(SELECT_FLOW_VERSION_SQL).get(row.flow_id, row.flow_version) as
+            | { definition_json: string }
+            | undefined;
+        const json =
+            versionRow?.definition_json ??
+            (
+                clanFlowsDb(clanId).prepare(SELECT_FLOW_DEFINITION_SQL).get(row.flow_id) as
+                    | { definition_json: string }
+                    | undefined
+            )?.definition_json;
         if (!json) return null;
         return parseFlowDefinition(JSON.parse(json));
     } catch {

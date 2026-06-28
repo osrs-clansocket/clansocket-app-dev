@@ -13,11 +13,7 @@ import {
     type ContainerItem,
     type RunePouchSlot,
 } from "./container-types.js";
-import {
-    EVENT_CONTAINER,
-    EVENT_CONTAINER_DELTA,
-    EVENT_RUNE_POUCH,
-} from "../../../../plugin-api/event-types.js";
+import { EVENT_CONTAINER, EVENT_CONTAINER_DELTA, EVENT_RUNE_POUCH } from "../../../../plugin-api/event-types.js";
 import { registerPluginEvent } from "../../../../flows/registries/plugin-event-registry.js";
 
 export function handleContainer(ctx: HandlerCtx): void {

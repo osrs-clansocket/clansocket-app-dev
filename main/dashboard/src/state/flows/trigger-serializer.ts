@@ -5,11 +5,7 @@ import type {
 } from "../../dom/pages/clans/manage/flow-builder/flow-card-types.js";
 import { conditionsToFilterDsl } from "./condition-dsl-bridge.js";
 import { placementAt } from "./edge-serializer.js";
-import {
-    LOOP_TRIGGER_VALUE,
-    MANUAL_TRIGGER_VALUE,
-    SCHEDULE_TRIGGER_VALUE,
-} from "./serializer-types.js";
+import { LOOP_TRIGGER_VALUE, MANUAL_TRIGGER_VALUE, SCHEDULE_TRIGGER_VALUE } from "./serializer-types.js";
 
 const MS_PER_MINUTE = 60_000;
 const MS_PER_HOUR = 3_600_000;

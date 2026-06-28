@@ -108,10 +108,7 @@ function onMove(ctx: DragCtx, e: PointerEvent): void {
     let liveX = ctx.session.baseX + (e.clientX - ctx.session.downX) * ctx.session.scale;
     let liveY = ctx.session.baseY + (e.clientY - ctx.session.downY) * ctx.session.scale;
     if (ctx.state.guidesEnabled$() && !e.ctrlKey) {
-        const snapped = snapPosition(
-            { x: liveX, y: liveY, w: comp.canvasW, h: comp.canvasH },
-            ctx.state.guides$(),
-        );
+        const snapped = snapPosition({ x: liveX, y: liveY, w: comp.canvasW, h: comp.canvasH }, ctx.state.guides$());
         liveX = snapped.x;
         liveY = snapped.y;
     }

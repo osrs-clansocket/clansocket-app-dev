@@ -9,9 +9,9 @@ interface MemberRow {
 }
 
 function memberAccountHashByRsn(clanId: string, rsn: string): string | null {
-    const row = getClanDb(clanId)
-        .prepare("SELECT account_hash FROM clan_members WHERE member_name = ?")
-        .get(rsn) as MemberRow | undefined;
+    const row = getClanDb(clanId).prepare("SELECT account_hash FROM clan_members WHERE member_name = ?").get(rsn) as
+        | MemberRow
+        | undefined;
     return row?.account_hash ?? null;
 }
 

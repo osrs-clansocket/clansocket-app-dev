@@ -1,6 +1,12 @@
 import { BaseRegistry } from "../../base/base-registry.js";
 import type { FlowFieldList } from "./payload-field-types.js";
-import type { OperationContext, OperationResult, SafetyTier, SideEffectsDescriptor, ValidationDescriptor } from "./registry-types.js";
+import type {
+    OperationContext,
+    OperationResult,
+    SafetyTier,
+    SideEffectsDescriptor,
+    ValidationDescriptor,
+} from "./registry-types.js";
 
 export type OperationHandler = (
     input: Readonly<Record<string, unknown>>,
@@ -25,11 +31,7 @@ class OperationRegistryStore extends BaseRegistry<string, RegisteredOperation> {
 export const operationRegistry = new OperationRegistryStore();
 
 export function registerOperation(spec: RegisteredOperation): void {
-    operationRegistry.registerUnique(
-        spec.opId,
-        spec,
-        (key) => new Error(`operation "${key}" already registered`),
-    );
+    operationRegistry.registerUnique(spec.opId, spec, (key) => new Error(`operation "${key}" already registered`));
 }
 
 export function operationsByCapability(capability: string): readonly RegisteredOperation[] {

@@ -1,12 +1,4 @@
-import {
-    BTN_VARIANT_OUTLINE,
-    baseProps,
-    button,
-    div,
-    type Instance,
-    span,
-    textProps,
-} from "../../../factory";
+import { BTN_VARIANT_OUTLINE, baseProps, button, div, type Instance, span, textProps } from "../../../factory";
 import { CHART_PRESETS, defaultSizeFor, type ChartPreset } from "../../../../state/clans/homepage/chart-presets.js";
 import type { EditorState } from "./homepage-editor-state.js";
 

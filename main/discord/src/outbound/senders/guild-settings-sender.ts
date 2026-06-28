@@ -80,7 +80,10 @@ async function setVerificationLevel(client: Client, p: GuildSettingsPayload, gui
     return guildId;
 }
 
-const ACTION_HANDLERS: Record<string, (client: Client, p: GuildSettingsPayload, guildId: string) => Promise<string | null>> = {
+const ACTION_HANDLERS: Record<
+    string,
+    (client: Client, p: GuildSettingsPayload, guildId: string) => Promise<string | null>
+> = {
     "set-name": setName,
     "set-icon": setIcon,
     "set-banner": setBanner,

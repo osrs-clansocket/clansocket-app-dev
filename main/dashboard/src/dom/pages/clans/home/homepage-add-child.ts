@@ -27,10 +27,7 @@ export function buildAddChild(
                 openProp$.set(null);
             },
         });
-        const row = div(baseProps([ROW_CLASS]), [
-            trigger,
-            span(textProps([LABEL_CLASS], entry.label)),
-        ]);
+        const row = div(baseProps([ROW_CLASS]), [trigger, span(textProps([LABEL_CLASS], entry.label))]);
         popover.addChild(row);
     }
     return popover;

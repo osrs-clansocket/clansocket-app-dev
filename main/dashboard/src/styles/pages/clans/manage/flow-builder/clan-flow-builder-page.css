@@ -72,9 +72,9 @@
 }
 
 .clans-manage__flow-builder-grid {
+    position: relative;
     display: grid;
-    align-content: start;
-    justify-content: start;
+    place-content: start start;
     gap: var(--sp-3);
     grid-area: grid;
     grid-auto-rows: min-content;
@@ -82,6 +82,26 @@
     min-block-size: 0;
     overflow: auto;
     padding: var(--sp-2);
+}
+
+.clans-manage__flow-builder-cells {
+    display: contents;
+}
+
+.clans-manage__flow-builder-connectors {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    overflow: visible;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.clans-manage__flow-builder-connector-path {
+    fill: none;
+    stroke: var(--base-gold-300);
+    stroke-linecap: round;
+    stroke-width: 3;
 }
 
 .clans-manage__flow-builder-card-slot {
@@ -213,30 +233,6 @@
     font-size: var(--fs-2xs);
 }
 
-.clans-manage__flow-builder-connector-right,
-.clans-manage__flow-builder-connector-below {
-    position: absolute;
-    background: var(--base-gold-500);
-    opacity: var(--opacity-high);
-    pointer-events: none;
-}
-
-.clans-manage__flow-builder-connector-right {
-    inset-block-start: 50%;
-    inset-inline-end: calc(-1 * var(--sp-3));
-    inline-size: var(--sp-3);
-    block-size: 0.125rem;
-    transform: translateY(-50%);
-}
-
-.clans-manage__flow-builder-connector-below {
-    inset-block-end: calc(-1 * var(--sp-3));
-    inset-inline-start: 50%;
-    inline-size: 0.125rem;
-    block-size: var(--sp-3);
-    transform: translateX(-50%);
-}
-
 .clans-manage__auto-hooks-card-header.clans-manage__flow-builder-card-header--kind-trigger {
     border-block-end: 0.125rem solid var(--flow-kind-trigger);
 }
@@ -280,9 +276,9 @@
 .clans-manage__flow-builder-card-manual-badge {
     display: inline-flex;
     align-items: center;
-    padding-inline: var(--sp-1);
-    padding-block: var(--sp-0);
     margin-inline-start: var(--sp-1);
+    padding-block: var(--sp-0);
+    padding-inline: var(--sp-1);
     border-radius: var(--radius-md);
     font-size: var(--fs-3xs);
     font-weight: var(--fw-semi);

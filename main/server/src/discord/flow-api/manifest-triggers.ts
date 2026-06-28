@@ -1,13 +1,15 @@
-import {
-    DISCORD_TRIGGER_MANIFEST,
-    type DiscordTriggerSpec,
-} from "@clansocket/constants/discord-trigger-manifest";
+import { DISCORD_TRIGGER_MANIFEST, type DiscordTriggerSpec } from "@clansocket/constants/discord-trigger-manifest";
 import { registerTrigger } from "../../flows/registries/trigger-registry.js";
 import type { FlowFieldList } from "../../flows/registries/payload-field-types.js";
 
 const CAPABILITY = "discord";
 
-const GUILD = { name: "guildId", type: "discord-guild-id" as const, valueSourceRef: "discord-guild-id", required: true };
+const GUILD = {
+    name: "guildId",
+    type: "discord-guild-id" as const,
+    valueSourceRef: "discord-guild-id",
+    required: true,
+};
 
 const PAYLOAD_BY_KIND: Readonly<Record<DiscordTriggerSpec["payloadKind"], FlowFieldList>> = {
     channel: [
@@ -36,16 +38,8 @@ const PAYLOAD_BY_KIND: Readonly<Record<DiscordTriggerSpec["payloadKind"], FlowFi
         GUILD,
         { name: "color", type: "integer" },
     ],
-    emoji: [
-        { name: "id", type: "string", required: true },
-        { name: "name", type: "string", required: true },
-        GUILD,
-    ],
-    sticker: [
-        { name: "id", type: "string", required: true },
-        { name: "name", type: "string", required: true },
-        GUILD,
-    ],
+    emoji: [{ name: "id", type: "string", required: true }, { name: "name", type: "string", required: true }, GUILD],
+    sticker: [{ name: "id", type: "string", required: true }, { name: "name", type: "string", required: true }, GUILD],
     webhook: [
         GUILD,
         { name: "channelId", type: "discord-channel-id", valueSourceRef: "discord-channel-id", required: true },

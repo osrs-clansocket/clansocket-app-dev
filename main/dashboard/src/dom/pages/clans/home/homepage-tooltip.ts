@@ -18,10 +18,7 @@ export interface TooltipOpts {
 }
 
 function buildRow(label: string, value: string): Instance {
-    return div(baseProps([ROW_CLASS]), [
-        span(textProps([LABEL_CLASS], label)),
-        span(textProps([VALUE_CLASS], value)),
-    ]);
+    return div(baseProps([ROW_CLASS]), [span(textProps([LABEL_CLASS], label)), span(textProps([VALUE_CLASS], value))]);
 }
 
 function buildReactiveRow(label: string, value$: () => string): Instance {

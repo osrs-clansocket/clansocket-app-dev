@@ -78,10 +78,7 @@ function byJoinedAt(members: ClanRosterMember[]): ClanRosterMember[] {
 function byPluginFirst(members: ClanRosterMember[], ladder: ClanRankLadder): ClanRosterMember[] {
     const withPlugin = members.filter((m) => m.hasPlugin === true);
     const without = members.filter((m) => m.hasPlugin !== true);
-    return [
-        ...sortMembers(withPlugin, ladder, rosterNameKey),
-        ...sortMembers(without, ladder, rosterNameKey),
-    ];
+    return [...sortMembers(withPlugin, ladder, rosterNameKey), ...sortMembers(without, ladder, rosterNameKey)];
 }
 
 export function applySort(members: ClanRosterMember[], sort: RosterSort, ladder: ClanRankLadder): ClanRosterMember[] {

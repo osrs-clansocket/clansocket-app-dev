@@ -22,11 +22,7 @@ function categoriesOf(presets: ReadonlyArray<ChartPreset>): string[] {
     return [...set];
 }
 
-function buildList(
-    ctx: HomepageContext,
-    activeCategory$: Signal<string>,
-    onPick: (id: string) => void,
-): Instance {
+function buildList(ctx: HomepageContext, activeCategory$: Signal<string>, onPick: (id: string) => void): Instance {
     const list = div(baseProps([LIST_CLASS]));
     list.trackDispose(
         effect(() => {
@@ -66,10 +62,7 @@ export function buildChartRail(opts: ChartRailOpts): Instance {
     const { state, ctx, open$ } = opts;
     const categories = categoriesOf(CHART_PRESETS);
     const activeCategory$ = signal<string>(categories[0] ?? "highscores");
-    const head = div(baseProps([HEAD_CLASS]), [
-        span(textProps([TITLE_CLASS], "Charts")),
-        buildClose(open$),
-    ]);
+    const head = div(baseProps([HEAD_CLASS]), [span(textProps([TITLE_CLASS], "Charts")), buildClose(open$)]);
     const tabs = buildChartRailTabs(categories, activeCategory$);
     const onPick = (presetId: string): void => {
         const preset = CHART_PRESETS.find((p) => p.id === presetId);

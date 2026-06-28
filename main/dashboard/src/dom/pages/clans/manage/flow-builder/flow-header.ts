@@ -48,11 +48,13 @@ function buildNameField(): Instance {
         onInput: (e) => setFlowName((e.target as HTMLInputElement).value),
     });
     const host = div(baseProps([SEGMENT_CLASS]), [span(textProps([LABEL_CLASS], "Name")), inputEl]);
-    host.trackDispose(effect(() => {
-        const name = flowMetaSignal().name;
-        const el = inputEl.el as HTMLInputElement;
-        if (el.value !== name) el.value = name;
-    }));
+    host.trackDispose(
+        effect(() => {
+            const name = flowMetaSignal().name;
+            const el = inputEl.el as HTMLInputElement;
+            if (el.value !== name) el.value = name;
+        }),
+    );
     return host;
 }
 

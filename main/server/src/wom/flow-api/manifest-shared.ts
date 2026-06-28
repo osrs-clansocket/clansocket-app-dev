@@ -10,7 +10,14 @@ import type { OperationContext, OperationResult } from "../../flows/registries/r
 export const CAPABILITY_NAME = "wom";
 export const CAPABILITY_COLOR = "leaf";
 export const SDK_TIMEOUT_MS = 15_000;
-export const READ_RESULT_CLASSES: readonly string[] = ["ok", "not_linked", "no_credentials", "rate_limited", "not_found", "error"];
+export const READ_RESULT_CLASSES: readonly string[] = [
+    "ok",
+    "not_linked",
+    "no_credentials",
+    "rate_limited",
+    "not_found",
+    "error",
+];
 
 export interface LoadedWom {
     identity: NonNullable<ReturnType<typeof clanWomIdentity>>;

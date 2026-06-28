@@ -21,8 +21,7 @@ interface VersionRow {
 const SELECT_ENABLED_FLOWS_SQL =
     "SELECT flow_id, flow_name, definition_json, published_version FROM clan_flows WHERE enabled = 1 AND archived = 0";
 
-const SELECT_VERSION_SQL =
-    "SELECT definition_json FROM clan_flow_versions WHERE flow_id = ? AND version = ?";
+const SELECT_VERSION_SQL = "SELECT definition_json FROM clan_flow_versions WHERE flow_id = ? AND version = ?";
 
 export interface FlowEventInput {
     readonly clanId: string;
@@ -33,9 +32,10 @@ export interface FlowEventInput {
 
 function loadFlowDefinition(clanId: string, row: FlowRow): FlowDefinition | null {
     try {
-        const sourceJson = row.published_version !== null
-            ? loadPublishedVersion(clanId, row.flow_id, row.published_version) ?? row.definition_json
-            : row.definition_json;
+        const sourceJson =
+            row.published_version !== null
+                ? (loadPublishedVersion(clanId, row.flow_id, row.published_version) ?? row.definition_json)
+                : row.definition_json;
         return parseFlowDefinition(JSON.parse(sourceJson));
     } catch (err) {
         logger.warn(`flow event-router: parse failed for ${row.flow_id}: ${(err as Error).message}`);
@@ -104,7 +104,9 @@ async function resumeWaitingForEvent(input: FlowEventInput): Promise<void> {
         try {
             await stepDispatcher.advance(wait.ctx);
         } catch (err) {
-            logger.warn(`flow event-router: resume failed for execution ${wait.executionId}: ${(err as Error).message}`);
+            logger.warn(
+                `flow event-router: resume failed for execution ${wait.executionId}: ${(err as Error).message}`,
+            );
         }
     }
 }

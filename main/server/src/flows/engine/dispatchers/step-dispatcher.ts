@@ -140,8 +140,7 @@ class StepDispatcher extends BaseDispatcher {
             if (opts.dryRun) return;
             try {
                 updateExecution(exec, persistedId);
-            } catch {
-            }
+            } catch {}
         };
         try {
             await this.runLoop(exec, opts);
@@ -307,9 +306,8 @@ class StepDispatcher extends BaseDispatcher {
             return;
         }
         const sendOptions = node.config.send_options as Readonly<Record<string, unknown>> | undefined;
-        const keyTemplate = typeof sendOptions?.idempotency_key_template === "string"
-            ? sendOptions.idempotency_key_template
-            : null;
+        const keyTemplate =
+            typeof sendOptions?.idempotency_key_template === "string" ? sendOptions.idempotency_key_template : null;
         if (keyTemplate && keyTemplate.length > 0) {
             const key = `action:${exec.clanId}:${resolveTemplate(keyTemplate, exec, node.id)}`;
             if (!claimCustomIdempotency(exec.clanId, key, DEFAULT_IDEMPOTENCY_RETENTION_MS)) {
@@ -346,9 +344,8 @@ class StepDispatcher extends BaseDispatcher {
                 return;
             }
         }
-        const newsletterListId = typeof sendOptions?.newsletter_list_id === "string"
-            ? sendOptions.newsletter_list_id
-            : null;
+        const newsletterListId =
+            typeof sendOptions?.newsletter_list_id === "string" ? sendOptions.newsletter_list_id : null;
         if (newsletterListId) {
             const rsn = typeof exec.entity.rsn === "string" ? exec.entity.rsn : "";
             const prefs = rsn.length > 0 ? memberPreferences(exec.clanId, rsn) : null;
@@ -391,8 +388,7 @@ class StepDispatcher extends BaseDispatcher {
                         outputs: result.outputs,
                     } as never,
                 });
-            } catch {
-            }
+            } catch {}
         }
         this.advanceToNext(exec, node, result.result_class);
     }

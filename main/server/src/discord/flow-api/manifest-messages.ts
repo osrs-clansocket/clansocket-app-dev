@@ -11,7 +11,10 @@ import {
 
 import { MESSAGE_OP_RESULT_CLASSES as CHANNEL_OP_RESULT_CLASSES } from "./result-classes.js";
 
-async function channelCreate(input: Readonly<Record<string, unknown>>, ctx: OperationContext): Promise<OperationResult> {
+async function channelCreate(
+    input: Readonly<Record<string, unknown>>,
+    ctx: OperationContext,
+): Promise<OperationResult> {
     const guildId = readString(input, "guildId");
     const name = readString(input, "name");
     const payload: Record<string, unknown> = {

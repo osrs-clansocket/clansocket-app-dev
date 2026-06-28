@@ -11,7 +11,6 @@
     justify-items: center;
 }
 
-
 .clans-home__canvas-wrapper {
     position: relative;
     display: flex;
@@ -43,9 +42,9 @@
 .clans-home__guide {
     position: absolute;
     box-sizing: content-box;
-    pointer-events: auto;
     background-color: var(--guide-color, var(--base-gold-400));
     background-clip: content-box;
+    pointer-events: auto;
 }
 
 .clans-home__guide--x {
@@ -58,7 +57,9 @@
 
 .clans-home__guide--y {
     inset-inline: 0;
-    inset-block-start: calc(var(--guide-pos, 0) / max(var(--clan-home-content-h, 480), 480) * 100% - var(--sp-hairline));
+    inset-block-start: calc(
+        var(--guide-pos, 0) / max(var(--clan-home-content-h, 480), 480) * 100% - var(--sp-hairline)
+    );
     block-size: var(--sp-hairline);
     padding-block: var(--sp-hairline);
     cursor: ns-resize;
@@ -87,8 +88,8 @@
 }
 
 .clans-home__guide--locked {
-    cursor: default;
     background-color: rgb(from var(--guide-color, var(--base-gold-400)) r g b / 0.35);
+    cursor: default;
 }
 
 .clans-home__guide.is-remove {
@@ -106,8 +107,8 @@
     border: var(--sp-hairline) solid var(--base-gold-500);
     border-radius: var(--radius-md);
     background: var(--gradient-surface-opaque);
-    pointer-events: auto;
     cursor: default;
+    pointer-events: auto;
 }
 
 .clans-home__guide-actions::before {
@@ -125,7 +126,6 @@
 .clans-home__guide:focus-within .clans-home__guide-actions {
     display: flex;
 }
-
 
 .clans-home__rulers {
     position: absolute;
@@ -147,10 +147,10 @@
 .clans-home__ruler {
     position: absolute;
     background: rgb(from var(--base-graphite-900) r g b / 0.55);
-    backdrop-filter: blur(var(--blur-sm));
-    pointer-events: auto;
-    cursor: crosshair;
     background-image: var(--ruler-ticks);
+    backdrop-filter: blur(var(--blur-sm));
+    cursor: crosshair;
+    pointer-events: auto;
 }
 
 .clans-home__ruler--top {
@@ -191,9 +191,9 @@
     inset-inline-start: 0;
     inline-size: var(--sp-3);
     block-size: var(--sp-3);
-    background: rgb(from var(--base-graphite-900) r g b / 0.7);
     border-block-end: var(--sp-hairline) solid var(--base-gold-500);
     border-inline-end: var(--sp-hairline) solid var(--base-gold-500);
+    background: rgb(from var(--base-graphite-900) r g b / 0.7);
     pointer-events: auto;
 }
 
@@ -239,10 +239,10 @@
     align-items: center;
     padding: 0;
     border: 0;
-    background: transparent;
-    color: var(--base-graphite-300);
-    cursor: pointer;
     line-height: 0;
+    color: var(--base-graphite-300);
+    background: transparent;
+    cursor: pointer;
 }
 
 .clans-home__popover-close:hover {
@@ -597,15 +597,15 @@
     border: 0;
     border-radius: 0;
     font-size: var(--fs-3xs);
-    text-transform: uppercase;
     letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
 }
 
 .clans-home__edit-row-main .clans-home__frame-tool {
     flex: 1 1 0;
     inline-size: auto;
-    block-size: auto;
     min-inline-size: 0;
+    block-size: auto;
     padding: var(--sp-1);
     border: 0;
     border-radius: 0;
@@ -626,9 +626,8 @@
 
 .clans-home__var-rail {
     position: fixed;
-    inset-block-start: var(--clan-home-chrome-h, 4rem);
+    inset-block: var(--clan-home-chrome-h, 4rem) 0;
     inset-inline-end: 0;
-    inset-block-end: 0;
     z-index: var(--z-modal);
     display: none;
     flex-direction: column;
@@ -656,9 +655,9 @@
     flex: 1 1 auto;
     font-size: var(--fs-xs);
     font-weight: var(--fw-semi);
-    color: var(--base-gold-300);
-    text-transform: uppercase;
     letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    color: var(--base-gold-300);
 }
 
 .clans-home__var-rail-close {
@@ -667,9 +666,9 @@
     block-size: var(--sp-6);
     padding: 0;
     border: 0;
-    background: transparent;
-    color: var(--base-graphite-300);
     font-size: var(--fs-md);
+    color: var(--base-graphite-300);
+    background: transparent;
     cursor: pointer;
 }
 
@@ -690,18 +689,18 @@
     padding: var(--sp-1) var(--sp-2);
     border: var(--sp-hairline) solid rgb(from var(--base-gold-500) r g b / 0.3);
     border-radius: var(--radius-md);
-    background: rgb(from var(--base-graphite-900) r g b / 0.4);
-    color: var(--base-graphite-300);
     font-size: var(--fs-3xs);
-    text-transform: uppercase;
     letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    color: var(--base-graphite-300);
+    background: rgb(from var(--base-graphite-900) r g b / 0.4);
     cursor: pointer;
 }
 
 .clans-home__var-rail-tab.is-active {
     border-color: rgb(from var(--base-gold-500) r g b / 0.7);
-    background: rgb(from var(--base-gold-500) r g b / 0.2);
     color: var(--base-gold-300);
+    background: rgb(from var(--base-gold-500) r g b / 0.2);
 }
 
 .clans-home__var-rail-body {
@@ -709,8 +708,8 @@
     flex: 1 1 auto;
     flex-direction: column;
     gap: var(--sp-2);
-    padding: var(--sp-2) var(--sp-3);
     overflow: hidden auto;
+    padding: var(--sp-2) var(--sp-3);
     scrollbar-width: none;
 }
 
@@ -755,8 +754,8 @@
 }
 
 .clans-home__var-chip-value {
-    font-style: italic;
     font-size: var(--fs-3xs);
+    font-style: italic;
     color: var(--base-graphite-400);
 }
 
@@ -786,25 +785,25 @@
     padding: var(--sp-1) var(--sp-2);
     border: var(--sp-hairline) solid rgb(from var(--base-gold-500) r g b / 0.3);
     border-radius: var(--radius-md);
-    background: rgb(from var(--base-graphite-900) r g b / 0.6);
-    color: var(--base-cream-100);
     font-size: var(--fs-3xs);
+    color: var(--base-cream-100);
+    background: rgb(from var(--base-graphite-900) r g b / 0.6);
 }
 
 .clans-home__var-search:focus {
-    outline: none;
     border-color: rgb(from var(--base-gold-500) r g b / 0.7);
+    outline: none;
 }
 
 .clans-home__edit-status {
-    flex: 0 0 auto;
     display: flex;
+    flex: 0 0 auto;
     align-items: center;
     padding-inline: var(--sp-3);
     border-inline-start: var(--sp-hairline) solid rgb(from var(--base-gold-500) r g b / 0.2);
     font-size: var(--fs-2xs);
-    color: var(--base-graphite-300);
     white-space: nowrap;
+    color: var(--base-graphite-300);
 }
 
 .clans-home__edit-image-picker {
@@ -954,8 +953,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    pointer-events: none;
     color: var(--icon-tint, var(--base-graphite-400));
+    pointer-events: none;
 }
 
 .clans-home__color-tool-icon i,
@@ -979,10 +978,10 @@
     padding: var(--sp-2);
     border: var(--sp-hairline) solid var(--base-gold-500);
     border-radius: var(--radius-md);
-    background: var(--gradient-surface-opaque);
-    color: var(--base-cream-100);
     font-size: var(--fs-2xs);
     line-height: var(--lh-snug);
+    color: var(--base-cream-100);
+    background: var(--gradient-surface-opaque);
     pointer-events: none;
 }
 
@@ -997,8 +996,8 @@
 
 .clans-home__tooltip-row {
     display: flex;
-    gap: var(--sp-1);
     align-items: baseline;
+    gap: var(--sp-1);
     margin-block-start: var(--sp-0h);
 }
 
@@ -1014,8 +1013,8 @@
 .clans-home__tooltip-value {
     flex: 1 1 auto;
     font-family: var(--font-mono);
-    color: var(--base-cream-50);
     word-break: break-all;
+    color: var(--base-cream-50);
 }
 
 .clans-home__frame-side--top {
@@ -1084,7 +1083,6 @@
     z-index: var(--z-modal);
     pointer-events: auto;
 }
-
 
 .clans-home__swatch-popover {
     display: flex;
@@ -1301,9 +1299,8 @@
 
 .clans-home__chart-rail {
     position: fixed;
-    inset-block-start: var(--clan-home-chrome-h, 4rem);
+    inset-block: var(--clan-home-chrome-h, 4rem) 0;
     inset-inline-end: 0;
-    inset-block-end: 0;
     z-index: var(--z-modal);
     display: none;
     flex-direction: column;
@@ -1331,9 +1328,9 @@
     flex: 1 1 auto;
     font-size: var(--fs-xs);
     font-weight: var(--fw-semi);
-    color: var(--base-gold-300);
-    text-transform: uppercase;
     letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    color: var(--base-gold-300);
 }
 
 .clans-home__chart-rail-close {
@@ -1342,9 +1339,9 @@
     block-size: var(--sp-6);
     padding: 0;
     border: 0;
-    background: transparent;
-    color: var(--base-graphite-300);
     font-size: var(--fs-md);
+    color: var(--base-graphite-300);
+    background: transparent;
     cursor: pointer;
 }
 
@@ -1365,26 +1362,26 @@
     padding: var(--sp-1) var(--sp-2);
     border: var(--sp-hairline) solid rgb(from var(--base-gold-500) r g b / 0.3);
     border-radius: var(--radius-md);
-    background: rgb(from var(--base-graphite-900) r g b / 0.4);
-    color: var(--base-graphite-300);
     font-size: var(--fs-3xs);
-    text-transform: uppercase;
     letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    color: var(--base-graphite-300);
+    background: rgb(from var(--base-graphite-900) r g b / 0.4);
     cursor: pointer;
 }
 
 .clans-home__chart-rail-tab.is-active {
     border-color: rgb(from var(--base-gold-500) r g b / 0.7);
-    background: rgb(from var(--base-gold-500) r g b / 0.2);
     color: var(--base-gold-300);
+    background: rgb(from var(--base-gold-500) r g b / 0.2);
 }
 
 .clans-home__chart-rail-body {
     display: flex;
     flex: 1 1 auto;
     flex-direction: column;
-    padding: var(--sp-2) var(--sp-3);
     overflow: hidden auto;
+    padding: var(--sp-2) var(--sp-3);
     scrollbar-width: none;
 }
 
@@ -1404,13 +1401,13 @@
     display: block;
     inline-size: 100%;
     block-size: 7.5rem;
+    overflow: hidden;
     padding: 0;
     border: var(--sp-hairline) solid rgb(from var(--base-gold-500) r g b / 0.4);
     border-radius: var(--radius-md);
-    background: rgb(from var(--base-graphite-900) r g b / 0.4);
-    overflow: hidden;
-    cursor: pointer;
     text-align: start;
+    background: rgb(from var(--base-graphite-900) r g b / 0.4);
+    cursor: pointer;
 }
 
 .clans-home__chart-rail-card:hover {
@@ -1429,26 +1426,25 @@
     inset-inline-start: var(--sp-2);
     padding: 0 var(--sp-1);
     border-radius: var(--radius-md);
-    background: rgb(from var(--base-graphite-900) r g b / 0.65);
     font-size: var(--fs-3xs);
     font-weight: var(--fw-semi);
     color: var(--base-gold-300);
+    background: rgb(from var(--base-graphite-900) r g b / 0.65);
     pointer-events: none;
 }
 
 .clans-home__chart-rail-card-desc {
     position: absolute;
+    inset-inline: var(--sp-2) var(--sp-2);
     inset-block-end: var(--sp-1);
-    inset-inline-start: var(--sp-2);
-    inset-inline-end: var(--sp-2);
     padding: 0 var(--sp-1);
     border-radius: var(--radius-md);
-    background: rgb(from var(--base-graphite-900) r g b / 0.65);
     font-size: var(--fs-3xs);
     color: var(--base-graphite-200);
-    pointer-events: none;
+    background: rgb(from var(--base-graphite-900) r g b / 0.65);
     opacity: 0;
     transition: opacity var(--dur-fast) var(--ease-out);
+    pointer-events: none;
 }
 
 .clans-home__chart-rail-card:hover .clans-home__chart-rail-card-desc {
@@ -1476,10 +1472,10 @@
 
 .clans-home__chart-empty {
     display: flex;
-    inline-size: 100%;
-    block-size: 100%;
     justify-content: center;
     align-items: center;
+    inline-size: 100%;
+    block-size: 100%;
     font-size: var(--fs-3xs);
     color: var(--base-graphite-400);
 }
@@ -1512,8 +1508,8 @@
     padding-inline: var(--sp-1);
     font-size: var(--fs-xs);
     font-weight: var(--fw-semi);
-    text-transform: uppercase;
     letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
     color: var(--base-gold-300);
 }
 
@@ -1532,14 +1528,14 @@
 
 .clans-home__chart-source-row {
     display: grid;
+    column-gap: var(--sp-2);
     grid-template-columns: auto 1fr;
     grid-template-rows: auto auto;
-    column-gap: var(--sp-2);
     padding: var(--sp-1) var(--sp-2);
     border: var(--sp-hairline) solid rgb(from var(--base-gold-500) r g b / 0.3);
     border-radius: var(--radius-md);
-    background: rgb(from var(--base-graphite-900) r g b / 0.4);
     text-align: start;
+    background: rgb(from var(--base-graphite-900) r g b / 0.4);
     cursor: pointer;
 }
 
@@ -1553,15 +1549,15 @@
 }
 
 .clans-home__chart-source-kind {
-    grid-row: 1 / span 2;
     align-self: center;
+    grid-row: 1 / span 2;
     padding: var(--sp-1) var(--sp-2);
     border-radius: var(--radius-md);
-    background: rgb(from var(--base-gold-500) r g b / 0.18);
-    color: var(--base-gold-300);
     font-size: var(--fs-3xs);
-    text-transform: uppercase;
     letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    color: var(--base-gold-300);
+    background: rgb(from var(--base-gold-500) r g b / 0.18);
 }
 
 .clans-home__chart-source-label {

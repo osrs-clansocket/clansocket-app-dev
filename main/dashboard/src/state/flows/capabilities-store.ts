@@ -1,6 +1,9 @@
 import { signal, type Signal } from "../../dom/factory";
 import { fetchCapabilities, type CapabilitySummary, type TriggerSummary } from "./flows-client.js";
-import { registerFieldsForTrigger, type ConditionField } from "../../shared/constants/clan-manage-discord/condition-field-list.js";
+import {
+    registerFieldsForTrigger,
+    type ConditionField,
+} from "../../shared/constants/clan-manage-discord/condition-field-list.js";
 import { humanize } from "./humanize.js";
 import { ensureFieldOperatorsLoaded } from "./field-operators-store.js";
 
@@ -63,7 +66,6 @@ async function fetchComponentKinds(): Promise<readonly ComponentKindDef[]> {
     }
 }
 
-
 function readFieldType(raw: Readonly<Record<string, unknown>>): string {
     const xType = raw["x-flow-type"];
     if (typeof xType === "string") return xType;
@@ -79,10 +81,7 @@ function readFormat(raw: Readonly<Record<string, unknown>>): string | undefined 
     return typeof format === "string" ? format : undefined;
 }
 
-function collectSchemaFields(
-    schema: Readonly<Record<string, unknown>>,
-    prefix: string,
-): readonly ConditionField[] {
+function collectSchemaFields(schema: Readonly<Record<string, unknown>>, prefix: string): readonly ConditionField[] {
     const result: ConditionField[] = [];
     const props = schema.properties;
     if (!props || typeof props !== "object") return result;
@@ -165,7 +164,9 @@ export function fieldTypeForScope(triggerId: string | null, field: string): stri
         for (const cap of capabilitiesSignal()) {
             const spec = cap.triggers[triggerId];
             if (!spec) continue;
-            const props = spec.payload_schema.properties as Readonly<Record<string, Readonly<Record<string, unknown>>>> | undefined;
+            const props = spec.payload_schema.properties as
+                | Readonly<Record<string, Readonly<Record<string, unknown>>>>
+                | undefined;
             const prop = props?.[fieldName];
             if (!prop) continue;
             const xType = prop["x-flow-type"];

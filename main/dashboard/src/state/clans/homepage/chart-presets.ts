@@ -114,9 +114,29 @@ function presetDoughnut(
 }
 
 const SKILL_ORDER: ReadonlyArray<string> = [
-    "attack", "strength", "defence", "ranged", "prayer", "magic", "runecraft", "construction",
-    "hitpoints", "agility", "herblore", "thieving", "crafting", "fletching", "slayer",
-    "hunter", "mining", "smithing", "fishing", "cooking", "firemaking", "woodcutting", "farming",
+    "attack",
+    "strength",
+    "defence",
+    "ranged",
+    "prayer",
+    "magic",
+    "runecraft",
+    "construction",
+    "hitpoints",
+    "agility",
+    "herblore",
+    "thieving",
+    "crafting",
+    "fletching",
+    "slayer",
+    "hunter",
+    "mining",
+    "smithing",
+    "fishing",
+    "cooking",
+    "firemaking",
+    "woodcutting",
+    "farming",
 ];
 
 const radarSkillsPreset: ChartPreset<"radar"> = {
@@ -175,10 +195,7 @@ const playerSkillXpHeatmap: ChartPreset<"heatmap"> = {
     buildSpec: (ctx) => buildHeatmap(ctx.heatmaps().get("player_skill_xp") ?? [], "XP"),
 };
 
-function buildTimeLineSpec(
-    points: ReadonlyArray<{ ts: number; v: number }>,
-    label: string,
-): TimeLineSpec | null {
+function buildTimeLineSpec(points: ReadonlyArray<{ ts: number; v: number }>, label: string): TimeLineSpec | null {
     if (points.length === 0) return null;
     return {
         data: {

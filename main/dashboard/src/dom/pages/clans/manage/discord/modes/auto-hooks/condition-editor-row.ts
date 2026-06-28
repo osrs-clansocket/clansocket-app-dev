@@ -49,7 +49,9 @@ function pickFieldType(ctx: RowContext): string | undefined {
 }
 
 function pickOpForField(fieldType: string | undefined, currentOp: string): { op: string; opts: SelectOption[] } {
-    const allowed = fieldType ? operatorsForFieldType(fieldType) : ["eq", "ne", "gt", "gte", "lt", "lte", "in", "not-in", "contains", "not-contains", "starts-with"];
+    const allowed = fieldType
+        ? operatorsForFieldType(fieldType)
+        : ["eq", "ne", "gt", "gte", "lt", "lte", "in", "not-in", "contains", "not-contains", "starts-with"];
     const opts = operatorOptions(allowed);
     const op = allowed.includes(currentOp) ? currentOp : (allowed[0] ?? "eq");
     return { op, opts };

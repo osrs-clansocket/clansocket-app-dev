@@ -87,12 +87,7 @@ function buildKeyLine(entry: VarEntry, ctx: HomepageContext): Instance {
     return div(baseProps([`${CHIP_CLASS}-line`]), [keySpan, valueSpan]);
 }
 
-function buildChip(
-    state: EditorState,
-    entry: VarEntry,
-    ctx: HomepageContext,
-    hint$: Signal<string>,
-): Instance {
+function buildChip(state: EditorState, entry: VarEntry, ctx: HomepageContext, hint$: Signal<string>): Instance {
     return div(
         {
             classes: [CHIP_CLASS],
@@ -132,10 +127,7 @@ function categoriesOf(entries: readonly VarEntry[]): string[] {
     return [...set];
 }
 
-function buildTabs(
-    entries$: Signal<VarEntry[]>,
-    activeCategory$: Signal<string>,
-): Instance {
+function buildTabs(entries$: Signal<VarEntry[]>, activeCategory$: Signal<string>): Instance {
     const tabs = div(baseProps([RAIL_TABS_CLASS]));
     tabs.trackDispose(
         effect(() => {

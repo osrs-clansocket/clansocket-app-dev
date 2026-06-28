@@ -5,10 +5,7 @@ const TABS_CLASS = "clans-home__chart-rail-tabs";
 const TAB_CLASS = "clans-home__chart-rail-tab";
 const TAB_ACTIVE_CLASS = "is-active";
 
-export function buildChartRailTabs(
-    categories: readonly string[],
-    activeCategory$: Signal<string>,
-): Instance {
+export function buildChartRailTabs(categories: readonly string[], activeCategory$: Signal<string>): Instance {
     const tabs = div(baseProps([TABS_CLASS]));
     for (const cat of categories) {
         const tab = button({

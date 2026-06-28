@@ -1,7 +1,4 @@
-import type {
-    FlowCardPlacement,
-    FlowMeta,
-} from "../../dom/pages/clans/manage/flow-builder/flow-card-types.js";
+import type { FlowCardPlacement, FlowMeta } from "../../dom/pages/clans/manage/flow-builder/flow-card-types.js";
 
 export function compactPlacements(placements: readonly FlowCardPlacement[]): readonly FlowCardPlacement[] {
     if (placements.length === 0) return placements;

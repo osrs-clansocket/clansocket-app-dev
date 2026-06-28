@@ -53,13 +53,15 @@ function pickerFor(format: string, placeholder: string): FormatPicker {
             for (const item of items) opts.push({ value: item.id, label: item.name });
             optionsSignal.set(opts);
         });
-        host.trackDispose(effect(() => {
-            const opts = optionsSignal();
-            const select = buildGlassSelect(`${format}-${ctx.fieldName}-${ctx.operationId ?? "op"}`, opts, value);
-            const hidden = select.el.querySelector<HTMLInputElement>("input[type='hidden']");
-            if (hidden) hidden.addEventListener("change", () => onChange(hidden.value));
-            host.setChildren(select);
-        }));
+        host.trackDispose(
+            effect(() => {
+                const opts = optionsSignal();
+                const select = buildGlassSelect(`${format}-${ctx.fieldName}-${ctx.operationId ?? "op"}`, opts, value);
+                const hidden = select.el.querySelector<HTMLInputElement>("input[type='hidden']");
+                if (hidden) hidden.addEventListener("change", () => onChange(hidden.value));
+                host.setChildren(select);
+            }),
+        );
         return host;
     };
 }

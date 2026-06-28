@@ -1,8 +1,10 @@
 import { div, effect, baseProps, gridCell, wireWheel, type Instance } from "../../../../factory";
 import { buildFlowCard } from "./flow-card.js";
 import { flowMetaSignal } from "../../../../../state/flow-builder/flow-store.js";
+import { buildConnectorOverlay } from "./connectors/connector-overlay.js";
 
 const GRID_CLASS = "clans-manage__flow-builder-grid";
+const CELLS_CONTAINER_CLASS = "clans-manage__flow-builder-cells";
 
 function gridDimensions(placements: ReturnType<typeof flowMetaSignal>["placements"]): {
     rows: number;
@@ -48,15 +50,21 @@ function attachWheelHorizontal(el: HTMLElement): void {
 export function buildFlowGrid(clanId: string): Instance<HTMLElement> {
     const host = div(baseProps([GRID_CLASS]));
     attachWheelHorizontal(host.el);
-    host.trackDispose(effect(() => {
-        const placements = flowMetaSignal().placements;
-        const dims = gridDimensions(placements);
-        host.el.style.gridTemplateColumns = `repeat(${dims.columns}, 26rem)`;
-        host.el.style.gridTemplateRows = `repeat(${dims.rows}, max-content)`;
-        const cells = placements.map((placement) =>
-            gridCell({ row: placement.row, col: placement.col }, [buildFlowCard(placement, clanId)]),
-        );
-        host.setChildren(...cells);
-    }));
+    const cells = div(baseProps([CELLS_CONTAINER_CLASS]));
+    const overlay = buildConnectorOverlay(host.el);
+    host.addChild(cells);
+    host.addChild(overlay.el);
+    host.trackDispose(
+        effect(() => {
+            const placements = flowMetaSignal().placements;
+            const dims = gridDimensions(placements);
+            host.el.style.gridTemplateColumns = `repeat(${dims.columns}, 26rem)`;
+            host.el.style.gridTemplateRows = `repeat(${dims.rows}, max-content)`;
+            const cellInsts = placements.map((placement) =>
+                gridCell({ row: placement.row, col: placement.col }, [buildFlowCard(placement, clanId)]),
+            );
+            cells.setChildren(...cellInsts);
+        }),
+    );
     return host;
 }

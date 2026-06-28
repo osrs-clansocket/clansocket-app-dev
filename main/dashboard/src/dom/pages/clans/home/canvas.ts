@@ -45,14 +45,15 @@ function buildCanvasShell(editor: EditorState | null): Instance {
         classes: [CANVAS_CLASS],
         context: null,
         meta: null,
-        onClick: editor === null
-            ? undefined
-            : {
-                handler: (e) => {
-                    if (e.target === canvas.el) editor.select(null);
-                },
-                raw: true,
-            },
+        onClick:
+            editor === null
+                ? undefined
+                : {
+                      handler: (e) => {
+                          if (e.target === canvas.el) editor.select(null);
+                      },
+                      raw: true,
+                  },
     });
     return canvas;
 }
@@ -82,8 +83,6 @@ export function buildCanvas(
         hosts: new Map<string, Instance>(),
         create: makeCreate(ctx, editor),
     };
-    canvas.trackDispose(
-        effect(() => runReconcile(reconcileCtx, orderForPaint(pickSource(editor, components$)))),
-    );
+    canvas.trackDispose(effect(() => runReconcile(reconcileCtx, orderForPaint(pickSource(editor, components$)))));
     return editor === null ? canvas : wrapForEditor(canvas, editor);
 }

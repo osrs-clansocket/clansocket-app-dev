@@ -83,11 +83,7 @@ function componentSnapTargets(c: HomepageComponent, axis: GuideAxis): readonly n
     return [c.canvasY, c.canvasY + c.canvasH / 2, c.canvasY + c.canvasH];
 }
 
-export function snapAxis(
-    axis: GuideAxis,
-    position: number,
-    components: ReadonlyArray<HomepageComponent>,
-): number {
+export function snapAxis(axis: GuideAxis, position: number, components: ReadonlyArray<HomepageComponent>): number {
     let bestPos = position;
     let bestDist = SNAP_THRESHOLD + 1;
     for (const c of components) {

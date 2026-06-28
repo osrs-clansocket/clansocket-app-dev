@@ -55,7 +55,7 @@ const OP_MAP: Readonly<Record<string, FilterOperator>> = {
 
 const SOURCE_PREFIX: Readonly<Record<FilterConditionSource, string>> = {
     "event-property": "ctx.event.",
-    "variable": "ctx.variables.",
+    variable: "ctx.variables.",
     "tracker-value": "ctx.trackers.",
     "entity-attribute": "entity.",
     "member-channel-opt-out": "entity.preferences.channel_opt_out.",
@@ -65,7 +65,9 @@ const SOURCE_PREFIX: Readonly<Record<FilterConditionSource, string>> = {
 
 const SOURCE_PREFIX_LONGEST_FIRST: readonly (readonly [FilterConditionSource, string])[] = (
     Object.entries(SOURCE_PREFIX) as (readonly [FilterConditionSource, string])[]
-).slice().sort((a, b) => b[1].length - a[1].length);
+)
+    .slice()
+    .sort((a, b) => b[1].length - a[1].length);
 
 function inferSource(field: string): FilterConditionSource {
     for (const [source, prefix] of SOURCE_PREFIX_LONGEST_FIRST) {

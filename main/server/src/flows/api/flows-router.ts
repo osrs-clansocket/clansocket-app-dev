@@ -119,8 +119,7 @@ function auditFlowAction(
             targetId: flowId,
             payload: { flowId, ...extra } as never,
         });
-    } catch {
-    }
+    } catch {}
 }
 
 const router = express.Router();
@@ -429,7 +428,9 @@ router.patch("/:clanId/:flowId", requireSiteAccount, (req, res) => {
             res.status(404).json({ error: "not found" });
             return;
         }
-        auditFlowAction(String(req.params.clanId), siteAccountId, "server:flow.updated", String(req.params.flowId), { flowName });
+        auditFlowAction(String(req.params.clanId), siteAccountId, "server:flow.updated", String(req.params.flowId), {
+            flowName,
+        });
         res.json({ flow_id: String(req.params.flowId) });
     } catch (err) {
         res.status(400).json({ error: (err as Error).message });
@@ -441,11 +442,9 @@ router.post("/:clanId/:flowId/enable", requireSiteAccount, (req, res) => {
     if (!siteAccountId) return;
     const enabled = req.body?.enabled === true ? 1 : 0;
     const db = clanFlowsDb(String(req.params.clanId));
-    const result = db.prepare("UPDATE clan_flows SET enabled = ?, updated_at = ? WHERE flow_id = ?").run(
-        enabled,
-        0,
-        String(req.params.flowId),
-    );
+    const result = db
+        .prepare("UPDATE clan_flows SET enabled = ?, updated_at = ? WHERE flow_id = ?")
+        .run(enabled, 0, String(req.params.flowId));
     if (result.changes === 0) {
         res.status(404).json({ error: "not found" });
         return;
@@ -467,9 +466,17 @@ router.post("/:clanId/:flowId/publish", requireSiteAccount, (req, res) => {
     try {
         const db = clanFlowsDb(String(req.params.clanId));
         const row = db
-            .prepare("SELECT flow_id, flow_name, definition_json, published_version, enabled FROM clan_flows WHERE flow_id = ?")
+            .prepare(
+                "SELECT flow_id, flow_name, definition_json, published_version, enabled FROM clan_flows WHERE flow_id = ?",
+            )
             .get(String(req.params.flowId)) as
-            | { flow_id: string; flow_name: string; definition_json: string; published_version: number | null; enabled: number }
+            | {
+                  flow_id: string;
+                  flow_name: string;
+                  definition_json: string;
+                  published_version: number | null;
+                  enabled: number;
+              }
             | undefined;
         if (!row) {
             res.status(404).json({ error: "not found" });

@@ -25,19 +25,21 @@ const TYPE_DISPATCH: Readonly<Record<string, (p: ControlProps) => Instance>> = {
     string: (p) => renderStringControl({ ...p, current: asString(p.current) }),
     number: (p) => renderNumberControl({ ...p, current: typeof p.current === "number" ? p.current : null }),
     integer: (p) => renderNumberControl({ ...p, current: typeof p.current === "number" ? p.current : null }),
-    boolean: (p) => renderBooleanControl({ fieldName: p.fieldName, current: asBoolean(p.current), onChange: p.onChange }),
-    object: (p) => renderObject({
-        schema: p.schema,
-        value: (p.current as Record<string, unknown> | null) ?? {},
-        onChange: p.onChange as (next: Record<string, unknown>) => void,
-        ctx: p.ctx,
-        nested: true,
-    }),
+    boolean: (p) =>
+        renderBooleanControl({ fieldName: p.fieldName, current: asBoolean(p.current), onChange: p.onChange }),
+    object: (p) =>
+        renderObject({
+            schema: p.schema,
+            value: (p.current as Record<string, unknown> | null) ?? {},
+            onChange: p.onChange as (next: Record<string, unknown>) => void,
+            ctx: p.ctx,
+            nested: true,
+        }),
 };
 
 function renderControl(p: ControlProps): Instance {
     const type = readType(p.schema);
-    const handler = type === null ? null : TYPE_DISPATCH[type] ?? null;
+    const handler = type === null ? null : (TYPE_DISPATCH[type] ?? null);
     return handler ? handler(p) : renderFallback(p);
 }
 

@@ -67,6 +67,13 @@ export interface FlowCardPlacement {
     readonly col: number;
 }
 
+export interface FlowEdge {
+    readonly id: string;
+    readonly from_node_id: string;
+    readonly from_handle_id: string;
+    readonly to_node_id: string;
+}
+
 export interface FlowMeta {
     readonly id: string;
     name: string;
@@ -74,6 +81,7 @@ export interface FlowMeta {
     loop: boolean;
     scheduleAtMs: number | null;
     placements: readonly FlowCardPlacement[];
+    edges: readonly FlowEdge[];
 }
 
 export const WAIT_UNIT_MS: Readonly<Record<WaitUnit, number>> = {

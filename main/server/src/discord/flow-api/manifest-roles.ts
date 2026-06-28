@@ -36,13 +36,21 @@ async function roleDelete(input: Readonly<Record<string, unknown>>, ctx: Operati
     return structuralEnqueueHandler("role.delete", "roleId", input, ctx, {});
 }
 
-async function roleSetPosition(input: Readonly<Record<string, unknown>>, ctx: OperationContext): Promise<OperationResult> {
+async function roleSetPosition(
+    input: Readonly<Record<string, unknown>>,
+    ctx: OperationContext,
+): Promise<OperationResult> {
     return structuralEnqueueHandler("role.set-position", "roleId", input, ctx, {
         position: typeof input.position === "number" ? input.position : 0,
     });
 }
 
-function roleOp(opId: string, tier: "live" | "manual", inputFields: FlowFieldList, handler: (i: Readonly<Record<string, unknown>>, c: OperationContext) => Promise<OperationResult>): void {
+function roleOp(
+    opId: string,
+    tier: "live" | "manual",
+    inputFields: FlowFieldList,
+    handler: (i: Readonly<Record<string, unknown>>, c: OperationContext) => Promise<OperationResult>,
+): void {
     registerOperation({
         capability: "discord",
         opId,
@@ -56,7 +64,30 @@ function roleOp(opId: string, tier: "live" | "manual", inputFields: FlowFieldLis
     });
 }
 
-roleOp("discord:roles.create", "live", [FIELD_GUILD, FIELD_NAME_100, FIELD_COLOR, FIELD_HOIST, FIELD_MENTIONABLE, FIELD_REASON], roleCreate);
-roleOp("discord:roles.update", "manual", [FIELD_GUILD, FIELD_ROLE, { ...FIELD_NAME_100, required: false }, FIELD_COLOR, FIELD_HOIST, FIELD_MENTIONABLE, FIELD_REASON], roleUpdate);
+roleOp(
+    "discord:roles.create",
+    "live",
+    [FIELD_GUILD, FIELD_NAME_100, FIELD_COLOR, FIELD_HOIST, FIELD_MENTIONABLE, FIELD_REASON],
+    roleCreate,
+);
+roleOp(
+    "discord:roles.update",
+    "manual",
+    [
+        FIELD_GUILD,
+        FIELD_ROLE,
+        { ...FIELD_NAME_100, required: false },
+        FIELD_COLOR,
+        FIELD_HOIST,
+        FIELD_MENTIONABLE,
+        FIELD_REASON,
+    ],
+    roleUpdate,
+);
 roleOp("discord:roles.delete", "manual", [FIELD_GUILD, FIELD_ROLE, FIELD_REASON], roleDelete);
-roleOp("discord:roles.set-position", "manual", [FIELD_GUILD, FIELD_ROLE, FIELD_POSITION, FIELD_REASON], roleSetPosition);
+roleOp(
+    "discord:roles.set-position",
+    "manual",
+    [FIELD_GUILD, FIELD_ROLE, FIELD_POSITION, FIELD_REASON],
+    roleSetPosition,
+);

@@ -41,10 +41,7 @@ function ctx(overrides: Partial<HomepageContext> = {}): HomepageContext {
 
 test("interpolates a live metric with int formatting", () => {
     const metricsMap = new Map<string, MetricValue>([["clan.npc_kc.kc.total", { value: 1234567, format: "int" }]]);
-    assert.equal(
-        interpolate("KC {{clan.npc_kc.kc.total}}", ctx({ metrics: () => metricsMap })),
-        "KC 1,234,567",
-    );
+    assert.equal(interpolate("KC {{clan.npc_kc.kc.total}}", ctx({ metrics: () => metricsMap })), "KC 1,234,567");
 });
 
 test("interpolates a live metric with gp formatting", () => {

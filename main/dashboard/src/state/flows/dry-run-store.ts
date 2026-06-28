@@ -23,9 +23,25 @@ export function clearDryRunTrace(): void {
     dryRunErrorSignal.set(null);
 }
 
+const DECISION_PRIORITY: Readonly<Record<DryRunStep["decision"], number>> = {
+    "would-fail": 4,
+    "would-fire": 3,
+    "would-pause": 2,
+    "would-skip": 1,
+};
+
 export function decisionForNode(nodeId: string): DryRunStep["decision"] | null {
     const trace = dryRunTraceSignal();
     if (!trace) return null;
-    const step = trace.steps.find((s) => s.node_id === nodeId);
-    return step ? step.decision : null;
+    let best: DryRunStep["decision"] | null = null;
+    let bestPriority = 0;
+    for (const step of trace.steps) {
+        if (step.node_id !== nodeId) continue;
+        const p = DECISION_PRIORITY[step.decision] ?? 0;
+        if (p > bestPriority) {
+            bestPriority = p;
+            best = step.decision;
+        }
+    }
+    return best;
 }

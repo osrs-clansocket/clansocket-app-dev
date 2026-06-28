@@ -59,15 +59,17 @@ export function buildFlowListRail(clanId: string): Instance<HTMLElement> {
     const listHost = div(baseProps([RAIL_ENTRIES_CLASS]));
     const live = flowsLiveFor(clanId);
     const root = div(baseProps([RAIL_CLASS]), [header, listHost]);
-    root.trackDispose(effect(() => {
-        const list = flowsListSignal();
-        const serverList = live.entries();
-        const activeId = flowMetaSignal().id;
-        const localIds = new Set(list.map((f) => f.id));
-        const serverOnly = serverList.filter((s) => !localIds.has(s.flow_id));
-        const localEntries = list.map((f) => buildEntry(f.name, f.id, activeId));
-        const serverEntries = serverOnly.map((s) => buildServerEntry(s.flow_name, s.flow_id, activeId));
-        listHost.setChildren(...localEntries, ...serverEntries);
-    }));
+    root.trackDispose(
+        effect(() => {
+            const list = flowsListSignal();
+            const serverList = live.entries();
+            const activeId = flowMetaSignal().id;
+            const localIds = new Set(list.map((f) => f.id));
+            const serverOnly = serverList.filter((s) => !localIds.has(s.flow_id));
+            const localEntries = list.map((f) => buildEntry(f.name, f.id, activeId));
+            const serverEntries = serverOnly.map((s) => buildServerEntry(s.flow_name, s.flow_id, activeId));
+            listHost.setChildren(...localEntries, ...serverEntries);
+        }),
+    );
     return root;
 }
