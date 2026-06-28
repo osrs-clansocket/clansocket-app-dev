@@ -71,16 +71,59 @@
     color: var(--base-graphite-300);
 }
 
+.clans-manage__flow-builder-grid-wrap {
+    display: flex;
+    flex-direction: column;
+    grid-area: grid;
+    min-inline-size: 0;
+    min-block-size: 0;
+    block-size: 100%;
+    overflow: hidden;
+}
+
+.clans-manage__flow-builder-hscroll {
+    flex: 0 0 auto;
+    block-size: var(--sp-3);
+    overflow-x: scroll;
+    overflow-y: hidden;
+    border-block-end: 0.0625rem solid var(--base-graphite-700);
+    background: var(--base-graphite-800);
+    scrollbar-color: var(--base-gold-500) var(--base-graphite-800);
+    scrollbar-width: thin;
+}
+
+.clans-manage__flow-builder-hscroll::-webkit-scrollbar {
+    height: var(--sp-3);
+}
+
+.clans-manage__flow-builder-hscroll::-webkit-scrollbar-track {
+    background: var(--base-graphite-800);
+}
+
+.clans-manage__flow-builder-hscroll::-webkit-scrollbar-thumb {
+    border-radius: var(--radius-md);
+    background: var(--base-gold-500);
+}
+
+.clans-manage__flow-builder-hscroll::-webkit-scrollbar-thumb:hover {
+    background: var(--base-gold-300);
+}
+
+.clans-manage__flow-builder-hscroll-inner {
+    block-size: 100%;
+}
+
 .clans-manage__flow-builder-grid {
     position: relative;
     display: grid;
+    flex: 1 1 auto;
     place-content: start start;
     gap: var(--sp-6);
-    grid-area: grid;
     grid-auto-rows: min-content;
     min-inline-size: 0;
     min-block-size: 0;
-    overflow: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
     padding: var(--sp-2);
 }
 
