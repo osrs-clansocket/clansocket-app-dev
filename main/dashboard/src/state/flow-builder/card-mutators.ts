@@ -78,6 +78,13 @@ function humanizeExit(cls: string): string {
     return spaced.map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(" ");
 }
 
+function pickExitPosition(fromRow: number, fromCol: number, exitIndex: number): { row: number; col: number } {
+    let row = fromRow + exitIndex;
+    const col = fromCol + 1;
+    while (isOccupied(row, col)) row += 1;
+    return { row, col };
+}
+
 export function openExitAndAdd(fromId: string, cls: string): void {
     const from = placementById(fromId);
     if (!from) return;
@@ -85,7 +92,7 @@ export function openExitAndAdd(fromId: string, cls: string): void {
     const action = from.config;
     const alreadyOpen = action.openExits.includes(cls);
     const handles = outputHandlesFor(action);
-    const handleIndex = alreadyOpen
+    const exitIndex = alreadyOpen
         ? handles.findIndex((h) => h.id === cls)
         : action.openExits.length;
     const placements = placementsCurrent().map((p) =>
@@ -95,7 +102,7 @@ export function openExitAndAdd(fromId: string, cls: string): void {
     );
     setPlacements(placements);
     const fresh = { ...defaultCard("action"), name: humanizeExit(cls) };
-    const { row, col } = pickPosition(from.row, from.col, Math.max(0, handleIndex));
+    const { row, col } = pickExitPosition(from.row, from.col, Math.max(0, exitIndex));
     const placement = { config: fresh, row, col };
     const edge = makeEdge(fromId, cls, fresh.id);
     setPlacementsAndEdges([...placementsCurrent(), placement], [...edgesCurrent(), edge]);
@@ -194,15 +201,52 @@ export function updateCard(id: string, patch: Readonly<Record<string, unknown>>)
     withPatched(id, patch);
 }
 
+function collectDownstreamReachable(rootId: string, allEdges: readonly FlowEdge[]): Set<string> {
+    const reachable = new Set<string>();
+    const queue: string[] = [rootId];
+    while (queue.length > 0) {
+        const current = queue.shift()!;
+        for (const edge of allEdges) {
+            if (edge.from_node_id !== current) continue;
+            if (reachable.has(edge.to_node_id)) continue;
+            reachable.add(edge.to_node_id);
+            queue.push(edge.to_node_id);
+        }
+    }
+    return reachable;
+}
+
 export function changeCardKind(id: string, kind: CardKind): void {
     const target = placementById(id);
     if (!target) return;
     const fresh = defaultCard(kind);
-    const placements = placementsCurrent().map((p) =>
-        p.config.id === id
-            ? { ...p, config: { ...fresh, id: target.config.id, name: target.config.name } as FlowCardConfig }
-            : p,
+    const downstream = collectDownstreamReachable(id, edgesCurrent());
+    const placements = placementsCurrent()
+        .filter((p) => !downstream.has(p.config.id))
+        .map((p) =>
+            p.config.id === id
+                ? { ...p, config: { ...fresh, id: target.config.id, name: target.config.name } as FlowCardConfig }
+                : p,
+        );
+    const edges = edgesCurrent().filter(
+        (e) => e.from_node_id !== id && !downstream.has(e.from_node_id) && !downstream.has(e.to_node_id),
     );
-    const edges = edgesCurrent().filter((e) => e.from_node_id !== id);
+    setPlacementsAndEdges(placements, edges);
+}
+
+export function changeActionOperation(id: string, patch: Readonly<Record<string, unknown>>): void {
+    const target = placementById(id);
+    if (!target) return;
+    if (target.config.kind !== "action") {
+        withPatched(id, patch);
+        return;
+    }
+    const downstream = collectDownstreamReachable(id, edgesCurrent());
+    const placements = placementsCurrent()
+        .filter((p) => !downstream.has(p.config.id))
+        .map((p) => (p.config.id === id ? { ...p, config: { ...p.config, ...patch } as FlowCardConfig } : p));
+    const edges = edgesCurrent().filter(
+        (e) => e.from_node_id !== id && !downstream.has(e.from_node_id) && !downstream.has(e.to_node_id),
+    );
     setPlacementsAndEdges(placements, edges);
 }

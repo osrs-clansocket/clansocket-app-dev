@@ -18,11 +18,12 @@ import { editName } from "../../../account/workflows/display-name-edit.js";
 import {
     addRight,
     addParallelSibling,
+    changeActionOperation,
+    changeCardKind,
     closeExitAndRemove,
     openExitAndAdd,
     removeCard,
     updateCard,
-    changeCardKind,
 } from "../../../../../state/flow-builder/card-mutators.js";
 import { flowMetaSignal } from "../../../../../state/flow-builder/flow-store.js";
 import {
@@ -203,7 +204,24 @@ function kindSwitcher(config: FlowCardConfig, placement: FlowCardPlacement): Ins
     const options = KIND_OPTIONS.filter((o) => o.value !== "trigger");
     const select = buildGlassSelect(`kind-${config.id}`, options, config.kind);
     const hidden = select.el.querySelector<HTMLInputElement>("input[type='hidden']");
-    if (hidden) hidden.addEventListener("change", () => changeCardKind(config.id, hidden.value as CardKind));
+    if (hidden)
+        hidden.addEventListener("change", () => {
+            const next = hidden.value as CardKind;
+            if (next === config.kind) return;
+            const perform = (): void => changeCardKind(config.id, next);
+            if (!hasDownstream(config.id)) {
+                perform();
+                return;
+            }
+            void confirmDestructiveSwap(
+                select,
+                `kind-swap-${config.id}`,
+                "confirm swapping card kind; downstream cards wired from this card will be discarded",
+            ).then((ok) => {
+                if (ok) perform();
+                else hidden.value = config.kind;
+            });
+        });
     return row("Kind", select);
 }
 
@@ -273,6 +291,21 @@ function capabilityFromOpId(opId: string): string {
     return colonIdx > 0 ? opId.slice(0, colonIdx) : CAPABILITY_FILTER_ALL;
 }
 
+function hasDownstream(cardId: string): boolean {
+    return flowMetaSignal().edges.some((e) => e.from_node_id === cardId);
+}
+
+async function confirmDestructiveSwap(host: Instance, group: string, message: string): Promise<boolean> {
+    return inlineConfirm(host, {
+        group,
+        cancelLabel: "Keep",
+        confirmLabel: "Swap & discard",
+        danger: true,
+        cancelContext: "keep the current selection and its downstream cards",
+        confirmContext: message,
+    });
+}
+
 function buildOperationSelect(config: ActionCardConfig): Instance {
     const filterSignal = signal<string>(capabilityFromOpId(config.operationId));
     const filterHost = div(baseProps([]));
@@ -286,7 +319,34 @@ function buildOperationSelect(config: ActionCardConfig): Instance {
             for (const cap of capabilities) filterOptions.push({ value: cap, label: cap });
             const filterSelect = buildGlassSelect(`op-filter-${config.id}`, filterOptions, filterSignal());
             const filterHidden = filterSelect.el.querySelector<HTMLInputElement>("input[type='hidden']");
-            if (filterHidden) filterHidden.addEventListener("change", () => filterSignal.set(filterHidden.value));
+            if (filterHidden)
+                filterHidden.addEventListener("change", () => {
+                    const next = filterHidden.value;
+                    const currentCap = capabilityFromOpId(config.operationId);
+                    const changesOp = config.operationId.length > 0 && next !== CAPABILITY_FILTER_ALL && next !== currentCap;
+                    const performSwap = (): void => {
+                        filterSignal.set(next);
+                        if (changesOp) {
+                            changeActionOperation(config.id, {
+                                operationId: "",
+                                inputValues: {},
+                                openExits: [],
+                            });
+                        }
+                    };
+                    if (!changesOp || !hasDownstream(config.id)) {
+                        performSwap();
+                        return;
+                    }
+                    void confirmDestructiveSwap(
+                        filterSelect,
+                        `op-swap-${config.id}`,
+                        "confirm swapping capability; downstream cards wired from this action will be discarded",
+                    ).then((ok) => {
+                        if (ok) performSwap();
+                        else filterHidden.value = filterSignal();
+                    });
+                });
             filterHost.setChildren(filterSelect);
         }),
     );
@@ -315,7 +375,19 @@ function buildOperationSelect(config: ActionCardConfig): Instance {
                     if (actionCardWasDefaultNamed(config.name, config.operationId)) {
                         patch.name = operationCardNameFor(next);
                     }
-                    updateCard(config.id, patch);
+                    const performSwap = (): void => changeActionOperation(config.id, patch);
+                    if (!hasDownstream(config.id)) {
+                        performSwap();
+                        return;
+                    }
+                    void confirmDestructiveSwap(
+                        select,
+                        `op-swap-${config.id}`,
+                        "confirm swapping operation; downstream cards wired from this action will be discarded",
+                    ).then((ok) => {
+                        if (ok) performSwap();
+                        else hidden.value = config.operationId;
+                    });
                 });
             opHost.setChildren(select);
         }),
@@ -604,9 +676,14 @@ function rightAdorner(placement: FlowCardPlacement): Instance | null {
     );
 }
 
+function hasCardBelowInSameCol(placement: FlowCardPlacement): boolean {
+    return flowMetaSignal().placements.some((p) => p.col === placement.col && p.row > placement.row);
+}
+
 function belowAdorner(placement: FlowCardPlacement): Instance | null {
     const config = placement.config;
     if (config.kind === "trigger") return null;
+    if (hasCardBelowInSameCol(placement)) return null;
     return button(
         {
             variant: BTN_VARIANT_BARE,
