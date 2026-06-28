@@ -2,6 +2,7 @@ import { effect } from "../../../../../factory";
 import { path, svg, type SvgInstance } from "../../../../../factory/content-ops/graphics/svg.js";
 import { flowMetaSignal } from "../../../../../../state/flow-builder/flow-store.js";
 import type { FlowEdge } from "../flow-card-types.js";
+import { rowColor } from "./row-color.js";
 
 const SVG_CLASS = "clans-manage__flow-builder-connectors";
 const PATH_CLASS = "clans-manage__flow-builder-connector-path";
@@ -53,12 +54,17 @@ function pathFor(source: Anchor, target: Anchor): string {
     return `M ${source.x} ${source.y} C ${c1x} ${source.y}, ${c2x} ${target.y}, ${target.x} ${target.y}`;
 }
 
-function buildEdgePath(edge: FlowEdge, boxes: Map<string, CardBox>): SvgInstance<SVGPathElement> | null {
+function buildEdgePath(edge: FlowEdge, boxes: Map<string, CardBox>, targetRow: number): SvgInstance<SVGPathElement> | null {
     const from = boxes.get(edge.from_node_id);
     const to = boxes.get(edge.to_node_id);
     if (!from || !to) return null;
     const d = pathFor(sourceAnchor(from), targetAnchor(to));
-    return path({ classes: [PATH_CLASS], d });
+    return path({ classes: [PATH_CLASS], d, stroke: rowColor(targetRow) });
+}
+
+function targetRowFor(meta: ReturnType<typeof flowMetaSignal>, edge: FlowEdge): number {
+    const target = meta.placements.find((p) => p.config.id === edge.to_node_id);
+    return target ? target.row : 0;
 }
 
 export function buildConnectorOverlay(scrollHost: HTMLElement): SvgInstance<SVGSVGElement> {
@@ -69,10 +75,10 @@ export function buildConnectorOverlay(scrollHost: HTMLElement): SvgInstance<SVGS
         const h = Math.max(scrollHost.scrollHeight, scrollHost.clientHeight, 1);
         overlay.el.style.width = `${w}px`;
         overlay.el.style.height = `${h}px`;
-        const edges = flowMetaSignal().edges;
+        const meta = flowMetaSignal();
         const boxes = readCardBoxes(scrollHost);
-        for (const edge of edges) {
-            const p = buildEdgePath(edge, boxes);
+        for (const edge of meta.edges) {
+            const p = buildEdgePath(edge, boxes, targetRowFor(meta, edge));
             if (p) overlay.addChild(p);
         }
     };

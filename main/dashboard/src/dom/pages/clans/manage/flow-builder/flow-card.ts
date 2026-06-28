@@ -36,6 +36,7 @@ import {
     fieldTypeForScope,
 } from "../../../../../state/flows/capabilities-store.js";
 import { schemaForm } from "./schema-form/index.js";
+import { rowColor } from "./connectors/row-color.js";
 import { dryRunTraceSignal, decisionForNode } from "../../../../../state/flows/dry-run-store.js";
 import {
     getValueOptions as readValueOptions,
@@ -435,7 +436,18 @@ function buildActionInputForm(config: ActionCardConfig, clanId: string): Instanc
     return host;
 }
 
+function targetRowForExit(fromId: string, cls: string): number | null {
+    const meta = flowMetaSignal();
+    const edge = meta.edges.find((e) => e.from_node_id === fromId && e.from_handle_id === cls);
+    if (!edge) return null;
+    const target = meta.placements.find((p) => p.config.id === edge.to_node_id);
+    return target ? target.row : null;
+}
+
 function buildExitToggle(config: ActionCardConfig, cls: string, isOpen: boolean): Instance {
+    const targetRow = isOpen ? targetRowForExit(config.id, cls) : null;
+    const color = targetRow !== null ? rowColor(targetRow) : null;
+    const style = isOpen && color ? `--flow-exit-color: ${color};` : "";
     return button({
         variant: BTN_VARIANT_BARE,
         classes: [EXIT_TOGGLE_CLASS, isOpen ? `${EXIT_TOGGLE_CLASS}--on` : `${EXIT_TOGGLE_CLASS}--off`],
@@ -445,6 +457,7 @@ function buildExitToggle(config: ActionCardConfig, cls: string, isOpen: boolean)
             ? `close the ${cls} exit and remove its downstream card`
             : `open the ${cls} exit and add a downstream card`,
         meta: ["action"],
+        style,
         onClick: () => {
             if (isOpen) closeExitAndRemove(config.id, cls);
             else openExitAndAdd(config.id, cls);
@@ -457,6 +470,7 @@ function buildExitsRow(config: ActionCardConfig): Instance {
     host.trackDispose(
         effect(() => {
             void capabilitiesSignal();
+            void flowMetaSignal();
             const op = lookupOperation(config.operationId);
             if (!op) {
                 host.setChildren();

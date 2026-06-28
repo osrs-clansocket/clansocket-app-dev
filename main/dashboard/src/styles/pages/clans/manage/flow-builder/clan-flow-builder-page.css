@@ -75,7 +75,7 @@
     position: relative;
     display: grid;
     place-content: start start;
-    gap: var(--sp-3);
+    gap: var(--sp-6);
     grid-area: grid;
     grid-auto-rows: min-content;
     min-inline-size: 0;
@@ -99,9 +99,8 @@
 
 .clans-manage__flow-builder-connector-path {
     fill: none;
-    stroke: var(--base-gold-300);
     stroke-linecap: round;
-    stroke-width: 3;
+    stroke-width: 0.1875rem;
 }
 
 .clans-manage__flow-builder-card-slot {
@@ -303,9 +302,9 @@
 }
 
 .clans-manage__flow-builder-card-exit-toggle--on {
-    border-color: var(--base-gold-500);
-    color: var(--base-gold-300);
-    background: rgb(from var(--base-gold-500) r g b / 0.15);
+    border-color: var(--flow-exit-color, var(--base-gold-500));
+    color: var(--flow-exit-color, var(--base-gold-300));
+    background: rgb(from var(--flow-exit-color, var(--base-gold-500)) r g b / 0.15);
 }
 
 .clans-manage__flow-builder-card-exit-toggle--off {
