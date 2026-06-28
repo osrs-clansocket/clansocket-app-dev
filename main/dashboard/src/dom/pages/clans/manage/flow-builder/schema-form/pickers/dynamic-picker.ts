@@ -17,15 +17,25 @@ const VALUE_SOURCE_CACHE = new AsyncMemoCache<string, readonly ValueSourceItem[]
 
 async function fetchValueSource(format: string, clanId: string): Promise<readonly ValueSourceItem[]> {
     const cacheKey = `${format}:${clanId.length > 0 ? clanId : "__static__"}`;
+    const cached = VALUE_SOURCE_CACHE.get(cacheKey);
+    if (cached !== undefined && cached.length > 0) return cached;
     return VALUE_SOURCE_CACHE.getOrLoad(cacheKey, async () => {
+        const params = new URLSearchParams({ format });
+        if (clanId.length > 0) params.set("clan_id", clanId);
+        const url = `/api/flows/value-sources?${params.toString()}`;
         try {
-            const params = new URLSearchParams({ format });
-            if (clanId.length > 0) params.set("clan_id", clanId);
-            const response = await fetch(`/api/flows/value-sources?${params.toString()}`);
-            if (!response.ok) return [];
-            const body = (await response.json()) as { items: readonly ValueSourceItem[] };
-            return body.items;
-        } catch {
+            const response = await fetch(url);
+            if (!response.ok) {
+                const text = await response.text().catch(() => "");
+                console.error(`[flow-picker] ${url} ${response.status}: ${text}`);
+                return [];
+            }
+            const body = (await response.json()) as { items?: readonly ValueSourceItem[] };
+            const items = body.items ?? [];
+            if (items.length === 0) console.warn(`[flow-picker] ${format} returned 0 items for clan ${clanId}`);
+            return items;
+        } catch (err) {
+            console.error(`[flow-picker] ${url} threw:`, err);
             return [];
         }
     });

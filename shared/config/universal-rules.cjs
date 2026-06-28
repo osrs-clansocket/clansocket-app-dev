@@ -54,6 +54,7 @@ const requireEnvelopeFieldsNotRedeclared = require("./eslint-rules/require-envel
 const requireFieldOperatorsBinding = require("./eslint-rules/require-field-operators-binding.cjs");
 const noConditionValueBypass = require("./eslint-rules/no-condition-value-bypass.cjs");
 const noCoerceFlowTypeWithoutXflow = require("./eslint-rules/no-coerce-flow-type-without-xflow.cjs");
+const routeNeedsAuthMiddleware = require("./eslint-rules/route-needs-auth-middleware.cjs");
 
 // session-added rules
 const aggregator = require("./eslint-rules/no-aggregator-god-class.cjs");
@@ -136,6 +137,7 @@ const rules = {
     "require-field-operators-binding": requireFieldOperatorsBinding,
     "no-condition-value-bypass": noConditionValueBypass,
     "no-coerce-flow-type-without-xflow": noCoerceFlowTypeWithoutXflow,
+    "route-needs-auth-middleware": routeNeedsAuthMiddleware,
     "no-aggregator-god-class": aggregator,
     "no-prepare-in-loop": prepareInLoop,
     "no-await-in-loop": awaitInLoop,
@@ -218,6 +220,7 @@ const severities = {
     "lvi/require-field-operators-binding": "error",
     "lvi/no-condition-value-bypass": "error",
     "lvi/no-coerce-flow-type-without-xflow": "error",
+    "lvi/route-needs-auth-middleware": "error",
     "lvi/no-aggregator-god-class": "error",
     "lvi/no-prepare-in-loop": "error",
     "lvi/no-await-in-loop": "error",

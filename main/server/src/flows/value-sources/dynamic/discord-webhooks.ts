@@ -5,6 +5,7 @@ interface WebhookRow {
     webhook_id: string;
     name: string | null;
     channel_id: string;
+    channel_name: string | null;
 }
 
 registerValueSource({
@@ -12,7 +13,10 @@ registerValueSource({
     label: "Discord webhooks",
     fetch: (clanId) =>
         queryAcrossGuilds<WebhookRow>(clanId, {
-            sql: "SELECT webhook_id, name, channel_id FROM discord_webhooks ORDER BY name",
-            mapRow: (row) => ({ id: row.webhook_id, name: row.name ?? row.webhook_id }),
+            sql: "SELECT webhook_id, name, channel_id, channel_name FROM discord_webhooks ORDER BY name",
+            mapRow: (row, ctx) => {
+                const label = row.name ?? row.channel_name ?? row.webhook_id;
+                return { id: row.webhook_id, name: `${ctx.guildName} · ${label}` };
+            },
         }),
 });

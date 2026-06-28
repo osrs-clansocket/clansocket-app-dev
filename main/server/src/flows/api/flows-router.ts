@@ -21,6 +21,7 @@ import { nextFireAt } from "../engine/dispatchers/cron-evaluator.js";
 import { dispatchEventSafe } from "../engine/dispatchers/event-router.js";
 import { byGuildId } from "../../database/discord/servers/by-guild-id.js";
 import { authenticate } from "../../api/middleware.js";
+import { requireSiteAccount } from "../../auth/site-middleware.js";
 import "../_bootstrap.js";
 
 const SCHEDULE_UPSERT_SQL = `INSERT INTO clan_flow_schedules (
@@ -219,7 +220,7 @@ router.get("/entity-attributes", (_req, res) => {
     res.json({ attributes: attrs });
 });
 
-router.get("/value-sources", async (req, res) => {
+router.get("/value-sources", requireSiteAccount, async (req, res) => {
     const format = String(req.query.format ?? "");
     const clanId = String(req.query.clan_id ?? "");
     if (format.length === 0) {
@@ -254,7 +255,7 @@ router.get("/value-sources", async (req, res) => {
     }
 });
 
-router.get("/value-options", (req, res) => {
+router.get("/value-options", requireSiteAccount, (req, res) => {
     const scope = String(req.query.scope ?? "") as ValueOptionsScope;
     const field = String(req.query.field ?? "");
     const clanId = String(req.query.clan_id ?? "");
@@ -344,8 +345,8 @@ router.post("/dry-run-direct", async (req, res) => {
     }
 });
 
-router.get("/:clanId", (req, res) => {
-    const db = clanFlowsDb(req.params.clanId);
+router.get("/:clanId", requireSiteAccount, (req, res) => {
+    const db = clanFlowsDb(String(req.params.clanId));
     const rows = db
         .prepare(
             "SELECT flow_id, flow_name, enabled, archived, published_version, created_at, updated_at FROM clan_flows ORDER BY updated_at DESC",
@@ -354,13 +355,13 @@ router.get("/:clanId", (req, res) => {
     res.json({ flows: rows });
 });
 
-router.get("/:clanId/:flowId", (req, res) => {
-    const db = clanFlowsDb(req.params.clanId);
+router.get("/:clanId/:flowId", requireSiteAccount, (req, res) => {
+    const db = clanFlowsDb(String(req.params.clanId));
     const row = db
         .prepare(
             "SELECT flow_id, flow_name, definition_json, enabled, archived, published_version, created_at, updated_at FROM clan_flows WHERE flow_id = ?",
         )
-        .get(req.params.flowId) as Record<string, unknown> | undefined;
+        .get(String(req.params.flowId)) as Record<string, unknown> | undefined;
     if (!row) {
         res.status(404).json({ error: "not found" });
         return;
@@ -368,8 +369,8 @@ router.get("/:clanId/:flowId", (req, res) => {
     res.json({ flow: row });
 });
 
-router.post("/:clanId", (req, res) => {
-    const siteAccountId = requireFlowManager(req, res, req.params.clanId);
+router.post("/:clanId", requireSiteAccount, (req, res) => {
+    const siteAccountId = requireFlowManager(req, res, String(req.params.clanId));
     if (!siteAccountId) return;
     try {
         const definition = parseFlowDefinition(req.body?.definition);
@@ -385,18 +386,18 @@ router.post("/:clanId", (req, res) => {
             return;
         }
         const now = 0;
-        const db = clanFlowsDb(req.params.clanId);
+        const db = clanFlowsDb(String(req.params.clanId));
         const existing = db.prepare("SELECT flow_id FROM clan_flows WHERE flow_id = ?").get(flowId);
         if (existing) {
             db.prepare(
                 "UPDATE clan_flows SET flow_name = ?, definition_json = ?, updated_at = ? WHERE flow_id = ?",
             ).run(flowName, JSON.stringify(definition), now, flowId);
-            auditFlowAction(req.params.clanId, siteAccountId, "server:flow.updated", flowId, { flowName });
+            auditFlowAction(String(req.params.clanId), siteAccountId, "server:flow.updated", flowId, { flowName });
         } else {
             db.prepare(
                 "INSERT INTO clan_flows (flow_id, flow_name, definition_json, enabled, archived, created_at, updated_at) VALUES (?, ?, ?, 0, 0, ?, ?)",
             ).run(flowId, flowName, JSON.stringify(definition), now, now);
-            auditFlowAction(req.params.clanId, siteAccountId, "server:flow.created", flowId, { flowName });
+            auditFlowAction(String(req.params.clanId), siteAccountId, "server:flow.created", flowId, { flowName });
         }
         res.status(201).json({ flow_id: flowId });
     } catch (err) {
@@ -404,8 +405,8 @@ router.post("/:clanId", (req, res) => {
     }
 });
 
-router.patch("/:clanId/:flowId", (req, res) => {
-    const siteAccountId = requireFlowManager(req, res, req.params.clanId);
+router.patch("/:clanId/:flowId", requireSiteAccount, (req, res) => {
+    const siteAccountId = requireFlowManager(req, res, String(req.params.clanId));
     if (!siteAccountId) return;
     try {
         const definition = parseFlowDefinition(req.body?.definition);
@@ -420,54 +421,54 @@ router.patch("/:clanId/:flowId", (req, res) => {
             return;
         }
         const now = 0;
-        const db = clanFlowsDb(req.params.clanId);
+        const db = clanFlowsDb(String(req.params.clanId));
         const result = db
             .prepare("UPDATE clan_flows SET flow_name = ?, definition_json = ?, updated_at = ? WHERE flow_id = ?")
-            .run(flowName, JSON.stringify(definition), now, req.params.flowId);
+            .run(flowName, JSON.stringify(definition), now, String(req.params.flowId));
         if (result.changes === 0) {
             res.status(404).json({ error: "not found" });
             return;
         }
-        auditFlowAction(req.params.clanId, siteAccountId, "server:flow.updated", req.params.flowId, { flowName });
-        res.json({ flow_id: req.params.flowId });
+        auditFlowAction(String(req.params.clanId), siteAccountId, "server:flow.updated", String(req.params.flowId), { flowName });
+        res.json({ flow_id: String(req.params.flowId) });
     } catch (err) {
         res.status(400).json({ error: (err as Error).message });
     }
 });
 
-router.post("/:clanId/:flowId/enable", (req, res) => {
-    const siteAccountId = requireFlowManager(req, res, req.params.clanId);
+router.post("/:clanId/:flowId/enable", requireSiteAccount, (req, res) => {
+    const siteAccountId = requireFlowManager(req, res, String(req.params.clanId));
     if (!siteAccountId) return;
     const enabled = req.body?.enabled === true ? 1 : 0;
-    const db = clanFlowsDb(req.params.clanId);
+    const db = clanFlowsDb(String(req.params.clanId));
     const result = db.prepare("UPDATE clan_flows SET enabled = ?, updated_at = ? WHERE flow_id = ?").run(
         enabled,
         0,
-        req.params.flowId,
+        String(req.params.flowId),
     );
     if (result.changes === 0) {
         res.status(404).json({ error: "not found" });
         return;
     }
-    db.prepare("UPDATE clan_flow_schedules SET enabled = ? WHERE flow_id = ?").run(enabled, req.params.flowId);
-    db.prepare("UPDATE clan_flow_loops SET enabled = ? WHERE flow_id = ?").run(enabled, req.params.flowId);
+    db.prepare("UPDATE clan_flow_schedules SET enabled = ? WHERE flow_id = ?").run(enabled, String(req.params.flowId));
+    db.prepare("UPDATE clan_flow_loops SET enabled = ? WHERE flow_id = ?").run(enabled, String(req.params.flowId));
     auditFlowAction(
-        req.params.clanId,
+        String(req.params.clanId),
         siteAccountId,
         enabled === 1 ? "server:flow.enabled" : "server:flow.disabled",
-        req.params.flowId,
+        String(req.params.flowId),
     );
-    res.json({ flow_id: req.params.flowId, enabled: enabled === 1 });
+    res.json({ flow_id: String(req.params.flowId), enabled: enabled === 1 });
 });
 
-router.post("/:clanId/:flowId/publish", (req, res) => {
-    const siteAccountId = requireFlowManager(req, res, req.params.clanId);
+router.post("/:clanId/:flowId/publish", requireSiteAccount, (req, res) => {
+    const siteAccountId = requireFlowManager(req, res, String(req.params.clanId));
     if (!siteAccountId) return;
     try {
-        const db = clanFlowsDb(req.params.clanId);
+        const db = clanFlowsDb(String(req.params.clanId));
         const row = db
             .prepare("SELECT flow_id, flow_name, definition_json, published_version, enabled FROM clan_flows WHERE flow_id = ?")
-            .get(req.params.flowId) as
+            .get(String(req.params.flowId)) as
             | { flow_id: string; flow_name: string; definition_json: string; published_version: number | null; enabled: number }
             | undefined;
         if (!row) {
@@ -489,7 +490,7 @@ router.post("/:clanId/:flowId/publish", (req, res) => {
         if (definition.trigger_type === "schedule") {
             db.prepare("DELETE FROM clan_flow_loops WHERE flow_id = ?").run(row.flow_id);
             upsertScheduleRow(
-                req.params.clanId,
+                String(req.params.clanId),
                 row.flow_id,
                 row.flow_name,
                 enabledForRow,
@@ -498,7 +499,7 @@ router.post("/:clanId/:flowId/publish", (req, res) => {
         } else if (definition.trigger_type === "loop") {
             db.prepare("DELETE FROM clan_flow_schedules WHERE flow_id = ?").run(row.flow_id);
             upsertLoopRow(
-                req.params.clanId,
+                String(req.params.clanId),
                 row.flow_id,
                 row.flow_name,
                 enabledForRow,
@@ -508,7 +509,7 @@ router.post("/:clanId/:flowId/publish", (req, res) => {
             db.prepare("DELETE FROM clan_flow_schedules WHERE flow_id = ?").run(row.flow_id);
             db.prepare("DELETE FROM clan_flow_loops WHERE flow_id = ?").run(row.flow_id);
         }
-        auditFlowAction(req.params.clanId, siteAccountId, "server:flow.published", row.flow_id, {
+        auditFlowAction(String(req.params.clanId), siteAccountId, "server:flow.published", row.flow_id, {
             flowName: row.flow_name,
             version: nextVersion,
         });
@@ -518,29 +519,29 @@ router.post("/:clanId/:flowId/publish", (req, res) => {
     }
 });
 
-router.delete("/:clanId/:flowId", (req, res) => {
-    const siteAccountId = requireFlowManager(req, res, req.params.clanId);
+router.delete("/:clanId/:flowId", requireSiteAccount, (req, res) => {
+    const siteAccountId = requireFlowManager(req, res, String(req.params.clanId));
     if (!siteAccountId) return;
-    const db = clanFlowsDb(req.params.clanId);
-    const result = db.prepare("UPDATE clan_flows SET archived = 1 WHERE flow_id = ?").run(req.params.flowId);
+    const db = clanFlowsDb(String(req.params.clanId));
+    const result = db.prepare("UPDATE clan_flows SET archived = 1 WHERE flow_id = ?").run(String(req.params.flowId));
     if (result.changes === 0) {
         res.status(404).json({ error: "not found" });
         return;
     }
-    db.prepare("DELETE FROM clan_flow_schedules WHERE flow_id = ?").run(req.params.flowId);
-    db.prepare("DELETE FROM clan_flow_loops WHERE flow_id = ?").run(req.params.flowId);
-    auditFlowAction(req.params.clanId, siteAccountId, "server:flow.archived", req.params.flowId);
+    db.prepare("DELETE FROM clan_flow_schedules WHERE flow_id = ?").run(String(req.params.flowId));
+    db.prepare("DELETE FROM clan_flow_loops WHERE flow_id = ?").run(String(req.params.flowId));
+    auditFlowAction(String(req.params.clanId), siteAccountId, "server:flow.archived", String(req.params.flowId));
     res.status(204).end();
 });
 
-router.get("/:clanId/review-queue", (req, res) => {
-    const rows = listPendingReviews(req.params.clanId);
+router.get("/:clanId/review-queue", requireSiteAccount, (req, res) => {
+    const rows = listPendingReviews(String(req.params.clanId));
     res.json({ reviews: rows });
 });
 
-router.post("/:clanId/review-queue/:id/approve", (req, res) => {
+router.post("/:clanId/review-queue/:id/approve", requireSiteAccount, (req, res) => {
     const ok = approveReview(
-        req.params.clanId,
+        String(req.params.clanId),
         Number(req.params.id),
         { accountHash: null, rsn: null, reason: req.body?.reason ?? null },
         0,
@@ -548,9 +549,9 @@ router.post("/:clanId/review-queue/:id/approve", (req, res) => {
     res.json({ ok });
 });
 
-router.post("/:clanId/review-queue/:id/cancel", (req, res) => {
+router.post("/:clanId/review-queue/:id/cancel", requireSiteAccount, (req, res) => {
     const ok = cancelReview(
-        req.params.clanId,
+        String(req.params.clanId),
         Number(req.params.id),
         { accountHash: null, rsn: null, reason: req.body?.reason ?? null },
         0,
@@ -558,12 +559,12 @@ router.post("/:clanId/review-queue/:id/cancel", (req, res) => {
     res.json({ ok });
 });
 
-router.post("/:clanId/:flowId/dry-run", async (req, res) => {
+router.post("/:clanId/:flowId/dry-run", requireSiteAccount, async (req, res) => {
     try {
-        const db = clanFlowsDb(req.params.clanId);
+        const db = clanFlowsDb(String(req.params.clanId));
         const row = db
             .prepare("SELECT flow_id, flow_name, definition_json, published_version FROM clan_flows WHERE flow_id = ?")
-            .get(req.params.flowId) as
+            .get(String(req.params.flowId)) as
             | { flow_id: string; flow_name: string; definition_json: string; published_version: number | null }
             | undefined;
         if (!row) {
@@ -572,7 +573,7 @@ router.post("/:clanId/:flowId/dry-run", async (req, res) => {
         }
         const definition = parseFlowDefinition(JSON.parse(row.definition_json));
         const trace = await runDryRun({
-            clanId: req.params.clanId,
+            clanId: String(req.params.clanId),
             flowId: row.flow_id,
             flowName: row.flow_name,
             flowVersion: row.published_version ?? 0,

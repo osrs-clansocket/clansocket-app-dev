@@ -13,6 +13,9 @@ registerValueSource({
     fetch: (clanId) =>
         queryAcrossGuilds<MemberRow>(clanId, {
             sql: "SELECT user_id, name, display_name FROM discord_members WHERE is_bot = 0 ORDER BY name",
-            mapRow: (row) => ({ id: row.user_id, name: row.display_name ?? row.name }),
+            mapRow: (row, ctx) => {
+                const label = row.display_name ?? row.name;
+                return { id: row.user_id, name: `${ctx.guildName} · ${label}` };
+            },
         }),
 });

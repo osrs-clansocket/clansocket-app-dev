@@ -12,6 +12,9 @@ registerValueSource({
     fetch: (clanId) =>
         queryAcrossGuilds<RoleRow>(clanId, {
             sql: "SELECT role_id, name FROM discord_roles WHERE managed = 0 ORDER BY position DESC",
-            mapRow: (row) => ({ id: row.role_id, name: row.name }),
+            mapRow: (row, ctx) => ({
+                id: row.role_id,
+                name: `${ctx.guildName} · ${row.name}`,
+            }),
         }),
 });
