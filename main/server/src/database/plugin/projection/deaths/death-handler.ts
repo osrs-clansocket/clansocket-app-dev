@@ -5,6 +5,8 @@ import type { PlayerIdentity, SpatialColumns } from "../projection-utils.js";
 import { flatWhere, parseCause, parseRespawn } from "./death-parsers.js";
 import { insertLostItem, readLostItems } from "./lost-items.js";
 import type { DeathCause, DeathInsertArgs } from "./death-types.js";
+import { EVENT_DEATH } from "../../../../plugin-api/event-types.js";
+import { registerPluginEvent } from "../../../../flows/registries/plugin-event-registry.js";
 
 const INSERT_DEATH_SQL = `INSERT INTO plugin_deaths
     (account_hash, rsn, session_id, session_seq, event_received_at,
@@ -91,3 +93,15 @@ export function handleDeath(ctx: HandlerCtx): void {
         for (const item of lostItems) insertLostItem(insertLost, deathId, item);
     })();
 }
+
+registerPluginEvent({
+    eventType: EVENT_DEATH,
+    routing: "current-state",
+    handler: handleDeath,
+    payloadFields: [
+        { name: "causeKind", type: "string", sqlTable: "plugin_deaths", sqlColumn: "cause_kind" },
+        { name: "causeName", type: "string", sqlTable: "plugin_deaths", sqlColumn: "cause_name" },
+        { name: "causeCategory", type: "string", sqlTable: "plugin_deaths", sqlColumn: "cause_category" },
+        { name: "hpBefore", type: "integer" },
+    ],
+});

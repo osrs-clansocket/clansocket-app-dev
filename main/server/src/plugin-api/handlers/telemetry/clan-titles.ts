@@ -5,6 +5,18 @@ import { logPluginError, logPluginEvent } from "../../logger/index.js";
 import { isTelemetryAllowed, rejectUnauthed } from "../../session/telemetry-gate.js";
 import type { PluginClientMessage } from "../../types/index.js";
 import type { DispatchContext } from "../dispatch-types.js";
+import { registerTrigger } from "../../../flows/registries/trigger-registry.js";
+
+registerTrigger({
+    capability: "plugin",
+    triggerId: EVENT_CLAN_TITLES_SNAPSHOT,
+    eventSource: `plugin.telemetry.${EVENT_CLAN_TITLES_SNAPSHOT}`,
+    routing: "event",
+    payloadFields: [
+        { name: "clanName", type: "string" },
+        { name: "titles", type: "string" },
+    ],
+});
 
 type ClanTitlesMsg = Extract<PluginClientMessage, { type: "clan_titles_snapshot" }>;
 

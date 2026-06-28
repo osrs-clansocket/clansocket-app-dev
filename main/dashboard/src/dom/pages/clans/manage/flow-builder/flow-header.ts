@@ -12,15 +12,13 @@ import {
 import { buildGlassCheck } from "../../../../forms/glass/inputs/glass-check.js";
 import { glassDate } from "../../../../forms/glass/inputs/date/index.js";
 import { glassInput } from "../../../../forms/glass/inputs/glass-input.js";
+import { flowMetaSignal, persistCurrent, saveToServer } from "../../../../../state/flow-builder/flow-store.js";
 import {
-    flowMetaSignal,
     setFlowName,
     setFlowEnabled,
     setFlowLoop,
-    setFlowScheduleAtMs,
-    persistCurrentToList,
-    saveCurrentToServer,
-} from "./flow-card-state.js";
+    setScheduleMs,
+} from "../../../../../state/flow-builder/flow-meta-setters.js";
 import { publishFlow, setFlowEnabledOnServer } from "../../../../../state/flows/flows-client.js";
 import { runDryRunForCurrent, dryRunErrorSignal } from "../../../../../state/flows/dry-run-store.js";
 
@@ -49,12 +47,13 @@ function buildNameField(): Instance {
         autocomplete: "off",
         onInput: (e) => setFlowName((e.target as HTMLInputElement).value),
     });
-    effect(() => {
+    const host = div(baseProps([SEGMENT_CLASS]), [span(textProps([LABEL_CLASS], "Name")), inputEl]);
+    host.trackDispose(effect(() => {
         const name = flowMetaSignal().name;
         const el = inputEl.el as HTMLInputElement;
         if (el.value !== name) el.value = name;
-    });
-    return div(baseProps([SEGMENT_CLASS]), [span(textProps([LABEL_CLASS], "Name")), inputEl]);
+    }));
+    return host;
 }
 
 function buildEnabledToggle(clanId: string): Instance {
@@ -85,7 +84,7 @@ function buildScheduleField(): Instance {
         name: "flow-schedule",
         value: msToIsoDate(flowMetaSignal().scheduleAtMs),
         placeholder: "pick a date",
-        onChange: (iso) => setFlowScheduleAtMs(isoDateToMs(iso)),
+        onChange: (iso) => setScheduleMs(isoDateToMs(iso)),
     });
     return div(baseProps([SEGMENT_CLASS]), [span(textProps([LABEL_CLASS], "Schedule")), picker]);
 }
@@ -97,7 +96,7 @@ function buildSaveButton(clanId: string): Instance {
         context: "save the current flow draft to the server",
         meta: ["action", "data"],
         onClick: () => {
-            void saveCurrentToServer(clanId);
+            void saveToServer(clanId);
         },
     });
 }
@@ -109,12 +108,12 @@ function buildPublishButton(clanId: string): Instance {
         context: "publish this flow",
         meta: ["action", "data"],
         onClick: async () => {
-            const saved = await saveCurrentToServer(clanId);
+            const saved = await saveToServer(clanId);
             if (!saved.ok) return;
             try {
                 await publishFlow(clanId, flowMetaSignal().id);
             } catch {
-                persistCurrentToList();
+                persistCurrent();
             }
         },
     });

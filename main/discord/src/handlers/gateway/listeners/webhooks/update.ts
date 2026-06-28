@@ -6,7 +6,6 @@ import { webhookGuard } from "../../specs/selectors-guards.js";
 
 registerListener({
     event: Events.WebhooksUpdate,
-    triggerId: "discord:webhooks.updated",
     selectEntity: webhookGuard,
     buildPayload: pWebhook,
     persist: syncWebhooksChannel,

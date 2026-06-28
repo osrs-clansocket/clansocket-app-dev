@@ -1,46 +1,15 @@
-import type {
-    JSONSchema,
-    OperationContext,
-    OperationResult,
-    OperationSpec,
-} from "../../flows/registries/registry-types.js";
+import { registerOperation } from "../../flows/registries/operation-registry.js";
+import type { OperationContext, OperationResult } from "../../flows/registries/registry-types.js";
+import { TARGET_KIND_STRUCTURAL_MUTATION, enqueue, readString } from "./manifest-shared.js";
 import {
-    ENQUEUE_RESULT_SCHEMA,
-    TARGET_KIND_STRUCTURAL_MUTATION,
-    enqueue,
-    readString,
-} from "./manifest-shared.js";
-import { DISCORD_CHANNEL_TYPE_LABELS, DISCORD_CHANNEL_TYPE_VALUES } from "./schema-enums.js";
+    FIELD_GUILD,
+    FIELD_NAME_100,
+    FIELD_PARENT_CHANNEL,
+    FIELD_POSITION_OPTIONAL,
+    FIELD_TOPIC,
+} from "./manifest-field-primitives.js";
 
-const CHANNEL_CREATE_INPUT_SCHEMA: JSONSchema = {
-    type: "object",
-    required: ["guildId", "name", "type"],
-    additionalProperties: false,
-    properties: {
-        guildId: { type: "string", format: "discord-guild-id" },
-        name: { type: "string", minLength: 1, maxLength: 100 },
-        type: {
-            type: "integer",
-            enum: DISCORD_CHANNEL_TYPE_VALUES as number[],
-            enumLabels: DISCORD_CHANNEL_TYPE_LABELS as string[],
-        },
-        topic: { type: "string", maxLength: 1024 },
-        bitrate: { type: "integer" },
-        user_limit: { type: "integer" },
-        position: { type: "integer" },
-        parent_id: { type: "string", format: "discord-channel-id" },
-        nsfw: { type: "boolean" },
-        rate_limit_per_user: { type: "integer" },
-    },
-};
-
-const CHANNEL_OP_RESULT_CLASSES: readonly string[] = [
-    "sent",
-    "rate_limit",
-    "permission_denied",
-    "channel_not_found",
-    "bot_missing_in_guild",
-];
+import { MESSAGE_OP_RESULT_CLASSES as CHANNEL_OP_RESULT_CLASSES } from "./result-classes.js";
 
 async function channelCreate(input: Readonly<Record<string, unknown>>, ctx: OperationContext): Promise<OperationResult> {
     const guildId = readString(input, "guildId");
@@ -67,10 +36,24 @@ async function channelCreate(input: Readonly<Record<string, unknown>>, ctx: Oper
     return { result_class: "sent", outputs: { queueId } };
 }
 
-const channelCreateOp: OperationSpec = {
+registerOperation({
+    capability: "discord",
+    opId: "discord:channels.create",
     safety_tier: "live",
-    input_schema: CHANNEL_CREATE_INPUT_SCHEMA,
-    output_schema: ENQUEUE_RESULT_SCHEMA,
+    inputFields: [
+        FIELD_GUILD,
+        FIELD_NAME_100,
+        { name: "type", type: "channel-type", valueSourceRef: "discord-channel-type", required: true },
+        FIELD_TOPIC,
+        { name: "bitrate", type: "integer" },
+        { name: "user_limit", type: "integer" },
+        FIELD_POSITION_OPTIONAL,
+        FIELD_PARENT_CHANNEL,
+        { name: "nsfw", type: "boolean" },
+        { name: "rate_limit_per_user", type: "integer" },
+    ],
+    outputFields: [{ name: "queueId", type: "string" }],
+    result_classes: CHANNEL_OP_RESULT_CLASSES,
     side_effects: {
         writes_outbound: true,
         writes_audit: true,
@@ -78,10 +61,5 @@ const channelCreateOp: OperationSpec = {
         emits: ["discord:channels.created"],
     },
     validation: { bot_permission: "ManageChannels", clansocket_permission: "discord:channels.create" },
-    result_classes: CHANNEL_OP_RESULT_CLASSES,
     handler: channelCreate,
-};
-
-export const MESSAGE_OPS: Readonly<Record<string, OperationSpec>> = {
-    "discord:channels.create": channelCreateOp,
-};
+});

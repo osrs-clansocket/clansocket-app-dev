@@ -108,7 +108,7 @@ function buildMount(canvas: HTMLCanvasElement, chart: Chart<MatrixKind>): ChartM
 function createHeatmap(canvas: HTMLCanvasElement, spec: HeatmapSpec): ChartMount {
     ensureCoreRegistered();
     ensureMatrixRegistered();
-    const theme = getChartTheme();
+    const theme = getChartTheme(canvas);
     const chart = new Chart(canvas, buildConfig(spec, theme));
     return buildMount(canvas, chart);
 }

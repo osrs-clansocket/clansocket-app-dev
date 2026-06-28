@@ -1,27 +1,7 @@
 import { recordClanAudit } from "../../database/index.js";
-import type {
-    JSONSchema,
-    OperationContext,
-    OperationResult,
-    OperationSpec,
-} from "../../flows/registries/registry-types.js";
-
-const RECORD_EVENT_INPUT: JSONSchema = {
-    type: "object",
-    required: ["category", "summary"],
-    additionalProperties: false,
-    properties: {
-        category: { type: "string", minLength: 1, maxLength: 64 },
-        summary: { type: "string", minLength: 1, maxLength: 512 },
-        rsn: { type: "string", format: "rsn", maxLength: 12 },
-        data: { type: "object", additionalProperties: true },
-    },
-};
-
-const RECORD_EVENT_OUTPUT: JSONSchema = {
-    type: "object",
-    properties: { recorded: { type: "boolean" } },
-};
+import { registerOperation } from "../../flows/registries/operation-registry.js";
+import type { OperationContext, OperationResult } from "../../flows/registries/registry-types.js";
+import { RECORD_EVENT_RESULT_CLASSES } from "./result-classes.js";
 
 function readString(input: Readonly<Record<string, unknown>>, key: string, required: boolean): string {
     const v = input[key];
@@ -30,7 +10,7 @@ function readString(input: Readonly<Record<string, unknown>>, key: string, requi
     return "";
 }
 
-async function recordClanEventHandler(
+async function recordEvent(
     input: Readonly<Record<string, unknown>>,
     ctx: OperationContext,
 ): Promise<OperationResult> {
@@ -51,12 +31,19 @@ async function recordClanEventHandler(
     }
 }
 
-export const recordClanEventOp: OperationSpec = {
+registerOperation({
+    capability: "clans",
+    opId: "clans:record-clan-event",
     safety_tier: "live",
-    input_schema: RECORD_EVENT_INPUT,
-    output_schema: RECORD_EVENT_OUTPUT,
+    inputFields: [
+        { name: "category", type: "string", required: true, minLength: 1, maxLength: 64 },
+        { name: "summary", type: "string", required: true, minLength: 1, maxLength: 512 },
+        { name: "rsn", type: "rsn", valueSourceRef: "rsn", maxLength: 12 },
+        { name: "data", type: "string" },
+    ],
+    outputFields: [{ name: "recorded", type: "boolean" }],
+    result_classes: RECORD_EVENT_RESULT_CLASSES,
     side_effects: { writes_audit: true },
     validation: {},
-    result_classes: ["recorded", "error"],
-    handler: recordClanEventHandler,
-};
+    handler: recordEvent,
+});

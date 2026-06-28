@@ -49,12 +49,18 @@ function composeSlide(trigger: Instance, panel: Instance, onCloseExtra: () => vo
     return slide;
 }
 
-function buildGlassSelect(name: string, options: ReadonlyArray<SelectOption>, current: string): Instance {
+function buildGlassSelect(
+    name: string,
+    options: ReadonlyArray<SelectOption>,
+    current: string,
+    layout: "grid" | "list" = "grid",
+): Instance {
     const labelInst = span(textProps([CLASS_LABEL], options.find((o) => o.value === current)?.label ?? current));
     const trigger = buildSelectTrigger(labelInst);
     const hidden = buildHiddenInput(name, current);
     const optionInsts = options.map((o) => buildOption(o, current));
-    const grid = div({ classes: [CLASS_GRID], role: "listbox", context: null, meta: null }, optionInsts);
+    const gridClasses = layout === "list" ? [CLASS_GRID, `${CLASS_GRID}--list`] : [CLASS_GRID];
+    const grid = div({ classes: gridClasses, role: "listbox", context: null, meta: null }, optionInsts);
     const innerChildren: Instance[] =
         options.length >= SEARCH_THRESHOLD ? [buildSearchInput(optionInsts), grid] : [grid];
     const inner = div(baseProps([CLASS_PANEL_INNER]), innerChildren);

@@ -8,7 +8,6 @@ import { passNew } from "../../specs/selectors-pass.js";
 
 registerListener({
     event: Events.GuildMemberUpdate,
-    triggerId: "discord:members.updated",
     selectEntity: passNew,
     buildPayload: pMember,
     persist: upsertOf(STATE_KINDS.MEMBERS, extractMemberRow),

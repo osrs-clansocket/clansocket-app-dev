@@ -53,25 +53,30 @@ const OP_MAP: Readonly<Record<string, FilterOperator>> = {
     "matches-tier": "matches-tier",
 };
 
+const SOURCE_PREFIX: Readonly<Record<FilterConditionSource, string>> = {
+    "event-property": "ctx.event.",
+    "variable": "ctx.variables.",
+    "tracker-value": "ctx.trackers.",
+    "entity-attribute": "entity.",
+    "member-channel-opt-out": "entity.preferences.channel_opt_out.",
+    "member-newsletter-opt-in": "entity.preferences.newsletter_opt_in.",
+    "time-relative": "time.",
+};
+
+const SOURCE_PREFIX_LONGEST_FIRST: readonly (readonly [FilterConditionSource, string])[] = (
+    Object.entries(SOURCE_PREFIX) as (readonly [FilterConditionSource, string])[]
+).slice().sort((a, b) => b[1].length - a[1].length);
+
 function inferSource(field: string): FilterConditionSource {
-    if (field.startsWith("ctx.event.")) return "event-property";
-    if (field.startsWith("entity.preferences.channel_opt_out.")) return "member-channel-opt-out";
-    if (field.startsWith("entity.preferences.newsletter_opt_in.")) return "member-newsletter-opt-in";
-    if (field.startsWith("entity.")) return "entity-attribute";
-    if (field.startsWith("ctx.variables.")) return "variable";
-    if (field.startsWith("ctx.trackers.")) return "tracker-value";
-    if (field.startsWith("time.")) return "time-relative";
+    for (const [source, prefix] of SOURCE_PREFIX_LONGEST_FIRST) {
+        if (field.startsWith(prefix)) return source;
+    }
     return "entity-attribute";
 }
 
 function stripFieldPrefix(field: string, source: FilterConditionSource): string {
-    if (source === "event-property") return field.replace(/^ctx\.event\./, "");
-    if (source === "variable") return field.replace(/^ctx\.variables\./, "");
-    if (source === "tracker-value") return field.replace(/^ctx\.trackers\./, "");
-    if (source === "entity-attribute") return field.replace(/^entity\./, "");
-    if (source === "member-channel-opt-out") return field.replace(/^entity\.preferences\.channel_opt_out\./, "");
-    if (source === "member-newsletter-opt-in") return field.replace(/^entity\.preferences\.newsletter_opt_in\./, "");
-    return field;
+    const prefix = SOURCE_PREFIX[source];
+    return field.startsWith(prefix) ? field.slice(prefix.length) : field;
 }
 
 function coerceValue(raw: string, operator: FilterOperator): unknown {

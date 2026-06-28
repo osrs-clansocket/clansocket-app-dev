@@ -1,0 +1,40 @@
+import { registerValueSource } from "../../registries/value-source-registry.js";
+
+const ZONES = [
+    "UTC",
+    "Europe/London",
+    "Europe/Paris",
+    "Europe/Berlin",
+    "Europe/Amsterdam",
+    "Europe/Madrid",
+    "Europe/Rome",
+    "Europe/Stockholm",
+    "Europe/Helsinki",
+    "Europe/Athens",
+    "Europe/Moscow",
+    "America/New_York",
+    "America/Chicago",
+    "America/Denver",
+    "America/Los_Angeles",
+    "America/Toronto",
+    "America/Vancouver",
+    "America/Sao_Paulo",
+    "America/Mexico_City",
+    "Asia/Tokyo",
+    "Asia/Shanghai",
+    "Asia/Hong_Kong",
+    "Asia/Singapore",
+    "Asia/Seoul",
+    "Asia/Dubai",
+    "Asia/Kolkata",
+    "Australia/Sydney",
+    "Australia/Melbourne",
+    "Australia/Perth",
+    "Pacific/Auckland",
+] as const;
+
+registerValueSource({
+    format: "iana-timezone",
+    label: "IANA timezones",
+    staticValues: ZONES.map((tz) => ({ id: tz, name: tz })),
+});

@@ -10,6 +10,8 @@ import {
     type PlayerIdentity,
     type SpatialColumns,
 } from "./projection-utils.js";
+import { EVENT_CLUE_COMPLETED, EVENT_CLUE_OPENED } from "../../../plugin-api/event-types.js";
+import { registerPluginEvent } from "../../../flows/registries/plugin-event-registry.js";
 
 function readPriorCount(conn: Database.Database, accountHash: string, tier: string): number | null {
     const row = conn
@@ -98,3 +100,21 @@ export function handleClueOpened(ctx: HandlerCtx): void {
     const emitter = buildChangeEmitter(conn, "plugin_clues_changes", CLUE_CHANGE_COLS);
     emitClueChange({ emitter, id, envelope, where, tier, countBefore: current, countAfter: current });
 }
+
+registerPluginEvent({
+    eventType: EVENT_CLUE_COMPLETED,
+    routing: "current-state",
+    handler: handleClueCompleted,
+    payloadFields: [
+        { name: "tier", type: "string" },
+        { name: "total", type: "integer" },
+        { name: "cluesCompletedBefore", type: "integer" },
+    ],
+});
+
+registerPluginEvent({
+    eventType: EVENT_CLUE_OPENED,
+    routing: "current-state",
+    handler: handleClueOpened,
+    payloadFields: [{ name: "tier", type: "string" }],
+});

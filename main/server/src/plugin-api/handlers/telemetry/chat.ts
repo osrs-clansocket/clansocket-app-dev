@@ -6,6 +6,19 @@ import { send } from "../../transport/send.js";
 import { isTelemetryAllowed, rejectUnauthed } from "../../session/telemetry-gate.js";
 import type { PluginClientMessage } from "../../types/index.js";
 import type { DispatchContext } from "../dispatch-types.js";
+import { registerTrigger } from "../../../flows/registries/trigger-registry.js";
+
+registerTrigger({
+    capability: "plugin",
+    triggerId: EVENT_CHAT,
+    eventSource: `plugin.telemetry.${EVENT_CHAT}`,
+    routing: "event",
+    payloadFields: [
+        { name: "text", type: "string" },
+        { name: "kind", type: "string" },
+        { name: "world", type: "integer" },
+    ],
+});
 
 type ChatMsg = Extract<PluginClientMessage, { type: "chat" }>;
 

@@ -1,17 +1,20 @@
-import type {
-    JSONSchema,
-    OperationContext,
-    OperationResult,
-    OperationSpec,
-} from "../../flows/registries/registry-types.js";
+import { registerOperation } from "../../flows/registries/operation-registry.js";
+import type { OperationContext, OperationResult } from "../../flows/registries/registry-types.js";
+import type { FlowFieldList } from "../../flows/registries/payload-field-types.js";
 import {
-    ENQUEUE_RESULT_SCHEMA,
     TARGET_KIND_CHANNEL_MESSAGE,
     TARGET_KIND_DM,
     TARGET_KIND_WEBHOOK_POST,
     enqueue,
     readString,
 } from "./manifest-shared.js";
+import {
+    FIELD_AVATAR_URL,
+    FIELD_CHANNEL,
+    FIELD_CONTENT,
+    FIELD_USER,
+    FIELD_WEBHOOK,
+} from "./manifest-field-primitives.js";
 import { discordGuildDb } from "../../database/discord/discord.js";
 import { listByClan } from "../../database/discord/servers/list-by-clan.js";
 import { decryptedWebhookToken } from "../../database/discord/webhook-tokens/get-decrypted.js";
@@ -25,52 +28,8 @@ function resolveWebhookGuild(clanId: string, webhookId: string): string | null {
     return null;
 }
 
-const SEND_RESULT_CLASSES: readonly string[] = ["sent", "rate_limit", "permission_denied", "channel_not_found"];
-
-const SEND_MESSAGE_INPUT: JSONSchema = {
-    type: "object",
-    required: ["channelId", "content"],
-    additionalProperties: false,
-    properties: {
-        channelId: { type: "string", format: "discord-channel-id" },
-        content: { type: "string", minLength: 1, maxLength: 2000 },
-    },
-};
-
-const SEND_EMBED_INPUT: JSONSchema = {
-    type: "object",
-    required: ["channelId", "title"],
-    additionalProperties: false,
-    properties: {
-        channelId: { type: "string", format: "discord-channel-id" },
-        title: { type: "string", minLength: 1, maxLength: 256 },
-        description: { type: "string", maxLength: 4096 },
-        color: { type: "integer" },
-        url: { type: "string", maxLength: 2048 },
-    },
-};
-
-const SEND_DM_INPUT: JSONSchema = {
-    type: "object",
-    required: ["userId", "content"],
-    additionalProperties: false,
-    properties: {
-        userId: { type: "string", format: "discord-member-id" },
-        content: { type: "string", minLength: 1, maxLength: 2000 },
-    },
-};
-
-const SEND_WEBHOOK_INPUT: JSONSchema = {
-    type: "object",
-    required: ["webhookId", "content"],
-    additionalProperties: false,
-    properties: {
-        webhookId: { type: "string", format: "discord-webhook-id" },
-        content: { type: "string", minLength: 1, maxLength: 2000 },
-        username: { type: "string", maxLength: 80 },
-        avatarUrl: { type: "string", maxLength: 2048 },
-    },
-};
+import { SEND_RESULT_CLASSES } from "./result-classes.js";
+const QUEUE_OUTPUT: FlowFieldList = [{ name: "queueId", type: "string" }];
 
 async function enqueueMessage(
     targetKind: string,
@@ -123,21 +82,35 @@ async function sendWebhook(input: Readonly<Record<string, unknown>>, ctx: Operat
     return { result_class: "sent", outputs: { queueId } };
 }
 
-function sendOp(input_schema: JSONSchema, handler: OperationSpec["handler"]): OperationSpec {
-    return {
+function sendOp(opId: string, inputFields: FlowFieldList, handler: (i: Readonly<Record<string, unknown>>, c: OperationContext) => Promise<OperationResult>): void {
+    registerOperation({
+        capability: "discord",
+        opId,
         safety_tier: "live",
-        input_schema,
-        output_schema: ENQUEUE_RESULT_SCHEMA,
+        inputFields,
+        outputFields: QUEUE_OUTPUT,
+        result_classes: SEND_RESULT_CLASSES,
         side_effects: { writes_outbound: true, writes_audit: true, rate_limit_route: "/channels/:id/messages" },
         validation: { bot_permission: "SendMessages" },
-        result_classes: SEND_RESULT_CLASSES,
         handler,
-    };
+    });
 }
 
-export const SEND_OPS: Readonly<Record<string, OperationSpec>> = {
-    "discord:send-message": sendOp(SEND_MESSAGE_INPUT, sendMessage),
-    "discord:send-embed": sendOp(SEND_EMBED_INPUT, sendEmbed),
-    "discord:send-dm": sendOp(SEND_DM_INPUT, sendDm),
-    "discord:send-webhook": sendOp(SEND_WEBHOOK_INPUT, sendWebhook),
-};
+sendOp("discord:send-message", [FIELD_CHANNEL, FIELD_CONTENT], sendMessage);
+
+sendOp("discord:send-embed", [
+    FIELD_CHANNEL,
+    { name: "title", type: "string", required: true, minLength: 1, maxLength: 256 },
+    { name: "description", type: "string", maxLength: 4096 },
+    { name: "color", type: "integer" },
+    { name: "url", type: "string", maxLength: 2048 },
+], sendEmbed);
+
+sendOp("discord:send-dm", [FIELD_USER, FIELD_CONTENT], sendDm);
+
+sendOp("discord:send-webhook", [
+    FIELD_WEBHOOK,
+    FIELD_CONTENT,
+    { name: "username", type: "string", maxLength: 80 },
+    FIELD_AVATAR_URL,
+], sendWebhook);

@@ -1,0 +1,26 @@
+import { registerFieldOperators } from "./field-operator-registry.js";
+
+registerFieldOperators("string", ["eq", "ne", "in", "not-in", "contains", "not-contains", "starts-with"]);
+registerFieldOperators("integer", ["eq", "ne", "gt", "gte", "lt", "lte", "in", "not-in"]);
+registerFieldOperators("number", ["eq", "ne", "gt", "gte", "lt", "lte", "in", "not-in"]);
+registerFieldOperators("boolean", ["eq", "ne"]);
+registerFieldOperators("timestamp", ["eq", "ne", "gt", "gte", "lt", "lte"]);
+registerFieldOperators("rsn", ["eq", "ne", "in", "not-in"]);
+registerFieldOperators("clan-rank", ["eq", "ne", "in", "not-in"]);
+registerFieldOperators("osrs-skill", ["eq", "ne", "in", "not-in"]);
+registerFieldOperators("osrs-boss", ["eq", "ne", "in", "not-in"]);
+registerFieldOperators("osrs-activity", ["eq", "ne", "in", "not-in"]);
+registerFieldOperators("osrs-metric", ["eq", "ne", "in", "not-in"]);
+registerFieldOperators("region-id", ["eq", "ne", "in", "not-in"]);
+registerFieldOperators("discord-channel-id", ["eq", "ne", "in", "not-in"]);
+registerFieldOperators("discord-member-id", ["eq", "ne", "in", "not-in"]);
+registerFieldOperators("discord-role-id", ["eq", "ne", "in", "not-in"]);
+registerFieldOperators("discord-guild-id", ["eq", "ne", "in", "not-in"]);
+registerFieldOperators("discord-webhook-id", ["eq", "ne", "in", "not-in"]);
+registerFieldOperators("iana-timezone", ["eq", "ne"]);
+registerFieldOperators("cron-preset", ["eq", "ne"]);
+registerFieldOperators("chatbox-color", ["eq", "ne"]);
+registerFieldOperators("mime-type", ["eq", "ne"]);
+registerFieldOperators("channel-type", ["eq", "ne", "in", "not-in"]);
+registerFieldOperators("verification-level", ["eq", "ne", "gt", "gte", "lt", "lte"]);
+registerFieldOperators("loop-interval-preset", ["eq", "ne"]);

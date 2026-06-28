@@ -13,6 +13,12 @@ import {
     type ContainerItem,
     type RunePouchSlot,
 } from "./container-types.js";
+import {
+    EVENT_CONTAINER,
+    EVENT_CONTAINER_DELTA,
+    EVENT_RUNE_POUCH,
+} from "../../../../plugin-api/event-types.js";
+import { registerPluginEvent } from "../../../../flows/registries/plugin-event-registry.js";
 
 export function handleContainer(ctx: HandlerCtx): void {
     const { conn, payload, now } = ctx;
@@ -55,3 +61,31 @@ export function handleRunePouch(ctx: HandlerCtx): void {
         snapshotInventory({ conn, accountHash, rsn, items, now, containerKind: KIND_RUNE_POUCH });
     })();
 }
+
+registerPluginEvent({
+    eventType: EVENT_CONTAINER,
+    routing: "current-state",
+    handler: handleContainer,
+    payloadFields: [
+        { name: "hash", type: "string" },
+        { name: "containerId", type: "string" },
+        { name: "items", type: "string" },
+    ],
+});
+
+registerPluginEvent({
+    eventType: EVENT_CONTAINER_DELTA,
+    routing: "current-state",
+    handler: handleContainerDelta,
+    payloadFields: [
+        { name: "containerId", type: "string" },
+        { name: "changes", type: "string" },
+    ],
+});
+
+registerPluginEvent({
+    eventType: EVENT_RUNE_POUCH,
+    routing: "current-state",
+    handler: handleRunePouch,
+    payloadFields: [{ name: "slots", type: "string" }],
+});

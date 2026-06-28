@@ -2,6 +2,8 @@ import type Database from "better-sqlite3";
 import { execMutation } from "../../core/db-mutations.js";
 import type { HandlerCtx } from "./handler-ctx.js";
 import type { Payload } from "./projection-utils.js";
+import { EVENT_INTERACTING, EVENT_VITALS } from "../../../plugin-api/event-types.js";
+import { registerPluginEvent } from "../../../flows/registries/plugin-event-registry.js";
 
 const ENSURE_ROW_SQL = `INSERT INTO plugin_current_state (account_hash, latest_rsn, first_seen, last_seen, updated_at)
  VALUES ($accountHash, $rsn, $now, $now, $now)
@@ -54,3 +56,29 @@ export function handleInteracting(ctx: HandlerCtx): void {
     const name = readTargetName(payload, kind);
     execMutation(conn, UPDATE_INTERACTING_SQL, { kind, id, name, now, accountHash });
 }
+
+registerPluginEvent({
+    eventType: EVENT_VITALS,
+    routing: "current-state",
+    handler: handleVitals,
+    payloadFields: [
+        { name: "energy", type: "integer" },
+        { name: "weight", type: "integer" },
+        { name: "spec", type: "integer" },
+        { name: "hitpoints", type: "integer" },
+        { name: "prayer", type: "integer" },
+        { name: "maxHitpoints", type: "integer" },
+        { name: "maxPrayer", type: "integer" },
+    ],
+});
+
+registerPluginEvent({
+    eventType: EVENT_INTERACTING,
+    routing: "current-state",
+    handler: handleInteracting,
+    payloadFields: [
+        { name: "targetKind", type: "string" },
+        { name: "targetId", type: "integer" },
+        { name: "targetName", type: "string" },
+    ],
+});

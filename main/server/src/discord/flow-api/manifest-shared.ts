@@ -17,7 +17,7 @@ export const ENQUEUE_RESULT_SCHEMA: JSONSchema = {
     properties: { queueId: { type: "string" } },
 };
 
-export const STRUCTURAL_RESULT_CLASSES: readonly string[] = ["queued", "permission_denied", "not_found"];
+export { STRUCTURAL_RESULT_CLASSES } from "./result-classes.js";
 
 export function readString(input: Readonly<Record<string, unknown>>, key: string): string {
     const value = input[key];

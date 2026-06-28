@@ -1,77 +1,20 @@
-import type {
-    JSONSchema,
-    OperationContext,
-    OperationResult,
-    OperationSpec,
-} from "../../flows/registries/registry-types.js";
+import { registerOperation } from "../../flows/registries/operation-registry.js";
+import type { OperationContext, OperationResult } from "../../flows/registries/registry-types.js";
+import type { FlowFieldList } from "../../flows/registries/payload-field-types.js";
 import {
-    ENQUEUE_RESULT_SCHEMA,
     STRUCTURAL_RESULT_CLASSES,
     TARGET_KIND_GUILD_SETTINGS,
     enqueue,
     readString,
 } from "./manifest-shared.js";
-import { DISCORD_VERIFICATION_LEVEL_LABELS, DISCORD_VERIFICATION_LEVEL_VALUES } from "./schema-enums.js";
+import {
+    FIELD_CHANNEL_OPTIONAL,
+    FIELD_GUILD,
+    FIELD_IMAGE_URL,
+    FIELD_REASON,
+} from "./manifest-field-primitives.js";
 
-const GUILD_NAME_INPUT: JSONSchema = {
-    type: "object",
-    required: ["guildId", "name"],
-    additionalProperties: false,
-    properties: {
-        guildId: { type: "string", format: "discord-guild-id" },
-        name: { type: "string", minLength: 2, maxLength: 100 },
-        reason: { type: "string", maxLength: 512 },
-    },
-};
-
-const GUILD_IMAGE_INPUT: JSONSchema = {
-    type: "object",
-    required: ["guildId", "imageUrl"],
-    additionalProperties: false,
-    properties: {
-        guildId: { type: "string", format: "discord-guild-id" },
-        imageUrl: { type: "string", maxLength: 2048 },
-        reason: { type: "string", maxLength: 512 },
-    },
-};
-
-const GUILD_DESCRIPTION_INPUT: JSONSchema = {
-    type: "object",
-    required: ["guildId"],
-    additionalProperties: false,
-    properties: {
-        guildId: { type: "string", format: "discord-guild-id" },
-        description: { type: "string", maxLength: 300 },
-        reason: { type: "string", maxLength: 512 },
-    },
-};
-
-const GUILD_CHANNEL_REF_INPUT: JSONSchema = {
-    type: "object",
-    required: ["guildId"],
-    additionalProperties: false,
-    properties: {
-        guildId: { type: "string", format: "discord-guild-id" },
-        channelId: { type: "string", format: "discord-channel-id" },
-        afkTimeout: { type: "integer", minimum: 60, maximum: 3600 },
-        reason: { type: "string", maxLength: 512 },
-    },
-};
-
-const GUILD_VERIFICATION_INPUT: JSONSchema = {
-    type: "object",
-    required: ["guildId", "verificationLevel"],
-    additionalProperties: false,
-    properties: {
-        guildId: { type: "string", format: "discord-guild-id" },
-        verificationLevel: {
-            type: "integer",
-            enum: DISCORD_VERIFICATION_LEVEL_VALUES as number[],
-            enumLabels: DISCORD_VERIFICATION_LEVEL_LABELS as string[],
-        },
-        reason: { type: "string", maxLength: 512 },
-    },
-};
+const QUEUE_OUTPUT: FlowFieldList = [{ name: "queueId", type: "string" }];
 
 async function guildSettingsEnqueueHandler(
     settingKey: string,
@@ -124,24 +67,24 @@ const setVerificationLevel = (input: Readonly<Record<string, unknown>>, ctx: Ope
         verification_level: typeof input.verificationLevel === "number" ? input.verificationLevel : 0,
     });
 
-function guildSettingsOp(input_schema: JSONSchema, handler: OperationSpec["handler"]): OperationSpec {
-    return {
+function gsOp(opId: string, inputFields: FlowFieldList, handler: (i: Readonly<Record<string, unknown>>, c: OperationContext) => Promise<OperationResult>): void {
+    registerOperation({
+        capability: "discord",
+        opId,
         safety_tier: "manual",
-        input_schema,
-        output_schema: ENQUEUE_RESULT_SCHEMA,
+        inputFields,
+        outputFields: QUEUE_OUTPUT,
+        result_classes: STRUCTURAL_RESULT_CLASSES,
         side_effects: { writes_outbound: true, writes_audit: true },
         validation: { bot_permission: "ManageGuild" },
-        result_classes: STRUCTURAL_RESULT_CLASSES,
         handler,
-    };
+    });
 }
 
-export const GUILD_SETTINGS_OPS: Readonly<Record<string, OperationSpec>> = {
-    "discord:guild-settings.set-name": guildSettingsOp(GUILD_NAME_INPUT, setName),
-    "discord:guild-settings.set-icon": guildSettingsOp(GUILD_IMAGE_INPUT, setIcon),
-    "discord:guild-settings.set-banner": guildSettingsOp(GUILD_IMAGE_INPUT, setBanner),
-    "discord:guild-settings.set-description": guildSettingsOp(GUILD_DESCRIPTION_INPUT, setDescription),
-    "discord:guild-settings.set-system-channel": guildSettingsOp(GUILD_CHANNEL_REF_INPUT, setSystemChannel),
-    "discord:guild-settings.set-afk-channel": guildSettingsOp(GUILD_CHANNEL_REF_INPUT, setAfkChannel),
-    "discord:guild-settings.set-verification-level": guildSettingsOp(GUILD_VERIFICATION_INPUT, setVerificationLevel),
-};
+gsOp("discord:guild-settings.set-name", [FIELD_GUILD, { name: "name", type: "string", required: true, minLength: 2, maxLength: 100 }, FIELD_REASON], setName);
+gsOp("discord:guild-settings.set-icon", [FIELD_GUILD, FIELD_IMAGE_URL, FIELD_REASON], setIcon);
+gsOp("discord:guild-settings.set-banner", [FIELD_GUILD, FIELD_IMAGE_URL, FIELD_REASON], setBanner);
+gsOp("discord:guild-settings.set-description", [FIELD_GUILD, { name: "description", type: "string", maxLength: 300 }, FIELD_REASON], setDescription);
+gsOp("discord:guild-settings.set-system-channel", [FIELD_GUILD, FIELD_CHANNEL_OPTIONAL, FIELD_REASON], setSystemChannel);
+gsOp("discord:guild-settings.set-afk-channel", [FIELD_GUILD, FIELD_CHANNEL_OPTIONAL, { name: "afkTimeout", type: "integer", minimum: 60, maximum: 3600 }, FIELD_REASON], setAfkChannel);
+gsOp("discord:guild-settings.set-verification-level", [FIELD_GUILD, { name: "verificationLevel", type: "verification-level", valueSourceRef: "discord-verification-level", required: true }, FIELD_REASON], setVerificationLevel);

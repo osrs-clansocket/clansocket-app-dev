@@ -1,52 +1,20 @@
-import type {
-    JSONSchema,
-    OperationContext,
-    OperationResult,
-    OperationSpec,
-} from "../../flows/registries/registry-types.js";
+import { registerOperation } from "../../flows/registries/operation-registry.js";
+import type { OperationContext, OperationResult } from "../../flows/registries/registry-types.js";
+import type { FlowFieldList } from "../../flows/registries/payload-field-types.js";
+import { STRUCTURAL_RESULT_CLASSES, structuralEnqueueHandler } from "./manifest-shared.js";
 import {
-    ENQUEUE_RESULT_SCHEMA,
-    STRUCTURAL_RESULT_CLASSES,
-    structuralEnqueueHandler,
-} from "./manifest-shared.js";
+    FIELD_CHANNEL,
+    FIELD_GUILD,
+    FIELD_NAME_100,
+    FIELD_PARENT_CHANNEL,
+    FIELD_POSITION,
+    FIELD_POSITION_OPTIONAL,
+    FIELD_REASON,
+    FIELD_TOPIC,
+} from "./manifest-field-primitives.js";
 
-const CHANNEL_UPDATE_INPUT: JSONSchema = {
-    type: "object",
-    required: ["guildId", "channelId"],
-    additionalProperties: false,
-    properties: {
-        guildId: { type: "string", format: "discord-guild-id" },
-        channelId: { type: "string", format: "discord-channel-id" },
-        name: { type: "string", minLength: 1, maxLength: 100 },
-        topic: { type: "string", maxLength: 1024 },
-        parentId: { type: "string", format: "discord-channel-id" },
-        position: { type: "integer" },
-        reason: { type: "string", maxLength: 512 },
-    },
-};
-
-const CHANNEL_DELETE_INPUT: JSONSchema = {
-    type: "object",
-    required: ["guildId", "channelId"],
-    additionalProperties: false,
-    properties: {
-        guildId: { type: "string", format: "discord-guild-id" },
-        channelId: { type: "string", format: "discord-channel-id" },
-        reason: { type: "string", maxLength: 512 },
-    },
-};
-
-const CHANNEL_MOVE_INPUT: JSONSchema = {
-    type: "object",
-    required: ["guildId", "channelId", "position"],
-    additionalProperties: false,
-    properties: {
-        guildId: { type: "string", format: "discord-guild-id" },
-        channelId: { type: "string", format: "discord-channel-id" },
-        position: { type: "integer", minimum: 0 },
-        reason: { type: "string", maxLength: 512 },
-    },
-};
+const QUEUE_OUTPUT: FlowFieldList = [{ name: "queueId", type: "string" }];
+const CHANNEL_BASE: FlowFieldList = [FIELD_GUILD, FIELD_CHANNEL];
 
 async function channelUpdate(input: Readonly<Record<string, unknown>>, ctx: OperationContext): Promise<OperationResult> {
     const extra: Record<string, unknown> = {};
@@ -67,20 +35,29 @@ async function channelMove(input: Readonly<Record<string, unknown>>, ctx: Operat
     });
 }
 
-function channelStructuralOp(input_schema: JSONSchema, handler: OperationSpec["handler"]): OperationSpec {
-    return {
+function channelOp(opId: string, inputFields: FlowFieldList, handler: (i: Readonly<Record<string, unknown>>, c: OperationContext) => Promise<OperationResult>): void {
+    registerOperation({
+        capability: "discord",
+        opId,
         safety_tier: "manual",
-        input_schema,
-        output_schema: ENQUEUE_RESULT_SCHEMA,
+        inputFields,
+        outputFields: QUEUE_OUTPUT,
+        result_classes: STRUCTURAL_RESULT_CLASSES,
         side_effects: { writes_outbound: true, writes_audit: true },
         validation: { bot_permission: "ManageChannels" },
-        result_classes: STRUCTURAL_RESULT_CLASSES,
         handler,
-    };
+    });
 }
 
-export const CHANNEL_STRUCTURAL_OPS: Readonly<Record<string, OperationSpec>> = {
-    "discord:channels.update": channelStructuralOp(CHANNEL_UPDATE_INPUT, channelUpdate),
-    "discord:channels.delete": channelStructuralOp(CHANNEL_DELETE_INPUT, channelDelete),
-    "discord:channels.move": channelStructuralOp(CHANNEL_MOVE_INPUT, channelMove),
-};
+channelOp("discord:channels.update", [
+    ...CHANNEL_BASE,
+    { ...FIELD_NAME_100, required: false },
+    FIELD_TOPIC,
+    FIELD_PARENT_CHANNEL,
+    FIELD_POSITION_OPTIONAL,
+    FIELD_REASON,
+], channelUpdate);
+
+channelOp("discord:channels.delete", [...CHANNEL_BASE, FIELD_REASON], channelDelete);
+
+channelOp("discord:channels.move", [...CHANNEL_BASE, FIELD_POSITION, FIELD_REASON], channelMove);

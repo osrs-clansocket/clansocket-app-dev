@@ -13,9 +13,12 @@ import { buildClanTabs } from "../clan-page-buttons.js";
 import { adaptClanSummary } from "../../../../state/clans/mappers/clan-summary-mapper.js";
 import { ensureHomepageStore } from "../../../../state/clans/homepage/homepage-store.js";
 import { ensureMetricsStore } from "../../../../state/clans/homepage/homepage-metrics-store.js";
+import { ensureHeatmapsStore } from "../../../../state/clans/homepage/homepage-heatmaps-store.js";
+import { ensureTimeseriesStore } from "../../../../state/clans/homepage/homepage-timeseries-store.js";
 import { buildCanvas } from "./canvas.js";
 import { buildEditStrip } from "./homepage-edit-strip.js";
 import { buildVariablesRow } from "./homepage-variable-picker.js";
+import { buildChartRail } from "./homepage-chart-rail.js";
 import { createEditorState, type EditorState } from "./homepage-editor-state.js";
 import { attachKeyboard } from "./homepage-keyboard.js";
 import { buildContext } from "../../../../state/clans/homepage/homepage-variables.js";
@@ -62,15 +65,19 @@ export async function renderClanHome(path: string): Promise<Instance> {
         .catch(() => false);
     const store = ensureHomepageStore(slug);
     const metrics = ensureMetricsStore(slug);
-    const ctx = buildContext(clan, metrics.metrics$);
+    const heatmaps = ensureHeatmapsStore(slug);
+    const timeseries = ensureTimeseriesStore(slug);
+    const ctx = buildContext(clan, metrics.metrics$, heatmaps.heatmaps$, timeseries.timeseries$);
     const editor: EditorState | null = isManager ? createEditorState(slug, store.components$) : null;
     const varsOpen$ = signal<boolean>(false);
+    const chartsOpen$ = signal<boolean>(false);
     const innerChildren: Instance[] = [];
     if (editor !== null) {
         innerChildren.push(
             buildEditStrip({
                 state: editor,
                 varsOpen$,
+                chartsOpen$,
                 onSave: async () => {
                     const ok = await editor.save();
                     if (ok) store.applyOptimistic(editor.draft$());
@@ -82,7 +89,10 @@ export async function renderClanHome(path: string): Promise<Instance> {
     innerChildren.push(buildCanvas(ctx, store.components$, editor));
     const home = div(baseProps([HOME_ROOT_CLASS]), innerChildren);
     const rootChildren: Instance[] = [buildClanTabs(clan.slug, isMember, isManager, "home"), home];
-    if (editor !== null) rootChildren.push(buildVariablesRow({ state: editor, ctx, open$: varsOpen$ }));
+    if (editor !== null) {
+        rootChildren.push(buildVariablesRow({ state: editor, ctx, open$: varsOpen$ }));
+        rootChildren.push(buildChartRail({ state: editor, ctx, open$: chartsOpen$ }));
+    }
     const root = div(
         { classes: [ROUTE_CLAN_CLASS], effects: onceEffect("route-enter-right"), context: null, meta: null },
         rootChildren,
@@ -91,6 +101,8 @@ export async function renderClanHome(path: string): Promise<Instance> {
     const offRoute = events.on("route:change", () => {
         store.dispose();
         metrics.dispose();
+        heatmaps.dispose();
+        timeseries.dispose();
         editor?.dispose();
         offKeyboard();
         offRoute();

@@ -74,6 +74,8 @@ interface ConfirmEntryArgs {
     onConfirmed: () => Promise<void>;
 }
 
+const RANK_WHITELIST_CONFIRM_GROUP = "rank-whitelist";
+
 function confirmEntry(args: ConfirmEntryArgs): RankPoolEntry {
     const host = div(baseProps([INLINE_CONFIRM_HOST_CLASS]));
     const btn = rankBtn({
@@ -85,6 +87,7 @@ function confirmEntry(args: ConfirmEntryArgs): RankPoolEntry {
                 danger: args.danger,
                 cancelContext: args.cancelContext,
                 confirmContext: args.confirmContext,
+                group: RANK_WHITELIST_CONFIRM_GROUP,
             });
             if (!ok) return;
             await args.onConfirmed();

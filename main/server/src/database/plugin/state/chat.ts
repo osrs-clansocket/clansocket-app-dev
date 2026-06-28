@@ -3,8 +3,25 @@ import { sha256Hex } from "../../../shared/hash.js";
 import { getClanDb } from "../../core/database.js";
 import { dispatchSafe } from "../projection/auto-hook-dispatcher.js";
 import { lookupAccountType } from "./lookup-account-type.js";
+import { registerTrigger } from "../../../flows/registries/trigger-registry.js";
 
 const CLAN_CHAT_TRIGGER = "clan_chat";
+
+registerTrigger({
+    capability: "plugin",
+    triggerId: CLAN_CHAT_TRIGGER,
+    eventSource: "plugin.clan_chat",
+    routing: "synthetic",
+    payloadFields: [
+        { name: "rsn", type: "rsn", valueSourceRef: "rsn" },
+        { name: "senderRsn", type: "rsn", valueSourceRef: "rsn" },
+        { name: "message", type: "string" },
+        { name: "kind", type: "string" },
+        { name: "world", type: "integer" },
+        { name: "rank", type: "clan-rank", valueSourceRef: "clan-rank" },
+        { name: "accountType", type: "string" },
+    ],
+});
 
 export interface ClanChatRecord {
     sessionId: string;

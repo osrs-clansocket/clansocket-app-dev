@@ -4,6 +4,8 @@ import { buildChangeEmitter } from "./change-inserter.js";
 import type { HandlerCtx } from "./handler-ctx.js";
 import { applyPrayerToggles } from "./dispatcher-prayer.js";
 import { extractWhere, type PlayerIdentity } from "./projection-utils.js";
+import { EVENT_PRAYERS } from "../../../plugin-api/event-types.js";
+import { registerPluginEvent } from "../../../flows/registries/plugin-event-registry.js";
 
 interface PrayerEntry {
     id: number;
@@ -78,3 +80,13 @@ export function handlePrayers(ctx: HandlerCtx): void {
         applyPrayerToggles(toggleArgs, "off");
     })();
 }
+
+registerPluginEvent({
+    eventType: EVENT_PRAYERS,
+    routing: "current-state",
+    handler: handlePrayers,
+    payloadFields: [
+        { name: "hash", type: "string" },
+        { name: "active", type: "string" },
+    ],
+});

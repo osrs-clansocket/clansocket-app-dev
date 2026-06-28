@@ -46,6 +46,20 @@ function readThemeTokens(root: CSSStyleDeclaration): ThemeTokens {
     return out;
 }
 
+function readOverlay(root: CSSStyleDeclaration, name: string): string {
+    return root.getPropertyValue(name).trim();
+}
+
+function applyOverlays(base: ChartTheme, root: CSSStyleDeclaration): ChartTheme {
+    const primary = readOverlay(root, "--chart-primary") || readOverlay(root, "--color") || base.primary;
+    const text = readOverlay(root, "--chart-text") || readOverlay(root, "--color") || base.text;
+    const textMuted = readOverlay(root, "--chart-text-muted") || base.textMuted;
+    const grid = readOverlay(root, "--chart-grid") || readOverlay(root, "--border-color") || base.grid;
+    const fontBody = readOverlay(root, "--chart-font-family") || readOverlay(root, "--font-family") || base.fontBody;
+    const palette = [primary, base.secondary, text, base.statusWarn, base.primary, base.statusDanger, base.fontBody, textMuted];
+    return { ...base, primary, text, textMuted, grid, palette, fontBody };
+}
+
 function buildTheme(t: ThemeTokens): ChartTheme {
     return {
         palette: [t.gold500, t.dangerStrong, t.parchment, t.bronze, t.gold300, t.ember200, t.gold200, t.dangerFg],
@@ -62,10 +76,16 @@ function buildTheme(t: ThemeTokens): ChartTheme {
     };
 }
 
-function getChartTheme(): ChartTheme {
-    if (cached) return cached;
+function baseTheme(): ChartTheme {
+    if (cached !== null) return cached;
     cached = buildTheme(readThemeTokens(getComputedStyle(document.documentElement)));
     return cached;
+}
+
+function getChartTheme(el?: Element | null): ChartTheme {
+    const base = baseTheme();
+    if (el === undefined || el === null) return base;
+    return applyOverlays(base, getComputedStyle(el));
 }
 
 interface ThemeDefaultsHost {
@@ -73,7 +93,7 @@ interface ThemeDefaultsHost {
 }
 
 export function applyChartDefaults(host: ThemeDefaultsHost): void {
-    const theme = getChartTheme();
+    const theme = baseTheme();
     host.defaults.font.family = theme.fontBody;
     host.defaults.font.size = DEFAULT_FONT_SIZE;
     host.defaults.color = theme.text;

@@ -1,4 +1,4 @@
-export const COMPONENT_KINDS = ["heading", "paragraph", "image", "spacer", "container", "kpi"] as const;
+export const COMPONENT_KINDS = ["heading", "paragraph", "image", "spacer", "container", "kpi", "chart"] as const;
 export type ComponentKind = (typeof COMPONENT_KINDS)[number];
 
 export const BASE_COLOR_FAMILIES = ["gold", "graphite", "cream", "ember", "forest"] as const;

@@ -6,7 +6,6 @@ import { channelGuard } from "../../specs/selectors-guards.js";
 
 registerListener({
     event: Events.ChannelCreate,
-    triggerId: "discord:channels.created",
     selectEntity: channelGuard,
     buildPayload: pChannel,
     persist: persistChannelCreate,

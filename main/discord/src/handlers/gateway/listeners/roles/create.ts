@@ -8,7 +8,6 @@ import { passthrough } from "../../specs/selectors-pass.js";
 
 registerListener({
     event: Events.GuildRoleCreate,
-    triggerId: "discord:roles.created",
     selectEntity: passthrough,
     buildPayload: pRoleCU,
     persist: upsertOf(STATE_KINDS.ROLES, extractRoleRow),

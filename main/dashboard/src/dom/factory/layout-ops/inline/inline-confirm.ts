@@ -26,6 +26,21 @@ interface InlineConfirmOptions {
     cancelContext: string;
     confirmContext: string;
     triggerEl?: HTMLElement;
+    group?: string;
+}
+
+const pendingByGroup = new Map<string, Instance>();
+
+function dismissPriorInGroup(group: string | undefined, currentHost: Instance): void {
+    if (group === undefined) return;
+    const prior = pendingByGroup.get(group);
+    if (prior !== undefined && prior !== currentHost) pendingHosts.get(prior)?.();
+    pendingByGroup.set(group, currentHost);
+}
+
+function clearGroupOnSettle(group: string | undefined, host: Instance): void {
+    if (group === undefined) return;
+    if (pendingByGroup.get(group) === host) pendingByGroup.delete(group);
 }
 
 function buildCancelBtn(opts: InlineConfirmOptions, settle: (v: boolean) => void): Instance {
@@ -69,18 +84,26 @@ function buildActions(
 }
 
 function inlineConfirm(host: Instance, opts: InlineConfirmOptions): Promise<boolean> {
+    dismissPriorInGroup(opts.group, host);
     pendingHosts.get(host)?.();
     return new Promise<boolean>((resolve) => {
+        const wrappedResolve = (v: boolean): void => {
+            clearGroupOnSettle(opts.group, host);
+            resolve(v);
+        };
         const ta = triggerAnchor(host, opts.triggerEl);
         if (ta === null) {
-            resolve(false);
+            wrappedResolve(false);
             return;
         }
         const { trigger, anchor } = ta;
         const prevVisibility = trigger.style.visibility;
         trigger.style.visibility = VISIBILITY_HIDDEN;
         host.el.classList.add(CLASS_PENDING);
-        const { settle, bindActions } = startOverlay({ host, trigger, anchor, prevVisibility, resolve }, pendingHosts);
+        const { settle, bindActions } = startOverlay(
+            { host, trigger, anchor, prevVisibility, resolve: wrappedResolve },
+            pendingHosts,
+        );
         pendingHosts.set(host, () => settle(false));
         const { actions, confirmBtn } = buildActions(opts, settle);
         bindActions(actions);

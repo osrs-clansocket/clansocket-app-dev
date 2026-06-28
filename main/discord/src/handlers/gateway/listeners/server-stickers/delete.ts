@@ -7,7 +7,6 @@ import { stickerGuard } from "../../specs/selectors-guards.js";
 
 registerListener({
     event: Events.GuildStickerDelete,
-    triggerId: "discord:server-stickers.deleted",
     selectEntity: stickerGuard,
     buildPayload: pSticker,
     persist: deleteOf(STATE_KINDS.SERVER_STICKERS),

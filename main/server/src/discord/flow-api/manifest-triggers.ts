@@ -1,74 +1,121 @@
-import type { JSONSchema, TriggerSpec } from "../../flows/registries/registry-types.js";
+import {
+    DISCORD_TRIGGER_MANIFEST,
+    type DiscordTriggerSpec,
+} from "@clansocket/constants/discord-trigger-manifest";
+import { registerTrigger } from "../../flows/registries/trigger-registry.js";
+import type { FlowFieldList } from "../../flows/registries/payload-field-types.js";
 
-const GUILD_ID_FIELD: JSONSchema = { type: "string", format: "discord-guild-id" };
+const CAPABILITY = "discord";
 
-const CHANNEL_PAYLOAD: JSONSchema = {
-    type: "object",
-    required: ["id", "name", "guildId", "type"],
-    properties: {
-        id: { type: "string" },
-        name: { type: "string" },
-        guildId: GUILD_ID_FIELD,
-        type: { type: "integer" },
-        parent_id: { type: "string" },
-    },
+const GUILD = { name: "guildId", type: "discord-guild-id" as const, valueSourceRef: "discord-guild-id", required: true };
+
+const PAYLOAD_BY_KIND: Readonly<Record<DiscordTriggerSpec["payloadKind"], FlowFieldList>> = {
+    channel: [
+        { name: "id", type: "discord-channel-id", valueSourceRef: "discord-channel-id", required: true },
+        { name: "name", type: "string", required: true },
+        GUILD,
+        { name: "type", type: "channel-type", valueSourceRef: "discord-channel-type", required: true },
+        { name: "parent_id", type: "discord-channel-id", valueSourceRef: "discord-channel-id" },
+        { name: "nsfw", type: "boolean" },
+        { name: "slowmodeSeconds", type: "integer" },
+        { name: "topic", type: "string" },
+        { name: "archived", type: "boolean" },
+    ],
+    member: [
+        { name: "id", type: "discord-member-id", valueSourceRef: "discord-member-id", required: true },
+        { name: "name", type: "string", required: true },
+        GUILD,
+        { name: "nick", type: "string" },
+        { name: "bot", type: "boolean" },
+        { name: "joinedAt", type: "timestamp" },
+        { name: "premiumSince", type: "timestamp" },
+    ],
+    role: [
+        { name: "id", type: "discord-role-id", valueSourceRef: "discord-role-id", required: true },
+        { name: "name", type: "string", required: true },
+        GUILD,
+        { name: "color", type: "integer" },
+    ],
+    emoji: [
+        { name: "id", type: "string", required: true },
+        { name: "name", type: "string", required: true },
+        GUILD,
+    ],
+    sticker: [
+        { name: "id", type: "string", required: true },
+        { name: "name", type: "string", required: true },
+        GUILD,
+    ],
+    webhook: [
+        GUILD,
+        { name: "channelId", type: "discord-channel-id", valueSourceRef: "discord-channel-id", required: true },
+    ],
+    guild: [
+        { name: "id", type: "discord-guild-id", valueSourceRef: "discord-guild-id", required: true },
+        { name: "name", type: "string", required: true },
+        { name: "ownerId", type: "discord-member-id", valueSourceRef: "discord-member-id" },
+        { name: "memberCount", type: "integer" },
+    ],
+    message: [
+        { name: "id", type: "string", required: true },
+        { name: "channelId", type: "discord-channel-id", valueSourceRef: "discord-channel-id", required: true },
+        GUILD,
+        { name: "authorId", type: "discord-member-id", valueSourceRef: "discord-member-id" },
+        { name: "content", type: "string" },
+        { name: "timestamp", type: "timestamp" },
+        { name: "editedAt", type: "timestamp" },
+        { name: "pinned", type: "boolean" },
+        { name: "mentionCount", type: "integer" },
+    ],
+    reaction: [
+        { name: "messageId", type: "string", required: true },
+        { name: "channelId", type: "discord-channel-id", valueSourceRef: "discord-channel-id", required: true },
+        GUILD,
+        { name: "userId", type: "discord-member-id", valueSourceRef: "discord-member-id", required: true },
+        { name: "emoji", type: "string" },
+    ],
+    thread: [
+        { name: "id", type: "discord-channel-id", valueSourceRef: "discord-channel-id", required: true },
+        { name: "name", type: "string", required: true },
+        GUILD,
+        { name: "parentId", type: "discord-channel-id", valueSourceRef: "discord-channel-id" },
+    ],
+    "voice-state": [
+        { name: "userId", type: "discord-member-id", valueSourceRef: "discord-member-id", required: true },
+        GUILD,
+        { name: "channelId", type: "discord-channel-id", valueSourceRef: "discord-channel-id" },
+        { name: "previousChannelId", type: "discord-channel-id", valueSourceRef: "discord-channel-id" },
+    ],
+    ban: [
+        { name: "userId", type: "discord-member-id", valueSourceRef: "discord-member-id", required: true },
+        GUILD,
+        { name: "reason", type: "string" },
+    ],
+    interaction: [
+        { name: "id", type: "string", required: true },
+        { name: "type", type: "string", required: true },
+        { name: "userId", type: "discord-member-id", valueSourceRef: "discord-member-id", required: true },
+        GUILD,
+        { name: "channelId", type: "discord-channel-id", valueSourceRef: "discord-channel-id" },
+        { name: "commandName", type: "string" },
+        { name: "customId", type: "string" },
+    ],
+    "scheduled-event": [
+        { name: "id", type: "string", required: true },
+        { name: "name", type: "string", required: true },
+        GUILD,
+        { name: "scheduledStartAt", type: "timestamp" },
+        { name: "scheduledEndAt", type: "timestamp" },
+        { name: "channelId", type: "discord-channel-id", valueSourceRef: "discord-channel-id" },
+    ],
 };
 
-const MEMBER_PAYLOAD: JSONSchema = {
-    type: "object",
-    required: ["id", "name", "guildId"],
-    properties: { id: { type: "string" }, name: { type: "string" }, guildId: GUILD_ID_FIELD },
-};
-
-const ROLE_PAYLOAD: JSONSchema = {
-    type: "object",
-    required: ["id", "name", "guildId"],
-    properties: {
-        id: { type: "string" },
-        name: { type: "string" },
-        guildId: GUILD_ID_FIELD,
-        color: { type: "integer" },
-    },
-};
-
-const EMOJI_PAYLOAD: JSONSchema = {
-    type: "object",
-    required: ["id", "name", "guildId"],
-    properties: { id: { type: "string" }, name: { type: "string" }, guildId: GUILD_ID_FIELD },
-};
-
-const WEBHOOK_PAYLOAD: JSONSchema = {
-    type: "object",
-    required: ["guildId", "channelId"],
-    properties: { guildId: GUILD_ID_FIELD, channelId: { type: "string" } },
-};
-
-const GUILD_PAYLOAD: JSONSchema = {
-    type: "object",
-    required: ["id", "name", "guildId"],
-    properties: { id: { type: "string" }, name: { type: "string" }, guildId: GUILD_ID_FIELD },
-};
-
-function trigger(eventSource: string, payload_schema: JSONSchema): TriggerSpec {
-    return { event_source: eventSource, payload_schema, triggerable: true };
+for (const spec of DISCORD_TRIGGER_MANIFEST) {
+    registerTrigger({
+        capability: CAPABILITY,
+        triggerId: spec.triggerId,
+        eventSource: spec.gatewaySource,
+        routing: "gateway",
+        payloadFields: PAYLOAD_BY_KIND[spec.payloadKind],
+    });
 }
-
-export const TRIGGERS: Readonly<Record<string, TriggerSpec>> = {
-    "discord:channels.created": trigger("discord.gateway.channelCreate", CHANNEL_PAYLOAD),
-    "discord:channels.updated": trigger("discord.gateway.channelUpdate", CHANNEL_PAYLOAD),
-    "discord:channels.deleted": trigger("discord.gateway.channelDelete", CHANNEL_PAYLOAD),
-    "discord:members.joined": trigger("discord.gateway.guildMemberAdd", MEMBER_PAYLOAD),
-    "discord:members.left": trigger("discord.gateway.guildMemberRemove", MEMBER_PAYLOAD),
-    "discord:members.updated": trigger("discord.gateway.guildMemberUpdate", MEMBER_PAYLOAD),
-    "discord:roles.created": trigger("discord.gateway.guildRoleCreate", ROLE_PAYLOAD),
-    "discord:roles.updated": trigger("discord.gateway.guildRoleUpdate", ROLE_PAYLOAD),
-    "discord:roles.deleted": trigger("discord.gateway.guildRoleDelete", ROLE_PAYLOAD),
-    "discord:server-emojis.created": trigger("discord.gateway.emojiCreate", EMOJI_PAYLOAD),
-    "discord:server-emojis.updated": trigger("discord.gateway.emojiUpdate", EMOJI_PAYLOAD),
-    "discord:server-emojis.deleted": trigger("discord.gateway.emojiDelete", EMOJI_PAYLOAD),
-    "discord:server-stickers.created": trigger("discord.gateway.stickerCreate", EMOJI_PAYLOAD),
-    "discord:server-stickers.updated": trigger("discord.gateway.stickerUpdate", EMOJI_PAYLOAD),
-    "discord:server-stickers.deleted": trigger("discord.gateway.stickerDelete", EMOJI_PAYLOAD),
-    "discord:webhooks.updated": trigger("discord.gateway.webhooksUpdate", WEBHOOK_PAYLOAD),
-    "discord:guild.updated": trigger("discord.gateway.guildUpdate", GUILD_PAYLOAD),
-};

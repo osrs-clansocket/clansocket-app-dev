@@ -15,6 +15,8 @@ import {
 } from "../projection-utils.js";
 import { upsertItemsCatalog } from "../items-catalog.js";
 import { reconcileNpcKc } from "../npc-kc-recorder.js";
+import { EVENT_LOOT } from "../../../../plugin-api/event-types.js";
+import { registerPluginEvent } from "../../../../flows/registries/plugin-event-registry.js";
 
 function causeName(payload: Payload, causeKind: string): string | null {
     return causeKind === "PLAYER" ? null : asStringNullable(payload.source);
@@ -121,3 +123,17 @@ export function handleLoot(ctx: HandlerCtx): void {
         });
     })();
 }
+
+registerPluginEvent({
+    eventType: EVENT_LOOT,
+    routing: "current-state",
+    handler: handleLoot,
+    payloadFields: [
+        { name: "sourceType", type: "string" },
+        { name: "sourceId", type: "integer" },
+        { name: "source", type: "string" },
+        { name: "sourceLevel", type: "integer" },
+        { name: "kc", type: "integer" },
+        { name: "items", type: "string" },
+    ],
+});

@@ -7,7 +7,6 @@ import { passthrough } from "../../specs/selectors-pass.js";
 
 registerListener({
     event: Events.GuildMemberRemove,
-    triggerId: "discord:members.left",
     selectEntity: passthrough,
     buildPayload: pMember,
     persist: deleteOf(STATE_KINDS.MEMBERS),

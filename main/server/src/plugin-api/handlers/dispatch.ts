@@ -25,7 +25,8 @@ import { handleChat } from "./telemetry/chat.js";
 import { handleTitlesSnapshot } from "./telemetry/clan-titles.js";
 import { handleIdentity } from "./identity.js";
 import { handleClanRoster, handleLoginState } from "./state-change.js";
-import { STANDARD_TELEMETRY_EVENTS, handleStandardTelemetry } from "./telemetry/standard-telemetry.js";
+import { handleStandardTelemetry } from "./telemetry/standard-telemetry.js";
+import { pluginEventRegistry } from "../../flows/registries/plugin-event-registry.js";
 import { handleCatalog } from "./telemetry/snapshots.js";
 import { dispatchBatch } from "./batch-dispatcher.js";
 import type { BatchContext, DispatchContext } from "./dispatch-types.js";
@@ -63,7 +64,7 @@ function handleBatch(ctx: DispatchContext, msg: BatchMsg): void {
     dispatchBatch(ctx, msg, dispatchPluginMessage);
 }
 
-const handlers = new Map<string, Handler>([
+const protocolHandlers = new Map<string, Handler>([
     [EVENT_HELLO, handleHello as Handler],
     [EVENT_PING, handlePing as Handler],
     [EVENT_RSN_VERIFY_RESPONSE, handleResponse as Handler],
@@ -76,11 +77,17 @@ const handlers = new Map<string, Handler>([
     [EVENT_CLAN_TITLES_SNAPSHOT, handleTitlesSnapshot as Handler],
     [EVENT_COMBAT_ACHIEVEMENTS_CATALOG, handleCatalog as Handler],
     [EVENT_CLAN_CONFIG_REQUEST, handleClanConfig as Handler],
-    ...STANDARD_TELEMETRY_EVENTS.map((t) => [t, handleStandardTelemetry as Handler] as const),
 ]);
 
+function resolveHandler(eventType: string): Handler | null {
+    const protocol = protocolHandlers.get(eventType);
+    if (protocol) return protocol;
+    if (pluginEventRegistry.has(eventType)) return handleStandardTelemetry as Handler;
+    return null;
+}
+
 export function dispatchPluginMessage(ctx: DispatchContext, msg: PluginClientMessage, batchCtx?: BatchContext): void {
-    const handler = handlers.get(msg.type);
+    const handler = resolveHandler(msg.type);
     if (!handler) {
         send(ctx.ws, { type: "error", reason: "unknown message type" });
         return;

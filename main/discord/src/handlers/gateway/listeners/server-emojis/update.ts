@@ -8,7 +8,6 @@ import { passNew } from "../../specs/selectors-pass.js";
 
 registerListener({
     event: Events.GuildEmojiUpdate,
-    triggerId: "discord:server-emojis.updated",
     selectEntity: passNew,
     buildPayload: pEmoji,
     persist: upsertOf(STATE_KINDS.SERVER_EMOJIS, extractEmojiRow),

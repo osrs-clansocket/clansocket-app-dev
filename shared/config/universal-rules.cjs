@@ -42,6 +42,18 @@ const maxNameWords = require("./eslint-rules/max-name-words.cjs");
 const iconNameLiteral = require("./eslint-rules/icon-name-literal.cjs");
 const flowOpRequiresSafetyTier = require("./eslint-rules/flow-op-requires-safety-tier.cjs");
 const flowExcludedOpRejected = require("./eslint-rules/flow-excluded-op-rejected.cjs");
+const requireTriggerRegistration = require("./eslint-rules/require-trigger-registration.cjs");
+const requireHandlerSelfRegister = require("./eslint-rules/require-handler-self-register.cjs");
+const requireOperationSelfRegister = require("./eslint-rules/require-operation-self-register.cjs");
+const noOrphanValueSourceRef = require("./eslint-rules/no-orphan-value-source-ref.cjs");
+const noHardcodedFlowSelect = require("./eslint-rules/no-hardcoded-flow-select.cjs");
+const noHardcodedConditionFallback = require("./eslint-rules/no-hardcoded-condition-fallback.cjs");
+const noHardcodedResultClasses = require("./eslint-rules/no-hardcoded-result-classes.cjs");
+const requirePayloadFieldTypeBinding = require("./eslint-rules/require-payload-field-type-binding.cjs");
+const requireEnvelopeFieldsNotRedeclared = require("./eslint-rules/require-envelope-fields-not-redeclared.cjs");
+const requireFieldOperatorsBinding = require("./eslint-rules/require-field-operators-binding.cjs");
+const noConditionValueBypass = require("./eslint-rules/no-condition-value-bypass.cjs");
+const noCoerceFlowTypeWithoutXflow = require("./eslint-rules/no-coerce-flow-type-without-xflow.cjs");
 
 // session-added rules
 const aggregator = require("./eslint-rules/no-aggregator-god-class.cjs");
@@ -112,6 +124,18 @@ const rules = {
     "icon-name-literal": iconNameLiteral,
     "flow-op-requires-safety-tier": flowOpRequiresSafetyTier,
     "flow-excluded-op-rejected": flowExcludedOpRejected,
+    "require-trigger-registration": requireTriggerRegistration,
+    "require-handler-self-register": requireHandlerSelfRegister,
+    "require-operation-self-register": requireOperationSelfRegister,
+    "no-orphan-value-source-ref": noOrphanValueSourceRef,
+    "no-hardcoded-flow-select": noHardcodedFlowSelect,
+    "no-hardcoded-condition-fallback": noHardcodedConditionFallback,
+    "no-hardcoded-result-classes": noHardcodedResultClasses,
+    "require-payload-field-type-binding": requirePayloadFieldTypeBinding,
+    "require-envelope-fields-not-redeclared": requireEnvelopeFieldsNotRedeclared,
+    "require-field-operators-binding": requireFieldOperatorsBinding,
+    "no-condition-value-bypass": noConditionValueBypass,
+    "no-coerce-flow-type-without-xflow": noCoerceFlowTypeWithoutXflow,
     "no-aggregator-god-class": aggregator,
     "no-prepare-in-loop": prepareInLoop,
     "no-await-in-loop": awaitInLoop,
@@ -182,6 +206,18 @@ const severities = {
     "lvi/icon-name-literal": "error",
     "lvi/flow-op-requires-safety-tier": "error",
     "lvi/flow-excluded-op-rejected": "error",
+    "lvi/require-trigger-registration": "error",
+    "lvi/require-handler-self-register": "error",
+    "lvi/require-operation-self-register": "error",
+    "lvi/no-orphan-value-source-ref": "error",
+    "lvi/no-hardcoded-flow-select": "error",
+    "lvi/no-hardcoded-condition-fallback": "error",
+    "lvi/no-hardcoded-result-classes": "error",
+    "lvi/require-payload-field-type-binding": "error",
+    "lvi/require-envelope-fields-not-redeclared": "error",
+    "lvi/require-field-operators-binding": "error",
+    "lvi/no-condition-value-bypass": "error",
+    "lvi/no-coerce-flow-type-without-xflow": "error",
     "lvi/no-aggregator-god-class": "error",
     "lvi/no-prepare-in-loop": "error",
     "lvi/no-await-in-loop": "error",

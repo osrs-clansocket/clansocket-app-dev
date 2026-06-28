@@ -1,71 +1,26 @@
-import type {
-    JSONSchema,
-    OperationContext,
-    OperationResult,
-    OperationSpec,
-} from "../../flows/registries/registry-types.js";
-import { ENQUEUE_RESULT_SCHEMA, TARGET_KIND_MEMBER_MUTATION, enqueue, readString } from "./manifest-shared.js";
+import { registerOperation } from "../../flows/registries/operation-registry.js";
+import type { OperationContext, OperationResult } from "../../flows/registries/registry-types.js";
+import type { FlowFieldList } from "../../flows/registries/payload-field-types.js";
+import { TARGET_KIND_MEMBER_MUTATION, enqueue, readString } from "./manifest-shared.js";
+import { FIELD_GUILD, FIELD_REASON, FIELD_ROLE, FIELD_USER } from "./manifest-field-primitives.js";
 
-const MEMBER_RESULT_CLASSES: readonly string[] = ["queued", "permission_denied", "member_not_found", "guild_not_found"];
+import { MEMBER_RESULT_CLASSES } from "./result-classes.js";
+const QUEUE_OUTPUT: FlowFieldList = [{ name: "queueId", type: "string" }];
 
-const MEMBER_ADD_ROLE_INPUT: JSONSchema = {
-    type: "object",
-    required: ["guildId", "userId", "roleId"],
-    additionalProperties: false,
-    properties: {
-        guildId: { type: "string", format: "discord-guild-id" },
-        userId: { type: "string", format: "discord-member-id" },
-        roleId: { type: "string", format: "discord-role-id" },
-        reason: { type: "string", maxLength: 512 },
-    },
-};
-
-const MEMBER_NICKNAME_INPUT: JSONSchema = {
-    type: "object",
-    required: ["guildId", "userId"],
-    additionalProperties: false,
-    properties: {
-        guildId: { type: "string", format: "discord-guild-id" },
-        userId: { type: "string", format: "discord-member-id" },
-        nickname: { type: "string", maxLength: 32 },
-        reason: { type: "string", maxLength: 512 },
-    },
-};
-
-const MEMBER_TIMEOUT_INPUT: JSONSchema = {
-    type: "object",
-    required: ["guildId", "userId", "durationMs"],
-    additionalProperties: false,
-    properties: {
-        guildId: { type: "string", format: "discord-guild-id" },
-        userId: { type: "string", format: "discord-member-id" },
-        durationMs: { type: "integer", minimum: 0, maximum: 2_419_200_000 },
-        reason: { type: "string", maxLength: 512 },
-    },
-};
-
-const MEMBER_KICK_INPUT: JSONSchema = {
-    type: "object",
-    required: ["guildId", "userId"],
-    additionalProperties: false,
-    properties: {
-        guildId: { type: "string", format: "discord-guild-id" },
-        userId: { type: "string", format: "discord-member-id" },
-        reason: { type: "string", maxLength: 512 },
-    },
-};
-
-const MEMBER_BAN_INPUT: JSONSchema = {
-    type: "object",
-    required: ["guildId", "userId"],
-    additionalProperties: false,
-    properties: {
-        guildId: { type: "string", format: "discord-guild-id" },
-        userId: { type: "string", format: "discord-member-id" },
-        reason: { type: "string", maxLength: 512 },
-        deleteMessageDays: { type: "integer", minimum: 0, maximum: 7 },
-    },
-};
+const GUILD_USER: FlowFieldList = [FIELD_GUILD, FIELD_USER];
+const MEMBER_ROLE_INPUT: FlowFieldList = [...GUILD_USER, FIELD_ROLE, FIELD_REASON];
+const MEMBER_NICKNAME_INPUT: FlowFieldList = [...GUILD_USER, { name: "nickname", type: "string", maxLength: 32 }, FIELD_REASON];
+const MEMBER_TIMEOUT_INPUT: FlowFieldList = [
+    ...GUILD_USER,
+    { name: "durationMs", type: "integer", required: true, minimum: 0, maximum: 2_419_200_000 },
+    FIELD_REASON,
+];
+const MEMBER_KICK_INPUT: FlowFieldList = [...GUILD_USER, FIELD_REASON];
+const MEMBER_BAN_INPUT: FlowFieldList = [
+    ...GUILD_USER,
+    FIELD_REASON,
+    { name: "deleteMessageDays", type: "integer", minimum: 0, maximum: 7 },
+];
 
 async function memberMutationEnqueueHandler(
     action: string,
@@ -118,29 +73,24 @@ async function unban(input: Readonly<Record<string, unknown>>, ctx: OperationCon
     return memberMutationEnqueueHandler("unban", input, ctx, {});
 }
 
-function memberOp(
-    safety_tier: "live" | "manual",
-    input_schema: JSONSchema,
-    handler: OperationSpec["handler"],
-    botPermission: string,
-): OperationSpec {
-    return {
-        safety_tier,
-        input_schema,
-        output_schema: ENQUEUE_RESULT_SCHEMA,
+function memberOp(opId: string, tier: "live" | "manual", inputFields: FlowFieldList, handler: (i: Readonly<Record<string, unknown>>, c: OperationContext) => Promise<OperationResult>, botPermission: string): void {
+    registerOperation({
+        capability: "discord",
+        opId,
+        safety_tier: tier,
+        inputFields,
+        outputFields: QUEUE_OUTPUT,
+        result_classes: MEMBER_RESULT_CLASSES,
         side_effects: { writes_outbound: true, writes_audit: true },
         validation: { bot_permission: botPermission },
-        result_classes: MEMBER_RESULT_CLASSES,
         handler,
-    };
+    });
 }
 
-export const MEMBER_OPS: Readonly<Record<string, OperationSpec>> = {
-    "discord:members.add-role": memberOp("live", MEMBER_ADD_ROLE_INPUT, addRole, "ManageRoles"),
-    "discord:members.set-nickname": memberOp("live", MEMBER_NICKNAME_INPUT, setNickname, "ManageNicknames"),
-    "discord:members.remove-role": memberOp("manual", MEMBER_ADD_ROLE_INPUT, removeRole, "ManageRoles"),
-    "discord:members.timeout": memberOp("manual", MEMBER_TIMEOUT_INPUT, timeoutMember, "ModerateMembers"),
-    "discord:members.kick": memberOp("manual", MEMBER_KICK_INPUT, kick, "KickMembers"),
-    "discord:members.ban": memberOp("manual", MEMBER_BAN_INPUT, ban, "BanMembers"),
-    "discord:members.unban": memberOp("manual", MEMBER_KICK_INPUT, unban, "BanMembers"),
-};
+memberOp("discord:members.add-role", "live", MEMBER_ROLE_INPUT, addRole, "ManageRoles");
+memberOp("discord:members.set-nickname", "live", MEMBER_NICKNAME_INPUT, setNickname, "ManageNicknames");
+memberOp("discord:members.remove-role", "manual", MEMBER_ROLE_INPUT, removeRole, "ManageRoles");
+memberOp("discord:members.timeout", "manual", MEMBER_TIMEOUT_INPUT, timeoutMember, "ModerateMembers");
+memberOp("discord:members.kick", "manual", MEMBER_KICK_INPUT, kick, "KickMembers");
+memberOp("discord:members.ban", "manual", MEMBER_BAN_INPUT, ban, "BanMembers");
+memberOp("discord:members.unban", "manual", MEMBER_KICK_INPUT, unban, "BanMembers");

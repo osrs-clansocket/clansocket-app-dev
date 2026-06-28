@@ -8,6 +8,9 @@ import { resolveTemplate } from "../store/template-resolver.js";
 import { memberPreferences } from "../../../database/clans/member-preferences-store.js";
 import { isInQuietHours } from "../../../database/clans/quiet-hours-evaluator.js";
 import { recordClanAudit } from "../../../database/index.js";
+import { evaluateFilter } from "../../../filter/evaluators/dsl-evaluator.js";
+import { toFilterContext } from "../context/exec-context.js";
+import type { FilterAst } from "../../../filter/dsl-types.js";
 import { BaseDispatcher } from "./base/base-dispatcher.js";
 import { registerDispatcher } from "./dispatcher-registry.js";
 import type { ExecContext } from "../context/exec-context.js";
@@ -270,7 +273,26 @@ class StepDispatcher extends BaseDispatcher {
             executeWaitForEvent(exec, node, opts.dryRun ?? false);
             return;
         }
+        if (node.kind === "condition") {
+            this.executeCondition(exec, node);
+            return;
+        }
         this.advanceToNext(exec, node, "next");
+    }
+
+    private executeCondition(exec: ExecContext, node: FlowNode): void {
+        const filter = node.config.conditions as FilterAst | null | undefined;
+        if (!filter) {
+            this.advanceToNext(exec, node, "yes");
+            return;
+        }
+        let matched = false;
+        try {
+            matched = evaluateFilter(filter, toFilterContext(exec));
+        } catch {
+            matched = false;
+        }
+        this.advanceToNext(exec, node, matched ? "yes" : "no");
     }
 
     private async executeAction(exec: ExecContext, node: FlowNode, opts: { dryRun?: boolean }): Promise<void> {
@@ -335,15 +357,22 @@ class StepDispatcher extends BaseDispatcher {
                 return;
             }
         }
-        const result = await opSpec.handler(node.config, {
-            clanId: exec.clanId,
-            flowId: exec.flowId,
-            flowName: exec.flowName,
-            flowVersion: exec.flowVersion,
-            executionId: String(exec.executionId),
-            botId: exec.botId,
-            guildId: exec.guildId,
-        });
+        let result;
+        try {
+            result = await opSpec.handler(node.config, {
+                clanId: exec.clanId,
+                flowId: exec.flowId,
+                flowName: exec.flowName,
+                flowVersion: exec.flowVersion,
+                executionId: String(exec.executionId),
+                botId: exec.botId,
+                guildId: exec.guildId,
+            });
+        } catch (err) {
+            exec.status = "FAILED";
+            exec.failureReason = `op ${node.operation_ref}: ${(err as Error).message}`;
+            return;
+        }
         if (opSpec.side_effects.writes_audit === true) {
             try {
                 const rsnEntity = typeof exec.entity.rsn === "string" ? exec.entity.rsn : null;
@@ -363,7 +392,6 @@ class StepDispatcher extends BaseDispatcher {
                     } as never,
                 });
             } catch {
-                // audit failure is non-fatal
             }
         }
         this.advanceToNext(exec, node, result.result_class);

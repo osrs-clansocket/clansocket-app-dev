@@ -1,6 +1,8 @@
 import { buildChangeEmitter } from "../change-inserter.js";
 import type { HandlerCtx } from "../handler-ctx.js";
 import { extractWhere, type Payload } from "../projection-utils.js";
+import { EVENT_PET_DROP } from "../../../../plugin-api/event-types.js";
+import { registerPluginEvent } from "../../../../flows/registries/plugin-event-registry.js";
 
 interface PetDropFacts {
     petItemId: number | null;
@@ -45,3 +47,15 @@ export function handlePetDrop(ctx: HandlerCtx): void {
         specific: [f.petItemId, f.petItemName, f.trigger, f.message, f.sourceKind, f.sourceId, f.sourceName],
     });
 }
+
+registerPluginEvent({
+    eventType: EVENT_PET_DROP,
+    routing: "current-state",
+    handler: handlePetDrop,
+    payloadFields: [
+        { name: "trigger", type: "string" },
+        { name: "message", type: "string" },
+        { name: "petName", type: "string" },
+        { name: "petItemId", type: "integer" },
+    ],
+});

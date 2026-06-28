@@ -3,6 +3,11 @@ import { buildChangeEmitter } from "./change-inserter.js";
 import type { HandlerCtx } from "./handler-ctx.js";
 import { asNumber, asNumberNullable, asString, extractWhere, sanitizeItemName } from "./projection-utils.js";
 import { upsertItemsCatalog } from "./items-catalog.js";
+import {
+    EVENT_COLLECTION_LOG_ENTRY,
+    EVENT_COLLECTION_LOG_SNAPSHOT,
+} from "../../../plugin-api/event-types.js";
+import { registerPluginEvent } from "../../../flows/registries/plugin-event-registry.js";
 
 interface SnapshotItem {
     itemId: number;
@@ -88,6 +93,13 @@ function extractFacts(entry: CollectionLogEntry): CollectionEntryFacts | null {
 
 const COLLECTION_LOG_CHANGE_COLS = ["item_id", "item_name", "category", "source_kind", "qty_signed"];
 
+registerPluginEvent({
+    eventType: EVENT_COLLECTION_LOG_SNAPSHOT,
+    routing: "current-state",
+    handler: handleSnapshot,
+    payloadFields: [{ name: "items", type: "string" }],
+});
+
 export function handleEntry(ctx: HandlerCtx): void {
     const { conn, payload, now, envelope, id } = ctx;
     const { accountHash, rsn } = id;
@@ -113,3 +125,15 @@ export function handleEntry(ctx: HandlerCtx): void {
         });
     })();
 }
+
+registerPluginEvent({
+    eventType: EVENT_COLLECTION_LOG_ENTRY,
+    routing: "current-state",
+    handler: handleEntry,
+    payloadFields: [
+        { name: "itemId", type: "integer" },
+        { name: "itemName", type: "string" },
+        { name: "category", type: "string" },
+        { name: "sourceKind", type: "string" },
+    ],
+});

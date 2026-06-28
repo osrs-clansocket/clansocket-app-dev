@@ -16,6 +16,10 @@ function buildFieldOptions(triggerType: string, cb: ConditionEditorCallbacks): S
     return fieldsForTrigger(triggerType).map((f) => ({ value: f.field, label: f.label }));
 }
 
+function defaultFieldType(triggerType: string, field: string): string | undefined {
+    return fieldsForTrigger(triggerType).find((f) => f.field === field)?.fieldType;
+}
+
 export function buildConditionEditor(initial: readonly ConditionRow[], cb: ConditionEditorCallbacks): Instance {
     const state: EditorState = { rows: [...initial] };
     const host = div(baseProps([AUTO_HOOKS_EMBED_EDITOR_CLASS]));
@@ -23,13 +27,16 @@ export function buildConditionEditor(initial: readonly ConditionRow[], cb: Condi
     function rerender(): void {
         const triggerType = cb.getTriggerType();
         const fields = buildFieldOptions(triggerType, cb);
+        const cbWithType: ConditionEditorCallbacks = cb.getFieldType
+            ? cb
+            : { ...cb, getFieldType: defaultFieldType };
         const rowEls = state.rows.map((row, idx) =>
-            buildRow(makeRowCtx({ state, cb, rerender, row, idx, triggerType, fields })),
+            buildRow(makeRowCtx({ state, cb: cbWithType, rerender, row, idx, triggerType, fields })),
         );
         host.setChildren(
             span(textProps([AUTO_HOOKS_CARD_LABEL_CLASS], "Conditions")),
             ...rowEls,
-            buildAddBtn({ triggerType, fields, state, cb, rerender }),
+            buildAddBtn({ triggerType, fields, state, cb: cbWithType, rerender }),
         );
     }
 

@@ -1,5 +1,7 @@
 import { ensureRow } from "../current-state.js";
 import type { HandlerCtx } from "../handler-ctx.js";
+import { EVENT_MENU_ACTION } from "../../../../plugin-api/event-types.js";
+import { registerPluginEvent } from "../../../../flows/registries/plugin-event-registry.js";
 
 export function handleMenuAction(ctx: HandlerCtx): void {
     const { conn, payload, now } = ctx;
@@ -18,3 +20,15 @@ export function handleMenuAction(ctx: HandlerCtx): void {
             WHERE account_hash = $accountHash`,
     ).run({ action, option, targetKind, target, targetId, now, accountHash });
 }
+
+registerPluginEvent({
+    eventType: EVENT_MENU_ACTION,
+    routing: "current-state",
+    handler: handleMenuAction,
+    payloadFields: [
+        { name: "action", type: "string" },
+        { name: "option", type: "string" },
+        { name: "target", type: "string" },
+        { name: "id", type: "integer" },
+    ],
+});

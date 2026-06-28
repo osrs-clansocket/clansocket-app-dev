@@ -8,7 +8,7 @@ import {
     BTN_VARIANT_OUTLINE,
     type Instance,
 } from "../../../../factory";
-import { flowMetaSignal, flowsListSignal, selectFlow, newFlow } from "./flow-card-state.js";
+import { flowMetaSignal, flowsListSignal, selectFlow, newFlow } from "../../../../../state/flow-builder/flow-store.js";
 import { flowsLiveFor } from "../../../../../state/flows/flows-live-store.js";
 
 const RAIL_CLASS = "clans-manage__flow-builder-rail";
@@ -58,7 +58,8 @@ export function buildFlowListRail(clanId: string): Instance<HTMLElement> {
     const header = div(baseProps([RAIL_HEADER_CLASS]), [headerLabel, newBtn]);
     const listHost = div(baseProps([RAIL_ENTRIES_CLASS]));
     const live = flowsLiveFor(clanId);
-    effect(() => {
+    const root = div(baseProps([RAIL_CLASS]), [header, listHost]);
+    root.trackDispose(effect(() => {
         const list = flowsListSignal();
         const serverList = live.entries();
         const activeId = flowMetaSignal().id;
@@ -67,6 +68,6 @@ export function buildFlowListRail(clanId: string): Instance<HTMLElement> {
         const localEntries = list.map((f) => buildEntry(f.name, f.id, activeId));
         const serverEntries = serverOnly.map((s) => buildServerEntry(s.flow_name, s.flow_id, activeId));
         listHost.setChildren(...localEntries, ...serverEntries);
-    });
-    return div(baseProps([RAIL_CLASS]), [header, listHost]);
+    }));
+    return root;
 }

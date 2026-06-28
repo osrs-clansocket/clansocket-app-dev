@@ -7,7 +7,6 @@ import { passthrough } from "../../specs/selectors-pass.js";
 
 registerListener({
     event: Events.GuildRoleDelete,
-    triggerId: "discord:roles.deleted",
     selectEntity: passthrough,
     buildPayload: pRoleDelete,
     persist: deleteOf(STATE_KINDS.ROLES),

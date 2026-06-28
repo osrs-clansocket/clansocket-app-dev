@@ -1,6 +1,8 @@
 import { signal, type Signal } from "../../dom/factory";
 import { fetchCapabilities, type CapabilitySummary, type TriggerSummary } from "./flows-client.js";
-import { registerFieldsForTrigger } from "../../shared/constants/clan-manage-discord/condition-field-list.js";
+import { registerFieldsForTrigger, type ConditionField } from "../../shared/constants/clan-manage-discord/condition-field-list.js";
+import { humanize } from "./humanize.js";
+import { ensureFieldOperatorsLoaded } from "./field-operators-store.js";
 
 export interface EntityAttribute {
     readonly path: string;
@@ -61,21 +63,39 @@ async function fetchComponentKinds(): Promise<readonly ComponentKindDef[]> {
     }
 }
 
-function humanizeKey(key: string): string {
-    const spaced = key.replace(/_/g, " ").replace(/([a-z])([A-Z])/g, "$1 $2");
-    return spaced.charAt(0).toUpperCase() + spaced.slice(1);
+
+function readFieldType(raw: Readonly<Record<string, unknown>>): string {
+    const xType = raw["x-flow-type"];
+    if (typeof xType === "string") return xType;
+    const format = raw.format;
+    if (typeof format === "string") return format;
+    const type = raw.type;
+    if (typeof type === "string") return type;
+    return "string";
+}
+
+function readFormat(raw: Readonly<Record<string, unknown>>): string | undefined {
+    const format = raw.format;
+    return typeof format === "string" ? format : undefined;
 }
 
 function collectSchemaFields(
     schema: Readonly<Record<string, unknown>>,
     prefix: string,
-): readonly { field: string; label: string }[] {
-    const result: { field: string; label: string }[] = [];
+): readonly ConditionField[] {
+    const result: ConditionField[] = [];
     const props = schema.properties;
     if (!props || typeof props !== "object") return result;
     for (const [name, raw] of Object.entries(props as Record<string, Readonly<Record<string, unknown>>>)) {
         const path = prefix.length === 0 ? name : `${prefix}.${name}`;
-        result.push({ field: path, label: humanizeKey(name) });
+        const entry: ConditionField = {
+            field: path,
+            label: humanize(name),
+            fieldType: readFieldType(raw),
+        };
+        const format = readFormat(raw);
+        if (format !== undefined) entry.format = format;
+        result.push(entry);
         if (raw && raw.type === "object") {
             for (const child of collectSchemaFields(raw, path)) result.push(child);
         }
@@ -105,7 +125,12 @@ export async function ensureCapabilitiesLoaded(): Promise<void> {
         const response = await fetchCapabilities();
         capabilitiesSignal.set(response.capabilities);
         registerAllTriggerFields(response.capabilities);
-        const [attrs, ops, kinds] = await Promise.all([fetchEntityAttributes(), fetchOperators(), fetchComponentKinds()]);
+        const [attrs, ops, kinds] = await Promise.all([
+            fetchEntityAttributes(),
+            fetchOperators(),
+            fetchComponentKinds(),
+            ensureFieldOperatorsLoaded(),
+        ]);
         entityAttributesSignal.set(attrs);
         operatorsSignal.set(ops);
         componentKindsSignal.set(kinds);
@@ -132,6 +157,29 @@ export function fieldOptionsForScope(triggerId: string | null): readonly { value
         out.push({ value: attr.path, label: attr.label });
     }
     return out;
+}
+
+export function fieldTypeForScope(triggerId: string | null, field: string): string | undefined {
+    if (triggerId && field.startsWith("ctx.event.")) {
+        const fieldName = field.slice("ctx.event.".length);
+        for (const cap of capabilitiesSignal()) {
+            const spec = cap.triggers[triggerId];
+            if (!spec) continue;
+            const props = spec.payload_schema.properties as Readonly<Record<string, Readonly<Record<string, unknown>>>> | undefined;
+            const prop = props?.[fieldName];
+            if (!prop) continue;
+            const xType = prop["x-flow-type"];
+            if (typeof xType === "string") return xType;
+            const fmt = prop.format;
+            if (typeof fmt === "string") return fmt;
+            const t = prop.type;
+            if (typeof t === "string") return t;
+        }
+    }
+    for (const attr of entityAttributesSignal()) {
+        if (attr.path === field) return attr.type;
+    }
+    return undefined;
 }
 
 export interface TriggerOption {

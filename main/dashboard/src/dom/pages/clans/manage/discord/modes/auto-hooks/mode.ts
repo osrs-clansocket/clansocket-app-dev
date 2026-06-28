@@ -2,6 +2,7 @@ import "../../../../../../../styles/pages/clans/manage/discord/clan-auto-hooks-p
 import "../../../../../../../styles/pages/account/greeting-page.css";
 import { div, paragraph, type Instance, baseProps, textProps } from "../../../../../../factory";
 import { openHooksStream } from "../../../../../../../state/discord/auto-hooks/client.js";
+import { ensureFieldOperatorsLoaded } from "../../../../../../../state/flows/field-operators-store.js";
 import { inspectorOverride$ } from "../../../../../../../state/discord/inspector-override.js";
 import { autoHooksStore } from "../../../../../../../state/discord/auto-hooks/configured-store.js";
 import { buildPreviewPane } from "./preview/preview-pane.js";
@@ -31,6 +32,7 @@ export function autoHooksMode(guildId: string): Instance {
     const channels = subscribeChannelsFeed(guildId, state, render);
     const webhooks = subscribeWebhooksFeed(guildId, state, render);
     void refetchRef.fn();
+    void ensureFieldOperatorsLoaded();
     const autoHooks = openHooksStream(guildId, () => void refetchRef.fn());
     const mountedRef = { v: true };
     queueMicrotask(() => {

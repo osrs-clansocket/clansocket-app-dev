@@ -139,6 +139,31 @@ function emitCount(out: MetricRow[], scope: PluginScope, scan: TableScan, db: Da
     });
 }
 
+function emitCountByGroup(
+    out: MetricRow[],
+    scope: PluginScope,
+    scan: TableScan,
+    db: Database.Database,
+    groupCol: string,
+): void {
+    const rows = db
+        .prepare(`SELECT ${groupCol} AS g, COUNT(*) AS v FROM ${scan.table} GROUP BY ${groupCol}`)
+        .all() as { g: string | null; v: number | null }[];
+    const seen = new Set<string>();
+    for (const r of rows) {
+        if (r.g === null || r.g === "") continue;
+        const slug = disambiguate(slugify(String(r.g)), seen);
+        if (slug === "") continue;
+        out.push({
+            variable_key: groupKey(scope, scan.mode, scan.short, "count", groupCol, slug),
+            value: Number(r.v ?? 0),
+            format: "int",
+            label: `${scan.short.replace(/_/g, " ")} count — ${String(r.g)}`,
+            category: "activity",
+        });
+    }
+}
+
 function emitMembers(out: MetricRow[], scope: PluginScope, scan: TableScan, db: Database.Database): void {
     const row = db
         .prepare(`SELECT COUNT(DISTINCT account_hash) AS v FROM ${scan.table}`)
@@ -156,6 +181,7 @@ function emitScan(out: MetricRow[], scope: PluginScope, scan: TableScan): void {
     const db = clanPluginDb(scope.clanId, scan.mode);
     if (scan.metricCols.length === 0) {
         emitCount(out, scope, scan, db);
+        for (const groupCol of scan.groupCols) emitCountByGroup(out, scope, scan, db, groupCol);
     } else {
         for (const col of scan.metricCols) {
             const rule = METRIC_COL_RULES[col];

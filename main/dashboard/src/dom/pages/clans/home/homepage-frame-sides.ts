@@ -21,6 +21,7 @@ const COLOR_PROP_IDS: ReadonlySet<string> = new Set(["color", "background", "bor
 const IMAGE_SOURCE_TOOL = { id: "image-source", name: "image", label: "Image source" };
 const INFO_TOOL = { id: "info", name: "info-circle", label: "Applied overrides" };
 const ADD_CHILD_TOOL = { id: "add-child", name: "plus-circle", label: "Add to section" };
+const CHART_SOURCE_TOOL = { id: "chart-source", name: "bar-chart-line", label: "Chart preset" };
 
 type OpenSignal = ReturnType<typeof signal<string | null>>;
 type Side = "top" | "right" | "bottom" | "left";
@@ -223,6 +224,9 @@ function gatherTools(component: HomepageComponent, ctx: FrameContext, open$: Ope
     }
     if (component.componentName === "container") {
         tools.push(buildToggleTool(ADD_CHILD_TOOL.id, ADD_CHILD_TOOL.name, ADD_CHILD_TOOL.label, open$, ctx));
+    }
+    if (component.componentName === "chart") {
+        tools.push(buildToggleTool(CHART_SOURCE_TOOL.id, CHART_SOURCE_TOOL.name, CHART_SOURCE_TOOL.label, open$, ctx));
     }
     tools.push(buildToggleTool(INFO_TOOL.id, INFO_TOOL.name, INFO_TOOL.label, open$, ctx));
     for (const tool of ACTION_TOOLS) tools.push(buildActionTool(tool, ctx));

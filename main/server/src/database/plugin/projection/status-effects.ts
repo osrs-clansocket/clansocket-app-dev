@@ -3,6 +3,8 @@ import { SQL_COLUMNS } from "../../core/sql-columns.js";
 import { buildChangeEmitter } from "./change-inserter.js";
 import type { HandlerCtx } from "./handler-ctx.js";
 import { extractWhere } from "./projection-utils.js";
+import { EVENT_STATUS_EFFECT } from "../../../plugin-api/event-types.js";
+import { registerPluginEvent } from "../../../flows/registries/plugin-event-registry.js";
 
 function readPriorActive(conn: Database.Database, accountHash: string, effect: string): number | null {
     const row = conn
@@ -61,3 +63,13 @@ export function handleStatusEffect(ctx: HandlerCtx): void {
         upsertStatusEffect({ conn, accountHash, rsn, effect, now, active: incomingActive });
     })();
 }
+
+registerPluginEvent({
+    eventType: EVENT_STATUS_EFFECT,
+    routing: "current-state",
+    handler: handleStatusEffect,
+    payloadFields: [
+        { name: "effect", type: "string" },
+        { name: "active", type: "boolean" },
+    ],
+});

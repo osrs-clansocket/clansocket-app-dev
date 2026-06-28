@@ -65,6 +65,8 @@
     grid-template-rows: minmax(0, 1fr);
 }
 .glass-select__panel-inner {
+    display: flex;
+    flex-direction: column;
     min-block-size: 0;
     overflow: hidden;
     padding: 0;
@@ -98,8 +100,26 @@
     display: grid;
     gap: var(--sp-0);
     grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
-    max-block-size: 16rem;
-    overflow-block: auto;
+    min-block-size: 0;
+    max-block-size: 22rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: transparent;
+}
+.glass-select__grid--list {
+    grid-template-columns: 1fr;
+}
+.glass-select__grid::-webkit-scrollbar {
+    inline-size: var(--sp-2);
+}
+.glass-select__grid::-webkit-scrollbar-thumb {
+    border-radius: var(--radius-md);
+    background: rgb(from var(--base-gold-500) r g b / 0.3);
+}
+.glass-select__grid::-webkit-scrollbar-thumb:hover {
+    background: rgb(from var(--base-gold-500) r g b / 0.5);
+}
+.glass-select__grid::-webkit-scrollbar-track {
     background: transparent;
 }
 .glass-select__option {

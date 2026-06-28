@@ -6,6 +6,7 @@ import { buildSwatchPopover } from "./token-swatch-popover.js";
 import { buildOverrideList } from "./homepage-override-list.js";
 import { buildImageSourcePopover } from "./homepage-image-source-popover.js";
 import { buildAddChild } from "./homepage-add-child.js";
+import { buildChartSourcePopover } from "./homepage-chart-source-popover.js";
 import { PROP_TOOLS, type FrameContext } from "./homepage-frame-tools.js";
 import { attachFrameSides } from "./homepage-frame-sides.js";
 
@@ -18,6 +19,7 @@ const VIEWPORT_MARGIN = 8;
 const POPOVER_OVERRIDES_ID = "info";
 const POPOVER_IMAGE_SOURCE_ID = "image-source";
 const POPOVER_ADD_CHILD_ID = "add-child";
+const POPOVER_CHART_SOURCE_ID = "chart-source";
 
 type OpenSignal = ReturnType<typeof signal<string | null>>;
 
@@ -26,6 +28,7 @@ function buildPopoverContent(openId: string, state: EditorState, id: string, ope
     if (openId === POPOVER_OVERRIDES_ID) return buildOverrideList(state, id, close);
     if (openId === POPOVER_IMAGE_SOURCE_ID) return buildImageSourcePopover(state, id, close);
     if (openId === POPOVER_ADD_CHILD_ID) return buildAddChild(state, id, open$);
+    if (openId === POPOVER_CHART_SOURCE_ID) return buildChartSourcePopover(state, id);
     const tool = PROP_TOOLS.find((t) => t.id === openId);
     if (!tool) return null;
     return buildSwatchPopover({

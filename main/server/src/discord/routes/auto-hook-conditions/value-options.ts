@@ -1,7 +1,7 @@
 import logger from "@clansocket/logger";
 import { type Request, type Response } from "express";
 import { handleAsync, validateGuildId } from "../../../api/middleware.js";
-import { conditionValueOptions } from "../../../database/discord/auto-hook-conditions/value-options.js";
+import { resolveValueOptions } from "../../../flows/value-resolvers/entity-value-options.js";
 import { serverByGuild } from "../../../database/discord/resolve-server.js";
 import { HTTP_BAD_REQUEST, HTTP_INTERNAL_ERROR, HTTP_OK } from "../../../shared/http/http-status.js";
 
@@ -15,7 +15,11 @@ interface OptionsGate {
 }
 
 function gateOptions(req: Request, res: Response, guildId: string): OptionsGate | null {
-    const triggerType = typeof req.query.trigger === "string" ? req.query.trigger : "";
+    const triggerType = typeof req.query.trigger_type === "string"
+        ? req.query.trigger_type
+        : typeof req.query.trigger === "string"
+            ? req.query.trigger
+            : "";
     const field = typeof req.query.field === "string" ? req.query.field : "";
     if (triggerType.length === 0 || field.length === 0) {
         res.status(HTTP_BAD_REQUEST).json({ error: "missing_params" });
@@ -38,7 +42,7 @@ function gateOptions(req: Request, res: Response, guildId: string): OptionsGate 
             const gate = gateOptions(req, res, guildId);
             if (!gate) return;
             try {
-                const values = conditionValueOptions(gate.server.clan_id, gate.triggerType, gate.field);
+                const values = await resolveValueOptions("trigger", gate.server.clan_id, gate.field, gate.triggerType);
                 res.status(HTTP_OK).json({ values });
             } catch (err) {
                 logger.error(

@@ -1,80 +1,38 @@
-import type {
-    CapabilityManifest,
-    JSONSchema,
-    OperationContext,
-    OperationResult,
-    OperationSpec,
-} from "../../flows/registries/registry-types.js";
+import { registerOperation } from "../../flows/registries/operation-registry.js";
+import { buildCapabilityFromRegistries } from "../../flows/registries/capability-builder.js";
+import type { CapabilityManifest, OperationContext, OperationResult } from "../../flows/registries/registry-types.js";
+import type { FlowFieldList } from "../../flows/registries/payload-field-types.js";
 
 const CAPABILITY_NAME = "http";
 const CAPABILITY_COLOR = "graphite";
 const REQUEST_TIMEOUT_MS = 10_000;
 const MAX_RESPONSE_BYTES = 65_536;
+const RESULT_CLASSES: readonly string[] = ["2xx", "4xx", "5xx", "network_error", "timeout"];
 
-const URL_INPUT: JSONSchema = {
-    type: "string",
+const OUTPUT_FIELDS: FlowFieldList = [
+    { name: "statusCode", type: "integer" },
+    { name: "bodyPreview", type: "string" },
+    { name: "truncated", type: "boolean" },
+];
+
+const URL_FIELD = {
+    name: "url",
+    type: "string" as const,
+    required: true,
     minLength: 8,
     maxLength: 2048,
-    pattern: "^https://",
 };
 
-const HEADERS_INPUT: JSONSchema = {
-    type: "object",
-    additionalProperties: { type: "string", maxLength: 1024 },
-};
+const HEADERS_FIELD = { name: "headers", type: "string" as const };
 
-const HTTP_RESULT_SCHEMA: JSONSchema = {
-    type: "object",
-    properties: {
-        statusCode: { type: "integer" },
-        bodyPreview: { type: "string" },
-        truncated: { type: "boolean" },
-    },
-};
+const POST_INPUT: FlowFieldList = [
+    URL_FIELD,
+    { name: "body", type: "string", maxLength: MAX_RESPONSE_BYTES },
+    { name: "contentType", type: "mime-type", valueSourceRef: "mime-type" },
+    HEADERS_FIELD,
+];
 
-const POST_INPUT: JSONSchema = {
-    type: "object",
-    required: ["url"],
-    additionalProperties: false,
-    properties: {
-        url: URL_INPUT,
-        body: { type: "string", maxLength: MAX_RESPONSE_BYTES },
-        contentType: {
-            type: "string",
-            enum: [
-                "application/json",
-                "application/x-www-form-urlencoded",
-                "text/plain",
-                "text/html",
-                "application/xml",
-            ],
-            enumLabels: [
-                "JSON",
-                "Form-urlencoded",
-                "Plain text",
-                "HTML",
-                "XML",
-            ],
-        },
-        headers: HEADERS_INPUT,
-    },
-};
-
-const GET_INPUT: JSONSchema = {
-    type: "object",
-    required: ["url"],
-    additionalProperties: false,
-    properties: {
-        url: URL_INPUT,
-        headers: HEADERS_INPUT,
-    },
-};
-
-const PUT_INPUT: JSONSchema = POST_INPUT;
-
-const DELETE_INPUT: JSONSchema = GET_INPUT;
-
-const RESULT_CLASSES: readonly string[] = ["2xx", "4xx", "5xx", "network_error", "timeout"];
+const GET_INPUT: FlowFieldList = [URL_FIELD, HEADERS_FIELD];
 
 function resultClassFor(statusCode: number): string {
     if (statusCode >= 200 && statusCode < 300) return "2xx";
@@ -145,44 +103,32 @@ async function performHttp(method: string, input: Readonly<Record<string, unknow
     }
 }
 
-async function httpPostHandler(input: Readonly<Record<string, unknown>>, _ctx: OperationContext): Promise<OperationResult> {
-    return performHttp("POST", input);
+function httpHandler(method: string) {
+    return async (input: Readonly<Record<string, unknown>>, _ctx: OperationContext): Promise<OperationResult> =>
+        performHttp(method, input);
 }
 
-async function httpGetHandler(input: Readonly<Record<string, unknown>>, _ctx: OperationContext): Promise<OperationResult> {
-    return performHttp("GET", input);
-}
-
-async function httpPutHandler(input: Readonly<Record<string, unknown>>, _ctx: OperationContext): Promise<OperationResult> {
-    return performHttp("PUT", input);
-}
-
-async function httpDeleteHandler(input: Readonly<Record<string, unknown>>, _ctx: OperationContext): Promise<OperationResult> {
-    return performHttp("DELETE", input);
-}
-
-function httpOp(input_schema: JSONSchema, handler: OperationSpec["handler"]): OperationSpec {
-    return {
+function httpOp(opId: string, inputFields: FlowFieldList, method: string): void {
+    registerOperation({
+        capability: CAPABILITY_NAME,
+        opId,
         safety_tier: "manual",
-        input_schema,
-        output_schema: HTTP_RESULT_SCHEMA,
+        inputFields,
+        outputFields: OUTPUT_FIELDS,
+        result_classes: RESULT_CLASSES,
         side_effects: { writes_audit: true },
         validation: {},
-        result_classes: RESULT_CLASSES,
-        handler,
-    };
+        handler: httpHandler(method),
+    });
 }
 
-export const manifest: CapabilityManifest = {
+httpOp("http:post", POST_INPUT, "POST");
+httpOp("http:get", GET_INPUT, "GET");
+httpOp("http:put", POST_INPUT, "PUT");
+httpOp("http:delete", GET_INPUT, "DELETE");
+
+export const manifest: CapabilityManifest = buildCapabilityFromRegistries({
     name: CAPABILITY_NAME,
-    version: "0.1.0",
+    version: "0.2.0",
     capability_color: CAPABILITY_COLOR,
-    operations: {
-        "http:post": httpOp(POST_INPUT, httpPostHandler),
-        "http:get": httpOp(GET_INPUT, httpGetHandler),
-        "http:put": httpOp(PUT_INPUT, httpPutHandler),
-        "http:delete": httpOp(DELETE_INPUT, httpDeleteHandler),
-    },
-    triggers: {},
-    data_sources: {},
-};
+});

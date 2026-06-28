@@ -3,9 +3,11 @@ import { lookupRsnHash } from "../../rsn-lookup.js";
 import { dispatchSafe } from "../auto-hook-dispatcher.js";
 import { buildEventEnvelope, type EnvelopeContext } from "../envelope.js";
 import { BUCKET_MS, type Payload } from "../projection-utils.js";
-import { BUCKET_ROUTES } from "./route-buckets.js";
-import { CURRENT_STATE_ROUTES } from "./route-current-state.js";
-import { EVENT_ROUTES } from "./route-events.js";
+import {
+    dispatchBucketHandler,
+    dispatchCurrentStateHandler,
+    dispatchEventHandler,
+} from "../../../../flows/registries/plugin-event-registry.js";
 
 export interface BatchEnvelopeCtx {
     batchSeq: number;
@@ -34,8 +36,6 @@ interface DispatchCtx {
 }
 
 function dispatchCurrentState(ctx: DispatchCtx): boolean {
-    const csHandler = CURRENT_STATE_ROUTES[ctx.eventType];
-    if (!csHandler) return false;
     const envelopeCtx: EnvelopeContext = {
         batchSeq: ctx.batchCtx.batchSeq,
         batchTick: ctx.batchCtx.batchTick,
@@ -44,26 +44,25 @@ function dispatchCurrentState(ctx: DispatchCtx): boolean {
         eventType: ctx.eventType,
     };
     const envelope = buildEventEnvelope(ctx.conn, envelopeCtx, ctx.payload);
-    csHandler({
+    return dispatchCurrentStateHandler(ctx.eventType, {
         envelope,
         conn: ctx.conn,
         payload: ctx.payload,
         now: ctx.now,
         id: { accountHash: ctx.accountHash, rsn: ctx.rsn },
     });
-    return true;
 }
 
 function dispatchFlat(ctx: DispatchCtx): void {
-    const evHandler = EVENT_ROUTES[ctx.eventType];
-    if (evHandler) {
-        evHandler(ctx.conn, ctx.accountHash, ctx.rsn, ctx.payload, ctx.now);
-        return;
-    }
-    const buHandler = BUCKET_ROUTES[ctx.eventType];
-    if (buHandler) {
-        buHandler(ctx.conn, ctx.accountHash, ctx.rsn, ctx.payload, Math.floor(ctx.now / BUCKET_MS));
-    }
+    if (dispatchEventHandler(ctx.eventType, ctx.conn, ctx.accountHash, ctx.rsn, ctx.payload, ctx.now)) return;
+    dispatchBucketHandler(
+        ctx.eventType,
+        ctx.conn,
+        ctx.accountHash,
+        ctx.rsn,
+        ctx.payload,
+        Math.floor(ctx.now / BUCKET_MS),
+    );
 }
 
 export function routePluginEvent(args: RouteEventArgs): void {

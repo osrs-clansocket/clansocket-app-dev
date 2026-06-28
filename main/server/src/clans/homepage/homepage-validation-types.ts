@@ -8,7 +8,14 @@ export interface ValidatedComponent {
     canvasW: number;
     canvasH: number;
     zIndex: number;
-    payload: { text?: string; imageKey?: string; imageVersion?: number; label?: string; value?: string };
+    payload: {
+        text?: string;
+        imageKey?: string;
+        imageVersion?: number;
+        label?: string;
+        value?: string;
+        chartPresetId?: string;
+    };
     tokenOverrides: Record<string, string>;
     parentId: string | null;
 }

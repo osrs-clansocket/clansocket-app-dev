@@ -6,7 +6,6 @@ import { passNew } from "../../specs/selectors-pass.js";
 
 registerListener({
     event: Events.GuildUpdate,
-    triggerId: "discord:guild.updated",
     selectEntity: passNew,
     buildPayload: pGuild,
     persist: persistGuildUpdate,

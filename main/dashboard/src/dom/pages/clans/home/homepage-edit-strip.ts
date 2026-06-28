@@ -1,9 +1,11 @@
 import {
     BTN_VARIANT_OUTLINE,
+    INLINE_CONFIRM_HOST_CLASS,
     baseProps,
     button,
     div,
     effect,
+    inlineConfirm,
     input,
     type Instance,
 } from "../../../factory";
@@ -41,6 +43,7 @@ const ICON_TOOLS: Record<string, IconToolDef> = {
     addSpacer: { name: "arrows-expand", tipKey: "add-spacer", label: "Add spacer" },
     addKpi: { name: "info-circle", tipKey: "add-kpi", label: "Add KPI" },
     variables: { name: "braces", tipKey: "toggle-variables", label: "Variables" },
+    charts: { name: "bar-chart-line", tipKey: "toggle-charts", label: "Charts" },
     guides: { name: "rulers", tipKey: "toggle-guides", label: "Guides" },
     undo: { name: "arrow-counterclockwise", tipKey: "undo", label: "Undo" },
     redo: { name: "arrow-clockwise", tipKey: "redo", label: "Redo" },
@@ -55,6 +58,7 @@ const TEXT_TOOLS: Record<string, TextToolDef> = {
 export interface EditStripOpts {
     readonly state: EditorState;
     readonly varsOpen$: Signal<boolean>;
+    readonly chartsOpen$: Signal<boolean>;
     onSave(): Promise<boolean>;
 }
 
@@ -143,7 +147,7 @@ function buildStatus(state: EditorState, feedback$: ReturnType<typeof signal<str
 }
 
 function buildEditingRows(opts: EditStripOpts, feedback$: ReturnType<typeof signal<string>>): Instance {
-    const { state, onSave, varsOpen$ } = opts;
+    const { state, onSave, varsOpen$, chartsOpen$ } = opts;
     const picker = buildHiddenImageInput(state);
     const save = textBtn(TEXT_TOOLS.save, async () => {
         feedback$.set("Saving...");
@@ -155,6 +159,20 @@ function buildEditingRows(opts: EditStripOpts, feedback$: ReturnType<typeof sign
         }
         setTimeout(() => feedback$.set(""), SAVE_FEEDBACK_RESET_MS);
     });
+    const exitHost = div(baseProps([INLINE_CONFIRM_HOST_CLASS]));
+    const exitBtn = textBtn(TEXT_TOOLS.exit, async () => {
+        if (!state.isDirty$()) {
+            state.setEditing(false);
+            return;
+        }
+        const ok = await inlineConfirm(exitHost, {
+            danger: true,
+            cancelContext: "stay in edit mode and keep the unsaved changes",
+            confirmContext: "exit edit mode and discard unsaved changes",
+        });
+        if (ok) state.setEditing(false);
+    });
+    exitHost.addChild(exitBtn);
     const mainRow = div(baseProps([MAIN_ROW_CLASS]), [
         iconBtn(ICON_TOOLS.addHeading, () => state.addComponent("heading")),
         iconBtn(ICON_TOOLS.addParagraph, () => state.addComponent("paragraph")),
@@ -163,6 +181,7 @@ function buildEditingRows(opts: EditStripOpts, feedback$: ReturnType<typeof sign
         iconBtn(ICON_TOOLS.addSpacer, () => state.addComponent("spacer")),
         iconBtn(ICON_TOOLS.addKpi, () => state.addComponent("kpi")),
         iconToggle(ICON_TOOLS.variables, () => varsOpen$(), () => varsOpen$.set(!varsOpen$())),
+        iconToggle(ICON_TOOLS.charts, () => chartsOpen$(), () => chartsOpen$.set(!chartsOpen$())),
         iconToggle(
             ICON_TOOLS.guides,
             () => state.guidesEnabled$(),
@@ -172,7 +191,7 @@ function buildEditingRows(opts: EditStripOpts, feedback$: ReturnType<typeof sign
         iconHistoryBtn(ICON_TOOLS.redo, () => state.redo(), () => state.canRedo$()),
         textBtn(TEXT_TOOLS.clearAll, () => state.clearAll()),
         save,
-        textBtn(TEXT_TOOLS.exit, () => state.setEditing(false)),
+        exitHost,
         picker,
         buildStatus(state, feedback$),
     ]);
@@ -180,14 +199,17 @@ function buildEditingRows(opts: EditStripOpts, feedback$: ReturnType<typeof sign
 }
 
 function buildIdleChild(state: EditorState): Instance {
-    return button({
-        variant: BTN_VARIANT_OUTLINE,
-        text: "Edit page",
-        ariaLabel: "Enter edit mode",
-        context: "enter edit mode to customize the homepage",
-        meta: ["action"],
-        onClick: () => state.setEditing(true),
-    });
+    return div(baseProps(["clans-home__edit-row-idle"]), [
+        button({
+            variant: BTN_VARIANT_OUTLINE,
+            classes: ["clans-home__edit-idle-btn"],
+            text: "Edit page",
+            ariaLabel: "Enter edit mode",
+            context: "enter edit mode to customize the homepage",
+            meta: ["action"],
+            onClick: () => state.setEditing(true),
+        }),
+    ]);
 }
 
 export function buildEditStrip(opts: EditStripOpts): Instance {

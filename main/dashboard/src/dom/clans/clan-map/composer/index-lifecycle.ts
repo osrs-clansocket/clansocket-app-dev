@@ -9,12 +9,25 @@ export function setupResizeObserver(
     canvasDims$: MapStateSignals["canvasDims$"],
 ): Disposable {
     const sync = makeCanvasSizer(hostEl, { bg: refs.bg.el, overlay: refs.overlay.el }, canvasDims$);
-    const observer = new ResizeObserver(sync);
+    let rafId = 0;
+    const deferredSync = (): void => {
+        if (rafId !== 0) return;
+        rafId = requestAnimationFrame(() => {
+            rafId = 0;
+            sync();
+        });
+    };
+    const observer = new ResizeObserver(deferredSync);
     queueMicrotask(() => {
         observer.observe(hostEl);
         sync();
     });
-    return { dispose: () => observer.disconnect() };
+    return {
+        dispose: () => {
+            observer.disconnect();
+            if (rafId !== 0) cancelAnimationFrame(rafId);
+        },
+    };
 }
 
 export interface AllDisposers {

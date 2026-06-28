@@ -15,7 +15,8 @@ import { componentRegistry } from "../engine/components/component-registry.js";
 import { isClanManager } from "../../database/clans/access/clan-manager-store.js";
 import { recordClanAudit } from "../../database/index.js";
 import { validateFlowReferences } from "../validators/reference-validator.js";
-import { dataSourceRegistry } from "../registries/data-source-registry.js";
+import { resolveValueSource, valueSourceRegistry } from "../registries/value-source-registry.js";
+import { allRegisteredFieldTypes, operatorsForFieldType } from "../registries/field-operator-registry.js";
 import { nextFireAt } from "../engine/dispatchers/cron-evaluator.js";
 import { dispatchEventSafe } from "../engine/dispatchers/event-router.js";
 import { byGuildId } from "../../database/discord/servers/by-guild-id.js";
@@ -176,7 +177,6 @@ router.get("/capabilities", (_req, res) => {
                 },
             ]),
         ),
-        data_sources: Object.keys(m.data_sources),
     }));
     res.json({ capabilities: out });
 });
@@ -208,38 +208,50 @@ router.get("/component-kinds", (_req, res) => {
     res.json({ kinds });
 });
 
-router.get("/data-source", async (req, res) => {
-    const sourceId = String(req.query.source ?? "");
-    const clanId = String(req.query.clan_id ?? "");
-    if (sourceId.length === 0 || clanId.length === 0) {
-        res.status(400).json({ error: "source and clan_id required" });
-        return;
-    }
-    const siteAccountId = req.siteAccountId;
-    if (!siteAccountId) {
-        res.status(403).json({ error: "authentication required" });
-        return;
-    }
-    if (!isClanManager(siteAccountId, clanId)) {
-        res.status(403).json({ error: "manager access required" });
-        return;
-    }
-    const adapter = dataSourceRegistry.get(sourceId);
-    if (!adapter) {
-        res.status(404).json({ error: `unknown source: ${sourceId}` });
-        return;
-    }
-    try {
-        const items = await adapter.fetch(clanId);
-        res.json({ items });
-    } catch (err) {
-        res.status(500).json({ error: (err as Error).message });
-    }
+router.get("/field-operators", (_req, res) => {
+    const out: Record<string, readonly string[]> = {};
+    for (const type of allRegisteredFieldTypes()) out[type] = operatorsForFieldType(type);
+    res.json({ field_operators: out });
 });
 
 router.get("/entity-attributes", (_req, res) => {
     const attrs = entityAttributes().map((a) => ({ path: a.path, label: a.label, type: a.type }));
     res.json({ attributes: attrs });
+});
+
+router.get("/value-sources", async (req, res) => {
+    const format = String(req.query.format ?? "");
+    const clanId = String(req.query.clan_id ?? "");
+    if (format.length === 0) {
+        res.status(400).json({ error: "format required" });
+        return;
+    }
+    const spec = valueSourceRegistry.get(format);
+    if (!spec) {
+        res.status(404).json({ error: `unknown value source format: ${format}` });
+        return;
+    }
+    if (spec.fetch) {
+        if (clanId.length === 0) {
+            res.status(400).json({ error: "clan_id required for dynamic value source" });
+            return;
+        }
+        const siteAccountId = req.siteAccountId;
+        if (!siteAccountId) {
+            res.status(403).json({ error: "authentication required" });
+            return;
+        }
+        if (!isClanManager(siteAccountId, clanId)) {
+            res.status(403).json({ error: "manager access required" });
+            return;
+        }
+    }
+    try {
+        const items = await resolveValueSource(format, clanId);
+        res.json({ format, label: spec.label, items });
+    } catch (err) {
+        res.status(500).json({ error: (err as Error).message });
+    }
 });
 
 router.get("/value-options", (req, res) => {
@@ -264,12 +276,14 @@ router.get("/value-options", (req, res) => {
         res.status(403).json({ error: "manager access required" });
         return;
     }
-    try {
-        const values = resolveValueOptions(scope, clanId, field, triggerType);
-        res.json({ values });
-    } catch (err) {
-        res.status(400).json({ error: (err as Error).message });
-    }
+    void (async () => {
+        try {
+            const values = await resolveValueOptions(scope, clanId, field, triggerType);
+            res.json({ values });
+        } catch (err) {
+            res.status(400).json({ error: (err as Error).message });
+        }
+    })();
 });
 
 router.post("/discord-trigger", authenticate, (req, res) => {

@@ -29,14 +29,13 @@ export async function ensureValueOptions(
     inflight.add(k);
     try {
         const params = new URLSearchParams({ scope, field, clan_id: clanId });
-        if (triggerType.length > 0) params.set("trigger", triggerType);
+        if (triggerType.length > 0) params.set("trigger_type", triggerType);
         const response = await fetch(`/api/flows/value-options?${params.toString()}`);
         if (!response.ok) return;
         const body = (await response.json()) as { values: readonly string[] };
         cache.set(k, { values: body.values ?? [], fetchedAt: Date.now() });
         valueOptionsTick.set(valueOptionsTick() + 1);
     } catch {
-        // swallow
     } finally {
         inflight.delete(k);
     }

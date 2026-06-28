@@ -1,26 +1,7 @@
 import { getClanDb } from "../../database/index.js";
-import type {
-    JSONSchema,
-    OperationContext,
-    OperationResult,
-    OperationSpec,
-} from "../../flows/registries/registry-types.js";
-
-const SET_MEMBER_TAG_INPUT: JSONSchema = {
-    type: "object",
-    required: ["rsn", "tag_key"],
-    additionalProperties: false,
-    properties: {
-        rsn: { type: "string", format: "rsn", minLength: 1, maxLength: 12 },
-        tag_key: { type: "string", minLength: 1, maxLength: 64 },
-        tag_value: { type: "string", maxLength: 512 },
-    },
-};
-
-const SET_MEMBER_TAG_OUTPUT: JSONSchema = {
-    type: "object",
-    properties: { rsn: { type: "string" }, tag_key: { type: "string" } },
-};
+import { registerOperation } from "../../flows/registries/operation-registry.js";
+import type { OperationContext, OperationResult } from "../../flows/registries/registry-types.js";
+import { SET_TAG_RESULT_CLASSES } from "./result-classes.js";
 
 const UPSERT_TAG_SQL = `INSERT INTO clan_member_tags (rsn, tag_key, tag_value, set_at, set_by_flow_id)
     VALUES (?, ?, ?, ?, ?)
@@ -33,7 +14,7 @@ function readString(input: Readonly<Record<string, unknown>>, key: string, requi
     return "";
 }
 
-async function setMemberTagHandler(
+async function setMemberTag(
     input: Readonly<Record<string, unknown>>,
     ctx: OperationContext,
 ): Promise<OperationResult> {
@@ -50,12 +31,21 @@ async function setMemberTagHandler(
     }
 }
 
-export const setMemberTagOp: OperationSpec = {
+registerOperation({
+    capability: "clans",
+    opId: "clans:set-member-tag",
     safety_tier: "live",
-    input_schema: SET_MEMBER_TAG_INPUT,
-    output_schema: SET_MEMBER_TAG_OUTPUT,
+    inputFields: [
+        { name: "rsn", type: "rsn", valueSourceRef: "rsn", required: true, minLength: 1, maxLength: 12 },
+        { name: "tag_key", type: "string", required: true, minLength: 1, maxLength: 64 },
+        { name: "tag_value", type: "string", maxLength: 512 },
+    ],
+    outputFields: [
+        { name: "rsn", type: "string" },
+        { name: "tag_key", type: "string" },
+    ],
+    result_classes: SET_TAG_RESULT_CLASSES,
     side_effects: { writes_audit: true },
     validation: {},
-    result_classes: ["set", "error"],
-    handler: setMemberTagHandler,
-};
+    handler: setMemberTag,
+});

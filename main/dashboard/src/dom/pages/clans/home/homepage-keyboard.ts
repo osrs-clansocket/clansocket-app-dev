@@ -53,6 +53,11 @@ function handleUndoRedo(e: KeyboardEvent, state: EditorState): boolean {
         state.redo();
         return true;
     }
+    if (e.key === "d" && state.selectedId$() !== null) {
+        e.preventDefault();
+        state.duplicateSelected();
+        return true;
+    }
     return false;
 }
 

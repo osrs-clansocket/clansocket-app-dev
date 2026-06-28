@@ -112,7 +112,7 @@ function buildMount(canvas: HTMLCanvasElement, chart: Chart<BarKind>): ChartMoun
 
 function createBar(canvas: HTMLCanvasElement, spec: BarSpec): ChartMount {
     ensureCoreRegistered();
-    const theme = getChartTheme();
+    const theme = getChartTheme(canvas);
     const chart = new Chart(canvas, buildConfig(spec, theme));
     return buildMount(canvas, chart);
 }

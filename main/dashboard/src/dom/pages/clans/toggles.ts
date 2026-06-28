@@ -37,6 +37,7 @@ export function buildSortToggle(current: RosterSort, onChange: (v: RosterSort) =
     const opts: { value: RosterSort; label: string }[] = [
         { value: "hierarchy", label: "Hierarchy" },
         { value: "joined", label: "Join date" },
+        { value: "plugin", label: "Plugin" },
     ];
     const btns = opts.map((o) =>
         button({
@@ -74,7 +75,17 @@ function byJoinedAt(members: ClanRosterMember[]): ClanRosterMember[] {
     });
 }
 
+function byPluginFirst(members: ClanRosterMember[], ladder: ClanRankLadder): ClanRosterMember[] {
+    const withPlugin = members.filter((m) => m.hasPlugin === true);
+    const without = members.filter((m) => m.hasPlugin !== true);
+    return [
+        ...sortMembers(withPlugin, ladder, rosterNameKey),
+        ...sortMembers(without, ladder, rosterNameKey),
+    ];
+}
+
 export function applySort(members: ClanRosterMember[], sort: RosterSort, ladder: ClanRankLadder): ClanRosterMember[] {
     if (sort === "joined") return byJoinedAt(members);
+    if (sort === "plugin") return byPluginFirst(members, ladder);
     return sortMembers(members, ladder, rosterNameKey);
 }

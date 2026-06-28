@@ -3,6 +3,8 @@ import { asNumber, asNumberNullable, extractWhere } from "../projection-utils.js
 import { insertStatChange } from "./stat-changes.js";
 import { normalizeSkill, readPriorStat, upsertStat } from "./stat-state.js";
 import type { SkillEntry } from "./stat-types.js";
+import { EVENT_LEVEL_UP, EVENT_STATS, EVENT_XP_GAINED } from "../../../../plugin-api/event-types.js";
+import { registerPluginEvent } from "../../../../flows/registries/plugin-event-registry.js";
 
 const statRow = (skill: string, level: number, boosted: number, xp: number) => ({ skill, level, boosted, xp });
 
@@ -48,3 +50,36 @@ export function handleXpGained(ctx: HandlerCtx): void {
     const level = prior?.level ?? 0;
     upsertStat(conn, id, statRow(skill, level, level, xpAfter), now);
 }
+
+registerPluginEvent({
+    eventType: EVENT_STATS,
+    routing: "current-state",
+    handler: handleStats,
+    payloadFields: [
+        { name: "hash", type: "string" },
+        { name: "skills", type: "string" },
+    ],
+});
+
+registerPluginEvent({
+    eventType: EVENT_LEVEL_UP,
+    routing: "current-state",
+    handler: handleLevelUp,
+    payloadFields: [
+        { name: "skill", type: "osrs-skill", valueSourceRef: "osrs-skill" },
+        { name: "level", type: "integer" },
+        { name: "levelBefore", type: "integer" },
+        { name: "xpBefore", type: "integer" },
+        { name: "xpGained", type: "integer" },
+    ],
+});
+
+registerPluginEvent({
+    eventType: EVENT_XP_GAINED,
+    routing: "current-state",
+    handler: handleXpGained,
+    payloadFields: [
+        { name: "skill", type: "osrs-skill", valueSourceRef: "osrs-skill" },
+        { name: "xp", type: "integer" },
+    ],
+});

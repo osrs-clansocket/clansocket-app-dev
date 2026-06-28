@@ -1,7 +1,7 @@
 import { signal, type Signal } from "../../dom/factory";
 import { dryRunFlow, type DryRunStep, type DryRunTrace } from "./flows-client.js";
 import { serializeFlowDefinition } from "./flow-serializer.js";
-import { flowMetaSignal } from "../../dom/pages/clans/manage/flow-builder/flow-card-state.js";
+import { flowMetaSignal } from "../flow-builder/flow-store.js";
 
 export const dryRunTraceSignal: Signal<DryRunTrace | null> = signal<DryRunTrace | null>(null);
 export const dryRunErrorSignal: Signal<string | null> = signal<string | null>(null);

@@ -8,6 +8,7 @@ export interface HomepageComponentPayload {
     readonly imageVersion?: number;
     readonly label?: string;
     readonly value?: string;
+    readonly chartPresetId?: string;
 }
 
 export interface HomepageComponent {

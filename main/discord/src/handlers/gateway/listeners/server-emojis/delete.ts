@@ -7,7 +7,6 @@ import { passthrough } from "../../specs/selectors-pass.js";
 
 registerListener({
     event: Events.GuildEmojiDelete,
-    triggerId: "discord:server-emojis.deleted",
     selectEntity: passthrough,
     buildPayload: pEmoji,
     persist: deleteOf(STATE_KINDS.SERVER_EMOJIS),

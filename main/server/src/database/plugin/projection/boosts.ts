@@ -4,6 +4,8 @@ import { buildChangeEmitter } from "./change-inserter.js";
 import type { HandlerCtx } from "./handler-ctx.js";
 
 import { asNumber, extractWhere, type PlayerIdentity, type SpatialColumns } from "./projection-utils.js";
+import { EVENT_BOOSTS } from "../../../plugin-api/event-types.js";
+import { registerPluginEvent } from "../../../flows/registries/plugin-event-registry.js";
 
 interface BoostEntry {
     skill?: string;
@@ -112,3 +114,13 @@ export function handleBoosts(ctx: HandlerCtx): void {
         clearStaleBoosts(emitter, ctx, where, seen);
     })();
 }
+
+registerPluginEvent({
+    eventType: EVENT_BOOSTS,
+    routing: "current-state",
+    handler: handleBoosts,
+    payloadFields: [
+        { name: "hash", type: "string" },
+        { name: "boosts", type: "string" },
+    ],
+});

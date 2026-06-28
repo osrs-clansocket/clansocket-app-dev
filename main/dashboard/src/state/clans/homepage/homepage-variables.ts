@@ -2,6 +2,8 @@ import type { ReadSignal } from "../../../dom/factory/reactive";
 import type { ClanRosterMember, ManagedClan } from "../clans-client/index.js";
 import { defaultThumbUrl } from "../../../dom/factory/data-ops/identity/clan-icon-url.js";
 import type { MetricValue } from "./homepage-metrics-store.js";
+import type { HeatmapCell } from "./homepage-heatmaps-store.js";
+import type { TimeseriesPoint } from "./homepage-timeseries-store.js";
 
 export interface HomepageContext {
     readonly clan: ManagedClan;
@@ -9,6 +11,8 @@ export interface HomepageContext {
     readonly iconUrl: string;
     readonly establishedYear: number | null;
     readonly metrics: ReadSignal<Map<string, MetricValue>>;
+    readonly heatmaps: ReadSignal<Map<string, HeatmapCell[]>>;
+    readonly timeseries: ReadSignal<Map<string, TimeseriesPoint[]>>;
 }
 
 const VARIABLE_PATTERN = /\{\{\s*([a-z][a-z0-9_.]*)\s*\}\}/gi;
@@ -61,10 +65,15 @@ function earliestJoinYear(members: readonly ClanRosterMember[]): number | null {
     return new Date(earliestMs).getUTCFullYear();
 }
 
-export function buildContext(clan: ManagedClan, metrics: ReadSignal<Map<string, MetricValue>>): HomepageContext {
+export function buildContext(
+    clan: ManagedClan,
+    metrics: ReadSignal<Map<string, MetricValue>>,
+    heatmaps: ReadSignal<Map<string, HeatmapCell[]>>,
+    timeseries: ReadSignal<Map<string, TimeseriesPoint[]>>,
+): HomepageContext {
     const memberCount = clan.roster?.memberCount ?? 0;
     const iconUrl = defaultThumbUrl(clan.slug);
     const members = clan.roster?.members ?? [];
     const establishedYear = earliestJoinYear(members);
-    return { clan, memberCount, iconUrl, establishedYear, metrics };
+    return { clan, memberCount, iconUrl, establishedYear, metrics, heatmaps, timeseries };
 }

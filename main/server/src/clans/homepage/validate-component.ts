@@ -85,6 +85,9 @@ function validateOne(raw: unknown, errors: ValidationError[]): ValidatedComponen
         if (typeof rawPayload.imageVersion === "number") payload.imageVersion = rawPayload.imageVersion;
         if (typeof rawPayload.label === "string") payload.label = rawPayload.label.slice(0, TEXT_MAX_LENGTH);
         if (typeof rawPayload.value === "string") payload.value = rawPayload.value.slice(0, TEXT_MAX_LENGTH);
+        if (typeof rawPayload.chartPresetId === "string" && COMPONENT_ID_REGEX.test(rawPayload.chartPresetId)) {
+            payload.chartPresetId = rawPayload.chartPresetId;
+        }
     }
     const tokenOverrides: Record<string, string> = {};
     const rawOverrides = r.tokenOverrides;

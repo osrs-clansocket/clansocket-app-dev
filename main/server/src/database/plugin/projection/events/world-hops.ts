@@ -1,6 +1,8 @@
 import { buildChangeEmitter } from "../change-inserter.js";
 import type { HandlerCtx } from "../handler-ctx.js";
 import { extractWhere } from "../projection-utils.js";
+import { EVENT_WORLD_HOP } from "../../../../plugin-api/event-types.js";
+import { registerPluginEvent } from "../../../../flows/registries/plugin-event-registry.js";
 
 export function handleWorldHop(ctx: HandlerCtx): void {
     const { conn, payload, now, envelope, id } = ctx;
@@ -23,3 +25,13 @@ export function handleWorldHop(ctx: HandlerCtx): void {
         ).run({ toWorld, now, accountHash });
     })();
 }
+
+registerPluginEvent({
+    eventType: EVENT_WORLD_HOP,
+    routing: "current-state",
+    handler: handleWorldHop,
+    payloadFields: [
+        { name: "fromWorld", type: "integer" },
+        { name: "toWorld", type: "integer" },
+    ],
+});

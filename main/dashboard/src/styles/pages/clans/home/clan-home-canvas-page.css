@@ -139,6 +139,11 @@
     display: block;
 }
 
+.clans-home__canvas-wrapper:not(.is-editing) .clans-home__rulers,
+.clans-home__canvas-wrapper:not(.is-editing) .clans-home__guides-layer {
+    display: none;
+}
+
 .clans-home__ruler {
     position: absolute;
     background: rgb(from var(--base-graphite-900) r g b / 0.55);
@@ -576,6 +581,24 @@
     display: flex;
     align-items: stretch;
     border-block-end: var(--sp-hairline) solid rgb(from var(--base-gold-500) r g b / 0.5);
+}
+
+.clans-home__edit-row-idle {
+    display: flex;
+    justify-content: flex-end;
+    align-items: stretch;
+    border-block-end: var(--sp-hairline) solid rgb(from var(--base-gold-500) r g b / 0.5);
+}
+
+.clans-home__edit-idle-btn {
+    inline-size: auto;
+    block-size: var(--sp-6);
+    padding: 0 var(--sp-3);
+    border: 0;
+    border-radius: 0;
+    font-size: var(--fs-3xs);
+    text-transform: uppercase;
+    letter-spacing: var(--ls-wide);
 }
 
 .clans-home__edit-row-main .clans-home__frame-tool {
@@ -1273,5 +1296,281 @@
     border-block-start: var(--sp-hairline) solid rgb(from var(--base-graphite-500) r g b / 0.3);
     font-size: var(--fs-2xs);
     text-align: center;
+    color: var(--base-graphite-300);
+}
+
+.clans-home__chart-rail {
+    position: fixed;
+    inset-block-start: var(--clan-home-chrome-h, 4rem);
+    inset-inline-end: 0;
+    inset-block-end: 0;
+    z-index: var(--z-modal);
+    display: none;
+    flex-direction: column;
+    inline-size: 22rem;
+    border-inline-start: var(--sp-hairline) solid rgb(from var(--base-gold-500) r g b / 0.5);
+    background: var(--gradient-surface-opaque);
+    backdrop-filter: blur(var(--blur-sm));
+    pointer-events: auto;
+}
+
+.clans-home__chart-rail.is-open {
+    display: flex;
+}
+
+.clans-home__chart-rail-head {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: var(--sp-2);
+    padding: var(--sp-2) var(--sp-3);
+    border-block-end: var(--sp-hairline) solid rgb(from var(--base-gold-500) r g b / 0.3);
+}
+
+.clans-home__chart-rail-title {
+    flex: 1 1 auto;
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semi);
+    color: var(--base-gold-300);
+    text-transform: uppercase;
+    letter-spacing: var(--ls-wide);
+}
+
+.clans-home__chart-rail-close {
+    flex: 0 0 auto;
+    inline-size: var(--sp-6);
+    block-size: var(--sp-6);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--base-graphite-300);
+    font-size: var(--fs-md);
+    cursor: pointer;
+}
+
+.clans-home__chart-rail-close:hover {
+    color: var(--base-gold-300);
+}
+
+.clans-home__chart-rail-tabs {
+    display: flex;
+    flex: 0 0 auto;
+    flex-wrap: wrap;
+    gap: var(--sp-1);
+    padding: var(--sp-2) var(--sp-3);
+    border-block-end: var(--sp-hairline) solid rgb(from var(--base-gold-500) r g b / 0.3);
+}
+
+.clans-home__chart-rail-tab {
+    padding: var(--sp-1) var(--sp-2);
+    border: var(--sp-hairline) solid rgb(from var(--base-gold-500) r g b / 0.3);
+    border-radius: var(--radius-md);
+    background: rgb(from var(--base-graphite-900) r g b / 0.4);
+    color: var(--base-graphite-300);
+    font-size: var(--fs-3xs);
+    text-transform: uppercase;
+    letter-spacing: var(--ls-wide);
+    cursor: pointer;
+}
+
+.clans-home__chart-rail-tab.is-active {
+    border-color: rgb(from var(--base-gold-500) r g b / 0.7);
+    background: rgb(from var(--base-gold-500) r g b / 0.2);
+    color: var(--base-gold-300);
+}
+
+.clans-home__chart-rail-body {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    padding: var(--sp-2) var(--sp-3);
+    overflow: hidden auto;
+    scrollbar-width: none;
+}
+
+.clans-home__chart-rail-body::-webkit-scrollbar {
+    inline-size: 0;
+    block-size: 0;
+}
+
+.clans-home__chart-rail-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+}
+
+.clans-home__chart-rail-card {
+    position: relative;
+    display: block;
+    inline-size: 100%;
+    block-size: 7.5rem;
+    padding: 0;
+    border: var(--sp-hairline) solid rgb(from var(--base-gold-500) r g b / 0.4);
+    border-radius: var(--radius-md);
+    background: rgb(from var(--base-graphite-900) r g b / 0.4);
+    overflow: hidden;
+    cursor: pointer;
+    text-align: start;
+}
+
+.clans-home__chart-rail-card:hover {
+    border-color: rgb(from var(--base-gold-500) r g b / 0.8);
+}
+
+.clans-home__chart-preview-canvas {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+}
+
+.clans-home__chart-rail-card-label {
+    position: absolute;
+    inset-block-start: var(--sp-1);
+    inset-inline-start: var(--sp-2);
+    padding: 0 var(--sp-1);
+    border-radius: var(--radius-md);
+    background: rgb(from var(--base-graphite-900) r g b / 0.65);
+    font-size: var(--fs-3xs);
+    font-weight: var(--fw-semi);
+    color: var(--base-gold-300);
+    pointer-events: none;
+}
+
+.clans-home__chart-rail-card-desc {
+    position: absolute;
+    inset-block-end: var(--sp-1);
+    inset-inline-start: var(--sp-2);
+    inset-inline-end: var(--sp-2);
+    padding: 0 var(--sp-1);
+    border-radius: var(--radius-md);
+    background: rgb(from var(--base-graphite-900) r g b / 0.65);
+    font-size: var(--fs-3xs);
+    color: var(--base-graphite-200);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity var(--dur-fast) var(--ease-out);
+}
+
+.clans-home__chart-rail-card:hover .clans-home__chart-rail-card-desc {
+    opacity: 1;
+}
+
+.clans-home__chart-preview-empty {
+    padding: var(--sp-3);
+    font-size: var(--fs-3xs);
+    text-align: center;
+    color: var(--base-graphite-400);
+}
+
+.clans-home__chart-wrap {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+}
+
+.clans-home__chart-canvas {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+}
+
+.clans-home__chart-empty {
+    display: flex;
+    inline-size: 100%;
+    block-size: 100%;
+    justify-content: center;
+    align-items: center;
+    font-size: var(--fs-3xs);
+    color: var(--base-graphite-400);
+}
+
+.clans-home__chart-no-data {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: var(--fs-3xs);
+    color: var(--base-graphite-400);
+    pointer-events: none;
+}
+
+.clans-home__chart-wrap {
+    position: relative;
+}
+
+.clans-home__chart-source {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+    inline-size: 22rem;
+    max-block-size: 28rem;
+    padding: var(--sp-2);
+}
+
+.clans-home__chart-source-head {
+    padding-inline: var(--sp-1);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semi);
+    text-transform: uppercase;
+    letter-spacing: var(--ls-wide);
+    color: var(--base-gold-300);
+}
+
+.clans-home__chart-source-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-1);
+    overflow: hidden auto;
+    scrollbar-width: none;
+}
+
+.clans-home__chart-source-list::-webkit-scrollbar {
+    inline-size: 0;
+    block-size: 0;
+}
+
+.clans-home__chart-source-row {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+    column-gap: var(--sp-2);
+    padding: var(--sp-1) var(--sp-2);
+    border: var(--sp-hairline) solid rgb(from var(--base-gold-500) r g b / 0.3);
+    border-radius: var(--radius-md);
+    background: rgb(from var(--base-graphite-900) r g b / 0.4);
+    text-align: start;
+    cursor: pointer;
+}
+
+.clans-home__chart-source-row:hover {
+    border-color: rgb(from var(--base-gold-500) r g b / 0.6);
+}
+
+.clans-home__chart-source-row.is-active {
+    border-color: rgb(from var(--base-gold-500) r g b / 0.8);
+    background: rgb(from var(--base-gold-500) r g b / 0.15);
+}
+
+.clans-home__chart-source-kind {
+    grid-row: 1 / span 2;
+    align-self: center;
+    padding: var(--sp-1) var(--sp-2);
+    border-radius: var(--radius-md);
+    background: rgb(from var(--base-gold-500) r g b / 0.18);
+    color: var(--base-gold-300);
+    font-size: var(--fs-3xs);
+    text-transform: uppercase;
+    letter-spacing: var(--ls-wide);
+}
+
+.clans-home__chart-source-label {
+    font-size: var(--fs-2xs);
+    font-weight: var(--fw-semi);
+    color: var(--base-cream-100);
+}
+
+.clans-home__chart-source-desc {
+    font-size: var(--fs-3xs);
     color: var(--base-graphite-300);
 }

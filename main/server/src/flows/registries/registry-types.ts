@@ -47,23 +47,10 @@ export interface TriggerSpec {
     readonly triggerable: boolean;
 }
 
-export interface DataSourceAdapter {
-    readonly id: string;
-    readonly label: string;
-    readonly fetch: (clanId: string) => Promise<readonly DataSourceItem[]>;
-}
-
-export interface DataSourceItem {
-    readonly id: string;
-    readonly name: string;
-    readonly kind?: string;
-}
-
 export interface CapabilityManifest {
     readonly name: string;
     readonly version: string;
     readonly capability_color: string;
     readonly operations: Readonly<Record<string, OperationSpec>>;
     readonly triggers: Readonly<Record<string, TriggerSpec>>;
-    readonly data_sources: Readonly<Record<string, DataSourceAdapter>>;
 }

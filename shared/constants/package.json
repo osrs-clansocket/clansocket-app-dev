@@ -11,6 +11,10 @@
     "./clan-homepage-types": {
       "types": "./clan-homepage-types.ts",
       "import": "./clan-homepage-types.ts"
+    },
+    "./discord-trigger-manifest": {
+      "types": "./discord-trigger-manifest.ts",
+      "import": "./discord-trigger-manifest.ts"
     }
   }
 }

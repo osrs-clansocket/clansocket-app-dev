@@ -8,7 +8,6 @@ import { stickerGuardNew } from "../../specs/selectors-guards.js";
 
 registerListener({
     event: Events.GuildStickerUpdate,
-    triggerId: "discord:server-stickers.updated",
     selectEntity: stickerGuardNew,
     buildPayload: pSticker,
     persist: upsertOf(STATE_KINDS.SERVER_STICKERS, extractStickerRow),

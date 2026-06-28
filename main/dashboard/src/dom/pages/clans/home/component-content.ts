@@ -5,6 +5,7 @@ import { isDefaultIconKey } from "../../../../state/clans/homepage/homepage-defa
 import type { EditorState } from "./homepage-editor-state.js";
 import { COMPONENT_IMAGE_CLASS, TEXT_DISPLAY_CLASS } from "./component-classes.js";
 import { buildKpiPartEditable, buildTextHostPair } from "./component-text-edit.js";
+import { buildChart } from "./component-chart.js";
 
 const KPI_LABEL_CLASS = "clans-home__kpi-label";
 const KPI_VALUE_CLASS = "clans-home__kpi-value";
@@ -23,6 +24,10 @@ function isKpiKind(c: HomepageComponent): boolean {
 
 function isContainerKind(c: HomepageComponent): boolean {
     return c.componentName === "container";
+}
+
+function isChartKind(c: HomepageComponent): boolean {
+    return c.componentName === "chart";
 }
 
 function resolveImageSrc(ctx: HomepageContext, c: HomepageComponent): string {
@@ -90,6 +95,9 @@ export function buildContent(
     }
     if (isContainerKind(c)) {
         return div(baseProps(["clans-home__container-body"]));
+    }
+    if (isChartKind(c)) {
+        return buildChart(ctx, c);
     }
     return null;
 }

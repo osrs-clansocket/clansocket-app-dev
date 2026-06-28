@@ -12,6 +12,8 @@ import {
     type PlayerIdentity,
     type SpatialColumns,
 } from "../projection-utils.js";
+import { EVENT_DIARIES, EVENT_DIARY_COMPLETED } from "../../../../plugin-api/event-types.js";
+import { registerPluginEvent } from "../../../../flows/registries/plugin-event-registry.js";
 
 interface DiaryEntry {
     region: string;
@@ -98,6 +100,13 @@ export function handleDiaries(ctx: HandlerCtx): void {
     })();
 }
 
+registerPluginEvent({
+    eventType: EVENT_DIARIES,
+    routing: "current-state",
+    handler: handleDiaries,
+    payloadFields: [{ name: "diaries", type: "string" }],
+});
+
 export function handleDiaryCompleted(ctx: HandlerCtx): void {
     const { conn, payload, now, envelope, id } = ctx;
     const { accountHash } = id;
@@ -111,3 +120,13 @@ export function handleDiaryCompleted(ctx: HandlerCtx): void {
         upsertDiary({ conn, id, now, ...d, complete: 1 });
     })();
 }
+
+registerPluginEvent({
+    eventType: EVENT_DIARY_COMPLETED,
+    routing: "current-state",
+    handler: handleDiaryCompleted,
+    payloadFields: [
+        { name: "region", type: "string" },
+        { name: "tier", type: "string" },
+    ],
+});

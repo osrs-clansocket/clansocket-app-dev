@@ -8,7 +8,6 @@ import { passNew } from "../../specs/selectors-pass.js";
 
 registerListener({
     event: Events.GuildRoleUpdate,
-    triggerId: "discord:roles.updated",
     selectEntity: passNew,
     buildPayload: pRoleCU,
     persist: upsertOf(STATE_KINDS.ROLES, extractRoleRow),

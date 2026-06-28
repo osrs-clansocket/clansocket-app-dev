@@ -1,6 +1,8 @@
 import { ensureRow } from "../current-state.js";
 import type { HandlerCtx } from "../handler-ctx.js";
 import type { Payload } from "../projection-utils.js";
+import { EVENT_LOCATION } from "../../../../plugin-api/event-types.js";
+import { registerPluginEvent } from "../../../../flows/registries/plugin-event-registry.js";
 
 function readRegionId(payload: Payload): number | null {
     if (typeof payload.region === "number") return payload.region;
@@ -25,3 +27,10 @@ export function handleLocation(ctx: HandlerCtx): void {
             WHERE account_hash = $accountHash`,
     ).run({ x, y, plane, regionId, regionName, now, accountHash });
 }
+
+registerPluginEvent({
+    eventType: EVENT_LOCATION,
+    routing: "current-state",
+    handler: handleLocation,
+    payloadFields: [],
+});

@@ -7,6 +7,11 @@ import { extractWhere, type PlayerIdentity, type SpatialColumns } from "../proje
 import { lookupCatalog, priorPointsAccount, upsertAchievement } from "./achievement-state.js";
 import { lookupSpecTask, resolveAchievementSpec } from "./achievement-resolver.js";
 import type { AchievementSpec } from "./achievement-types.js";
+import {
+    EVENT_COMBAT_ACHIEVEMENT_COMPLETED,
+    EVENT_COMBAT_ACHIEVEMENTS_SNAPSHOT,
+} from "../../../../plugin-api/event-types.js";
+import { registerPluginEvent } from "../../../../flows/registries/plugin-event-registry.js";
 
 const ACHIEVEMENT_CHANGE_COLS = [
     "task_id",
@@ -81,3 +86,20 @@ export function handleSnapshot(ctx: HandlerCtx): void {
         }
     })();
 }
+
+registerPluginEvent({
+    eventType: EVENT_COMBAT_ACHIEVEMENT_COMPLETED,
+    routing: "current-state",
+    handler: handleCombatAchievement,
+    payloadFields: [
+        { name: "taskId", type: "integer" },
+        { name: "pointsBefore", type: "integer" },
+    ],
+});
+
+registerPluginEvent({
+    eventType: EVENT_COMBAT_ACHIEVEMENTS_SNAPSHOT,
+    routing: "current-state",
+    handler: handleSnapshot,
+    payloadFields: [{ name: "completedTasks", type: "string" }],
+});

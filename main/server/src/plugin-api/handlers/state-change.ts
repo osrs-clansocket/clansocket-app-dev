@@ -19,6 +19,29 @@ import type { RosterSnapshotEntry } from "../session/socket-state.js";
 import { isTelemetryAllowed, rejectUnauthed } from "../session/telemetry-gate.js";
 import type { PluginClientMessage, PluginLoginState } from "../types/index.js";
 import type { DispatchContext } from "./dispatch-types.js";
+import { registerTrigger } from "../../flows/registries/trigger-registry.js";
+
+registerTrigger({
+    capability: "plugin",
+    triggerId: EVENT_LOGIN_STATE,
+    eventSource: `plugin.telemetry.${EVENT_LOGIN_STATE}`,
+    routing: "event",
+    payloadFields: [
+        { name: "state", type: "string" },
+        { name: "world", type: "integer" },
+    ],
+});
+
+registerTrigger({
+    capability: "plugin",
+    triggerId: EVENT_CLAN_ROSTER,
+    eventSource: `plugin.telemetry.${EVENT_CLAN_ROSTER}`,
+    routing: "event",
+    payloadFields: [
+        { name: "clanName", type: "string" },
+        { name: "members", type: "string" },
+    ],
+});
 
 const VALID_LOGIN_STATES: ReadonlySet<PluginLoginState> = new Set([
     LOGIN_STATE_LOGGED_IN,

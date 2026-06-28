@@ -8,7 +8,6 @@ import { passthrough } from "../../specs/selectors-pass.js";
 
 registerListener({
     event: Events.GuildMemberAdd,
-    triggerId: "discord:members.joined",
     selectEntity: passthrough,
     buildPayload: pMember,
     persist: upsertOf(STATE_KINDS.MEMBERS, extractMemberRow),

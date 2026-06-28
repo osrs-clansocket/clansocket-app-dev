@@ -31,6 +31,7 @@ export interface EditorState extends Disposable {
     readonly draft$: ReadSignal<HomepageComponent[]>;
     readonly canUndo$: ReadSignal<boolean>;
     readonly canRedo$: ReadSignal<boolean>;
+    readonly isDirty$: ReadSignal<boolean>;
     readonly guides$: ReadSignal<Guide[]>;
     readonly guidesEnabled$: ReadSignal<boolean>;
     setGuidesEnabled(v: boolean): void;
@@ -45,6 +46,8 @@ export interface EditorState extends Disposable {
     addComponent(kind: HomepageComponent["componentName"]): void;
     addBottomSection(): void;
     addChildComponent(kind: HomepageComponent["componentName"], parentId: string): void;
+    addChartFromPreset(presetId: string, size?: { w: number; h: number }): void;
+    setPayload(id: string, patch: Partial<HomepageComponent["payload"]>): void;
     deleteSelected(): void;
     duplicateSelected(): void;
     beginDragHistory(): void;
@@ -91,17 +94,22 @@ function replaceById(
     return components.map((c) => (c.componentId === id ? patch(c) : c));
 }
 
+const CHART_DEFAULT_W = 320;
+const CHART_DEFAULT_H = 240;
+
 function defaultsForKind(kind: HomepageComponent["componentName"]): { w: number; h: number } {
     if (kind === "container") return { w: CONTAINER_DEFAULT_W, h: CONTAINER_DEFAULT_H };
     if (kind === "image") return { w: IMAGE_DEFAULT_W, h: HEADING_DEFAULT_H * 4 };
     if (kind === "spacer") return { w: TEXT_DEFAULT_W, h: SPACER_DEFAULT_H };
     if (kind === "kpi") return { w: 180, h: 72 };
+    if (kind === "chart") return { w: CHART_DEFAULT_W, h: CHART_DEFAULT_H };
     return { w: TEXT_DEFAULT_W, h: kind === "heading" ? HEADING_DEFAULT_H : PARAGRAPH_DEFAULT_H };
 }
 
 function payloadFor(kind: HomepageComponent["componentName"]): HomepageComponent["payload"] {
     if (kind === "heading" || kind === "paragraph") return { text: `New ${kind}` };
     if (kind === "kpi") return { label: "Label", value: "Value" };
+    if (kind === "chart") return {};
     return {};
 }
 
@@ -139,18 +147,34 @@ function topBottom(components: ReadonlyArray<HomepageComponent>): number {
     return bottom;
 }
 
+function fingerprint(components: ReadonlyArray<HomepageComponent>): string {
+    return JSON.stringify(components);
+}
+
 export function createEditorState(slug: string, components$: ReadSignal<HomepageComponent[]>): EditorState {
     const editing$ = persistedSignal<boolean>(`clan-home-edit.${slug}`, false);
     const selectedId$ = signal<string | null>(null);
     const initialUpstream = components$();
-    const initialDraft = editing$() && initialUpstream.length === 0 ? defaultScaffold() : initialUpstream;
+    const persistedDraft$ = persistedSignal<HomepageComponent[] | null>(`clan-home-draft.${slug}`, null);
+    const initialDraft =
+        persistedDraft$() ??
+        (editing$() && initialUpstream.length === 0 ? defaultScaffold() : initialUpstream);
     const draft$ = signal<HomepageComponent[]>(initialDraft);
+    const isDirty$ = signal<boolean>(fingerprint(initialDraft) !== fingerprint(initialUpstream));
     const undoStack: HomepageComponent[][] = [];
     const redoStack: HomepageComponent[][] = [];
     const canUndo$ = signal<boolean>(false);
     const canRedo$ = signal<boolean>(false);
     const guidesApi = createGuidesState(slug);
     let counter = 0;
+
+    const persistDispose = effect(() => {
+        const cur = draft$();
+        const upstream = components$();
+        const dirty = fingerprint(cur) !== fingerprint(upstream);
+        isDirty$.set(dirty);
+        persistedDraft$.set(dirty && editing$() ? cur : null);
+    });
 
     const syncDispose = effect(() => {
         const upstream = components$();
@@ -214,6 +238,24 @@ export function createEditorState(slug: string, components$: ReadSignal<Homepage
         pushHistory();
         const y = topBottom(draft$()) + SECTION_GAP;
         appendBuilt(buildComponent({ id: nextId(), kind: "container", x: 0, parentId: null, y }));
+    }
+
+    function setPayload(id: string, patch: Partial<HomepageComponent["payload"]>): void {
+        draft$.set(replaceById(draft$(), id, (c) => ({ ...c, payload: { ...c.payload, ...patch } })));
+    }
+
+    function addChartFromPreset(presetId: string, size?: { w: number; h: number }): void {
+        pushHistory();
+        const id = nextId();
+        appendBuilt(buildComponent({ id, x: DEFAULT_X, y: DEFAULT_Y, parentId: null, kind: "chart" }));
+        draft$.set(
+            replaceById(draft$(), id, (c) => ({
+                ...c,
+                payload: { ...c.payload, chartPresetId: presetId },
+                canvasW: size ? clampW(size.w) : c.canvasW,
+                canvasH: size ? clampH(size.h) : c.canvasH,
+            })),
+        );
     }
 
     function addChildComponent(kind: HomepageComponent["componentName"], parentId: string): void {
@@ -371,7 +413,10 @@ export function createEditorState(slug: string, components$: ReadSignal<Homepage
 
     async function save(): Promise<boolean> {
         const ok = await saveHomepageComponents(slug, draft$());
-        if (ok) clearHistory();
+        if (ok) {
+            clearHistory();
+            persistedDraft$.set(null);
+        }
         return ok;
     }
 
@@ -382,6 +427,7 @@ export function createEditorState(slug: string, components$: ReadSignal<Homepage
         draft$,
         canUndo$,
         canRedo$,
+        isDirty$,
         guides$: guidesApi.guides$,
         guidesEnabled$: guidesApi.guidesEnabled$,
         setGuidesEnabled: guidesApi.setGuidesEnabled,
@@ -396,6 +442,8 @@ export function createEditorState(slug: string, components$: ReadSignal<Homepage
         addComponent,
         addBottomSection,
         addChildComponent,
+        addChartFromPreset,
+        setPayload,
         deleteSelected,
         duplicateSelected,
         beginDragHistory,
@@ -414,6 +462,7 @@ export function createEditorState(slug: string, components$: ReadSignal<Homepage
         save,
         dispose: () => {
             syncDispose.dispose();
+            persistDispose.dispose();
             guidesApi.dispose();
         },
     };

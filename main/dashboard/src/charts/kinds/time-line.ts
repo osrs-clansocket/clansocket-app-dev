@@ -56,7 +56,7 @@ function buildOptions(spec: TimeLineSpec, theme: ChartTheme): ChartOptions<LineK
 function createTimeLine(canvas: HTMLCanvasElement, spec: TimeLineSpec): ChartMount {
     ensureCoreRegistered();
     if (spec.minimal !== ENABLED) ensureZoomRegistered();
-    const theme = getChartTheme();
+    const theme = getChartTheme(canvas);
     const config: ChartConfiguration<LineKind> = {
         type: LINE_TYPE,
         data: { datasets: buildDatasets(spec, theme.palette) },

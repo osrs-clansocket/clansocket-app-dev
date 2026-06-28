@@ -6,6 +6,8 @@ import type { HandlerCtx } from "../handler-ctx.js";
 import { asNumberNullable, extractWhere, type PlayerIdentity, type SpatialColumns } from "../projection-utils.js";
 import { upsertItemsCatalog } from "../items-catalog.js";
 import { safeItemName, safePrice } from "./bank-utils.js";
+import { EVENT_BANK_CLOSE, EVENT_BANK_OPEN } from "../../../../plugin-api/event-types.js";
+import { registerPluginEvent } from "../../../../flows/registries/plugin-event-registry.js";
 
 export function handleBankOpen(ctx: HandlerCtx): void {
     const { conn, payload, now } = ctx;
@@ -56,3 +58,24 @@ export function handleBankClose(ctx: HandlerCtx): void {
         for (const change of changes) emitBankChange({ emitter, id, envelope, where, change });
     })();
 }
+
+registerPluginEvent({
+    eventType: EVENT_BANK_OPEN,
+    routing: "current-state",
+    handler: handleBankOpen,
+    payloadFields: [
+        { name: "hash", type: "string" },
+        { name: "items", type: "string" },
+    ],
+});
+
+registerPluginEvent({
+    eventType: EVENT_BANK_CLOSE,
+    routing: "current-state",
+    handler: handleBankClose,
+    payloadFields: [
+        { name: "hash", type: "string" },
+        { name: "items", type: "string" },
+        { name: "durationMs", type: "integer" },
+    ],
+});

@@ -1,0 +1,28 @@
+.clans-manage__flow-builder-schema-row {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sp-1h);
+    padding-block-start: var(--sp-0);
+}
+
+.clans-manage__flow-builder-schema-label {
+    flex-shrink: 0;
+    inline-size: 5rem;
+    font-size: var(--fs-3xs);
+    letter-spacing: var(--ls-snug);
+    text-transform: uppercase;
+    color: var(--base-graphite-300);
+}
+
+.clans-manage__flow-builder-schema-control {
+    flex: 1 1 0;
+    min-inline-size: 0;
+}
+
+.clans-manage__flow-builder-schema-nested {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-0);
+    padding-inline-start: var(--sp-1h);
+    border-inline-start: 0.0625rem solid var(--base-graphite-700);
+}

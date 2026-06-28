@@ -49,6 +49,16 @@ export const TOOL_TOOLTIPS: Record<string, TooltipDef> = {
         description: "Toggle the variables strip — insert {{clan.X}} tokens (name, slug, status, memberCount, etc.) into selected text.",
         affects: "Editor chrome",
     },
+    "toggle-charts": {
+        title: "Charts rail",
+        description: "Open the chart preset rail. Click a preset to add it to the page as a live chart component.",
+        affects: "Editor chrome",
+    },
+    "chart-source": {
+        title: "Chart preset",
+        description: "Swap which chart preset this component renders. The size resets to the new preset's recommended dimensions.",
+        affects: "Chart binding + size",
+    },
     "toggle-guides": {
         title: "Guides + rulers",
         description: "Toggle photoshop-style guides and rulers. Drag from a ruler to add a guide; components snap to nearby guides while dragging.",

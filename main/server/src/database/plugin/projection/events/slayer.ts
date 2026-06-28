@@ -13,6 +13,8 @@ import {
     type SpatialColumns,
 } from "../projection-utils.js";
 import { upsertSlayer, type SlayerFacts } from "./slayer-writer.js";
+import { EVENT_SLAYER } from "../../../../plugin-api/event-types.js";
+import { registerPluginEvent } from "../../../../flows/registries/plugin-event-registry.js";
 
 interface PriorSlayer {
     target_id: number | null;
@@ -106,3 +108,22 @@ export function handleSlayer(ctx: HandlerCtx): void {
         upsertSlayer(conn, id, facts, now);
     })();
 }
+
+registerPluginEvent({
+    eventType: EVENT_SLAYER,
+    routing: "current-state",
+    handler: handleSlayer,
+    payloadFields: [
+        { name: "target", type: "integer" },
+        { name: "targetName", type: "string", sqlTable: "plugin_slayer", sqlColumn: "target_name" },
+        { name: "slayerAreaId", type: "integer" },
+        { name: "areaName", type: "string", sqlTable: "plugin_slayer", sqlColumn: "area_name" },
+        { name: "master", type: "integer" },
+        { name: "masterName", type: "string", sqlTable: "plugin_slayer", sqlColumn: "master_name" },
+        { name: "points", type: "integer" },
+        { name: "tasksCompleted", type: "integer" },
+        { name: "bossId", type: "integer" },
+        { name: "bossName", type: "osrs-boss", valueSourceRef: "osrs-boss" },
+        { name: "count", type: "integer" },
+    ],
+});

@@ -11,6 +11,8 @@ import {
     type PlayerIdentity,
     type SpatialColumns,
 } from "./projection-utils.js";
+import { EVENT_QUEST_COMPLETED, EVENT_QUESTS } from "../../../plugin-api/event-types.js";
+import { registerPluginEvent } from "../../../flows/registries/plugin-event-registry.js";
 
 interface QuestEntry {
     id: number;
@@ -123,6 +125,13 @@ export function handleQuests(ctx: HandlerCtx): void {
     })();
 }
 
+registerPluginEvent({
+    eventType: EVENT_QUESTS,
+    routing: "current-state",
+    handler: handleQuests,
+    payloadFields: [{ name: "quests", type: "string" }],
+});
+
 export function handleQuestCompleted(ctx: HandlerCtx): void {
     const { conn, payload, now, envelope, id } = ctx;
     const { accountHash } = id;
@@ -146,3 +155,13 @@ export function handleQuestCompleted(ctx: HandlerCtx): void {
         upsertQuest({ conn, id, questId, questName, now, state: "COMPLETE" });
     })();
 }
+
+registerPluginEvent({
+    eventType: EVENT_QUEST_COMPLETED,
+    routing: "current-state",
+    handler: handleQuestCompleted,
+    payloadFields: [
+        { name: "id", type: "integer" },
+        { name: "name", type: "string" },
+    ],
+});

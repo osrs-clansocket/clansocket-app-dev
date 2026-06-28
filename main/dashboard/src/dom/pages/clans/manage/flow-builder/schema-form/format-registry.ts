@@ -1,6 +1,7 @@
 import type { Instance } from "../../../../../factory/index.js";
+import type { JSONSchemaNode } from "../../../../../../state/flows/schema-types-reader.js";
 
-export type JSONSchemaNode = Readonly<Record<string, unknown>>;
+export type { JSONSchemaNode };
 
 export interface FormatPickerContext {
     readonly fieldName: string;

@@ -3,10 +3,11 @@ import { buildGlassSelect } from "../../../../../../forms/glass/inputs/select/in
 import type { SelectOption } from "../../../../../../forms/glass/inputs/select/index.js";
 import {
     buildValueControl,
-    OP_OPTIONS,
+    operatorOptions,
     type ConditionEditorCallbacks,
     type ConditionRow,
 } from "./condition-editor-value.js";
+import { operatorsForFieldType } from "../../../../../../../state/flows/field-operators-store.js";
 import {
     AUTO_HOOKS_CARD_DELETE_CLASS,
     AUTO_HOOKS_CARD_ROW_CLASS,
@@ -43,10 +44,24 @@ function buildDeleteBtn(onDelete: () => void): Instance {
     );
 }
 
+function pickFieldType(ctx: RowContext): string | undefined {
+    return ctx.cb.getFieldType?.(ctx.triggerType, ctx.row.field);
+}
+
+function pickOpForField(fieldType: string | undefined, currentOp: string): { op: string; opts: SelectOption[] } {
+    const allowed = fieldType ? operatorsForFieldType(fieldType) : ["eq", "ne", "gt", "gte", "lt", "lte", "in", "not-in", "contains", "not-contains", "starts-with"];
+    const opts = operatorOptions(allowed);
+    const op = allowed.includes(currentOp) ? currentOp : (allowed[0] ?? "eq");
+    return { op, opts };
+}
+
 export function buildRow(ctx: RowContext): Instance {
     const fieldSel = buildGlassSelect(`cond-field-${ctx.idx}`, ctx.fields, ctx.row.field);
     bindHiddenChange(fieldSel, (v) => ctx.onUpdate({ ...ctx.row, field: v, value: "" }));
-    const opSel = buildGlassSelect(`cond-op-${ctx.idx}`, OP_OPTIONS, ctx.row.op);
+    const fieldType = pickFieldType(ctx);
+    const { op, opts } = pickOpForField(fieldType, ctx.row.op);
+    if (op !== ctx.row.op) ctx.row = { ...ctx.row, op };
+    const opSel = buildGlassSelect(`cond-op-${ctx.idx}`, opts, op);
     bindHiddenChange(opSel, (v) => ctx.onUpdate({ ...ctx.row, op: v, value: "" }));
     const valueCtrl = buildValueControl({
         idx: ctx.idx,
@@ -54,6 +69,7 @@ export function buildRow(ctx: RowContext): Instance {
         triggerType: ctx.triggerType,
         cb: ctx.cb,
         onUpdate: (v) => ctx.onValueUpdate({ ...ctx.row, value: v }),
+        fieldType,
     });
     const delBtn = buildDeleteBtn(ctx.onDelete);
     fieldSel.el.classList.add(AUTO_HOOKS_CARD_VALUE_CLASS);

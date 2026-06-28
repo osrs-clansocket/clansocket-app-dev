@@ -1,5 +1,9 @@
 import "../../../styles/pages/clans/clan-map-page.css";
 import "../../../styles/pages/clans/clan-map-page-mobile.css";
+import "../../../styles/components/data/clan-map-component.css";
+import "../../../styles/components/data/clan-map-component-mobile.css";
+import "../../../styles/components/banner/index.css";
+import "../../../styles/pages/routes/route-clan-page.css";
 import { div, paragraph, type Instance, type ReadSignal, baseProps, textProps } from "../../factory";
 import { clanMap } from "../../clans/clan-map/index.js";
 import { liveSlug } from "../../../managers/router/slug-paths.js";

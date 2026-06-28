@@ -2,6 +2,8 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { interpolate, type HomepageContext } from "./homepage-variables.ts";
 import type { MetricValue } from "./homepage-metrics-store.ts";
+import type { HeatmapCell } from "./homepage-heatmaps-store.ts";
+import type { TimeseriesPoint } from "./homepage-timeseries-store.ts";
 import type { ManagedClan } from "../clans-client/index.ts";
 
 function ctx(overrides: Partial<HomepageContext> = {}): HomepageContext {
@@ -23,12 +25,16 @@ function ctx(overrides: Partial<HomepageContext> = {}): HomepageContext {
         roster: null,
     };
     const metricsMap = new Map<string, MetricValue>();
+    const heatmapsMap = new Map<string, HeatmapCell[]>();
+    const timeseriesMap = new Map<string, TimeseriesPoint[]>();
     return {
         clan,
         memberCount: 42,
         iconUrl: "/api/clans/varietyz/icon",
         establishedYear: 2021,
         metrics: () => metricsMap,
+        heatmaps: () => heatmapsMap,
+        timeseries: () => timeseriesMap,
         ...overrides,
     };
 }

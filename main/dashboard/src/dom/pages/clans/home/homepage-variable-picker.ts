@@ -219,25 +219,7 @@ export interface VariablesRowOpts {
     readonly open$: Signal<boolean>;
 }
 
-const CHROME_TOP_SELECTORS = [".page-banner__row", ".clans-home__edit-strip"];
-const CHROME_BOTTOM_SELECTOR = ".ai-bar:not(.ai-bar--hidden)";
-
-function measureChromeBottom(): number {
-    let bottom = 0;
-    for (const sel of CHROME_TOP_SELECTORS) {
-        const el = document.querySelector(sel) as HTMLElement | null;
-        if (el === null) continue;
-        const rect = el.getBoundingClientRect();
-        if (rect.bottom > bottom) bottom = rect.bottom;
-    }
-    return bottom;
-}
-
-function measureBottomGutter(): number {
-    const el = document.querySelector(CHROME_BOTTOM_SELECTOR) as HTMLElement | null;
-    if (el === null) return 0;
-    return Math.max(0, window.innerHeight - el.getBoundingClientRect().top);
-}
+import { chromeObserveSelectors, measureBottomGutter, measureChromeBottom } from "./homepage-rail-bounds.js";
 
 export function buildVariablesRow(opts: VariablesRowOpts): Instance {
     const { state, open$ } = opts;
@@ -270,7 +252,7 @@ export function buildVariablesRow(opts: VariablesRowOpts): Instance {
     window.addEventListener("resize", onResize);
     const ro = new ResizeObserver(() => onResize());
     const observeChrome = (): void => {
-        for (const sel of [...CHROME_TOP_SELECTORS, ".ai-bar"]) {
+        for (const sel of chromeObserveSelectors()) {
             const el = document.querySelector(sel);
             if (el !== null) ro.observe(el);
         }

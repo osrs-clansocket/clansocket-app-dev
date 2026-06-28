@@ -106,7 +106,7 @@ function buildMount(canvas: HTMLCanvasElement, chart: Chart<RadarKind>): ChartMo
 function createRadar(canvas: HTMLCanvasElement, spec: RadarSpec): ChartMount {
     ensureCoreRegistered();
     ensureRadarRegistered();
-    const theme = getChartTheme();
+    const theme = getChartTheme(canvas);
     const chart = new Chart(canvas, buildConfig(spec, theme));
     return buildMount(canvas, chart);
 }

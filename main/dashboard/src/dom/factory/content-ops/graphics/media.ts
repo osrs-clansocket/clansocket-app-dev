@@ -67,7 +67,7 @@ function rasterIcon(provider: string, props: IconProps, ariaHiddenAttr: string |
         attrs: buildAttrs([
             [ATTR_SRC, src],
             [ATTR_ALT, props.alt ?? props.name],
-            [ATTR_TITLE, props.title ?? props.name],
+            [ATTR_TITLE, props.title],
             [ATTR_LOADING, LOADING_LAZY],
             [ATTR_ARIA_HIDDEN, ariaHiddenAttr],
         ]),
@@ -86,7 +86,7 @@ function svgIcon(provider: string, props: IconProps, ariaHiddenAttr: string | un
         classes: props.classes && props.classes.length > 0 ? props.classes : undefined,
         attrs: buildAttrs([
             [ATTR_STYLE, SVG_ICON_STYLE],
-            [ATTR_TITLE, props.title ?? props.name],
+            [ATTR_TITLE, props.title],
             [ATTR_ARIA_HIDDEN, ariaHiddenAttr],
         ]),
         effects: props.effects,

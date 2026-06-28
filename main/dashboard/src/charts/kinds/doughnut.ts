@@ -99,7 +99,7 @@ function buildMount(canvas: HTMLCanvasElement, chart: Chart<DoughnutKind>): Char
 function createDoughnut(canvas: HTMLCanvasElement, spec: DoughnutSpec): ChartMount {
     ensureCoreRegistered();
     ensureDoughnutRegistered();
-    const theme = getChartTheme();
+    const theme = getChartTheme(canvas);
     const chart = new Chart(canvas, buildConfig(spec, theme));
     return buildMount(canvas, chart);
 }

@@ -18,6 +18,7 @@ import fs from "node:fs";
 import path from "node:path";
 import url from "node:url";
 import zlib from "node:zlib";
+import ts from "typescript";
 
 const here = path.dirname(url.fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(here, "..", "..");
@@ -28,6 +29,7 @@ const fullOutDir = path.resolve(repoRoot, "public", "svg-sprite-full");
 const allowlistPath = path.resolve(dashSrc, "icons", "icons-allowlist.json");
 
 const FAMILIES = ["bi", "ti", "mdi", "gi", "ph"];
+const FAMILY_SET = new Set(FAMILIES);
 
 const SCAN_ROOTS = [
     path.resolve(dashSrc, "dom"),
@@ -70,34 +72,142 @@ function walkSync(dir, files = []) {
 }
 
 const DEFAULT_PROVIDER = "bi";
-const DEFAULT_ICON_FIELD_PATTERN = /\bicon\s*:\s*["']([a-z0-9][a-z0-9-]*)["']/g;
-const ICON_NAME_PROP_PATTERN = /\bname\s*:\s*["']([a-z0-9][a-z0-9-]*)["']/g;
+const ICON_NAME_SHAPE = /^[a-z][a-z0-9-]*$/;
+const PROVIDER_ALIAS_KEYS = new Set(["provider", "kind"]);
+const NAME_ALIAS_KEYS = new Set(["name", "iconName", "iconKey", "iconId", "glyph", "icon"]);
+const ICON_FACTORY_CALLS = new Set(["icon", "iconEl"]);
+const POSITIONAL_ICON_HELPERS = { entry: { argIndex: 1, family: DEFAULT_PROVIDER } };
+const TS_EXTS = new Set([".ts", ".tsx", ".js", ".jsx", ".cjs", ".mjs"]);
 
-function scanUsedNames(prefix, sourceFiles) {
-    const classPattern = new RegExp(`\\b${prefix}-([a-z0-9-]+)`, "g");
-    const provNamePattern = new RegExp(
-        `provider\\s*:\\s*["']${prefix}["'][^}]{0,200}?name\\s*:\\s*["']([a-z0-9][a-z0-9-]*)["']`,
-        "g",
-    );
-    const nameProvPattern = new RegExp(
-        `name\\s*:\\s*["']([a-z0-9][a-z0-9-]*)["'][^}]{0,200}?provider\\s*:\\s*["']${prefix}["']`,
-        "g",
-    );
-    const found = new Set();
-    for (const file of sourceFiles) {
-        const content = fs.readFileSync(file, "utf-8");
-        for (const m of content.matchAll(classPattern)) found.add(m[1]);
-        for (const m of content.matchAll(provNamePattern)) found.add(m[1]);
-        for (const m of content.matchAll(nameProvPattern)) found.add(m[1]);
-        if (prefix === DEFAULT_PROVIDER) {
-            for (const m of content.matchAll(DEFAULT_ICON_FIELD_PATTERN)) found.add(m[1]);
-            for (const m of content.matchAll(ICON_NAME_PROP_PATTERN)) {
-                const lookahead = content.slice(m.index, m.index + 240);
-                if (!/provider\s*:\s*["'](?!bi["'])/.test(lookahead)) found.add(m[1]);
-            }
+function isStringLiteralNode(node) {
+    return ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node);
+}
+
+function asIconLiteral(node) {
+    if (!isStringLiteralNode(node)) return null;
+    return ICON_NAME_SHAPE.test(node.text) ? node.text : null;
+}
+
+function asPlainLiteral(node) {
+    return isStringLiteralNode(node) ? node.text : null;
+}
+
+function propertyKeyText(prop) {
+    if (!prop.name) return null;
+    if (ts.isIdentifier(prop.name)) return prop.name.text;
+    if (ts.isStringLiteral(prop.name)) return prop.name.text;
+    return null;
+}
+
+function extractIconFieldsFromObject(objLit) {
+    const fields = { providers: [], names: [], aliasNames: [] };
+    for (const prop of objLit.properties) {
+        if (!ts.isPropertyAssignment(prop)) continue;
+        const key = propertyKeyText(prop);
+        if (key === null) continue;
+        if (PROVIDER_ALIAS_KEYS.has(key)) {
+            const v = asPlainLiteral(prop.initializer);
+            if (v !== null) fields.providers.push(v);
+            continue;
+        }
+        if (key === "name") {
+            const v = asIconLiteral(prop.initializer);
+            if (v !== null) fields.names.push(v);
+            continue;
+        }
+        if (NAME_ALIAS_KEYS.has(key)) {
+            const v = asIconLiteral(prop.initializer);
+            if (v !== null) fields.aliasNames.push({ key, value: v });
         }
     }
-    return found;
+    return fields;
+}
+
+function getCalleeName(call) {
+    const expr = call.expression;
+    if (ts.isIdentifier(expr)) return expr.text;
+    if (ts.isPropertyAccessExpression(expr) && ts.isIdentifier(expr.name)) return expr.name.text;
+    return null;
+}
+
+function recordRef(collected, family, name) {
+    if (!ICON_NAME_SHAPE.test(name)) return;
+    if (!collected.has(family)) collected.set(family, new Set());
+    collected.get(family).add(name);
+}
+
+function resolveFamily(providerValues) {
+    for (const v of providerValues) {
+        if (FAMILY_SET.has(v)) return v;
+    }
+    return DEFAULT_PROVIDER;
+}
+
+function collectFromIconFactoryCall(call, collected) {
+    const arg0 = call.arguments[0];
+    if (!arg0 || !ts.isObjectLiteralExpression(arg0)) return;
+    const fields = extractIconFieldsFromObject(arg0);
+    const family = resolveFamily(fields.providers);
+    for (const n of fields.names) recordRef(collected, family, n);
+    for (const a of fields.aliasNames) recordRef(collected, family, a.value);
+}
+
+function collectFromPositionalHelper(call, helper, collected) {
+    const arg = call.arguments[helper.argIndex];
+    if (!arg) return;
+    const v = asIconLiteral(arg);
+    if (v !== null) recordRef(collected, helper.family, v);
+}
+
+function collectFromObjectLiteral(objLit, collected) {
+    const fields = extractIconFieldsFromObject(objLit);
+    const targetFamily = resolveFamily(fields.providers);
+    for (const n of fields.names) recordRef(collected, targetFamily, n);
+    for (const a of fields.aliasNames) recordRef(collected, targetFamily, a.value);
+}
+
+function walkAst(sourceText, filename, collected) {
+    const sf = ts.createSourceFile(filename, sourceText, ts.ScriptTarget.Latest, true);
+    const visit = (node) => {
+        if (ts.isCallExpression(node)) {
+            const callee = getCalleeName(node);
+            if (callee !== null) {
+                if (ICON_FACTORY_CALLS.has(callee)) collectFromIconFactoryCall(node, collected);
+                const helper = POSITIONAL_ICON_HELPERS[callee];
+                if (helper) collectFromPositionalHelper(node, helper, collected);
+            }
+        }
+        if (ts.isObjectLiteralExpression(node)) {
+            collectFromObjectLiteral(node, collected);
+        }
+        ts.forEachChild(node, visit);
+    };
+    visit(sf);
+}
+
+function scanCssClasses(content, prefix, found) {
+    const classPattern = new RegExp(`\\b${prefix}-([a-z0-9-]+)`, "g");
+    for (const m of content.matchAll(classPattern)) found.add(m[1]);
+}
+
+function scanAll(sourceFiles) {
+    const collected = new Map();
+    for (const file of sourceFiles) {
+        const content = fs.readFileSync(file, "utf-8");
+        const ext = path.extname(file);
+        if (TS_EXTS.has(ext)) {
+            try {
+                walkAst(content, file, collected);
+            } catch (err) {
+                console.warn(`  ast skip: ${path.relative(repoRoot, file)} — ${err.message}`);
+            }
+        }
+        for (const family of FAMILIES) {
+            if (!collected.has(family)) collected.set(family, new Set());
+            scanCssClasses(content, family, collected.get(family));
+        }
+    }
+    return collected;
 }
 
 function loadAllowlist() {
@@ -173,6 +283,7 @@ function main() {
     const sourceFiles = [];
     for (const root of SCAN_ROOTS) walkSync(root, sourceFiles);
     const allowlist = loadAllowlist();
+    const allScanned = scanAll(sourceFiles);
 
     let subsetTotal = 0;
     let fullTotal = 0;
@@ -185,7 +296,7 @@ function main() {
         }
         const { glyphs, skipped } = familyData;
 
-        const scanned = scanUsedNames(family, sourceFiles);
+        const scanned = allScanned.get(family) ?? new Set();
         const allowEntry = allowlist[family];
         const fullFamily = allowEntry === "*";
         const allowSet = Array.isArray(allowEntry) ? new Set(allowEntry) : new Set();

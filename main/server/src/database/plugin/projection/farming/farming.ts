@@ -5,6 +5,8 @@ import { buildChangeEmitter } from "../change-inserter.js";
 import type { HandlerCtx } from "../handler-ctx.js";
 import { emitFarmingChange, FARMING_CHANGE_COLS, upsertFarming } from "./farming-writer.js";
 import { extractWhere, type SpatialColumns } from "../projection-utils.js";
+import { EVENT_FARMING_PATCH } from "../../../../plugin-api/event-types.js";
+import { registerPluginEvent } from "../../../../flows/registries/plugin-event-registry.js";
 
 function readPriorState(
     conn: Database.Database,
@@ -63,3 +65,13 @@ export function handleFarmingPatch(ctx: HandlerCtx): void {
         upsertFarming({ conn, id, decoded, varbitId, value, now });
     })();
 }
+
+registerPluginEvent({
+    eventType: EVENT_FARMING_PATCH,
+    routing: "current-state",
+    handler: handleFarmingPatch,
+    payloadFields: [
+        { name: "varbitId", type: "integer" },
+        { name: "value", type: "integer" },
+    ],
+});
